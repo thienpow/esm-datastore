@@ -1,0 +1,42 @@
+version: "3.9"
+services:
+
+  grpc-web-proxy:
+    image: envoyproxy/envoy:v1.16.2
+    volumes:
+      - ./grpc_web_proxy/envoy.yaml:/etc/envoy/envoy.yaml
+      - /etc/letsencrypt/live/aadi.my/fullchain.pem:/etc/envoy/fullchain.pem
+      - /etc/letsencrypt/live/aadi.my/privkey.pem:/etc/envoy/privkey.pem
+    restart: always
+    environment: 
+      - ENVOY_UID=0
+      - ENVOY_GID=0
+    networks:
+      envoymesh:
+        aliases:
+          - grpc-web-proxy
+    depends_on:
+      - "esmservice"
+    links:
+      - "esmservice"
+    expose:
+      - "443"
+    ports: 
+      - "443:443"
+
+  esmservice:
+    build:
+      context: .
+      dockerfile: ./service/Dockerfile
+    restart: always
+    networks:
+      envoymesh:
+        aliases:
+          - esmservice
+    expose:
+      - "50051"
+    ports:
+      - "50051:50051"
+
+networks:
+  envoymesh: {}

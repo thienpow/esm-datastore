@@ -1,0 +1,262 @@
+
+use tokio_postgres;
+use bb8::{Pool, RunError};
+use bb8_postgres::PostgresConnectionManager;
+use std::time::{SystemTime};
+use svc::adminapi::adminapi_proto::UserCount;
+use crate::svc;
+
+
+pub struct User {
+  pub id: i64,
+  pub username: String,
+  pub passhash: String,
+  pub email: String,
+  pub phone: String,
+  pub firstname: String,
+  pub lastname: String,
+  pub created_on: SystemTime,
+  pub last_login: SystemTime,
+  pub role_id: i32,
+  pub status: i32,
+  pub gem_balance: i64,
+  pub social_link_fb: String,
+  pub social_link_google: String,
+  pub avatar_url: String,
+  pub exp: i32,
+  pub full_name: String,
+  pub address: String,
+  pub city: String,
+  pub state: String,
+  pub zip_code: String,
+  pub country: String,
+  pub country_code: i32,
+  pub is_notify_allowed: bool,
+  pub is_notify_new_reward: bool,
+  pub is_notify_new_tournament: bool,
+  pub is_notify_tour_ending: bool,
+  pub nick_name: String,
+}
+pub struct Address {
+  pub id: i64,
+  pub full_name: String,
+  pub address: String,
+  pub city: String,
+  pub state: String,
+  pub zip_code: String,
+  pub country: String,
+  pub country_code: i32,
+}
+pub struct Settings {
+  pub id: i64,
+  pub is_notify_allowed: bool,
+  pub is_notify_new_reward: bool,
+  pub is_notify_new_tournament: bool,
+  pub is_notify_tour_ending: bool,
+  pub nick_name: String,
+}
+
+impl User {
+    
+    pub async fn add(user: User, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("INSERT INTO public.\"user\" (username, passhash, email, phone, firstname, lastname, \
+        created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp) \
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id;").await?;
+      let row = conn.query_one(&stmt, 
+                  &[&user.username, &user.passhash, &user.email, &user.phone, 
+                  &user.firstname, &user.lastname, 
+                  &user.created_on, &user.last_login, &user.role_id, &user.status, &user.gem_balance, 
+                  &user.social_link_fb, &user.social_link_google, &user.avatar_url, &user.exp]).await?;
+    
+      Ok(row.get::<usize, i64>(0))
+    }
+    
+    pub async fn update_email_confirmed(id: i64, status: bool, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"user\" SET is_email_confirmed=$1 WHERE id=$2;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&status, &id]).await?;
+    
+      Ok(n)
+    }
+    
+    pub async fn update_social_link_fb(id: i64, fb_id: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"user\" SET social_link_fb=$1 WHERE id=$2;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&fb_id, &id]).await?;
+    
+      Ok(n)
+    }
+
+    pub async fn update_social_link_google(id: i64, google_id: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"user\" SET social_link_google=$1 WHERE id=$2;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&google_id, &id]).await?;
+    
+      Ok(n)
+    }
+
+    pub async fn update_status(id: i64, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"user\" SET status=$1 WHERE id=$2;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&status, &id]).await?;
+    
+      Ok(n)
+    }
+    
+    pub async fn update_address(addr: Address, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"user\" SET full_name=$1, address=$2, city=$3, state=$4, zip_code=$5, country=$6, country_code=$7 WHERE id=$8;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&addr.full_name, &addr.address, &addr.city, &addr.state, &addr.zip_code, &addr.country, &addr.country_code, 
+                  &addr.id]).await?;
+    
+      Ok(n)
+    }
+    
+    pub async fn update_settings(sett: Settings, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"user\" SET is_notify_allowed=$1, is_notify_new_reward=$2, is_notify_new_tournament=$3, is_notify_tour_ending=$4, nick_name=$5 WHERE id=$6;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&sett.is_notify_allowed, &sett.is_notify_new_reward, &sett.is_notify_new_tournament, &sett.is_notify_tour_ending, &sett.nick_name,
+                  &sett.id]).await?;
+    
+      Ok(n)
+    }
+    
+    pub async fn change_password(username: String, passhash: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"user\" SET passhash=$1 WHERE username=$2;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&passhash, &username]).await?;
+    
+      Ok(n)
+    }
+    
+    pub async fn sign_in(username: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<User, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+
+      let stmt = conn.prepare("SELECT id, username, passhash, email, phone, firstname, lastname, \
+      created_on, last_login, role_id, status, gem_balance, \
+      social_link_fb, social_link_google, avatar_url, exp, \
+      full_name, address, city, state, zip_code, country, country_code, \
+      is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name \
+      FROM public.\"user\" WHERE status=1 AND username=$1 LIMIT 1;").await?;
+
+      let row = conn.query_one(&stmt, 
+                  &[&username]).await?;
+
+      let user = User {
+        id: row.get(0),
+        username: row.get(1),
+        passhash: row.get(2),
+        email: row.get(3),
+        phone: row.get(4),
+        firstname: row.get(5),
+        lastname: row.get(6),
+        created_on: row.get(7),
+        last_login: row.get(8),
+        role_id: row.get(9),
+        status: row.get(10),
+        gem_balance: row.get(11),
+        social_link_fb: row.get(12), 
+        social_link_google: row.get(13), 
+        avatar_url: row.get(14), 
+        exp: row.get(15),
+        full_name: row.get(16), 
+        address: row.get(17), 
+        city: row.get(18), 
+        state: row.get(19), 
+        zip_code: row.get(20), 
+        country: row.get(21), 
+        country_code: row.get(22), 
+        is_notify_allowed: row.get(23), 
+        is_notify_new_reward: row.get(24), 
+        is_notify_new_tournament: row.get(25), 
+        is_notify_tour_ending: row.get(26), 
+        nick_name: row.get(27)
+      };
+
+      Ok(user)
+    }
+
+
+    pub async fn list(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<User>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, address, city, state, zip_code, country, country_code, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name FROM public.\"user\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
+    
+      let mut vec: Vec<User> = Vec::new();
+      for row in conn.query(&stmt, &[&limit, &offset]).await? {
+        let user = User {
+          id: row.get(0),
+          username: row.get(1),
+          passhash: "".to_string(), //passhas field value won't be retrieved but must be set, just ignore.
+          email: row.get(2),
+          phone: row.get(3),
+          firstname: row.get(4),
+          lastname: row.get(5),
+          created_on: row.get(6),
+          last_login: row.get(7),
+          role_id: row.get(8),
+          status: row.get(9),
+          gem_balance: row.get(10),
+          social_link_fb: row.get(11),
+          social_link_google: row.get(12),
+          avatar_url: row.get(13),
+          exp: row.get(14),
+
+          //full_name, address, city, state, zip_code, country, country_code
+          full_name: row.get(15),
+          address: row.get(16),
+          city: row.get(17),
+          state: row.get(18),
+          zip_code: row.get(19),
+          country: row.get(20),
+          country_code: row.get(21),
+
+          //is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name
+          is_notify_allowed: row.get(22),
+          is_notify_new_reward: row.get(23),
+          is_notify_new_tournament: row.get(24),
+          is_notify_tour_ending: row.get(25),
+          nick_name: row.get(26),
+        };
+
+        vec.push(user);
+      }
+      
+      Ok(vec)
+    }
+
+    
+    pub async fn count(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<UserCount, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let sql = "SELECT (SELECT COUNT(id) FROM public.\"user\" WHERE status=1) AS active, (SELECT COUNT(id) FROM public.\"user\" WHERE status=2) AS blocked;";
+
+      let stmt = conn.prepare(sql).await?;
+      let row = conn.query_one(&stmt, &[]).await?;
+      
+      Ok(UserCount {
+        active: row.get::<usize, i64>(0),
+        blocked: row.get::<usize, i64>(1)
+      })
+
+    }
+
+
+    
+}

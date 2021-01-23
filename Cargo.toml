@@ -1,0 +1,118 @@
+[package]
+name = "esm-datastore"
+version = "0.1.0"
+authors = ["Ken Chong <thienpow@gmail.com>"]
+edition = "2018"
+default-run = "esmserver"
+
+[[bin]]
+name = "esmserver"
+path = "src/main.rs"
+
+#[[bin]]
+#name = "config"
+#path = "src/client/config.rs"
+
+#[[bin]]
+#name = "game"
+#path = "src/client/game.rs"
+
+#[[bin]]
+#name = "gplayer"
+#path = "src/client/gplayer.rs"
+
+#[[bin]]
+#name = "item"
+#path = "src/client/item.rs"
+
+#[[bin]]
+#name = "subscription"
+#path = "src/client/subscription.rs"
+
+#[[bin]]
+#name = "prize"
+#path = "src/client/prize.rs"
+
+#[[bin]]
+#name = "raffle"
+#path = "src/client/raffle.rs"
+
+#[[bin]]
+#name = "shop"
+#path = "src/client/shop.rs"
+
+#[[bin]]
+#name = "winner"
+#path = "src/client/winner.rs"
+
+#[[bin]]
+#name = "user"
+#path = "src/client/user.rs"
+
+#[[bin]]
+#name = "login"
+#path = "src/client/login.rs"
+
+#[[bin]]
+#name = "tournament"
+#path = "src/client/tournament.rs"
+
+#[[bin]]
+#name ="test"
+#path  = "src/client/test.rs"
+
+[dependencies]
+
+ring = "0.16.15"
+jsonwebtoken = "7.2.0"
+argonautica = "0.2.0"
+
+
+failure = "0.1.8"
+num_cpus = "1.13.0"
+derive_more = "0.99.11"
+
+bytes = "0.5.6"
+prost = "0.6.1"
+
+tokio = { version = "0.2.22", features = ["full"] }
+futures = { version = "0.3.5", default-features = false, features = ["alloc"]}
+async-stream = "0.3.0"
+http = "0.2"
+tower = "0.3.1"
+
+rand = "0.7.3"
+
+
+# Below is for database
+serde = { version = "1.0.111", features = ["derive"] }
+serde_json = "1.0"
+serde_derive = "1.0"
+
+# Tracing
+tracing = "0.1"
+tracing-subscriber =  { version = "0.2.0-alpha", features = ["tracing-log"] }
+tracing-attributes = "0.1"
+tracing-futures = "0.2"
+
+# Required for wellknown types
+prost-types = "0.6.1"
+
+chrono = { version = "0.4.19", features = ["serde"] }
+bigdecimal = { version = "0.2.0", features = ["serde"]}
+num-traits = "0.2.14"
+
+uuid = { version = "0.7", features = ["serde", "v4"] }
+bb8 = "0.5.2"
+bb8-postgres = "0.5.0"
+tokio-postgres = "0.5.1"
+
+tonic = {version = "0.3.1", features = ["tls"] } 
+
+lazy_static = "1.4.0"
+log = "0.4.8"
+reqwest = { version = "0.10.10", features = ["blocking", "json"] }
+
+
+[build-dependencies]
+tonic-build = "0.3.1"

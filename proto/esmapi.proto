@@ -1,0 +1,901 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.esportsmini.esmapi";
+option java_outer_classname = "EsmApiProto";
+
+package api.esm;
+
+
+service EsmApi {
+  
+  // Common
+  rpc ListStatusType(ListStatusTypeRequest) returns (ListStatusTypeResponse) {}
+
+  // User
+  rpc SignIn(SignInRequest) returns (SignInResponse) {}
+  rpc AddUser(AddUserRequest) returns (AddUserResponse) {}
+  rpc UpdateEmailConfirmed(UpdateEmailConfirmedRequest) returns (UpdateEmailConfirmedResponse) {}
+  rpc UpdateSocialLinkFB(UpdateSocialLinkFBRequest) returns (UpdateSocialLinkFBResponse) {}
+  rpc UpdateSocialLinkGoogle(UpdateSocialLinkGoogleRequest) returns (UpdateSocialLinkGoogleResponse) {}
+  rpc UpdateUserStatus(UpdateUserStatusRequest) returns (UpdateUserStatusResponse) {}
+  rpc UpdateAddress(UpdateAddressRequest) returns (UpdateAddressResponse) {}
+  rpc UpdateUserSettings(UpdateUserSettingsRequest) returns (UpdateUserSettingsResponse) {}
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
+  rpc ListUser(ListUserRequest) returns (ListUserResponse) {}
+
+  // Config
+  rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {}
+
+  // Game
+  rpc ListGameLeaderRule(ListGameLeaderRuleRequest) returns (ListGameLeaderRuleResponse) {}
+  rpc GetGameCode(GetGameCodeRequest) returns (GetGameCodeResponse) {}
+  rpc ListGame(ListGameRequest) returns (ListGameResponse) {}
+
+  // GPlayer
+  rpc LogGEnter(LogGEnterRequest) returns (LogGEnterResponse) {}
+  rpc LogGLeave(LogGLeaveRequest) returns (LogGLeaveResponse) {}
+
+  // Invite
+  rpc GenerateInviteURL(GenerateInviteUrlRequest) returns(GenerateInviteUrlResponse) {}
+  rpc AddInvite(AddInviteRequest) returns (AddInviteResponse) {}
+  rpc ClaimInvite(ClaimInviteRequest) returns (ClaimInviteResponse) {}
+  rpc ListInvitedBy(ListInvitedByRequest) returns (ListInvitedByResponse) {}
+
+  // Item
+  rpc ListItem(ListItemRequest) returns (ListItemResponse) {}
+  rpc ListItemType(ListItemTypeRequest) returns (ListItemTypeResponse) {}
+
+
+  // Prize
+  rpc ListPrize(ListPrizeRequest) returns (ListPrizeResponse) {}
+  rpc ListPrizeType(ListPrizeTypeRequest) returns (ListPrizeTypeResponse) {}
+
+  // Rank
+  rpc ListRank(ListRankRequest) returns (ListRankResponse) {}
+
+  // Shop
+  rpc Buy(BuyRequest) returns (BuyResponse) {}
+
+  // Subscription
+  rpc ListSubscription(ListSubscriptionRequest) returns (ListSubscriptionResponse) {}
+  rpc ListSubscriptionType(ListSubscriptionTypeRequest) returns (ListSubscriptionTypeResponse) {}
+
+  // Tournament
+  rpc ListTournament(ListTournamentRequest) returns (ListTournamentResponse) {}
+
+  // Winner
+  rpc ListWinner(ListWinnerRequest) returns (ListWinnerResponse) {}
+  rpc ClaimWinner(ClaimWinnerRequest) returns (ClaimWinnerResponse) {}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+*************************************** Common ***************************************
+*/
+
+//Get StatusType from db
+message ListStatusTypeRequest {
+}
+message ListStatusTypeResponse {
+  repeated StatusTypeDetail result = 1;
+}
+message StatusTypeDetail {
+  int32 id = 1;
+  string title = 2;
+}
+
+/*
+*************************************** User ***************************************
+*/
+
+message SignInRequest {
+  string id_token = 1;
+  string username = 2; //maximum 128 characters, usually firebase user.uid
+}
+message SignInResponse {
+  UserDetail result = 1;
+}
+//Add a new user
+message AddUserRequest {
+  string username = 1;
+  string password = 2;
+  string email = 3;
+  string phone = 4;
+  string firstname = 5;
+  string lastname = 6;
+  string social_link_fb = 7;
+  string social_link_google = 8;
+  string avatar_url = 9;
+  string id_token = 10; // firebase.auth().currentUser.getIdToken
+}
+message AddUserResponse {
+  string result = 1; //response a id
+}
+
+//Update an existing user data
+message UpdateEmailConfirmedRequest {
+  int64 id = 1;
+  bool status = 2;
+}
+message UpdateEmailConfirmedResponse {
+  string result = 1;
+}
+
+//Update an existing user data
+message UpdateSocialLinkFBRequest {
+  int64 id = 1;
+  string fb_id = 2;
+}
+message UpdateSocialLinkFBResponse {
+  string result = 1;
+}
+
+//Update an existing user data
+message UpdateSocialLinkGoogleRequest {
+  int64 id = 1;
+  string google_id = 2;
+}
+message UpdateSocialLinkGoogleResponse {
+  string result = 1;
+}
+
+//Update an existing user data
+message UpdateUserStatusRequest {
+  int64 id = 1;
+  int32 status = 2;
+}
+message UpdateUserStatusResponse {
+  string result = 1;
+}
+
+//Update an existing user data
+message UpdateAddressRequest {
+  int64 id = 1;
+  string full_name = 2;
+  string address = 3;
+  string city = 4;
+  string state = 5;
+  string zip_code= 6;
+  string country = 7;
+  string country_code = 8;
+}
+message UpdateAddressResponse {
+  string result = 1;
+}
+
+//Update an existing user data
+message UpdateUserSettingsRequest {
+  int64 id = 1;
+  bool is_notify_allowed = 2;
+  bool is_notify_new_reward = 3;
+  bool is_notify_new_tournament = 4;
+  bool is_notify_tour_ending = 5;
+  string nick_name = 6;
+}
+message UpdateUserSettingsResponse {
+  string result = 1;
+}
+
+//Update an existing user data
+message ChangePasswordRequest {
+  string username = 1;
+  string old_password = 2;
+  string new_password = 3;
+}
+message ChangePasswordResponse {
+  string result = 1;
+}
+
+//Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
+message GetUserCountRequest {
+}
+message GetUserCountResponse {
+  UserCount result = 1;
+}
+message UserCount {
+  int64 active = 1;
+  int64 blocked = 2;
+}
+
+//Get users from db
+message ListUserRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+message ListUserResponse {
+  repeated UserDetail result = 1;
+}
+message UserDetail {
+  int64 id = 1;
+  string username = 2;
+  string email = 3;
+  string phone = 4;
+  string firstname = 5;
+  string lastname = 6;
+  int64 created_on = 7;
+  int64 last_login = 8;
+  int32 role_id = 9;
+  int32 status = 10;
+  int64 gem_balance = 11;
+  string social_link_fb = 12;
+  string social_link_google = 13;
+  string avatar_url = 14;
+  int32 exp = 15;
+  string full_name = 16;
+  string address = 17;
+  string city = 18;
+  string state = 19;
+  string zip_code= 20;
+  string country = 21;
+  int32 country_code = 22;
+  bool is_notify_allowed = 23;
+  bool is_notify_new_reward = 24;
+  bool is_notify_new_tournament = 25;
+  bool is_notify_tour_ending = 26;
+  string nick_name = 27;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+*************************************** Config ***************************************
+*/
+//Get config Get from db
+message GetConfigRequest {
+}
+message GetConfigResponse {
+  ConfigDetail result = 1;
+}
+message ConfigDetail {
+  repeated int32 spinner = 1;
+  int32 invites = 2;
+  int32 games_per_ad = 3;
+  int32 days_to_claim = 4;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+*************************************** Game ***************************************
+*/
+//list game score rules from db
+message ListGameLeaderRuleRequest {
+  int64 game_id = 1;
+}
+message ListGameLeaderRuleResponse {
+  repeated GameLeaderRuleDetail result = 1;
+}
+message GameLeaderRuleDetail {
+  int64 game_id = 1;
+  int32 rank = 2;
+  int32 tickets = 3;
+  int32 exp = 4;
+}
+
+//Get the game's code from db
+message GetGameCodeRequest {
+  int64 id = 1;
+}
+message GetGameCodeResponse {
+  string result = 1;
+}
+//Get games from db
+message ListGameRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+message ListGameResponse {
+  repeated GameDetail result = 1;
+}
+message GameDetail {
+  int64 id = 1;
+  string title = 2;
+  string subtitle = 3;
+  string img_url = 4;
+  string content = 5;
+  int32 type_id = 6;
+  int32 engine_id = 7;
+  int32 version = 8;
+  int32 status = 9;
+  int32 score_rule = 10;
+  int32 watch_ad_get_tickets = 11;
+  int32 watch_ad_get_exp = 12;
+  int32 use_gem_get_tickets = 13;
+  int32 use_gem_get_exp = 14;
+}
+
+
+//Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
+message GetGameCountRequest {
+}
+message GetGameCountResponse {
+  GameCount result = 1;
+}
+message GameCount {
+  int64 draft = 1;
+  int64 published = 2;
+  int64 archived = 3;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+*************************************** GPlayer ***************************************
+*/
+//LogEnter will response a secret key to be used for LogLeave
+//LogEnter = log the status of starting a game
+message LogGEnterRequest {
+  string secret = 1;
+  string access_token = 2;
+  int64 user_id = 3;
+  int64 game_id = 4;
+}
+message LogGEnterResponse {
+  string result = 1; //another new secret key
+}
+
+//LogLeave  is also a LogScore
+//LogLeave = log the status of quiting a game and update the score
+message LogGLeaveRequest {
+  string secret = 1; //to be use over here
+  string access_token = 2;
+  int64 id = 3;
+  int32 game_score = 4;
+}
+message LogGLeaveResponse {
+  string result = 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+*************************************** Invite ***************************************
+*/
+//this will generate an invitation url
+message GenerateInviteUrlRequest {
+  int64 invited_by = 1;
+  string target_email = 2;
+}
+message GenerateInviteUrlResponse {
+  string result = 1;  
+}
+
+//Add a new Invite, added when "new user" joined
+message AddInviteRequest {
+  int64 user_id = 1;
+  int64 invited_by = 2;
+}
+message AddInviteResponse {
+  string result = 1; 
+}
+
+
+//Claim an existing Invite where invite_id
+message ClaimInviteRequest {
+  int64 id = 1;
+}
+message ClaimInviteResponse {
+  string result = 1;
+}
+
+
+//List the Invites filter by invite_by from db
+message ListInvitedByRequest {
+  int64 invited_by = 1;
+  bool is_claimed = 2;
+}
+message ListInvitedByResponse {
+  repeated InvitedByDetail result = 1;
+}
+message InvitedByDetail {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 invited_by = 3;
+  int64 invited_date = 4;
+  bool is_claimed = 5;
+  int64 claimed_date = 6;
+}
+
+//Get Invites Count based on is_claimed & invited_by, false=not claimed, true=claimed
+message GetInvitedByCountRequest {
+  int64 invited_by = 1;
+  bool is_claimed = 2;
+}
+message GetInvitedByCountResponse {
+  string result = 1;
+}
+
+//Delete an existing game from db
+message DeleteInviteRequest {
+  int64 id = 1;
+}
+message DeleteInviteResponse {
+  string result = 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+**************************************** Item ***************************************
+*/
+//Add a new Item
+message AddItemRequest {
+  string title = 1;
+  string subtitle = 2;
+  string content = 3;
+  string img_url = 4;
+  int32 type_id = 5;
+  int32 amount = 6;
+  int32 status = 7;
+}
+message AddItemResponse {
+  string result = 1;
+}
+
+
+//Update an Item data
+message UpdateItemRequest {
+  int64 id = 1;
+  string title = 2;
+  string subtitle = 3;
+  string content = 4;
+  string img_url = 5;
+  int32 type_id = 6;
+  int32 amount = 7;
+  int32 status = 8;
+}
+message UpdateItemResponse {
+  string result = 1;
+}
+
+
+//Delete an Item from db
+message DeleteItemRequest {
+  int64 id = 1;
+}
+message DeleteItemResponse {
+  string result = 1;
+}
+
+
+//Get Item from db
+message ListItemRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+message ListItemResponse {
+  repeated ItemDetail result = 1;
+}
+message ItemDetail {
+  int64 id = 1;
+  string title = 2;
+  string subtitle = 3;
+  string content = 4;
+  string img_url = 5;
+  int32 type_id = 6;
+  int32 amount = 7;
+  int32 status = 8;
+}
+
+
+//Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
+message GetItemCountRequest {
+}
+message GetItemCountResponse {
+  ItemCount result = 1;
+}
+message ItemCount {
+  int64 draft = 1;
+  int64 published = 2;
+  int64 archived = 3;
+}
+
+//Get ItemType from db
+message ListItemTypeRequest {
+}
+message ListItemTypeResponse {
+  repeated ItemTypeDetail result = 1;
+}
+message ItemTypeDetail {
+  int32 id = 1;
+  string title = 2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+**************************************** Prize ***************************************
+*/
+//List prize from db
+message ListPrizeRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+message ListPrizeResponse {
+  repeated PrizeDetail result = 1;
+}
+message PrizeDetail {
+  int64 id = 1;
+  string title = 2;
+  string subtitle = 3;
+  string img_url = 4;
+  string content = 5;
+  int64 tickets_required = 6;
+  int32 count_down_hours = 7;
+  int32 type_id = 8;
+  int64 reward_id = 9;
+  int64 reward_amount = 10;
+  int64 scheduled_on = 11;
+  repeated int32 repeated_on = 12;
+  int32 status = 13;
+  int32 status_prize = 14;
+  int64 tickets_collected = 15;
+  repeated int64 tournament_ids = 16;
+}
+
+
+
+//Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
+message GetPrizeCountRequest {
+}
+message GetPrizeCountResponse {
+  PrizeCount result = 1;
+}
+message PrizeCount {
+  int64 draft = 1;
+  int64 published = 2;
+  int64 archived = 3;
+}
+
+//Get PrizeType from db
+message ListPrizeTypeRequest {
+}
+message ListPrizeTypeResponse {
+  repeated PrizeTypeDetail result = 1;
+}
+message PrizeTypeDetail {
+  int32 id = 1;
+  string title = 2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+**************************************** Rank ***************************************
+*/
+//Get rank list from db
+message ListRankRequest {
+}
+message ListRankResponse {
+  repeated RankDetail result = 1;
+}
+message RankDetail {
+  int64 id = 1;
+  string title = 2;
+  int64 exp = 3;
+  int64 gem = 4;
+  double multiplier = 5;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+**************************************** Shop ***************************************
+*/
+//Buy an Item_Gem or Item_Subscription
+//item_type_id for gem = 1, subscription = 2
+message BuyRequest {
+  string secret = 1;
+  int32 item_type_id = 2;
+  int64 item_id = 3;
+  int64 user_id = 4;
+}
+message BuyResponse {
+  string result = 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+**************************************** Subscription ***************************************
+*/
+//Get Subscription from db
+message ListSubscriptionRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+message ListSubscriptionResponse {
+  repeated SubscriptionDetail result = 1;
+}
+message SubscriptionDetail {
+  int64 id = 1;
+  string title = 2;
+  string subtitle = 3;
+  string content = 4;
+  string img_url = 5;
+  int32 type_id = 6;
+  int32 amount = 7;
+  int32 status = 8;
+}
+
+
+//Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
+message GetSubscriptionCountRequest {
+}
+message GetSubscriptionCountResponse {
+  SubscriptionCount result = 1;
+}
+message SubscriptionCount {
+  int64 draft = 1;
+  int64 published = 2;
+  int64 archived = 3;
+}
+
+//Get SubscriptionType from db
+message ListSubscriptionTypeRequest {
+}
+message ListSubscriptionTypeResponse {
+  repeated SubscriptionTypeDetail result = 1;
+}
+message SubscriptionTypeDetail {
+  int32 id = 1;
+  string title = 2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+**************************************** Tournament ***************************************
+*/
+//Get tournament from db
+message ListTournamentRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+message ListTournamentResponse {
+  repeated TournamentDetail result = 1;
+}
+message TournamentDetail {
+  int64 id = 1;
+  string title = 2;
+  int64 scheduled_on = 3;
+  int64 scheduled_off = 4;
+  repeated int64 prize_ids = 5;
+  repeated int64 game_ids = 6;
+  int32 status = 7;
+}
+
+//Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
+message GetTournamentCountRequest {
+}
+message GetTournamentCountResponse {
+  TournamentCount result = 1;
+}
+message TournamentCount {
+  int64 draft = 1;
+  int64 published = 2;
+  int64 archived = 3;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+**************************************** Winner ***************************************
+*/
+//Claim
+message ClaimWinnerRequest {
+  int64 id = 1;
+  int64 user_id = 2;
+  string id_token = 3;
+}
+message ClaimWinnerResponse {
+  string result = 1;
+}
+
+//List winner from db
+message ListWinnerRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+message ListWinnerResponse {
+  repeated WinnerDetail result = 1;
+}
+message WinnerDetail {
+  int64 id = 1;
+  int64 prize_id = 2;
+  int64 user_id = 3;
+  int64 created_on = 4;
+  int32 status = 5;
+  int64 tournament_id = 6;
+}
+
+message GetWinnerCountRequest {
+}
+message GetWinnerCountResponse {
+  WinnerCount result = 1;
+}
+message WinnerCount {
+  int64 active = 1;
+  int64 archived = 2;
+}
