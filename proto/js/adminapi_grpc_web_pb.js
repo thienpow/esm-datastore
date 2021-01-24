@@ -4474,6 +4474,166 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.addTournament =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.AddTournamentSetRequest,
+ *   !proto.adminapi.esm.AddTournamentSetResponse>}
+ */
+const methodDescriptor_AdminApi_AddTournamentSet = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/AddTournamentSet',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.AddTournamentSetRequest,
+  proto.adminapi.esm.AddTournamentSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.AddTournamentSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.AddTournamentSetResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.AddTournamentSetRequest,
+ *   !proto.adminapi.esm.AddTournamentSetResponse>}
+ */
+const methodInfo_AdminApi_AddTournamentSet = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.AddTournamentSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.AddTournamentSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.AddTournamentSetResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.AddTournamentSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.AddTournamentSetResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.AddTournamentSetResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.addTournamentSet =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/AddTournamentSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_AddTournamentSet,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.AddTournamentSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.AddTournamentSetResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.addTournamentSet =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/AddTournamentSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_AddTournamentSet);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.AddTournamentSetGameRuleRequest,
+ *   !proto.adminapi.esm.AddTournamentSetGameRuleResponse>}
+ */
+const methodDescriptor_AdminApi_AddTournamentSetGameRule = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/AddTournamentSetGameRule',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.AddTournamentSetGameRuleRequest,
+  proto.adminapi.esm.AddTournamentSetGameRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.AddTournamentSetGameRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.AddTournamentSetGameRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.AddTournamentSetGameRuleRequest,
+ *   !proto.adminapi.esm.AddTournamentSetGameRuleResponse>}
+ */
+const methodInfo_AdminApi_AddTournamentSetGameRule = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.AddTournamentSetGameRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.AddTournamentSetGameRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.AddTournamentSetGameRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.AddTournamentSetGameRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.AddTournamentSetGameRuleResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.AddTournamentSetGameRuleResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.addTournamentSetGameRule =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/AddTournamentSetGameRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_AddTournamentSetGameRule,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.AddTournamentSetGameRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.AddTournamentSetGameRuleResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.addTournamentSetGameRule =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/AddTournamentSetGameRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_AddTournamentSetGameRule);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.UpdateTournamentRequest,
  *   !proto.adminapi.esm.UpdateTournamentResponse>}
  */
@@ -4548,6 +4708,166 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.updateTournament =
       request,
       metadata || {},
       methodDescriptor_AdminApi_UpdateTournament);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.UpdateTournamentSetRequest,
+ *   !proto.adminapi.esm.UpdateTournamentSetResponse>}
+ */
+const methodDescriptor_AdminApi_UpdateTournamentSet = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/UpdateTournamentSet',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.UpdateTournamentSetRequest,
+  proto.adminapi.esm.UpdateTournamentSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.UpdateTournamentSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.UpdateTournamentSetResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.UpdateTournamentSetRequest,
+ *   !proto.adminapi.esm.UpdateTournamentSetResponse>}
+ */
+const methodInfo_AdminApi_UpdateTournamentSet = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.UpdateTournamentSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.UpdateTournamentSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.UpdateTournamentSetResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.UpdateTournamentSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.UpdateTournamentSetResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.UpdateTournamentSetResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.updateTournamentSet =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/UpdateTournamentSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_UpdateTournamentSet,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.UpdateTournamentSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.UpdateTournamentSetResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.updateTournamentSet =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/UpdateTournamentSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_UpdateTournamentSet);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.UpdateTournamentSetGameRuleRequest,
+ *   !proto.adminapi.esm.UpdateTournamentSetGameRuleResponse>}
+ */
+const methodDescriptor_AdminApi_UpdateTournamentSetGameRule = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/UpdateTournamentSetGameRule',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.UpdateTournamentSetGameRuleRequest,
+  proto.adminapi.esm.UpdateTournamentSetGameRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.UpdateTournamentSetGameRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.UpdateTournamentSetGameRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.UpdateTournamentSetGameRuleRequest,
+ *   !proto.adminapi.esm.UpdateTournamentSetGameRuleResponse>}
+ */
+const methodInfo_AdminApi_UpdateTournamentSetGameRule = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.UpdateTournamentSetGameRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.UpdateTournamentSetGameRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.UpdateTournamentSetGameRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.UpdateTournamentSetGameRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.UpdateTournamentSetGameRuleResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.UpdateTournamentSetGameRuleResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.updateTournamentSetGameRule =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/UpdateTournamentSetGameRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_UpdateTournamentSetGameRule,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.UpdateTournamentSetGameRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.UpdateTournamentSetGameRuleResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.updateTournamentSetGameRule =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/UpdateTournamentSetGameRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_UpdateTournamentSetGameRule);
 };
 
 
@@ -4634,6 +4954,166 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.deleteTournament =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.DeleteTournamentSetRequest,
+ *   !proto.adminapi.esm.DeleteTournamentSetResponse>}
+ */
+const methodDescriptor_AdminApi_DeleteTournamentSet = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/DeleteTournamentSet',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.DeleteTournamentSetRequest,
+  proto.adminapi.esm.DeleteTournamentSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.DeleteTournamentSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.DeleteTournamentSetResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.DeleteTournamentSetRequest,
+ *   !proto.adminapi.esm.DeleteTournamentSetResponse>}
+ */
+const methodInfo_AdminApi_DeleteTournamentSet = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.DeleteTournamentSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.DeleteTournamentSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.DeleteTournamentSetResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.DeleteTournamentSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.DeleteTournamentSetResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.DeleteTournamentSetResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.deleteTournamentSet =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/DeleteTournamentSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_DeleteTournamentSet,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.DeleteTournamentSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.DeleteTournamentSetResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.deleteTournamentSet =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/DeleteTournamentSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_DeleteTournamentSet);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.DeleteTournamentSetGameRuleRequest,
+ *   !proto.adminapi.esm.DeleteTournamentSetGameRuleResponse>}
+ */
+const methodDescriptor_AdminApi_DeleteTournamentSetGameRule = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/DeleteTournamentSetGameRule',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.DeleteTournamentSetGameRuleRequest,
+  proto.adminapi.esm.DeleteTournamentSetGameRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.DeleteTournamentSetGameRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.DeleteTournamentSetGameRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.DeleteTournamentSetGameRuleRequest,
+ *   !proto.adminapi.esm.DeleteTournamentSetGameRuleResponse>}
+ */
+const methodInfo_AdminApi_DeleteTournamentSetGameRule = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.DeleteTournamentSetGameRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.DeleteTournamentSetGameRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.DeleteTournamentSetGameRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.DeleteTournamentSetGameRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.DeleteTournamentSetGameRuleResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.DeleteTournamentSetGameRuleResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.deleteTournamentSetGameRule =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/DeleteTournamentSetGameRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_DeleteTournamentSetGameRule,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.DeleteTournamentSetGameRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.DeleteTournamentSetGameRuleResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.deleteTournamentSetGameRule =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/DeleteTournamentSetGameRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_DeleteTournamentSetGameRule);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.ListTournamentRequest,
  *   !proto.adminapi.esm.ListTournamentResponse>}
  */
@@ -4708,6 +5188,166 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listTournament =
       request,
       metadata || {},
       methodDescriptor_AdminApi_ListTournament);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListTournamentSetRequest,
+ *   !proto.adminapi.esm.ListTournamentSetResponse>}
+ */
+const methodDescriptor_AdminApi_ListTournamentSet = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListTournamentSet',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListTournamentSetRequest,
+  proto.adminapi.esm.ListTournamentSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListTournamentSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListTournamentSetResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListTournamentSetRequest,
+ *   !proto.adminapi.esm.ListTournamentSetResponse>}
+ */
+const methodInfo_AdminApi_ListTournamentSet = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListTournamentSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListTournamentSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListTournamentSetResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListTournamentSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListTournamentSetResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListTournamentSetResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listTournamentSet =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListTournamentSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListTournamentSet,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListTournamentSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListTournamentSetResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listTournamentSet =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListTournamentSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListTournamentSet);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListTournamentSetGameRuleRequest,
+ *   !proto.adminapi.esm.ListTournamentSetGameRuleResponse>}
+ */
+const methodDescriptor_AdminApi_ListTournamentSetGameRule = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListTournamentSetGameRule',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListTournamentSetGameRuleRequest,
+  proto.adminapi.esm.ListTournamentSetGameRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListTournamentSetGameRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListTournamentSetGameRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListTournamentSetGameRuleRequest,
+ *   !proto.adminapi.esm.ListTournamentSetGameRuleResponse>}
+ */
+const methodInfo_AdminApi_ListTournamentSetGameRule = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListTournamentSetGameRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListTournamentSetGameRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListTournamentSetGameRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListTournamentSetGameRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListTournamentSetGameRuleResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListTournamentSetGameRuleResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listTournamentSetGameRule =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListTournamentSetGameRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListTournamentSetGameRule,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListTournamentSetGameRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListTournamentSetGameRuleResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listTournamentSetGameRule =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListTournamentSetGameRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListTournamentSetGameRule);
 };
 
 
