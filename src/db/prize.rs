@@ -13,11 +13,13 @@ pub struct Prize {
   pub subtitle: String,
   pub img_url: String,
   pub content: String,
+  pub type_id: i32,
   pub tickets_required: i64,
   pub duration_days: i32,
   pub duration_hours: i32,
-  pub type_id: i32,
+  pub timezone: i32,
   pub scheduled_on: SystemTime,
+  pub is_repeat: bool,
   pub repeated_on: Vec<i32>,
   pub status: i32,
   pub status_prize: i32,
@@ -36,12 +38,13 @@ impl Prize {
     pub async fn add(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"prize\" (title, subtitle, img_url, content, tickets_required, duration_days, duration_hours, type_id, scheduled_on, repeated_on, status, tournament_ids) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"prize\" (title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, is_repeat, repeated_on, status, tournament_ids) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
-                  &[&prize.title, &prize.subtitle, &prize.img_url, &prize.content, &prize.tickets_required, 
+                  &[&prize.title, &prize.subtitle, &prize.img_url, &prize.content, 
+                  &prize.type_id, &prize.tickets_required, 
                   &prize.duration_days, &prize.duration_hours,
-                  &prize.type_id, 
-                  &prize.scheduled_on, &prize.repeated_on, 
+                  &prize.timezone, &prize.scheduled_on, 
+                  &prize.is_repeat, &prize.repeated_on, 
                   &prize.status, &prize.tournament_ids]).await?;
     
       Ok(row.get::<usize, i64>(0))
@@ -50,12 +53,14 @@ impl Prize {
     pub async fn update(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"prize\" SET title=$1, subtitle=$2, img_url=$3, content=$4, tickets_required=$5, duration_days=$6, duration_hours=$7, type_id=$8, scheduled_on=$9, repeated_on=$10, status=$11, tournament_ids=$12 WHERE id=$13;").await?;
+      let stmt = conn.prepare("UPDATE public.\"prize\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, tickets_required=$6, duration_days=$7, duration_hours=$8, timezone=$9, scheduled_on=$10, is_repeat=$11, repeated_on=$12, status=$13, tournament_ids=$14 WHERE id=$15;").await?;
       let n = conn.execute(&stmt, 
-                  &[&prize.title, &prize.subtitle, &prize.img_url, &prize.content, &prize.tickets_required, 
+                  &[&prize.title, &prize.subtitle, &prize.img_url, &prize.content, 
+                  &prize.type_id, &prize.tickets_required, 
                   &prize.duration_days, &prize.duration_hours,
-                  &prize.type_id, &prize.scheduled_on, 
-                  &prize.repeated_on, &prize.status, &prize.tournament_ids,
+                  &prize.timezone, &prize.scheduled_on, 
+                  &prize.is_repeat, &prize.repeated_on, 
+                  &prize.status, &prize.tournament_ids,
                   &prize.id]).await?;
     
       Ok(n)
@@ -73,7 +78,7 @@ impl Prize {
     pub async fn list(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Prize>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, tickets_required, duration_days, duration_hours, type_id, scheduled_on, repeated_on, status, tournament_ids, status_prize, tickets_collected FROM public.\"prize\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
+      let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, is_repeat, repeated_on, status, tournament_ids, status_prize, tickets_collected FROM public.\"prize\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
     
       //let rows = conn.query(&stmt, &[]).await?;
 
@@ -85,16 +90,18 @@ impl Prize {
           subtitle: row.get(2),
           img_url: row.get(3),
           content: row.get(4),
-          tickets_required: row.get(5),
-          duration_days: row.get(6),
-          duration_hours: row.get(7),
-          type_id: row.get(8),
-          scheduled_on: row.get(9),
-          repeated_on: row.get(10),
-          status: row.get(11),
-          tournament_ids: row.get(12),
-          status_prize: row.get(13),
-          tickets_collected: row.get(14),
+          type_id: row.get(5),
+          tickets_required: row.get(6),
+          duration_days: row.get(7),
+          duration_hours: row.get(8),
+          timezone: row.get(9),
+          scheduled_on: row.get(10),
+          is_repeat: row.get(11),
+          repeated_on: row.get(12),
+          status: row.get(13),
+          tournament_ids: row.get(14),
+          status_prize: row.get(15),
+          tickets_collected: row.get(16),
         };
 
         vec.push(prize);
@@ -138,5 +145,6 @@ impl Prize {
       
       Ok(vec)
     }
+
 
 }
