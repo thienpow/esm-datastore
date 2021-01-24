@@ -112,11 +112,19 @@ use adminapi_proto::{
 
   // Tournament
   AddTournamentRequest, AddTournamentResponse,
+  AddTournamentSetRequest, AddTournamentSetResponse,
+  AddTournamentSetGameRuleRequest, AddTournamentSetGameRuleResponse,
   UpdateTournamentRequest, UpdateTournamentResponse,
+  UpdateTournamentSetRequest, UpdateTournamentSetResponse,
+  UpdateTournamentSetGameRuleRequest, UpdateTournamentSetGameRuleResponse,
   DeleteTournamentRequest, DeleteTournamentResponse,
+  DeleteTournamentSetRequest, DeleteTournamentSetResponse,
+  DeleteTournamentSetGameRuleRequest, DeleteTournamentSetGameRuleResponse,
   ListTournamentRequest, ListTournamentResponse, 
+  ListTournamentSetRequest, ListTournamentSetResponse, 
+  ListTournamentSetGameRuleRequest, ListTournamentSetGameRuleResponse, 
   GetTournamentCountRequest, GetTournamentCountResponse,
-  TournamentDetail, //TournamentCount,
+  TournamentDetail, TournamentSetDetail, TournamentSetGameRuleDetail,
 
   // Winner
   AddWinnerRequest, AddWinnerResponse,
@@ -1770,31 +1778,10 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
     let req = request.into_inner();
 
-    let iseconds_on: i64 = req.scheduled_on.into();
-    let scheduled_on = UNIX_EPOCH + Duration::new(iseconds_on as u64, 0);
-
-    let iseconds_off: i64 = req.scheduled_off.into();
-    let scheduled_off = UNIX_EPOCH + Duration::new(iseconds_off as u64, 0);
-
-    /*
-    let mut prize_ids: Vec<i64> = Vec::new();
-    while let Some(i) = req.prize_ids.pop() {
-      prize_ids.push(i)
-    }
-
-    let mut game_ids: Vec<i64> = Vec::new();
-    while let Some(i) = req.game_ids.pop() {
-      game_ids.push(i)
-    }
-    */
-
     let tournament = db::tournament::Tournament {
       id: 0,
       title: req.title.into(),
-      scheduled_on: scheduled_on,
-      scheduled_off: scheduled_off,
-      prize_ids: req.prize_ids.into(),
-      game_ids: req.game_ids.into(),
+      tour_set_ids: req.tour_set_ids.into(),
       status: req.status.into()
     };
     
@@ -1808,6 +1795,55 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     }))
 
   }
+  async fn add_tournament_set(&self, request: Request<AddTournamentSetRequest>, ) -> Result<Response<AddTournamentSetResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+
+    let req = request.into_inner();
+
+    let tournament_set = db::tournament::TournamentSet {
+      id: 0,
+      title: req.title.into(),
+      duration_days: req.duration_days.into(),
+      duration_hours: req.duration_hours.into(),
+      is_group: req.is_group.into()
+    };
+    
+    let result = match db::tournament::Tournament::add_set(tournament_set, &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(AddTournamentSetResponse {
+      result: result,
+    }))
+
+  }
+  
+  async fn add_tournament_set_game_rule(&self, request: Request<AddTournamentSetGameRuleRequest>, ) -> Result<Response<AddTournamentSetGameRuleResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+
+    let req = request.into_inner();
+
+    let rule = db::tournament::TournamentSetGameRule {
+      id: 0,
+      set_id: req.set_id.into(),
+      game_id: req.game_id.into(),
+      duration_days: req.duration_days.into(),
+      duration_hours: req.duration_hours.into(),
+      duration_minutes: req.duration_minutes.into(),
+      group_id: req.group_id.into()
+    };
+    
+    let result = match db::tournament::Tournament::add_set_game_rule(rule, &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(AddTournamentSetGameRuleResponse {
+      result: result,
+    }))
+
+  }
 
 
   async fn update_tournament(&self, request: Request<UpdateTournamentRequest>, ) -> Result<Response<UpdateTournamentResponse>, Status> {
@@ -1815,19 +1851,18 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
     let req = request.into_inner();
 
+    /*
     let iseconds_on: i64 = req.scheduled_on.into();
     let scheduled_on = UNIX_EPOCH + Duration::new(iseconds_on as u64, 0);
 
     let iseconds_off: i64 = req.scheduled_off.into();
     let scheduled_off = UNIX_EPOCH + Duration::new(iseconds_off as u64, 0);
+    */
 
     let tournament = db::tournament::Tournament {
       id: req.id.into(),
       title: req.title.into(),
-      scheduled_on: scheduled_on,
-      scheduled_off: scheduled_off,
-      prize_ids: req.prize_ids.into(),
-      game_ids: req.game_ids.into(),
+      tour_set_ids: req.tour_set_ids.into(),
       status: req.status.into()
     };
     
@@ -1841,7 +1876,55 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     }))
 
   }
+  async fn update_tournament_set(&self, request: Request<UpdateTournamentSetRequest>, ) -> Result<Response<UpdateTournamentSetResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
 
+    let req = request.into_inner();
+
+    let tournament_set = db::tournament::TournamentSet {
+      id: req.id.into(),
+      title: req.title.into(),
+      duration_days: req.duration_days.into(),
+      duration_hours: req.duration_hours.into(),
+      is_group: req.is_group.into()
+    };
+    
+    let result = match db::tournament::Tournament::update_set(tournament_set, &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(UpdateTournamentSetResponse {
+      result: result,
+    }))
+
+  }
+
+  async fn update_tournament_set_game_rule(&self, request: Request<UpdateTournamentSetGameRuleRequest>, ) -> Result<Response<UpdateTournamentSetGameRuleResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+
+    let req = request.into_inner();
+
+    let rule = db::tournament::TournamentSetGameRule {
+      id: req.id.into(),
+      set_id: req.set_id.into(),
+      game_id: req.game_id.into(),
+      duration_days: req.duration_days.into(),
+      duration_hours: req.duration_hours.into(),
+      duration_minutes: req.duration_minutes.into(),
+      group_id: req.group_id.into()
+    };
+    
+    let result = match db::tournament::Tournament::update_set_game_rule(rule, &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(UpdateTournamentSetGameRuleResponse {
+      result: result,
+    }))
+
+  }
 
   async fn delete_tournament(&self, request: Request<DeleteTournamentRequest>, ) -> Result<Response<DeleteTournamentResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
@@ -1854,6 +1937,36 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     };
     
     Ok(Response::new(DeleteTournamentResponse {
+      result: result,
+    }))
+  }
+
+  async fn delete_tournament_set(&self, request: Request<DeleteTournamentSetRequest>, ) -> Result<Response<DeleteTournamentSetResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let result = match db::tournament::Tournament::delete_set(req.id.into(), &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(DeleteTournamentSetResponse {
+      result: result,
+    }))
+  }
+
+  async fn delete_tournament_set_game_rule(&self, request: Request<DeleteTournamentSetGameRuleRequest>, ) -> Result<Response<DeleteTournamentSetGameRuleResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let result = match db::tournament::Tournament::delete_set_game_rule(req.id.into(), &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(DeleteTournamentSetGameRuleResponse {
       result: result,
     }))
   }
@@ -1873,16 +1986,13 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     
     for tournament in tournaments {
       
-      let seconds_on = tournament.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-      let seconds_off = tournament.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      //let seconds_off = tournament.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
         
       let li = TournamentDetail {
         id: tournament.id,
         title: tournament.title,
-        scheduled_on: seconds_on as i64,
-        scheduled_off: seconds_off as i64,
-        prize_ids: tournament.prize_ids,
-        game_ids: tournament.game_ids,
+        //scheduled_off: seconds_off as i64,
+        tour_set_ids: tournament.tour_set_ids,
         status: tournament.status
       };
       
@@ -1895,6 +2005,73 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
   }
 
+  async fn list_tournament_set(&self, request: Request<ListTournamentSetRequest>, ) -> Result<Response<ListTournamentSetResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let sets = match db::tournament::Tournament::list_set(req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+      Ok(sets) => sets,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<TournamentSetDetail> = Vec::new();
+    
+    for set in sets {
+      
+      //let seconds_off = tournament.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
+        
+      let li = TournamentSetDetail {
+        id: set.id,
+        title: set.title,
+        duration_days: set.duration_days,
+        duration_hours: set.duration_hours,
+        is_group: set.is_group
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListTournamentSetResponse {
+      result: result,
+    }))
+
+  }
+
+  async fn list_tournament_set_game_rule(&self, request: Request<ListTournamentSetGameRuleRequest>, ) -> Result<Response<ListTournamentSetGameRuleResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let rules = match db::tournament::Tournament::list_set_game_rule(req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+      Ok(rules) => rules,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<TournamentSetGameRuleDetail> = Vec::new();
+    
+    for rule in rules {
+      
+      //let seconds_off = tournament.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
+        
+      let li = TournamentSetGameRuleDetail {
+        id: rule.id,
+        set_id: rule.set_id,
+        game_id: rule.game_id,
+        duration_days: rule.duration_days,
+        duration_hours: rule.duration_hours,
+        duration_minutes: rule.duration_minutes,
+        group_id: rule.group_id
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListTournamentSetGameRuleResponse {
+      result: result,
+    }))
+
+  }
 
   async fn get_tournament_count(&self, request: Request<GetTournamentCountRequest>, ) -> Result<Response<GetTournamentCountResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;

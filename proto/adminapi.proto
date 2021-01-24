@@ -88,9 +88,17 @@ service AdminApi {
 
   // Tournament
   rpc AddTournament(AddTournamentRequest) returns (AddTournamentResponse) {}
+  rpc AddTournamentSet(AddTournamentSetRequest) returns (AddTournamentSetResponse) {}
+  rpc AddTournamentSetGameRule(AddTournamentSetGameRuleRequest) returns (AddTournamentSetGameRuleResponse) {}
   rpc UpdateTournament(UpdateTournamentRequest) returns (UpdateTournamentResponse) {}
+  rpc UpdateTournamentSet(UpdateTournamentSetRequest) returns (UpdateTournamentSetResponse) {}
+  rpc UpdateTournamentSetGameRule(UpdateTournamentSetGameRuleRequest) returns (UpdateTournamentSetGameRuleResponse) {}
   rpc DeleteTournament(DeleteTournamentRequest) returns (DeleteTournamentResponse) {}
+  rpc DeleteTournamentSet(DeleteTournamentSetRequest) returns (DeleteTournamentSetResponse) {}
+  rpc DeleteTournamentSetGameRule(DeleteTournamentSetGameRuleRequest) returns (DeleteTournamentSetGameRuleResponse) {}
   rpc ListTournament(ListTournamentRequest) returns (ListTournamentResponse) {}
+  rpc ListTournamentSet(ListTournamentSetRequest) returns (ListTournamentSetResponse) {}
+  rpc ListTournamentSetGameRule(ListTournamentSetGameRuleRequest) returns (ListTournamentSetGameRuleResponse) {}
   rpc GetTournamentCount(GetTournamentCountRequest) returns (GetTournamentCountResponse) {}
 
   // Winner
@@ -1064,13 +1072,32 @@ message SubscriptionTypeDetail {
 //Add a new tournament
 message AddTournamentRequest {
   string title = 1;
-  int64 scheduled_on = 2;
-  int64 scheduled_off = 3;
-  repeated int64 prize_ids = 4;
-  repeated int64 game_ids = 5;
-  int32 status = 6;
+  repeated int64 tour_set_ids = 2;
+  int32 status = 3;
 }
 message AddTournamentResponse {
+  string result = 1;
+}
+//Add a new tournament Set
+message AddTournamentSetRequest {
+  string title = 1;
+  int32 duration_days = 2;
+  int32 duration_hours = 3;
+  bool is_group = 4;
+}
+message AddTournamentSetResponse {
+  string result = 1;
+}
+//Add a new tournament Set Game Rule
+message AddTournamentSetGameRuleRequest {
+  int64 set_id = 1;
+  int64 game_id = 2;
+  int32 duration_days = 3;
+  int32 duration_hours = 4;
+  int32 duration_minutes = 5;
+  int32 group_id = 6;
+}
+message AddTournamentSetGameRuleResponse {
   string result = 1;
 }
 
@@ -1078,16 +1105,36 @@ message AddTournamentResponse {
 message UpdateTournamentRequest {
   int64 id = 1;
   string title = 2;
-  int64 scheduled_on = 3;
-  int64 scheduled_off = 4;
-  repeated int64 prize_ids = 5;
-  repeated int64 game_ids = 6;
-  int32 status = 7;
+  repeated int64 tour_set_ids = 3;
+  int32 status = 4;
 }
 message UpdateTournamentResponse {
   string result = 1;
 }
-
+//Update a tournament Set
+message UpdateTournamentSetRequest {
+  int64 id = 1;
+  string title = 2;
+  int32 duration_days = 3;
+  int32 duration_hours = 4;
+  bool is_group = 5;
+}
+message UpdateTournamentSetResponse {
+  string result = 1;
+}
+//Add a new tournament Set Game Rule
+message UpdateTournamentSetGameRuleRequest {
+  int64 id = 1;
+  int64 set_id = 2;
+  int64 game_id = 3;
+  int32 duration_days = 4;
+  int32 duration_hours = 5;
+  int32 duration_minutes = 6;
+  int32 group_id = 7;
+}
+message UpdateTournamentSetGameRuleResponse {
+  string result = 1;
+}
 
 //Delete an tournament from db
 message DeleteTournamentRequest {
@@ -1096,9 +1143,22 @@ message DeleteTournamentRequest {
 message DeleteTournamentResponse {
   string result = 1;
 }
+//Delete a tournament Set
+message DeleteTournamentSetRequest {
+  int64 id = 1;
+}
+message DeleteTournamentSetResponse {
+  string result = 1;
+}
+//Delete a tournament Set
+message DeleteTournamentSetGameRuleRequest {
+  int64 id = 1;
+}
+message DeleteTournamentSetGameRuleResponse {
+  string result = 1;
+}
 
-
-//Get tournament from db
+//List tournament from db
 message ListTournamentRequest {
   int64 limit = 1;
   int64 offset = 2;
@@ -1109,11 +1169,41 @@ message ListTournamentResponse {
 message TournamentDetail {
   int64 id = 1;
   string title = 2;
-  int64 scheduled_on = 3;
-  int64 scheduled_off = 4;
-  repeated int64 prize_ids = 5;
-  repeated int64 game_ids = 6;
-  int32 status = 7;
+  repeated int64 tour_set_ids = 3;
+  int32 status = 4;
+}
+
+//List tournament Set  
+message ListTournamentSetRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+message ListTournamentSetResponse {
+  repeated TournamentSetDetail result = 1;
+}
+message TournamentSetDetail {
+  int64 id = 1;
+  string title = 2;
+  int32 duration_days = 3;
+  int32 duration_hours = 4;
+  bool is_group = 5;
+}
+//List tournament Set Game Rule
+message ListTournamentSetGameRuleRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+}
+message ListTournamentSetGameRuleResponse {
+  repeated TournamentSetGameRuleDetail result = 1;
+}
+message TournamentSetGameRuleDetail {
+  int64 id = 1;
+  int64 set_id = 2;
+  int64 game_id = 3;
+  int32 duration_days = 4;
+  int32 duration_hours = 5;
+  int32 duration_minutes = 6;
+  int32 group_id = 7;
 }
 
 //Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked

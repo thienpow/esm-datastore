@@ -1192,16 +1192,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     for tournament in tournaments {
       
-      let seconds_on = tournament.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-      let seconds_off = tournament.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      //let seconds_on = tournament.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      //let seconds_off = tournament.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
         
       let li = TournamentDetail {
         id: tournament.id,
         title: tournament.title,
-        scheduled_on: seconds_on as i64,
-        scheduled_off: seconds_off as i64,
-        prize_ids: tournament.prize_ids,
-        game_ids: tournament.game_ids,
+        //scheduled_on: seconds_on as i64,
+        //scheduled_off: seconds_off as i64,
+        tour_set_ids: tournament.tour_set_ids,
         status: tournament.status
       };
       

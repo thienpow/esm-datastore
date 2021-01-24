@@ -824,11 +824,8 @@ message ListTournamentResponse {
 message TournamentDetail {
   int64 id = 1;
   string title = 2;
-  int64 scheduled_on = 3;
-  int64 scheduled_off = 4;
-  repeated int64 prize_ids = 5;
-  repeated int64 game_ids = 6;
-  int32 status = 7;
+  repeated int64 tour_set_ids = 3;
+  int32 status = 4;
 }
 
 //Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
