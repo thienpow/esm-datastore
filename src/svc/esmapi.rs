@@ -928,16 +928,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         img_url: prize.img_url,
         content: prize.content,
         tickets_required: prize.tickets_required,
-        count_down_hours: prize.count_down_hours,
+        duration_days: prize.duration_days,
+        duration_hours: prize.duration_hours,
         type_id: prize.type_id,
-        reward_id: prize.reward_id,
-        reward_amount: prize.reward_amount,
         scheduled_on: seconds_on as i64,
         repeated_on: prize.repeated_on,
         status: prize.status,
+        tournament_ids: prize.tournament_ids,
         status_prize: prize.status_prize,
         tickets_collected: prize.tickets_collected,
-        tournament_ids: prize.tournament_ids
       };
       
       result.push(li);

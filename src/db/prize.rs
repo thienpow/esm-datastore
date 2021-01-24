@@ -14,10 +14,9 @@ pub struct Prize {
   pub img_url: String,
   pub content: String,
   pub tickets_required: i64,
-  pub count_down_hours: i32,
+  pub duration_days: i32,
+  pub duration_hours: i32,
   pub type_id: i32,
-  pub reward_id: i64,
-  pub reward_amount: i64,
   pub scheduled_on: SystemTime,
   pub repeated_on: Vec<i32>,
   pub status: i32,
@@ -37,10 +36,11 @@ impl Prize {
     pub async fn add(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"prize\" (title, subtitle, img_url, content, tickets_required, count_down_hours, type_id, reward_id, reward_amount, scheduled_on, repeated_on, status, tournament_ids) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"prize\" (title, subtitle, img_url, content, tickets_required, duration_days, duration_hours, type_id, scheduled_on, repeated_on, status, tournament_ids) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
-                  &[&prize.title, &prize.subtitle, &prize.img_url, &prize.content, &prize.tickets_required, &prize.count_down_hours,
-                  &prize.type_id, &prize.reward_id, &prize.reward_amount, 
+                  &[&prize.title, &prize.subtitle, &prize.img_url, &prize.content, &prize.tickets_required, 
+                  &prize.duration_days, &prize.duration_hours,
+                  &prize.type_id, 
                   &prize.scheduled_on, &prize.repeated_on, 
                   &prize.status, &prize.tournament_ids]).await?;
     
@@ -50,10 +50,12 @@ impl Prize {
     pub async fn update(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"prize\" SET title=$1, subtitle=$2, img_url=$3, content=$4, tickets_required=$5, count_down_hours=$6, type_id=$7, reward_id=$8, reward_amount=$9, scheduled_on=$10, repeated_on=$11, status=$12, tournament_ids=$13 WHERE id=$14;").await?;
+      let stmt = conn.prepare("UPDATE public.\"prize\" SET title=$1, subtitle=$2, img_url=$3, content=$4, tickets_required=$5, duration_days=$6, duration_hours=$7, type_id=$8, scheduled_on=$9, repeated_on=$10, status=$11, tournament_ids=$12 WHERE id=$13;").await?;
       let n = conn.execute(&stmt, 
-                  &[&prize.title, &prize.subtitle, &prize.img_url, &prize.content, &prize.tickets_required, &prize.count_down_hours,
-                  &prize.type_id, &prize.reward_id, &prize.reward_amount, &prize.scheduled_on, &prize.repeated_on, &prize.status, &prize.tournament_ids,
+                  &[&prize.title, &prize.subtitle, &prize.img_url, &prize.content, &prize.tickets_required, 
+                  &prize.duration_days, &prize.duration_hours,
+                  &prize.type_id, &prize.scheduled_on, 
+                  &prize.repeated_on, &prize.status, &prize.tournament_ids,
                   &prize.id]).await?;
     
       Ok(n)
@@ -71,7 +73,7 @@ impl Prize {
     pub async fn list(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Prize>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, tickets_required, count_down_hours, type_id, reward_id, reward_amount, scheduled_on, repeated_on, status, status_prize, tickets_collected, tournament_ids FROM public.\"prize\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
+      let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, tickets_required, duration_days, duration_hours, type_id, scheduled_on, repeated_on, status, tournament_ids, status_prize, tickets_collected FROM public.\"prize\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
     
       //let rows = conn.query(&stmt, &[]).await?;
 
@@ -84,16 +86,15 @@ impl Prize {
           img_url: row.get(3),
           content: row.get(4),
           tickets_required: row.get(5),
-          count_down_hours: row.get(6),
-          type_id: row.get(7),
-          reward_id: row.get(8),
-          reward_amount: row.get(9),
+          duration_days: row.get(6),
+          duration_hours: row.get(7),
+          type_id: row.get(8),
           scheduled_on: row.get(10),
           repeated_on: row.get(11),
           status: row.get(12),
-          status_prize: row.get(13),
-          tickets_collected: row.get(14),
-          tournament_ids: row.get(15),
+          tournament_ids: row.get(13),
+          status_prize: row.get(14),
+          tickets_collected: row.get(15),
         };
 
         vec.push(prize);

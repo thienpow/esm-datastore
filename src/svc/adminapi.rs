@@ -1261,16 +1261,15 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       img_url: req.img_url.into(),
       content: req.content.into(),
       tickets_required: req.tickets_required.into(),
-      count_down_hours: req.count_down_hours.into(),
+      duration_days: req.duration_days.into(),
+      duration_hours: req.duration_hours.into(),
       type_id: req.type_id.into(),
-      reward_id: req.reward_id.into(),
-      reward_amount: req.reward_amount.into(),
       scheduled_on: scheduled_on,
       repeated_on: req.repeated_on.into(),
       status: req.status.into(),
       status_prize: 0,
+      tournament_ids: req.tournament_ids.into(),
       tickets_collected: 0,
-      tournament_ids: req.tournament_ids.into()
     };
     
     let result = match db::prize::Prize::add(prize, &self.pool.clone()).await {
@@ -1300,16 +1299,15 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       img_url: req.img_url.into(),
       content: req.content.into(),
       tickets_required: req.tickets_required.into(),
-      count_down_hours: req.count_down_hours.into(),
+      duration_days: req.duration_days.into(),
+      duration_hours: req.duration_hours.into(),
       type_id: req.type_id.into(),
-      reward_id: req.reward_id.into(),
-      reward_amount: req.reward_amount.into(),
       scheduled_on: scheduled_on,
       repeated_on: req.repeated_on.into(),
       status: req.status.into(),
       status_prize: 0,
+      tournament_ids: req.tournament_ids.into(),
       tickets_collected: 0,
-      tournament_ids: req.tournament_ids.into()
     };
     
     let result = match db::prize::Prize::update(prize, &self.pool.clone()).await {
@@ -1363,16 +1361,15 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
         img_url: prize.img_url,
         content: prize.content,
         tickets_required: prize.tickets_required,
-        count_down_hours: prize.count_down_hours,
+        duration_days: prize.duration_days,
+        duration_hours: prize.duration_hours,
         type_id: prize.type_id,
-        reward_id: prize.reward_id,
-        reward_amount: prize.reward_amount,
         scheduled_on: seconds_on as i64,
         repeated_on: prize.repeated_on,
         status: prize.status,
+        tournament_ids: prize.tournament_ids,
         status_prize: prize.status_prize,
         tickets_collected: prize.tickets_collected,
-        tournament_ids: prize.tournament_ids,
       };
       
       result.push(li);

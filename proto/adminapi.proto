@@ -748,14 +748,13 @@ message AddPrizeRequest {
   string img_url = 3;
   string content = 4;
   int64 tickets_required = 5;
-  int32 count_down_hours = 6;
-  int32 type_id = 7;
-  int64 reward_id = 8;
-  int32 reward_amount = 9;
-  int64 scheduled_on = 10;
-  repeated int32 repeated_on = 11;
-  int32 status = 12;
-  repeated int64 tournament_ids = 13;
+  int32 duration_days = 6;
+  int32 duration_hours = 7;
+  int32 type_id = 8;
+  int64 scheduled_on = 9;
+  repeated int32 repeated_on = 10;
+  int32 status = 11;
+  repeated int64 tournament_ids = 12;
 }
 message AddPrizeResponse {
   string result = 1;
@@ -770,14 +769,13 @@ message UpdatePrizeRequest {
   string img_url = 4;
   string content = 5;
   int64 tickets_required = 6;
-  int32 count_down_hours = 7;
-  int32 type_id = 8;
-  int64 reward_id = 9;
-  int32 reward_amount = 10;
-  int64 scheduled_on = 11;
-  repeated int32 repeated_on = 12;
-  int32 status = 13;
-  repeated int64 tournament_ids = 14;
+  int32 duration_days = 7;
+  int32 duration_hours = 8;
+  int32 type_id = 9;
+  int64 scheduled_on = 10;
+  repeated int32 repeated_on = 11;
+  int32 status = 12;
+  repeated int64 tournament_ids = 13;
 }
 message UpdatePrizeResponse {
   string result = 1;
@@ -809,16 +807,15 @@ message PrizeDetail {
   string img_url = 4;
   string content = 5;
   int64 tickets_required = 6;
-  int32 count_down_hours = 7;
-  int32 type_id = 8;
-  int64 reward_id = 9;
-  int64 reward_amount = 10;
-  int64 scheduled_on = 11;
-  repeated int32 repeated_on = 12;
-  int32 status = 13;
+  int32 duration_days = 7;
+  int32 duration_hours = 8;
+  int32 type_id = 9;
+  int64 scheduled_on = 10;
+  repeated int32 repeated_on = 11;
+  int32 status = 12;
+  repeated int64 tournament_ids = 13;
   int32 status_prize = 14;
   int64 tickets_collected = 15;
-  repeated int64 tournament_ids = 16;
 }
 
 
