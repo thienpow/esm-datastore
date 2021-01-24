@@ -215,8 +215,6 @@ CREATE TABLE public.prize (
     duration_days integer DEFAULT 0,
     duration_hours integer DEFAULT 0,
     type_id integer,
-    reward_id bigint,
-    reward_amount bigint,
     scheduled_on timestamp with time zone,
     repeated_on integer[] DEFAULT '{}'::integer[],
     status integer,

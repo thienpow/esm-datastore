@@ -89,12 +89,12 @@ impl Prize {
           duration_days: row.get(6),
           duration_hours: row.get(7),
           type_id: row.get(8),
-          scheduled_on: row.get(10),
-          repeated_on: row.get(11),
-          status: row.get(12),
-          tournament_ids: row.get(13),
-          status_prize: row.get(14),
-          tickets_collected: row.get(15),
+          scheduled_on: row.get(9),
+          repeated_on: row.get(10),
+          status: row.get(11),
+          tournament_ids: row.get(12),
+          status_prize: row.get(13),
+          tickets_collected: row.get(14),
         };
 
         vec.push(prize);
