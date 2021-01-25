@@ -5,7 +5,7 @@
 -- Dumped from database version 12.5 (Ubuntu 12.5-0ubuntu0.20.04.1)
 -- Dumped by pg_dump version 13.1
 
--- Started on 2021-01-25 10:10:42 +08
+-- Started on 2021-01-25 10:18:28 +08
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -518,7 +518,7 @@ CREATE TABLE public.tournament_set_game_rule (
     game_id bigint NOT NULL,
     duration_days integer NOT NULL,
     duration_hours integer NOT NULL,
-    duration_munites integer NOT NULL,
+    duration_minutes integer NOT NULL,
     group_id integer DEFAULT 0 NOT NULL
 );
 
@@ -1081,7 +1081,7 @@ CREATE INDEX idx_user_phone ON public."user" USING btree (phone);
 CREATE INDEX idx_user_username ON public."user" USING btree (username);
 
 
--- Completed on 2021-01-25 10:10:45 +08
+-- Completed on 2021-01-25 10:18:32 +08
 
 --
 -- PostgreSQL database dump complete
