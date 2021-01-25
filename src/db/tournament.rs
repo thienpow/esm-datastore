@@ -163,13 +163,13 @@ impl Tournament {
       Ok(vec)
     }
 
-    pub async fn list_set_game_rule(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<TournamentSetGameRule>, RunError<tokio_postgres::Error>> {
+    pub async fn list_set_game_rule(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<TournamentSetGameRule>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, set_id, game_id, duration_days, duration_hours, duration_minutes, group_id FROM public.\"tournament_set_game_rule\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
+      let stmt = conn.prepare("SELECT id, set_id, game_id, duration_days, duration_hours, duration_minutes, group_id FROM public.\"tournament_set_game_rule\" WHERE id=$1 ORDER BY id ASC;").await?;
     
       let mut vec: Vec<TournamentSetGameRule> = Vec::new();
-      for row in conn.query(&stmt, &[&limit, &offset]).await? {
+      for row in conn.query(&stmt, &[&id]).await? {
         let rule = TournamentSetGameRule {
           id: row.get(0),
           set_id: row.get(1),

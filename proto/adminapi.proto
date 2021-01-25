@@ -1193,8 +1193,7 @@ message TournamentSetDetail {
 }
 //List tournament Set Game Rule
 message ListTournamentSetGameRuleRequest {
-  int64 limit = 1;
-  int64 offset = 2;
+  int64 id = 1;
 }
 message ListTournamentSetGameRuleResponse {
   repeated TournamentSetGameRuleDetail result = 1;

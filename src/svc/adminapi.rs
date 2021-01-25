@@ -2046,7 +2046,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     
     let req = request.into_inner();
     
-    let rules = match db::tournament::Tournament::list_set_game_rule(req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+    let rules = match db::tournament::Tournament::list_set_game_rule(req.id.into(), &self.pool.clone()).await {
       Ok(rules) => rules,
       Err(error) => panic!("Error: {}.", error),
     };
