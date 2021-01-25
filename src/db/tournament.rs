@@ -75,24 +75,24 @@ impl Tournament {
       Ok(n)
     }
     
-    pub async fn update_set(tournament_set: TournamentSet, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn update_set(tournament_set: TournamentSet, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"tournament_set\" SET title=$1, duration_days=$2, duration_hours=$3, is_group=$4 WHERE id=$5;").await?;
-      let row = conn.query_one(&stmt, 
+      let n = conn.execute(&stmt, 
                   &[&tournament_set.title, &tournament_set.duration_days, &tournament_set.duration_hours, &tournament_set.is_group, &tournament_set.id]).await?;
     
-      Ok(row.get::<usize, i64>(0))
+      Ok(n)
     }
     
-    pub async fn update_set_game_rule(rule: TournamentSetGameRule, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn update_set_game_rule(rule: TournamentSetGameRule, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"tournament_set_game_rule\" SET set_id=$1, game_id=$2, duration_days=$3, duration_hours=$4, duration_minutes=$5, group_id=$6 WHERE id=$7;").await?;
-      let row = conn.query_one(&stmt, 
+      let n = conn.execute(&stmt, 
                   &[&rule.set_id, &rule.game_id, &rule.duration_days, &rule.duration_hours, &rule.duration_minutes, &rule.group_id, &rule.id]).await?;
     
-      Ok(row.get::<usize, i64>(0))
+      Ok(n)
     }
     
     pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
