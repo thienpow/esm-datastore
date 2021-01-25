@@ -220,9 +220,9 @@ CREATE TABLE public.prize (
     is_repeat boolean,
     repeated_on integer[] DEFAULT '{}'::integer[],
     status integer,
+    tournament_ids bigint[],
     status_prize integer DEFAULT 0,
-    tickets_collected bigint DEFAULT 0,
-    tournament_ids bigint[]
+    tickets_collected bigint DEFAULT 0
 );
 
 
