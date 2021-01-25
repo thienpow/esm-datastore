@@ -31883,8 +31883,7 @@ proto.adminapi.esm.ListTournamentSetGameRuleRequest.prototype.toObject = functio
  */
 proto.adminapi.esm.ListTournamentSetGameRuleRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    limit: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    offset: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -31923,11 +31922,7 @@ proto.adminapi.esm.ListTournamentSetGameRuleRequest.deserializeBinaryFromReader 
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setLimit(value);
-      break;
-    case 2:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setOffset(value);
+      msg.setId(value);
       break;
     default:
       reader.skipField();
@@ -31958,17 +31953,10 @@ proto.adminapi.esm.ListTournamentSetGameRuleRequest.prototype.serializeBinary = 
  */
 proto.adminapi.esm.ListTournamentSetGameRuleRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getLimit();
+  f = message.getId();
   if (f !== 0) {
     writer.writeInt64(
       1,
-      f
-    );
-  }
-  f = message.getOffset();
-  if (f !== 0) {
-    writer.writeInt64(
-      2,
       f
     );
   }
@@ -31976,10 +31964,10 @@ proto.adminapi.esm.ListTournamentSetGameRuleRequest.serializeBinaryToWriter = fu
 
 
 /**
- * optional int64 limit = 1;
+ * optional int64 id = 1;
  * @return {number}
  */
-proto.adminapi.esm.ListTournamentSetGameRuleRequest.prototype.getLimit = function() {
+proto.adminapi.esm.ListTournamentSetGameRuleRequest.prototype.getId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -31988,26 +31976,8 @@ proto.adminapi.esm.ListTournamentSetGameRuleRequest.prototype.getLimit = functio
  * @param {number} value
  * @return {!proto.adminapi.esm.ListTournamentSetGameRuleRequest} returns this
  */
-proto.adminapi.esm.ListTournamentSetGameRuleRequest.prototype.setLimit = function(value) {
+proto.adminapi.esm.ListTournamentSetGameRuleRequest.prototype.setId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-/**
- * optional int64 offset = 2;
- * @return {number}
- */
-proto.adminapi.esm.ListTournamentSetGameRuleRequest.prototype.getOffset = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.adminapi.esm.ListTournamentSetGameRuleRequest} returns this
- */
-proto.adminapi.esm.ListTournamentSetGameRuleRequest.prototype.setOffset = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
