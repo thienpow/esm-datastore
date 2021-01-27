@@ -259,6 +259,7 @@ message UserCount {
 message ListUserRequest {
   int64 limit = 1;
   int64 offset = 2;
+  string search_username = 3;
 }
 message ListUserResponse {
   repeated UserDetail result = 1;
@@ -458,6 +459,7 @@ message DeleteGameResponse {
 message ListGameRequest {
   int64 limit = 1;
   int64 offset = 2;
+  string search_title = 3;
 }
 message ListGameResponse {
   repeated GameDetail result = 1;
@@ -682,6 +684,7 @@ message DeleteItemResponse {
 message ListItemRequest {
   int64 limit = 1;
   int64 offset = 2;
+  string search_title = 3;
 }
 message ListItemResponse {
   repeated ItemDetail result = 1;
@@ -800,6 +803,7 @@ message DeletePrizeResponse {
 message ListPrizeRequest {
   int64 limit = 1;
   int64 offset = 2;
+  string search_title = 3;
 }
 message ListPrizeResponse {
   repeated PrizeDetail result = 1;
@@ -1013,6 +1017,7 @@ message DeleteSubscriptionResponse {
 message ListSubscriptionRequest {
   int64 limit = 1;
   int64 offset = 2;
+  string search_title = 3;
 }
 message ListSubscriptionResponse {
   repeated SubscriptionDetail result = 1;
@@ -1165,6 +1170,7 @@ message DeleteTournamentSetGameRuleResponse {
 message ListTournamentRequest {
   int64 limit = 1;
   int64 offset = 2;
+  string search_title = 3;
 }
 message ListTournamentResponse {
   repeated TournamentDetail result = 1;
@@ -1180,6 +1186,7 @@ message TournamentDetail {
 message ListTournamentSetRequest {
   int64 limit = 1;
   int64 offset = 2;
+  string search_title = 3;
 }
 message ListTournamentSetResponse {
   repeated TournamentSetDetail result = 1;

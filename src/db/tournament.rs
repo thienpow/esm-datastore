@@ -122,42 +122,77 @@ impl Tournament {
       Ok(n)
     }
     
-    pub async fn list(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Tournament>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_title: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Tournament>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
-    
       let mut vec: Vec<Tournament> = Vec::new();
-      for row in conn.query(&stmt, &[&limit, &offset]).await? {
-        let tournament = Tournament {
-          id: row.get(0),
-          title: row.get(1),
-          tour_set_ids:  row.get(2),
-          status: row.get(3)
-        };
-
-        vec.push(tournament);
+      if search_title.len() > 2 {
+        let stmt = conn.prepare("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE title LIKE '%$1%' ORDER BY id DESC LIMIT $2 OFFSET $3;").await?;
+    
+        for row in conn.query(&stmt, &[&search_title, &limit, &offset]).await? {
+          let tournament = Tournament {
+            id: row.get(0),
+            title: row.get(1),
+            tour_set_ids:  row.get(2),
+            status: row.get(3)
+          };
+  
+          vec.push(tournament);
+        }
+        
+      } else {
+        let stmt = conn.prepare("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
+    
+        for row in conn.query(&stmt, &[&limit, &offset]).await? {
+          let tournament = Tournament {
+            id: row.get(0),
+            title: row.get(1),
+            tour_set_ids:  row.get(2),
+            status: row.get(3)
+          };
+  
+          vec.push(tournament);
+        }
+        
       }
       
       Ok(vec)
     }
 
-    pub async fn list_set(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<TournamentSet>, RunError<tokio_postgres::Error>> {
+    pub async fn list_set(limit: i64, offset: i64, search_title: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<TournamentSet>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
-    
       let mut vec: Vec<TournamentSet> = Vec::new();
-      for row in conn.query(&stmt, &[&limit, &offset]).await? {
-        let set = TournamentSet {
-          id: row.get(0),
-          title: row.get(1), 
-          duration_days: row.get(2),
-          duration_hours: row.get(3), 
-          is_group: row.get(4), 
-        };
-
-        vec.push(set);
+      if search_title.len() > 2 {
+        let stmt = conn.prepare("SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE title LIKE '%$1%' ORDER BY id DESC LIMIT $2 OFFSET $3;").await?;
+    
+        for row in conn.query(&stmt, &[&search_title, &limit, &offset]).await? {
+          let set = TournamentSet {
+            id: row.get(0),
+            title: row.get(1), 
+            duration_days: row.get(2),
+            duration_hours: row.get(3), 
+            is_group: row.get(4), 
+          };
+  
+          vec.push(set);
+        }
+        
+      } else {
+        let stmt = conn.prepare("SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
+    
+        for row in conn.query(&stmt, &[&limit, &offset]).await? {
+          let set = TournamentSet {
+            id: row.get(0),
+            title: row.get(1), 
+            duration_days: row.get(2),
+            duration_hours: row.get(3), 
+            is_group: row.get(4), 
+          };
+  
+          vec.push(set);
+        }
+        
       }
       
       Ok(vec)

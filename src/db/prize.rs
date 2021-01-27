@@ -75,36 +75,64 @@ impl Prize {
       Ok(n)
     }
     
-    pub async fn list(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Prize>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_title: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Prize>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, is_repeat, repeated_on, status, tournament_ids, status_prize, tickets_collected FROM public.\"prize\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
-    
-      //let rows = conn.query(&stmt, &[]).await?;
-
       let mut vec: Vec<Prize> = Vec::new();
-      for row in conn.query(&stmt, &[&limit, &offset]).await? {
-        let prize = Prize {
-          id: row.get(0),
-          title: row.get(1),
-          subtitle: row.get(2),
-          img_url: row.get(3),
-          content: row.get(4),
-          type_id: row.get(5),
-          tickets_required: row.get(6),
-          duration_days: row.get(7),
-          duration_hours: row.get(8),
-          timezone: row.get(9),
-          scheduled_on: row.get(10),
-          is_repeat: row.get(11),
-          repeated_on: row.get(12),
-          status: row.get(13),
-          tournament_ids: row.get(14),
-          status_prize: row.get(15),
-          tickets_collected: row.get(16),
-        };
-
-        vec.push(prize);
+      if search_title.len() > 2 {
+        let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, is_repeat, repeated_on, status, tournament_ids, status_prize, tickets_collected FROM public.\"prize\" WHERE title LIKE '%$1%' ORDER BY id DESC LIMIT $2 OFFSET $3;").await?;
+    
+        for row in conn.query(&stmt, &[&search_title, &limit, &offset]).await? {
+          let prize = Prize {
+            id: row.get(0),
+            title: row.get(1),
+            subtitle: row.get(2),
+            img_url: row.get(3),
+            content: row.get(4),
+            type_id: row.get(5),
+            tickets_required: row.get(6),
+            duration_days: row.get(7),
+            duration_hours: row.get(8),
+            timezone: row.get(9),
+            scheduled_on: row.get(10),
+            is_repeat: row.get(11),
+            repeated_on: row.get(12),
+            status: row.get(13),
+            tournament_ids: row.get(14),
+            status_prize: row.get(15),
+            tickets_collected: row.get(16),
+          };
+  
+          vec.push(prize);
+        }
+        
+      } else {
+        let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, is_repeat, repeated_on, status, tournament_ids, status_prize, tickets_collected FROM public.\"prize\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
+    
+        for row in conn.query(&stmt, &[&limit, &offset]).await? {
+          let prize = Prize {
+            id: row.get(0),
+            title: row.get(1),
+            subtitle: row.get(2),
+            img_url: row.get(3),
+            content: row.get(4),
+            type_id: row.get(5),
+            tickets_required: row.get(6),
+            duration_days: row.get(7),
+            duration_hours: row.get(8),
+            timezone: row.get(9),
+            scheduled_on: row.get(10),
+            is_repeat: row.get(11),
+            repeated_on: row.get(12),
+            status: row.get(13),
+            tournament_ids: row.get(14),
+            status_prize: row.get(15),
+            tickets_collected: row.get(16),
+          };
+  
+          vec.push(prize);
+        }
+        
       }
       
       Ok(vec)

@@ -56,25 +56,46 @@ impl Subscription {
       Ok(n)
     }
     
-    pub async fn list(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Subscription>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_title: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Subscription>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"subscription\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
-    
       let mut vec: Vec<Subscription> = Vec::new();
-      for row in conn.query(&stmt, &[&limit, &offset]).await? {
-        let sub = Subscription {
-          id: row.get(0),
-          title: row.get(1),
-          subtitle: row.get(2),
-          img_url: row.get(3),
-          content: row.get(4),
-          type_id: row.get(5),
-          amount: row.get(6),
-          status: row.get(7)
-        };
-
-        vec.push(sub);
+      if search_title.len() > 2 {
+        let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"subscription\" WHERE title LIKE '%$1%' ORDER BY id DESC LIMIT $2 OFFSET $3;").await?;
+    
+        for row in conn.query(&stmt, &[&search_title, &limit, &offset]).await? {
+          let sub = Subscription {
+            id: row.get(0),
+            title: row.get(1),
+            subtitle: row.get(2),
+            img_url: row.get(3),
+            content: row.get(4),
+            type_id: row.get(5),
+            amount: row.get(6),
+            status: row.get(7)
+          };
+  
+          vec.push(sub);
+        }
+        
+      } else {
+        let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"subscription\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
+    
+        for row in conn.query(&stmt, &[&limit, &offset]).await? {
+          let sub = Subscription {
+            id: row.get(0),
+            title: row.get(1),
+            subtitle: row.get(2),
+            img_url: row.get(3),
+            content: row.get(4),
+            type_id: row.get(5),
+            amount: row.get(6),
+            status: row.get(7)
+          };
+  
+          vec.push(sub);
+        }
+        
       }
       
       Ok(vec)

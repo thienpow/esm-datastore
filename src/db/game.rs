@@ -116,33 +116,61 @@ impl Game {
       Ok(n)
     }
     
-    pub async fn list(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Game>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_title: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Game>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp FROM public.\"game\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
-    
-      let mut vec: Vec<Game> = Vec::new();
-      for row in conn.query(&stmt, &[&limit, &offset]).await? {
-        let game = Game {
-          id: row.get(0),
-          title: row.get(1),
-          subtitle: row.get(2),
-          img_url: row.get(3),
-          content: row.get(4),
-          type_id: row.get(5),
-          engine_id: row.get(6),
-          version: row.get(7),
-          status: row.get(8),
-          score_rule: row.get(9),
-          watch_ad_get_tickets: row.get(10),
-          watch_ad_get_exp: row.get(11),
-          use_gem_get_tickets: row.get(12),
-          use_gem_get_exp: row.get(13),
-          game_code: "".to_string() //game_code field value won't be retrieved but must be set, just ignore.
-        };
 
-        vec.push(game);
+      let mut vec: Vec<Game> = Vec::new();
+      if search_title.len() > 2 {
+        let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp FROM public.\"game\" WHERE title LIKE '%$1%' ORDER BY id DESC LIMIT $2 OFFSET $3;").await?;
+    
+        for row in conn.query(&stmt, &[&search_title, &limit, &offset]).await? {
+          let game = Game {
+            id: row.get(0),
+            title: row.get(1),
+            subtitle: row.get(2),
+            img_url: row.get(3),
+            content: row.get(4),
+            type_id: row.get(5),
+            engine_id: row.get(6),
+            version: row.get(7),
+            status: row.get(8),
+            score_rule: row.get(9),
+            watch_ad_get_tickets: row.get(10),
+            watch_ad_get_exp: row.get(11),
+            use_gem_get_tickets: row.get(12),
+            use_gem_get_exp: row.get(13),
+            game_code: "".to_string() //game_code field value won't be retrieved but must be set, just ignore.
+          };
+  
+          vec.push(game);
+        }
+      } else {
+        let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp FROM public.\"game\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
+    
+        for row in conn.query(&stmt, &[&limit, &offset]).await? {
+          let game = Game {
+            id: row.get(0),
+            title: row.get(1),
+            subtitle: row.get(2),
+            img_url: row.get(3),
+            content: row.get(4),
+            type_id: row.get(5),
+            engine_id: row.get(6),
+            version: row.get(7),
+            status: row.get(8),
+            score_rule: row.get(9),
+            watch_ad_get_tickets: row.get(10),
+            watch_ad_get_exp: row.get(11),
+            use_gem_get_tickets: row.get(12),
+            use_gem_get_exp: row.get(13),
+            game_code: "".to_string() //game_code field value won't be retrieved but must be set, just ignore.
+          };
+  
+          vec.push(game);
+        }
       }
+      
       
       Ok(vec)
     }
