@@ -409,7 +409,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let users = match db::user::User::list(req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+    let users = match db::user::User::list(req.limit.into(), req.offset.into(), "".to_string(), &self.pool.clone()).await {
       Ok(users) => users,
       Err(error) => panic!("Error: {}.", error),
     };

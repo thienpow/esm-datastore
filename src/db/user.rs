@@ -193,51 +193,99 @@ impl User {
     }
 
 
-    pub async fn list(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<User>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_username: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<User>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, address, city, state, zip_code, country, country_code, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name FROM public.\"user\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
-    
       let mut vec: Vec<User> = Vec::new();
-      for row in conn.query(&stmt, &[&limit, &offset]).await? {
-        let user = User {
-          id: row.get(0),
-          username: row.get(1),
-          passhash: "".to_string(), //passhas field value won't be retrieved but must be set, just ignore.
-          email: row.get(2),
-          phone: row.get(3),
-          firstname: row.get(4),
-          lastname: row.get(5),
-          created_on: row.get(6),
-          last_login: row.get(7),
-          role_id: row.get(8),
-          status: row.get(9),
-          gem_balance: row.get(10),
-          social_link_fb: row.get(11),
-          social_link_google: row.get(12),
-          avatar_url: row.get(13),
-          exp: row.get(14),
+      if search_username.len() > 2 {
 
-          //full_name, address, city, state, zip_code, country, country_code
-          full_name: row.get(15),
-          address: row.get(16),
-          city: row.get(17),
-          state: row.get(18),
-          zip_code: row.get(19),
-          country: row.get(20),
-          country_code: row.get(21),
+        let sql_string = format!("SELECT id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, address, city, state, zip_code, country, country_code, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name FROM public.\"user\" WHERE username LIKE '%{}%' OR email LIKE '%{}%' OR phone LIKE '%{}%' OR firstname LIKE '%{}%' OR lastname LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_username, search_username, search_username, search_username, search_username, limit, offset);
+        let stmt = conn.prepare(&sql_string).await?;
+    
+        for row in conn.query(&stmt, &[]).await? {
+          let user = User {
+            id: row.get(0),
+            username: row.get(1),
+            passhash: "".to_string(), //passhas field value won't be retrieved but must be set, just ignore.
+            email: row.get(2),
+            phone: row.get(3),
+            firstname: row.get(4),
+            lastname: row.get(5),
+            created_on: row.get(6),
+            last_login: row.get(7),
+            role_id: row.get(8),
+            status: row.get(9),
+            gem_balance: row.get(10),
+            social_link_fb: row.get(11),
+            social_link_google: row.get(12),
+            avatar_url: row.get(13),
+            exp: row.get(14),
+  
+            //full_name, address, city, state, zip_code, country, country_code
+            full_name: row.get(15),
+            address: row.get(16),
+            city: row.get(17),
+            state: row.get(18),
+            zip_code: row.get(19),
+            country: row.get(20),
+            country_code: row.get(21),
+  
+            //is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name
+            is_notify_allowed: row.get(22),
+            is_notify_new_reward: row.get(23),
+            is_notify_new_tournament: row.get(24),
+            is_notify_tour_ending: row.get(25),
+            nick_name: row.get(26),
+          };
+  
+          vec.push(user);
+        }
+        
+      } else {
 
-          //is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name
-          is_notify_allowed: row.get(22),
-          is_notify_new_reward: row.get(23),
-          is_notify_new_tournament: row.get(24),
-          is_notify_tour_ending: row.get(25),
-          nick_name: row.get(26),
-        };
-
-        vec.push(user);
+        let stmt = conn.prepare("SELECT id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, address, city, state, zip_code, country, country_code, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name FROM public.\"user\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
+    
+        for row in conn.query(&stmt, &[&limit, &offset]).await? {
+          let user = User {
+            id: row.get(0),
+            username: row.get(1),
+            passhash: "".to_string(), //passhas field value won't be retrieved but must be set, just ignore.
+            email: row.get(2),
+            phone: row.get(3),
+            firstname: row.get(4),
+            lastname: row.get(5),
+            created_on: row.get(6),
+            last_login: row.get(7),
+            role_id: row.get(8),
+            status: row.get(9),
+            gem_balance: row.get(10),
+            social_link_fb: row.get(11),
+            social_link_google: row.get(12),
+            avatar_url: row.get(13),
+            exp: row.get(14),
+  
+            //full_name, address, city, state, zip_code, country, country_code
+            full_name: row.get(15),
+            address: row.get(16),
+            city: row.get(17),
+            state: row.get(18),
+            zip_code: row.get(19),
+            country: row.get(20),
+            country_code: row.get(21),
+  
+            //is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name
+            is_notify_allowed: row.get(22),
+            is_notify_new_reward: row.get(23),
+            is_notify_new_tournament: row.get(24),
+            is_notify_tour_ending: row.get(25),
+            nick_name: row.get(26),
+          };
+  
+          vec.push(user);
+        }
+        
       }
-      
+
       Ok(vec)
     }
 

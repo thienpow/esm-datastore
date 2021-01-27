@@ -459,7 +459,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
     let req = request.into_inner();
     
-    let users = match db::user::User::list(req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+    let users = match db::user::User::list(req.limit.into(), req.offset.into(), req.search_username.into(), &self.pool.clone()).await {
       Ok(users) => users,
       Err(error) => panic!("Error: {}.", error),
     };

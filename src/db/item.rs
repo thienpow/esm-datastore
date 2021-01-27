@@ -60,9 +60,10 @@ impl Item {
   
       let mut vec: Vec<Item> = Vec::new();
       if search_title.len() > 2 {
-        let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"item\" WHERE title LIKE '%$1%' ORDER BY id DESC LIMIT $2 OFFSET $3;").await?;
+        let sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"item\" WHERE title LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        let stmt = conn.prepare(&sql_string).await?;
     
-        for row in conn.query(&stmt, &[&search_title, &limit, &offset]).await? {
+        for row in conn.query(&stmt, &[]).await? {
           let item = Item {
             id: row.get(0),
             title: row.get(1),

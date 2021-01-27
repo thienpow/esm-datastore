@@ -127,9 +127,10 @@ impl Tournament {
   
       let mut vec: Vec<Tournament> = Vec::new();
       if search_title.len() > 2 {
-        let stmt = conn.prepare("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE title LIKE '%$1%' ORDER BY id DESC LIMIT $2 OFFSET $3;").await?;
+        let sql_string = format!("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE title LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        let stmt = conn.prepare(&sql_string).await?;
     
-        for row in conn.query(&stmt, &[&search_title, &limit, &offset]).await? {
+        for row in conn.query(&stmt, &[]).await? {
           let tournament = Tournament {
             id: row.get(0),
             title: row.get(1),
@@ -164,9 +165,10 @@ impl Tournament {
   
       let mut vec: Vec<TournamentSet> = Vec::new();
       if search_title.len() > 2 {
-        let stmt = conn.prepare("SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE title LIKE '%$1%' ORDER BY id DESC LIMIT $2 OFFSET $3;").await?;
+        let sql_string = format!("SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE title LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        let stmt = conn.prepare(&sql_string).await?;
     
-        for row in conn.query(&stmt, &[&search_title, &limit, &offset]).await? {
+        for row in conn.query(&stmt, &[]).await? {
           let set = TournamentSet {
             id: row.get(0),
             title: row.get(1), 
