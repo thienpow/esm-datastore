@@ -122,7 +122,7 @@ impl Game {
 
       let mut vec: Vec<Game> = Vec::new();
       if search_title.len() > 2 {
-        let search_string = format!("'%{}%'", search_title);
+        let search_string = format!("\"%{}%\"", search_title);
         let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp FROM public.\"game\" WHERE title LIKE $1 ORDER BY id DESC LIMIT $2 OFFSET $3;").await?;
     
         for row in conn.query(&stmt, &[&search_string, &limit, &offset]).await? {
