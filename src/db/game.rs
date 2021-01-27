@@ -122,6 +122,7 @@ impl Game {
       let mut vec: Vec<Game> = Vec::new();
       if search_title.len() > 2 {
         let sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp FROM public.\"game\" WHERE title LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        println!("{}", &sql_string);
         let stmt = conn.prepare(&sql_string).await?;
     
         for row in conn.query(&stmt, &[]).await? {
@@ -143,6 +144,7 @@ impl Game {
             game_code: "".to_string() //game_code field value won't be retrieved but must be set, just ignore.
           };
   
+          println!("Got game!!!!!!! {}", game.title);
           vec.push(game);
         }
       } else {
