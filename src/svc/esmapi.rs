@@ -578,7 +578,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let games = match db::game::Game::list(req.limit.into(), req.offset.into(), "".to_string(), &self.pool.clone()).await {
+    let games = match db::game::Game::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
       Ok(games) => games,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -827,7 +827,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let items = match db::item::Item::list(req.limit.into(), req.offset.into(), "".to_string(), &self.pool.clone()).await {
+    let items = match db::item::Item::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
       Ok(items) => items,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -910,7 +910,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     let req = request.into_inner();
     
-    let prizes = match db::prize::Prize::list(req.limit.into(), req.offset.into(), "".to_string(), &self.pool.clone()).await {
+    let prizes = match db::prize::Prize::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
       Ok(prizes) => prizes,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1100,7 +1100,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let subscriptions = match db::subscription::Subscription::list(req.limit.into(), req.offset.into(), "".to_string(), &self.pool.clone()).await {
+    let subscriptions = match db::subscription::Subscription::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
       Ok(subscriptions) => subscriptions,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1184,7 +1184,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     let req = request.into_inner();
     
-    let tournaments = match db::tournament::Tournament::list(req.limit.into(), req.offset.into(), "".to_string(), &self.pool.clone()).await {
+    let tournaments = match db::tournament::Tournament::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
       Ok(tournaments) => tournaments,
       Err(error) => panic!("Error: {}.", error),
     };

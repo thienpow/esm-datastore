@@ -55,12 +55,15 @@ impl Item {
       Ok(n)
     }
     
-    pub async fn list(limit: i64, offset: i64, search_title: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Item>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Item>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<Item> = Vec::new();
       if search_title.len() > 2 {
-        let sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"item\" WHERE title LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        let mut sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"item\" WHERE title LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        if status > 0 {
+          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"item\" WHERE title LIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
+        }
         let stmt = conn.prepare(&sql_string).await?;
     
         for row in conn.query(&stmt, &[]).await? {
