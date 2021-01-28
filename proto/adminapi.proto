@@ -100,6 +100,7 @@ service AdminApi {
   rpc ListTournamentSet(ListTournamentSetRequest) returns (ListTournamentSetResponse) {}
   rpc ListTournamentSetGameRule(ListTournamentSetGameRuleRequest) returns (ListTournamentSetGameRuleResponse) {}
   rpc GetTournamentCount(GetTournamentCountRequest) returns (GetTournamentCountResponse) {}
+  rpc GetTournamentSetCount(GetTournamentSetCountRequest) returns (GetTournamentSetCountResponse) {}
 
   // Winner
   rpc AddWinner(AddWinnerRequest) returns (AddWinnerResponse) {}
@@ -1227,6 +1228,15 @@ message TournamentCount {
   int64 archived = 3;
 }
 
+//Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
+message GetTournamentSetCountRequest {
+}
+message GetTournamentSetCountResponse {
+  TournamentSetCount result = 1;
+}
+message TournamentSetCount {
+  int64 total = 1;
+}
 
 
 

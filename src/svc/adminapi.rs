@@ -124,6 +124,7 @@ use adminapi_proto::{
   ListTournamentSetRequest, ListTournamentSetResponse, 
   ListTournamentSetGameRuleRequest, ListTournamentSetGameRuleResponse, 
   GetTournamentCountRequest, GetTournamentCountResponse,
+  GetTournamentSetCountRequest, GetTournamentSetCountResponse,
   TournamentDetail, TournamentSetDetail, TournamentSetGameRuleDetail,
 
   // Winner
@@ -2085,6 +2086,19 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     };
     
     Ok(Response::new(GetTournamentCountResponse {
+      result: Some(result),
+    }))
+  }
+
+  async fn get_tournament_set_count(&self, request: Request<GetTournamentSetCountRequest>, ) -> Result<Response<GetTournamentSetCountResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+
+    let result = match db::tournament::Tournament::count_set(&self.pool.clone()).await {
+      Ok(result) => result,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    Ok(Response::new(GetTournamentSetCountResponse {
       result: Some(result),
     }))
   }

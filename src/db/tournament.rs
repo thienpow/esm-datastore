@@ -3,7 +3,9 @@ use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
 //use std::time::{SystemTime};
-use svc::adminapi::adminapi_proto::TournamentCount;
+use svc::adminapi::adminapi_proto::{
+  TournamentCount, TournamentSetCount,
+};
 use crate::svc;
 
 
@@ -236,6 +238,19 @@ impl Tournament {
         draft: row.get::<usize, i64>(0),
         published: row.get::<usize, i64>(1),
         archived: row.get::<usize, i64>(2)
+      })
+    }
+
+    pub async fn count_set(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<TournamentSetCount, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let sql = "SELECT (SELECT COUNT(id) FROM public.\"tournament_set\") AS total;";
+
+      let stmt = conn.prepare(sql).await?;
+      let row = conn.query_one(&stmt, &[]).await?;
+      
+      Ok(TournamentSetCount {
+        total: row.get::<usize, i64>(0),
       })
     }
 
