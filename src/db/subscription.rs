@@ -83,7 +83,11 @@ impl Subscription {
         }
         
       } else {
-        let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"subscription\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
+        let mut sql_string = "SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"subscription\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
+        if status > 0 {
+          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"subscription\" WHERE status={} LIMIT $1 OFFSET $2;", status);
+        }
+        let stmt = conn.prepare(&sql_string).await?;
     
         for row in conn.query(&stmt, &[&limit, &offset]).await? {
           let sub = Subscription {
