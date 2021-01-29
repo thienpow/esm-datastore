@@ -1193,7 +1193,6 @@ message ListTournamentSetRequest {
   int64 limit = 1;
   int64 offset = 2;
   string search_title = 3;
-  int32 status = 4;
 }
 message ListTournamentSetResponse {
   repeated TournamentSetDetail result = 1;

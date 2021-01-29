@@ -170,7 +170,7 @@ impl Tournament {
       Ok(vec)
     }
 
-    pub async fn list_set(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<TournamentSet>, RunError<tokio_postgres::Error>> {
+    pub async fn list_set(limit: i64, offset: i64, search_title: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<TournamentSet>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<TournamentSet> = Vec::new();
@@ -191,10 +191,7 @@ impl Tournament {
         }
         
       } else {
-        let mut sql_string = "SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
-        if status > 0 {
-          sql_string = format!("SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE status={} LIMIT $1 OFFSET $2;", status);
-        }
+        let sql_string = "SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
         let stmt = conn.prepare(&sql_string).await?;
     
         for row in conn.query(&stmt, &[&limit, &offset]).await? {
