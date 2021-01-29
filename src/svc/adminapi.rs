@@ -1091,7 +1091,8 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       img_url: req.img_url.into(),
       content: req.content.into(),
       type_id: req.type_id.into(),
-      amount: req.amount.into(),
+      price: req.price.into(),
+      quantity: req.quantity.into(),
       status: req.status.into()
     };
     
@@ -1118,7 +1119,8 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       img_url: req.img_url.into(),
       content: req.content.into(),
       type_id: req.type_id.into(),
-      amount: req.amount.into(),
+      price: req.price.into(),
+      quantity: req.quantity.into(),
       status: req.status.into()
     };
     
@@ -1171,7 +1173,8 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
         img_url: item.img_url,
         content: item.content,
         type_id: item.type_id,
-        amount: item.amount,
+        price: item.price,
+        quantity: item.quantity,
         status: item.status
       };
       
@@ -1621,7 +1624,8 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       img_url: req.img_url.into(),
       content: req.content.into(),
       type_id: req.type_id.into(),
-      amount: req.amount.into(),
+      price: req.price.into(),
+      quantity: req.quantity.into(),
       status: req.status.into()
     };
     
@@ -1648,7 +1652,8 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       img_url: req.img_url.into(),
       content: req.content.into(),
       type_id: req.type_id.into(),
-      amount: req.amount.into(),
+      price: req.price.into(),
+      quantity: req.quantity.into(),
       status: req.status.into()
     };
     
@@ -1701,7 +1706,8 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
         img_url: sub.img_url,
         content: sub.content,
         type_id: sub.type_id,
-        amount: sub.amount,
+        price: sub.price,
+        quantity: sub.quantity,
         status: sub.status
       };
       

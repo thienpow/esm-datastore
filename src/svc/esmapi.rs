@@ -843,7 +843,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         img_url: item.img_url,
         content: item.content,
         type_id: item.type_id,
-        amount: item.amount,
+        price: item.price,
+        quantity: item.quantity,
         status: item.status
       };
       
@@ -1116,7 +1117,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         img_url: sub.img_url,
         content: sub.content,
         type_id: sub.type_id,
-        amount: sub.amount,
+        price: sub.price,
+        quantity: sub.quantity,
         status: sub.status
       };
       

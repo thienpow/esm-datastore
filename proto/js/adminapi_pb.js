@@ -17041,8 +17041,9 @@ proto.adminapi.esm.AddItemRequest.toObject = function(includeInstance, msg) {
     content: jspb.Message.getFieldWithDefault(msg, 3, ""),
     imgUrl: jspb.Message.getFieldWithDefault(msg, 4, ""),
     typeId: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    amount: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 7, 0)
+    price: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    quantity: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    status: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -17101,9 +17102,13 @@ proto.adminapi.esm.AddItemRequest.deserializeBinaryFromReader = function(msg, re
       break;
     case 6:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setAmount(value);
+      msg.setPrice(value);
       break;
     case 7:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setQuantity(value);
+      break;
+    case 8:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
@@ -17171,17 +17176,24 @@ proto.adminapi.esm.AddItemRequest.serializeBinaryToWriter = function(message, wr
       f
     );
   }
-  f = message.getAmount();
+  f = message.getPrice();
   if (f !== 0) {
     writer.writeInt32(
       6,
       f
     );
   }
-  f = message.getStatus();
+  f = message.getQuantity();
   if (f !== 0) {
     writer.writeInt32(
       7,
+      f
+    );
+  }
+  f = message.getStatus();
+  if (f !== 0) {
+    writer.writeInt32(
+      8,
       f
     );
   }
@@ -17279,10 +17291,10 @@ proto.adminapi.esm.AddItemRequest.prototype.setTypeId = function(value) {
 
 
 /**
- * optional int32 amount = 6;
+ * optional int32 price = 6;
  * @return {number}
  */
-proto.adminapi.esm.AddItemRequest.prototype.getAmount = function() {
+proto.adminapi.esm.AddItemRequest.prototype.getPrice = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
@@ -17291,16 +17303,16 @@ proto.adminapi.esm.AddItemRequest.prototype.getAmount = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.AddItemRequest} returns this
  */
-proto.adminapi.esm.AddItemRequest.prototype.setAmount = function(value) {
+proto.adminapi.esm.AddItemRequest.prototype.setPrice = function(value) {
   return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
 /**
- * optional int32 status = 7;
+ * optional int32 quantity = 7;
  * @return {number}
  */
-proto.adminapi.esm.AddItemRequest.prototype.getStatus = function() {
+proto.adminapi.esm.AddItemRequest.prototype.getQuantity = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -17309,8 +17321,26 @@ proto.adminapi.esm.AddItemRequest.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.AddItemRequest} returns this
  */
-proto.adminapi.esm.AddItemRequest.prototype.setStatus = function(value) {
+proto.adminapi.esm.AddItemRequest.prototype.setQuantity = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
+};
+
+
+/**
+ * optional int32 status = 8;
+ * @return {number}
+ */
+proto.adminapi.esm.AddItemRequest.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.AddItemRequest} returns this
+ */
+proto.adminapi.esm.AddItemRequest.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 
@@ -17482,8 +17512,9 @@ proto.adminapi.esm.UpdateItemRequest.toObject = function(includeInstance, msg) {
     content: jspb.Message.getFieldWithDefault(msg, 4, ""),
     imgUrl: jspb.Message.getFieldWithDefault(msg, 5, ""),
     typeId: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    amount: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 8, 0)
+    price: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    quantity: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    status: jspb.Message.getFieldWithDefault(msg, 9, 0)
   };
 
   if (includeInstance) {
@@ -17546,9 +17577,13 @@ proto.adminapi.esm.UpdateItemRequest.deserializeBinaryFromReader = function(msg,
       break;
     case 7:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setAmount(value);
+      msg.setPrice(value);
       break;
     case 8:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setQuantity(value);
+      break;
+    case 9:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
@@ -17623,17 +17658,24 @@ proto.adminapi.esm.UpdateItemRequest.serializeBinaryToWriter = function(message,
       f
     );
   }
-  f = message.getAmount();
+  f = message.getPrice();
   if (f !== 0) {
     writer.writeInt32(
       7,
       f
     );
   }
-  f = message.getStatus();
+  f = message.getQuantity();
   if (f !== 0) {
     writer.writeInt32(
       8,
+      f
+    );
+  }
+  f = message.getStatus();
+  if (f !== 0) {
+    writer.writeInt32(
+      9,
       f
     );
   }
@@ -17749,10 +17791,10 @@ proto.adminapi.esm.UpdateItemRequest.prototype.setTypeId = function(value) {
 
 
 /**
- * optional int32 amount = 7;
+ * optional int32 price = 7;
  * @return {number}
  */
-proto.adminapi.esm.UpdateItemRequest.prototype.getAmount = function() {
+proto.adminapi.esm.UpdateItemRequest.prototype.getPrice = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -17761,16 +17803,16 @@ proto.adminapi.esm.UpdateItemRequest.prototype.getAmount = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.UpdateItemRequest} returns this
  */
-proto.adminapi.esm.UpdateItemRequest.prototype.setAmount = function(value) {
+proto.adminapi.esm.UpdateItemRequest.prototype.setPrice = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
 /**
- * optional int32 status = 8;
+ * optional int32 quantity = 8;
  * @return {number}
  */
-proto.adminapi.esm.UpdateItemRequest.prototype.getStatus = function() {
+proto.adminapi.esm.UpdateItemRequest.prototype.getQuantity = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
@@ -17779,8 +17821,26 @@ proto.adminapi.esm.UpdateItemRequest.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.UpdateItemRequest} returns this
  */
-proto.adminapi.esm.UpdateItemRequest.prototype.setStatus = function(value) {
+proto.adminapi.esm.UpdateItemRequest.prototype.setQuantity = function(value) {
   return jspb.Message.setProto3IntField(this, 8, value);
+};
+
+
+/**
+ * optional int32 status = 9;
+ * @return {number}
+ */
+proto.adminapi.esm.UpdateItemRequest.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.UpdateItemRequest} returns this
+ */
+proto.adminapi.esm.UpdateItemRequest.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 9, value);
 };
 
 
@@ -18592,8 +18652,9 @@ proto.adminapi.esm.ItemDetail.toObject = function(includeInstance, msg) {
     content: jspb.Message.getFieldWithDefault(msg, 4, ""),
     imgUrl: jspb.Message.getFieldWithDefault(msg, 5, ""),
     typeId: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    amount: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 8, 0)
+    price: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    quantity: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    status: jspb.Message.getFieldWithDefault(msg, 9, 0)
   };
 
   if (includeInstance) {
@@ -18656,9 +18717,13 @@ proto.adminapi.esm.ItemDetail.deserializeBinaryFromReader = function(msg, reader
       break;
     case 7:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setAmount(value);
+      msg.setPrice(value);
       break;
     case 8:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setQuantity(value);
+      break;
+    case 9:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
@@ -18733,17 +18798,24 @@ proto.adminapi.esm.ItemDetail.serializeBinaryToWriter = function(message, writer
       f
     );
   }
-  f = message.getAmount();
+  f = message.getPrice();
   if (f !== 0) {
     writer.writeInt32(
       7,
       f
     );
   }
-  f = message.getStatus();
+  f = message.getQuantity();
   if (f !== 0) {
     writer.writeInt32(
       8,
+      f
+    );
+  }
+  f = message.getStatus();
+  if (f !== 0) {
+    writer.writeInt32(
+      9,
       f
     );
   }
@@ -18859,10 +18931,10 @@ proto.adminapi.esm.ItemDetail.prototype.setTypeId = function(value) {
 
 
 /**
- * optional int32 amount = 7;
+ * optional int32 price = 7;
  * @return {number}
  */
-proto.adminapi.esm.ItemDetail.prototype.getAmount = function() {
+proto.adminapi.esm.ItemDetail.prototype.getPrice = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -18871,16 +18943,16 @@ proto.adminapi.esm.ItemDetail.prototype.getAmount = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.ItemDetail} returns this
  */
-proto.adminapi.esm.ItemDetail.prototype.setAmount = function(value) {
+proto.adminapi.esm.ItemDetail.prototype.setPrice = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
 /**
- * optional int32 status = 8;
+ * optional int32 quantity = 8;
  * @return {number}
  */
-proto.adminapi.esm.ItemDetail.prototype.getStatus = function() {
+proto.adminapi.esm.ItemDetail.prototype.getQuantity = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
@@ -18889,8 +18961,26 @@ proto.adminapi.esm.ItemDetail.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.ItemDetail} returns this
  */
-proto.adminapi.esm.ItemDetail.prototype.setStatus = function(value) {
+proto.adminapi.esm.ItemDetail.prototype.setQuantity = function(value) {
   return jspb.Message.setProto3IntField(this, 8, value);
+};
+
+
+/**
+ * optional int32 status = 9;
+ * @return {number}
+ */
+proto.adminapi.esm.ItemDetail.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.ItemDetail} returns this
+ */
+proto.adminapi.esm.ItemDetail.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 9, value);
 };
 
 
@@ -25253,8 +25343,9 @@ proto.adminapi.esm.AddSubscriptionRequest.toObject = function(includeInstance, m
     content: jspb.Message.getFieldWithDefault(msg, 3, ""),
     imgUrl: jspb.Message.getFieldWithDefault(msg, 4, ""),
     typeId: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    amount: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 7, 0)
+    price: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    quantity: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    status: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -25313,9 +25404,13 @@ proto.adminapi.esm.AddSubscriptionRequest.deserializeBinaryFromReader = function
       break;
     case 6:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setAmount(value);
+      msg.setPrice(value);
       break;
     case 7:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setQuantity(value);
+      break;
+    case 8:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
@@ -25383,17 +25478,24 @@ proto.adminapi.esm.AddSubscriptionRequest.serializeBinaryToWriter = function(mes
       f
     );
   }
-  f = message.getAmount();
+  f = message.getPrice();
   if (f !== 0) {
     writer.writeInt32(
       6,
       f
     );
   }
-  f = message.getStatus();
+  f = message.getQuantity();
   if (f !== 0) {
     writer.writeInt32(
       7,
+      f
+    );
+  }
+  f = message.getStatus();
+  if (f !== 0) {
+    writer.writeInt32(
+      8,
       f
     );
   }
@@ -25491,10 +25593,10 @@ proto.adminapi.esm.AddSubscriptionRequest.prototype.setTypeId = function(value) 
 
 
 /**
- * optional int32 amount = 6;
+ * optional int32 price = 6;
  * @return {number}
  */
-proto.adminapi.esm.AddSubscriptionRequest.prototype.getAmount = function() {
+proto.adminapi.esm.AddSubscriptionRequest.prototype.getPrice = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
@@ -25503,16 +25605,16 @@ proto.adminapi.esm.AddSubscriptionRequest.prototype.getAmount = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.AddSubscriptionRequest} returns this
  */
-proto.adminapi.esm.AddSubscriptionRequest.prototype.setAmount = function(value) {
+proto.adminapi.esm.AddSubscriptionRequest.prototype.setPrice = function(value) {
   return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
 /**
- * optional int32 status = 7;
+ * optional int32 quantity = 7;
  * @return {number}
  */
-proto.adminapi.esm.AddSubscriptionRequest.prototype.getStatus = function() {
+proto.adminapi.esm.AddSubscriptionRequest.prototype.getQuantity = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -25521,8 +25623,26 @@ proto.adminapi.esm.AddSubscriptionRequest.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.AddSubscriptionRequest} returns this
  */
-proto.adminapi.esm.AddSubscriptionRequest.prototype.setStatus = function(value) {
+proto.adminapi.esm.AddSubscriptionRequest.prototype.setQuantity = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
+};
+
+
+/**
+ * optional int32 status = 8;
+ * @return {number}
+ */
+proto.adminapi.esm.AddSubscriptionRequest.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.AddSubscriptionRequest} returns this
+ */
+proto.adminapi.esm.AddSubscriptionRequest.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 
@@ -25694,8 +25814,9 @@ proto.adminapi.esm.UpdateSubscriptionRequest.toObject = function(includeInstance
     content: jspb.Message.getFieldWithDefault(msg, 4, ""),
     imgUrl: jspb.Message.getFieldWithDefault(msg, 5, ""),
     typeId: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    amount: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 8, 0)
+    price: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    quantity: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    status: jspb.Message.getFieldWithDefault(msg, 9, 0)
   };
 
   if (includeInstance) {
@@ -25758,9 +25879,13 @@ proto.adminapi.esm.UpdateSubscriptionRequest.deserializeBinaryFromReader = funct
       break;
     case 7:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setAmount(value);
+      msg.setPrice(value);
       break;
     case 8:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setQuantity(value);
+      break;
+    case 9:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
@@ -25835,17 +25960,24 @@ proto.adminapi.esm.UpdateSubscriptionRequest.serializeBinaryToWriter = function(
       f
     );
   }
-  f = message.getAmount();
+  f = message.getPrice();
   if (f !== 0) {
     writer.writeInt32(
       7,
       f
     );
   }
-  f = message.getStatus();
+  f = message.getQuantity();
   if (f !== 0) {
     writer.writeInt32(
       8,
+      f
+    );
+  }
+  f = message.getStatus();
+  if (f !== 0) {
+    writer.writeInt32(
+      9,
       f
     );
   }
@@ -25961,10 +26093,10 @@ proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setTypeId = function(valu
 
 
 /**
- * optional int32 amount = 7;
+ * optional int32 price = 7;
  * @return {number}
  */
-proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getAmount = function() {
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getPrice = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -25973,16 +26105,16 @@ proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getAmount = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.UpdateSubscriptionRequest} returns this
  */
-proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setAmount = function(value) {
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setPrice = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
 /**
- * optional int32 status = 8;
+ * optional int32 quantity = 8;
  * @return {number}
  */
-proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getStatus = function() {
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getQuantity = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
@@ -25991,8 +26123,26 @@ proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.UpdateSubscriptionRequest} returns this
  */
-proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setStatus = function(value) {
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setQuantity = function(value) {
   return jspb.Message.setProto3IntField(this, 8, value);
+};
+
+
+/**
+ * optional int32 status = 9;
+ * @return {number}
+ */
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.UpdateSubscriptionRequest} returns this
+ */
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 9, value);
 };
 
 
@@ -26804,8 +26954,9 @@ proto.adminapi.esm.SubscriptionDetail.toObject = function(includeInstance, msg) 
     content: jspb.Message.getFieldWithDefault(msg, 4, ""),
     imgUrl: jspb.Message.getFieldWithDefault(msg, 5, ""),
     typeId: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    amount: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 8, 0)
+    price: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    quantity: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    status: jspb.Message.getFieldWithDefault(msg, 9, 0)
   };
 
   if (includeInstance) {
@@ -26868,9 +27019,13 @@ proto.adminapi.esm.SubscriptionDetail.deserializeBinaryFromReader = function(msg
       break;
     case 7:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setAmount(value);
+      msg.setPrice(value);
       break;
     case 8:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setQuantity(value);
+      break;
+    case 9:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
@@ -26945,17 +27100,24 @@ proto.adminapi.esm.SubscriptionDetail.serializeBinaryToWriter = function(message
       f
     );
   }
-  f = message.getAmount();
+  f = message.getPrice();
   if (f !== 0) {
     writer.writeInt32(
       7,
       f
     );
   }
-  f = message.getStatus();
+  f = message.getQuantity();
   if (f !== 0) {
     writer.writeInt32(
       8,
+      f
+    );
+  }
+  f = message.getStatus();
+  if (f !== 0) {
+    writer.writeInt32(
+      9,
       f
     );
   }
@@ -27071,10 +27233,10 @@ proto.adminapi.esm.SubscriptionDetail.prototype.setTypeId = function(value) {
 
 
 /**
- * optional int32 amount = 7;
+ * optional int32 price = 7;
  * @return {number}
  */
-proto.adminapi.esm.SubscriptionDetail.prototype.getAmount = function() {
+proto.adminapi.esm.SubscriptionDetail.prototype.getPrice = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -27083,16 +27245,16 @@ proto.adminapi.esm.SubscriptionDetail.prototype.getAmount = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.SubscriptionDetail} returns this
  */
-proto.adminapi.esm.SubscriptionDetail.prototype.setAmount = function(value) {
+proto.adminapi.esm.SubscriptionDetail.prototype.setPrice = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
 /**
- * optional int32 status = 8;
+ * optional int32 quantity = 8;
  * @return {number}
  */
-proto.adminapi.esm.SubscriptionDetail.prototype.getStatus = function() {
+proto.adminapi.esm.SubscriptionDetail.prototype.getQuantity = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
@@ -27101,8 +27263,26 @@ proto.adminapi.esm.SubscriptionDetail.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.SubscriptionDetail} returns this
  */
-proto.adminapi.esm.SubscriptionDetail.prototype.setStatus = function(value) {
+proto.adminapi.esm.SubscriptionDetail.prototype.setQuantity = function(value) {
   return jspb.Message.setProto3IntField(this, 8, value);
+};
+
+
+/**
+ * optional int32 status = 9;
+ * @return {number}
+ */
+proto.adminapi.esm.SubscriptionDetail.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.SubscriptionDetail} returns this
+ */
+proto.adminapi.esm.SubscriptionDetail.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 9, value);
 };
 
 
@@ -31711,8 +31891,7 @@ proto.adminapi.esm.ListTournamentSetRequest.toObject = function(includeInstance,
   var f, obj = {
     limit: jspb.Message.getFieldWithDefault(msg, 1, 0),
     offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    searchTitle: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    status: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    searchTitle: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -31761,10 +31940,6 @@ proto.adminapi.esm.ListTournamentSetRequest.deserializeBinaryFromReader = functi
       var value = /** @type {string} */ (reader.readString());
       msg.setSearchTitle(value);
       break;
-    case 4:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setStatus(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -31812,13 +31987,6 @@ proto.adminapi.esm.ListTournamentSetRequest.serializeBinaryToWriter = function(m
   if (f.length > 0) {
     writer.writeString(
       3,
-      f
-    );
-  }
-  f = message.getStatus();
-  if (f !== 0) {
-    writer.writeInt32(
-      4,
       f
     );
   }
@@ -31876,24 +32044,6 @@ proto.adminapi.esm.ListTournamentSetRequest.prototype.getSearchTitle = function(
  */
 proto.adminapi.esm.ListTournamentSetRequest.prototype.setSearchTitle = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
-};
-
-
-/**
- * optional int32 status = 4;
- * @return {number}
- */
-proto.adminapi.esm.ListTournamentSetRequest.prototype.getStatus = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.adminapi.esm.ListTournamentSetRequest} returns this
- */
-proto.adminapi.esm.ListTournamentSetRequest.prototype.setStatus = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 

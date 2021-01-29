@@ -12,7 +12,8 @@ pub struct Subscription {
   pub img_url: String,
   pub content: String,
   pub type_id: i32,
-  pub amount: i32,
+  pub price: i32,
+  pub quantity: i32,
   pub status: i32,
 }
 
@@ -27,10 +28,10 @@ impl Subscription {
     pub async fn add(sub: Subscription, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"subscription\" (title, subtitle, img_url, content, type_id, amount, status) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"subscription\" (title, subtitle, img_url, content, type_id, price, quantity, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
                   &[&sub.title, &sub.subtitle, &sub.img_url, &sub.content, 
-                  &sub.type_id, &sub.amount, &sub.status]).await?;
+                  &sub.type_id, &sub.price, &sub.quantity, &sub.status]).await?;
     
       Ok(row.get::<usize, i64>(0))
     }
@@ -38,10 +39,10 @@ impl Subscription {
     pub async fn update(sub: Subscription, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"subscription\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, amount=$6, status=$7 WHERE id=$8;").await?;
+      let stmt = conn.prepare("UPDATE public.\"subscription\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, price=$6, quantity=$7, status=$8 WHERE id=$9;").await?;
       let n = conn.execute(&stmt, 
                   &[&sub.title, &sub.subtitle, &sub.img_url, &sub.content, 
-                  &sub.type_id, &sub.amount, &sub.status,
+                  &sub.type_id, &sub.price, &sub.quantity, &sub.status,
                   &sub.id]).await?;
     
       Ok(n)
@@ -61,9 +62,9 @@ impl Subscription {
   
       let mut vec: Vec<Subscription> = Vec::new();
       if search_title.len() > 2 {
-        let mut sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"subscription\" WHERE title LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        let mut sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, price, quantity, status FROM public.\"subscription\" WHERE title LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
         if status > 0 {
-          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"subscription\" WHERE title LIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
+          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, price, quantity, status FROM public.\"subscription\" WHERE title LIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
         }
         let stmt = conn.prepare(&sql_string).await?;
     
@@ -75,17 +76,18 @@ impl Subscription {
             img_url: row.get(3),
             content: row.get(4),
             type_id: row.get(5),
-            amount: row.get(6),
-            status: row.get(7)
+            price: row.get(6),
+            quantity: row.get(7),
+            status: row.get(8)
           };
   
           vec.push(sub);
         }
         
       } else {
-        let mut sql_string = "SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"subscription\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
+        let mut sql_string = "SELECT id, title, subtitle, img_url, content, type_id, price, quantity, status FROM public.\"subscription\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
         if status > 0 {
-          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, amount, status FROM public.\"subscription\" WHERE status={} LIMIT $1 OFFSET $2;", status);
+          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, price, quantity, status FROM public.\"subscription\" WHERE status={} LIMIT $1 OFFSET $2;", status);
         }
         let stmt = conn.prepare(&sql_string).await?;
     
@@ -97,8 +99,9 @@ impl Subscription {
             img_url: row.get(3),
             content: row.get(4),
             type_id: row.get(5),
-            amount: row.get(6),
-            status: row.get(7)
+            price: row.get(6),
+            quantity: row.get(7),
+            status: row.get(8)
           };
   
           vec.push(sub);
