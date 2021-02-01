@@ -4,6 +4,7 @@ use jsonwebtoken::TokenData;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use std::thread;
+
 #[derive(Clone)]
 pub struct JwkAuth {
     verifier: Arc<Mutex<JwkVerifier>>,
@@ -39,7 +40,7 @@ impl JwkAuth {
     fn start_key_update(&self, verifier: Arc<Mutex<JwkVerifier>>) {
 
         thread::spawn(move || {
-            let mut rt = tokio::runtime::Runtime::new().unwrap();
+            let rt = tokio::runtime::Runtime::new().unwrap();
             rt.block_on(async {
                 
                 
