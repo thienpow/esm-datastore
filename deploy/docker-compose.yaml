@@ -7,6 +7,10 @@ services:
       - ./front/envoy.yaml:/etc/envoy/envoy.yaml
       - /etc/letsencrypt/live/aadi.my/fullchain.pem:/etc/envoy/fullchain.pem
       - /etc/letsencrypt/live/aadi.my/privkey.pem:/etc/envoy/privkey.pem
+    restart: always
+    environment: 
+      - ENVOY_UID=0
+      - ENVOY_GID=0
     networks:
       - envoymesh
     expose:
