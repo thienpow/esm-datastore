@@ -20,14 +20,14 @@ static_resources:
           route_config:
             name: local_route
             virtual_hosts:
-            - name: gloader
-              domains:
-              - "esm-gloader.aadi.my"
-              routes:
-              - match:
-                  prefix: "/"
-                route:
-                  cluster: esm-game-loader
+            #- name: gloader
+            #  domains:
+            #  - "esm-gloader.aadi.my"
+            #  routes:
+            #  - match:
+            #      prefix: "/"
+            #    route:
+            #      cluster: esm-game-loader
             - name: grpcproxy
               domains:
               - "esm-api.aadi.my"
