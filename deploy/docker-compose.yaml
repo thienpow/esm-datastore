@@ -1,12 +1,23 @@
 version: "3.9"
 services:
 
+  frontenvoy:
+    image: envoyproxy/envoy:v1.16.2
+    volumes:
+      - ./front/envoy.yaml:/etc/envoy/envoy.yaml
+      - /etc/letsencrypt/live/aadi.my/fullchain.pem:/etc/envoy/fullchain.pem
+      - /etc/letsencrypt/live/aadi.my/privkey.pem:/etc/envoy/privkey.pem
+    networks:
+      - envoymesh
+    expose:
+      - "443"
+    ports:
+      - "443:443"
+
   grpc-web-proxy:
     image: envoyproxy/envoy:v1.16.2
     volumes:
       - ./grpc_web_proxy/envoy.yaml:/etc/envoy/envoy.yaml
-      - /etc/letsencrypt/live/aadi.my/fullchain.pem:/etc/envoy/fullchain.pem
-      - /etc/letsencrypt/live/aadi.my/privkey.pem:/etc/envoy/privkey.pem
     restart: always
     environment: 
       - ENVOY_UID=0
@@ -20,9 +31,9 @@ services:
     links:
       - "esmservice"
     expose:
-      - "443"
+      - "8080"
     ports: 
-      - "443:443"
+      - "8080:8080"
 
   esmservice:
     build:
@@ -37,6 +48,20 @@ services:
       - "50051"
     ports:
       - "50051:50051"
+
+  esm-game-loader:
+    build:
+      context: .
+      dockerfile: ./gloader/Dockerfile
+    restart: always
+    networks:
+      envoymesh:
+        aliases:
+          - esm-game-loader
+    expose:
+      - "3033"
+    ports:
+      - "3033:3033"
 
 networks:
   envoymesh: {}
