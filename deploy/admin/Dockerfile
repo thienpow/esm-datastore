@@ -2,13 +2,9 @@ FROM ubuntu:20.04
 
 RUN apt-get update && apt-get install -y ca-certificates libssl-dev && rm -rf /var/lib/apt/lists/*
 
-COPY ./admin/esm-admin-warp /usr/local/bin/esm-admin-warp
-RUN chmod u+x /usr/local/bin/esm-admin-warp
+COPY ./admin/esm-admin-warp /esm-admin-warp
+RUN chmod u+x /esm-admin-warp
 
-COPY ./admin/www /usr/local/bin/www
-RUN chmod u+x /usr/local/bin/www
+COPY ./admin/www /www
 
-COPY ./admin/start.sh /usr/local/bin/start
-RUN chmod u+x /usr/local/bin/start
-
-CMD ["/usr/local/bin/start"]
+CMD ["/esm-admin-warp"]
