@@ -14,10 +14,10 @@ services:
     networks:
       - envoymesh
     expose:
-      - "80"
+      #- "80"
       - "443"
     ports:
-      - "80:80"
+      #- "80:80"
       - "443:443"
 
   grpc-web-proxy:
