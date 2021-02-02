@@ -64,16 +64,16 @@ static_resources:
               socket_address:
                 address: esm-game-loader
                 port_value: 3033
-- name: grpc-web-proxy
-    connect_timeout: 0.25s
-    type: strict_dns
-    lb_policy: round_robin
-    load_assignment:
-      cluster_name: grpc-web-proxy
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: grpc-web-proxy
-                port_value: 8080
+  - name: grpc-web-proxy
+      connect_timeout: 0.25s
+      type: strict_dns
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: grpc-web-proxy
+        endpoints:
+        - lb_endpoints:
+          - endpoint:
+              address:
+                socket_address:
+                  address: grpc-web-proxy
+                  port_value: 8080
