@@ -20,6 +20,14 @@ static_resources:
           route_config:
             name: local_route
             virtual_hosts:
+            - name: admin
+              domains:
+              - "esm-admin.aadi.my"
+              routes:
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: esm-admin
             - name: gloader
               domains:
               - "esm-gloader.aadi.my"
@@ -51,6 +59,19 @@ static_resources:
                 private_key: 
                   filename: /etc/envoy/privkey.pem
   clusters:
+  - name: esm-admin
+    connect_timeout: 0.25s
+    type: strict_dns
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: esm-admin
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: esm-admin
+                port_value: 3030
   - name: esm-game-loader
     connect_timeout: 0.25s
     type: strict_dns

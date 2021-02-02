@@ -67,5 +67,19 @@ services:
     ports:
       - "3033:3033"
 
+  esm-admin:
+    build:
+      context: .
+      dockerfile: ./gloader/Dockerfile
+    restart: always
+    networks:
+      envoymesh:
+        aliases:
+          - esm-admin
+    expose:
+      - "3030"
+    ports:
+      - "3030:3030"
+
 networks:
   envoymesh: {}
