@@ -20,14 +20,14 @@ static_resources:
           route_config:
             name: local_route
             virtual_hosts:
-            #- name: gloader
-            #  domains:
-            #  - "esm-gloader.aadi.my"
-            #  routes:
-            #  - match:
-            #      prefix: "/"
-            #    route:
-            #      cluster: esm-game-loader
+            - name: gloader
+              domains:
+              - "esm-gloader.aadi.my"
+              routes:
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: esm-game-loader
             - name: grpcproxy
               domains:
               - "esm-api.aadi.my"
@@ -65,15 +65,15 @@ static_resources:
                 address: esm-game-loader
                 port_value: 3033
   - name: grpc-web-proxy
-      connect_timeout: 0.25s
-      type: strict_dns
-      lb_policy: round_robin
-      load_assignment:
-        cluster_name: grpc-web-proxy
-        endpoints:
-        - lb_endpoints:
-          - endpoint:
-              address:
-                socket_address:
-                  address: grpc-web-proxy
-                  port_value: 8080
+    connect_timeout: 0.25s
+    type: strict_dns
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: grpc-web-proxy
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: grpc-web-proxy
+                port_value: 8080
