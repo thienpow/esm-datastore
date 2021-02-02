@@ -70,7 +70,7 @@ services:
   esm-admin:
     build:
       context: .
-      dockerfile: ./gloader/Dockerfile
+      dockerfile: ./admin/Dockerfile
     restart: always
     networks:
       envoymesh:
