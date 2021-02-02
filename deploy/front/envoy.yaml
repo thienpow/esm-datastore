@@ -13,9 +13,9 @@ static_resources:
           stat_prefix: ingress_http
           route_config:
             virtual_hosts:
-            - name: all
+            - name: admin
               domains:
-              - "*"
+              - "esm-admin.aadi.my"
               routes:
               - match:
                   prefix: "/"
