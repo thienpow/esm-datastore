@@ -22,7 +22,7 @@ static_resources:
             virtual_hosts:
             - name: gloader
               domains:
-              - "gloader.aadi.my"
+              - "esm-gloader.aadi.my"
               routes:
               - match:
                   prefix: "/"
