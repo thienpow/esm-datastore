@@ -72,6 +72,8 @@ services:
       context: .
       dockerfile: ./admin/Dockerfile
     restart: always
+    volumes:
+      - ./admin/www:/usr/local/bin/www
     networks:
       envoymesh:
         aliases:
