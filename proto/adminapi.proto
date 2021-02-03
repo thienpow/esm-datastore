@@ -760,7 +760,7 @@ message AddPrizeRequest {
   int64 tickets_required = 6;
   int32 duration_days = 7;
   int32 duration_hours = 8;
-  int32 timezone  = 9;
+  double timezone  = 9;
   int64 scheduled_on = 10;
   bool is_repeat =  11;
   repeated int32 repeated_on = 12;
@@ -783,7 +783,7 @@ message UpdatePrizeRequest {
   int64 tickets_required = 7;
   int32 duration_days = 8;
   int32 duration_hours = 9;
-  int32 timezone = 10;
+  double timezone = 10;
   int64 scheduled_on = 11;
   bool is_repeat =  12;
   repeated int32 repeated_on = 13;
@@ -825,7 +825,7 @@ message PrizeDetail {
   int64 tickets_required = 7;
   int32 duration_days = 8;
   int32 duration_hours = 9;
-  int32 timezone = 10;
+  double timezone = 10;
   int64 scheduled_on = 11;
   bool is_repeat =  12;
   repeated int32 repeated_on = 13;

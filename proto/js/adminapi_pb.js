@@ -19894,7 +19894,7 @@ proto.adminapi.esm.AddPrizeRequest.toObject = function(includeInstance, msg) {
     ticketsRequired: jspb.Message.getFieldWithDefault(msg, 6, 0),
     durationDays: jspb.Message.getFieldWithDefault(msg, 7, 0),
     durationHours: jspb.Message.getFieldWithDefault(msg, 8, 0),
-    timezone: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    timezone: jspb.Message.getFloatingPointFieldWithDefault(msg, 9, 0.0),
     scheduledOn: jspb.Message.getFieldWithDefault(msg, 10, 0),
     isRepeat: jspb.Message.getBooleanFieldWithDefault(msg, 11, false),
     repeatedOnList: (f = jspb.Message.getRepeatedField(msg, 12)) == null ? undefined : f,
@@ -19969,7 +19969,7 @@ proto.adminapi.esm.AddPrizeRequest.deserializeBinaryFromReader = function(msg, r
       msg.setDurationHours(value);
       break;
     case 9:
-      var value = /** @type {number} */ (reader.readInt32());
+      var value = /** @type {number} */ (reader.readDouble());
       msg.setTimezone(value);
       break;
     case 10:
@@ -20078,8 +20078,8 @@ proto.adminapi.esm.AddPrizeRequest.serializeBinaryToWriter = function(message, w
     );
   }
   f = message.getTimezone();
-  if (f !== 0) {
-    writer.writeInt32(
+  if (f !== 0.0) {
+    writer.writeDouble(
       9,
       f
     );
@@ -20267,11 +20267,11 @@ proto.adminapi.esm.AddPrizeRequest.prototype.setDurationHours = function(value) 
 
 
 /**
- * optional int32 timezone = 9;
+ * optional double timezone = 9;
  * @return {number}
  */
 proto.adminapi.esm.AddPrizeRequest.prototype.getTimezone = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 9, 0.0));
 };
 
 
@@ -20280,7 +20280,7 @@ proto.adminapi.esm.AddPrizeRequest.prototype.getTimezone = function() {
  * @return {!proto.adminapi.esm.AddPrizeRequest} returns this
  */
 proto.adminapi.esm.AddPrizeRequest.prototype.setTimezone = function(value) {
-  return jspb.Message.setProto3IntField(this, 9, value);
+  return jspb.Message.setProto3FloatField(this, 9, value);
 };
 
 
@@ -20590,7 +20590,7 @@ proto.adminapi.esm.UpdatePrizeRequest.toObject = function(includeInstance, msg) 
     ticketsRequired: jspb.Message.getFieldWithDefault(msg, 7, 0),
     durationDays: jspb.Message.getFieldWithDefault(msg, 8, 0),
     durationHours: jspb.Message.getFieldWithDefault(msg, 9, 0),
-    timezone: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    timezone: jspb.Message.getFloatingPointFieldWithDefault(msg, 10, 0.0),
     scheduledOn: jspb.Message.getFieldWithDefault(msg, 11, 0),
     isRepeat: jspb.Message.getBooleanFieldWithDefault(msg, 12, false),
     repeatedOnList: (f = jspb.Message.getRepeatedField(msg, 13)) == null ? undefined : f,
@@ -20669,7 +20669,7 @@ proto.adminapi.esm.UpdatePrizeRequest.deserializeBinaryFromReader = function(msg
       msg.setDurationHours(value);
       break;
     case 10:
-      var value = /** @type {number} */ (reader.readInt32());
+      var value = /** @type {number} */ (reader.readDouble());
       msg.setTimezone(value);
       break;
     case 11:
@@ -20785,8 +20785,8 @@ proto.adminapi.esm.UpdatePrizeRequest.serializeBinaryToWriter = function(message
     );
   }
   f = message.getTimezone();
-  if (f !== 0) {
-    writer.writeInt32(
+  if (f !== 0.0) {
+    writer.writeDouble(
       10,
       f
     );
@@ -20992,11 +20992,11 @@ proto.adminapi.esm.UpdatePrizeRequest.prototype.setDurationHours = function(valu
 
 
 /**
- * optional int32 timezone = 10;
+ * optional double timezone = 10;
  * @return {number}
  */
 proto.adminapi.esm.UpdatePrizeRequest.prototype.getTimezone = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 10, 0.0));
 };
 
 
@@ -21005,7 +21005,7 @@ proto.adminapi.esm.UpdatePrizeRequest.prototype.getTimezone = function() {
  * @return {!proto.adminapi.esm.UpdatePrizeRequest} returns this
  */
 proto.adminapi.esm.UpdatePrizeRequest.prototype.setTimezone = function(value) {
-  return jspb.Message.setProto3IntField(this, 10, value);
+  return jspb.Message.setProto3FloatField(this, 10, value);
 };
 
 
@@ -21985,7 +21985,7 @@ proto.adminapi.esm.PrizeDetail.toObject = function(includeInstance, msg) {
     ticketsRequired: jspb.Message.getFieldWithDefault(msg, 7, 0),
     durationDays: jspb.Message.getFieldWithDefault(msg, 8, 0),
     durationHours: jspb.Message.getFieldWithDefault(msg, 9, 0),
-    timezone: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    timezone: jspb.Message.getFloatingPointFieldWithDefault(msg, 10, 0.0),
     scheduledOn: jspb.Message.getFieldWithDefault(msg, 11, 0),
     isRepeat: jspb.Message.getBooleanFieldWithDefault(msg, 12, false),
     repeatedOnList: (f = jspb.Message.getRepeatedField(msg, 13)) == null ? undefined : f,
@@ -22066,7 +22066,7 @@ proto.adminapi.esm.PrizeDetail.deserializeBinaryFromReader = function(msg, reade
       msg.setDurationHours(value);
       break;
     case 10:
-      var value = /** @type {number} */ (reader.readInt32());
+      var value = /** @type {number} */ (reader.readDouble());
       msg.setTimezone(value);
       break;
     case 11:
@@ -22190,8 +22190,8 @@ proto.adminapi.esm.PrizeDetail.serializeBinaryToWriter = function(message, write
     );
   }
   f = message.getTimezone();
-  if (f !== 0) {
-    writer.writeInt32(
+  if (f !== 0.0) {
+    writer.writeDouble(
       10,
       f
     );
@@ -22411,11 +22411,11 @@ proto.adminapi.esm.PrizeDetail.prototype.setDurationHours = function(value) {
 
 
 /**
- * optional int32 timezone = 10;
+ * optional double timezone = 10;
  * @return {number}
  */
 proto.adminapi.esm.PrizeDetail.prototype.getTimezone = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 10, 0.0));
 };
 
 
@@ -22424,7 +22424,7 @@ proto.adminapi.esm.PrizeDetail.prototype.getTimezone = function() {
  * @return {!proto.adminapi.esm.PrizeDetail} returns this
  */
 proto.adminapi.esm.PrizeDetail.prototype.setTimezone = function(value) {
-  return jspb.Message.setProto3IntField(this, 10, value);
+  return jspb.Message.setProto3FloatField(this, 10, value);
 };
 
 

@@ -17,7 +17,7 @@ pub struct Prize {
   pub tickets_required: i64,
   pub duration_days: i32,
   pub duration_hours: i32,
-  pub timezone: i32,
+  pub timezone: f64,
   pub scheduled_on: SystemTime,
   pub is_repeat: bool,
   pub repeated_on: Vec<i32>,
