@@ -61,9 +61,9 @@ impl Item {
   
       let mut vec: Vec<Item> = Vec::new();
       if search_title.len() > 2 {
-        let mut sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, price, quantity, status FROM public.\"item\" WHERE title LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        let mut sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, price, quantity, status FROM public.\"item\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
         if status > 0 {
-          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, price, quantity, status FROM public.\"item\" WHERE title LIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
+          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, price, quantity, status FROM public.\"item\" WHERE title ILIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
         }
         let stmt = conn.prepare(&sql_string).await?;
     

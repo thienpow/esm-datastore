@@ -199,7 +199,7 @@ impl User {
       let mut vec: Vec<User> = Vec::new();
       if search_username.len() > 2 {
 
-        let sql_string = format!("SELECT id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, address, city, state, zip_code, country, country_code, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name FROM public.\"user\" WHERE username LIKE '%{}%' OR email LIKE '%{}%' OR phone LIKE '%{}%' OR firstname LIKE '%{}%' OR lastname LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_username, search_username, search_username, search_username, search_username, limit, offset);
+        let sql_string = format!("SELECT id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, address, city, state, zip_code, country, country_code, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name FROM public.\"user\" WHERE username ILIKE '%{}%' OR email ILIKE '%{}%' OR phone ILIKE '%{}%' OR firstname ILIKE '%{}%' OR lastname ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_username, search_username, search_username, search_username, search_username, limit, offset);
         let stmt = conn.prepare(&sql_string).await?;
     
         for row in conn.query(&stmt, &[]).await? {

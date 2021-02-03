@@ -129,9 +129,9 @@ impl Tournament {
   
       let mut vec: Vec<Tournament> = Vec::new();
       if search_title.len() > 2 {
-        let mut sql_string = format!("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE title LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        let mut sql_string = format!("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
         if status > 0 {
-          sql_string = format!("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE title LIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
+          sql_string = format!("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE title ILIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
         }
         let stmt = conn.prepare(&sql_string).await?;
     
@@ -175,7 +175,7 @@ impl Tournament {
   
       let mut vec: Vec<TournamentSet> = Vec::new();
       if search_title.len() > 2 {
-        let sql_string = format!("SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE title LIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        let sql_string = format!("SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
         let stmt = conn.prepare(&sql_string).await?;
     
         for row in conn.query(&stmt, &[]).await? {
