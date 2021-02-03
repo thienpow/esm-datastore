@@ -5,7 +5,7 @@
 -- Dumped from database version 12.5 (Ubuntu 12.5-0ubuntu0.20.04.1)
 -- Dumped by pg_dump version 13.1
 
--- Started on 2021-02-03 18:59:20 +08
+-- Started on 2021-02-03 22:22:52 +08
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -217,8 +217,8 @@ CREATE TABLE public.prize (
     tickets_required bigint,
     duration_days integer DEFAULT 0,
     duration_hours integer DEFAULT 0,
-    timezone integer DEFAULT 0,
-    scheduled_on timestamp with time zone,
+    timezone double precision DEFAULT 0,
+    scheduled_on timestamp without time zone,
     is_repeat boolean,
     repeated_on integer[] DEFAULT '{}'::integer[],
     status integer,
@@ -767,7 +767,7 @@ ALTER TABLE ONLY public.item ALTER COLUMN id SET DEFAULT nextval('public.item_id
 
 
 --
--- TOC entry 2922 (class 2604 OID 17934)
+-- TOC entry 2921 (class 2604 OID 17934)
 -- Name: prize id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1149,7 +1149,7 @@ CREATE INDEX tournament_lower_idx ON public.tournament USING btree (lower((title
 CREATE INDEX tournament_set_lower_idx ON public.tournament_set USING btree (lower((title)::text));
 
 
--- Completed on 2021-02-03 18:59:24 +08
+-- Completed on 2021-02-03 22:22:57 +08
 
 --
 -- PostgreSQL database dump complete
