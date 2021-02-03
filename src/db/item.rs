@@ -12,7 +12,7 @@ pub struct Item {
   pub img_url: String,
   pub content: String,
   pub type_id: i32,
-  pub price: i32,
+  pub price: f64,
   pub quantity: i32,
   pub status: i32
 }

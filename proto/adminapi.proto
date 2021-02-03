@@ -649,7 +649,7 @@ message AddItemRequest {
   string content = 3;
   string img_url = 4;
   int32 type_id = 5;
-  int32 price = 6;
+  double price = 6;
   int32 quantity = 7;
   int32 status = 8;
 }
@@ -666,7 +666,7 @@ message UpdateItemRequest {
   string content = 4;
   string img_url = 5;
   int32 type_id = 6;
-  int32 price = 7;
+  double price = 7;
   int32 quantity = 8;
   int32 status = 9;
 }
@@ -701,7 +701,7 @@ message ItemDetail {
   string content = 4;
   string img_url = 5;
   int32 type_id = 6;
-  int32 price = 7;
+  double price = 7;
   int32 quantity = 8;
   int32 status = 9;
 }
@@ -987,7 +987,7 @@ message AddSubscriptionRequest {
   string content = 3;
   string img_url = 4;
   int32 type_id = 5;
-  int32 price = 6;
+  double price = 6;
   int32 quantity = 7;
   int32 status = 8;
 }
@@ -1004,7 +1004,7 @@ message UpdateSubscriptionRequest {
   string content = 4;
   string img_url = 5;
   int32 type_id = 6;
-  int32 price = 7;
+  double price = 7;
   int32 quantity = 8;
   int32 status = 9;
 }
@@ -1039,7 +1039,7 @@ message SubscriptionDetail {
   string content = 4;
   string img_url = 5;
   int32 type_id = 6;
-  int32 price = 7;
+  double price = 7;
   int32 quantity = 8;
   int32 status = 9;
 }

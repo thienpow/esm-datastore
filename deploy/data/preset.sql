@@ -44,11 +44,10 @@ COPY public.status_type (id, title) FROM stdin;
 --
 COPY public.subscription_type (id, title) FROM stdin;
 0	Not Selected
-1	Weekly
-2	Monthly
-3	3 Months
-4	6 Months
-5	1 Year
+1	Day
+2	Week
+3	Month
+4	Year
 \.
 
 
