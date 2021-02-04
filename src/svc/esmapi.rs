@@ -23,6 +23,8 @@ use esmapi_proto::{
   // Common 
   ListStatusTypeRequest,  ListStatusTypeResponse,
   StatusTypeDetail,
+  ListWinTypeRequest, ListWinTypeResponse,
+  WinTypeDetail,
   ListTimezonesRequest,  ListTimezonesResponse,
   TimezonesDetail,
   // User
@@ -41,7 +43,8 @@ use esmapi_proto::{
   //Config
   GetConfigRequest, GetConfigResponse,
   ConfigDetail,
-
+  ListSpinnerRuleRequest, ListSpinnerRuleResponse,
+  SpinnerRuleDetail,
   // Game
   ListGameLeaderRuleRequest, ListGameLeaderRuleResponse,
   GameLeaderRuleDetail,
@@ -148,6 +151,32 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     };
     
     Ok(Response::new(ListStatusTypeResponse {
+      result: result,
+    }))
+
+  }
+
+  async fn list_win_type(&self, request: Request<ListWinTypeRequest>, ) -> Result<Response<ListWinTypeResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+
+    let win_types = match db::spinner::SpinnerRule::list_win_type(&self.pool.clone()).await {
+      Ok(win_types) => win_types,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<WinTypeDetail> = Vec::new();
+    
+    for s in win_types {
+      
+      let li = WinTypeDetail {
+        id: s.id,
+        title: s.title
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListWinTypeResponse {
       result: result,
     }))
 
@@ -540,6 +569,36 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
 
 
+  async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) -> Result<Response<ListSpinnerRuleResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+  
+    //let req = request.into_inner();
+    
+    let rules = match db::spinner::SpinnerRule::list(&self.pool.clone()).await {
+      Ok(rules) => rules,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<SpinnerRuleDetail> = Vec::new();
+    
+    for rule in rules {
+      
+      let li = SpinnerRuleDetail {
+        id: rule.id,
+        probability: rule.probability,
+        win: rule.win,
+        type_id: rule.type_id
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListSpinnerRuleResponse {
+      result: result,
+    }))
+  
+  }
+  
 
 
 

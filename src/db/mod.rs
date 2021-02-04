@@ -10,3 +10,4 @@ pub mod invites;
 pub mod rank;
 pub mod config;
 pub mod subscription;
+pub mod spinner;

@@ -11,6 +11,7 @@ service EsmApi {
   
   // Common
   rpc ListStatusType(ListStatusTypeRequest) returns (ListStatusTypeResponse) {}
+  rpc ListWinType(ListWinTypeRequest) returns (ListWinTypeResponse) {}
   rpc ListTimezones(ListTimezonesRequest) returns (ListTimezonesResponse) {}
   
   // User
@@ -27,7 +28,8 @@ service EsmApi {
 
   // Config
   rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {}
-
+  // Spinner 
+  rpc ListSpinnerRule(ListSpinnerRuleRequest) returns (ListSpinnerRuleResponse) {}
   // Game
   rpc ListGameLeaderRule(ListGameLeaderRuleRequest) returns (ListGameLeaderRuleResponse) {}
   rpc GetGameCode(GetGameCodeRequest) returns (GetGameCodeResponse) {}
@@ -97,6 +99,17 @@ message ListStatusTypeResponse {
   repeated StatusTypeDetail result = 1;
 }
 message StatusTypeDetail {
+  int32 id = 1;
+  string title = 2;
+}
+
+//Get WinType from db
+message ListWinTypeRequest {
+}
+message ListWinTypeResponse {
+  repeated WinTypeDetail result = 1;
+}
+message WinTypeDetail {
   int32 id = 1;
   string title = 2;
 }
@@ -304,6 +317,19 @@ message ConfigDetail {
 
 
 
+
+//list game score rules from db
+message ListSpinnerRuleRequest {
+}
+message ListSpinnerRuleResponse {
+  repeated SpinnerRuleDetail result = 1;
+}
+message SpinnerRuleDetail {
+  int32 id = 1;
+  double probability = 2;
+  double win = 3;
+  int32 type_id = 4;
+}
 
 
 

@@ -25,6 +25,8 @@ use adminapi_proto::{
   // Common 
   ListStatusTypeRequest,  ListStatusTypeResponse,
   StatusTypeDetail,
+  ListWinTypeRequest, ListWinTypeResponse,
+  WinTypeDetail,
   ListTimezonesRequest,  ListTimezonesResponse,
   TimezonesDetail,
   // User
@@ -46,6 +48,11 @@ use adminapi_proto::{
   GetConfigRequest, GetConfigResponse,
   ConfigDetail,
 
+  AddSpinnerRuleRequest, AddSpinnerRuleResponse,
+  UpdateSpinnerRuleRequest, UpdateSpinnerRuleResponse,
+  DeleteSpinnerRuleRequest, DeleteSpinnerRuleResponse,
+  ListSpinnerRuleRequest, ListSpinnerRuleResponse,
+  SpinnerRuleDetail,
   // Game
   AddGameRequest, AddGameResponse,
   UpdateGameRequest, UpdateGameResponse,
@@ -191,6 +198,32 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     };
     
     Ok(Response::new(ListStatusTypeResponse {
+      result: result,
+    }))
+
+  }
+
+  async fn list_win_type(&self, request: Request<ListWinTypeRequest>, ) -> Result<Response<ListWinTypeResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+
+    let win_types = match db::spinner::SpinnerRule::list_win_type(&self.pool.clone()).await {
+      Ok(win_types) => win_types,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<WinTypeDetail> = Vec::new();
+    
+    for s in win_types {
+      
+      let li = WinTypeDetail {
+        id: s.id,
+        title: s.title
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListWinTypeResponse {
       result: result,
     }))
 
@@ -626,8 +659,97 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
 
 
+/**  Spinner Rule */
 
 
+async fn add_spinner_rule(&self, request: Request<AddSpinnerRuleRequest>, ) -> Result<Response<AddSpinnerRuleResponse>, Status> {
+  let _ = svc::check_is_admin(&request.metadata()).await?;
+
+  let req = request.into_inner();
+  let sr = db::spinner::SpinnerRule {
+    id: 0,
+    probability: req.probability.into(),
+    win: req.win.into(),
+    type_id: req.type_id.into()
+  };
+  
+  let result = match db::spinner::SpinnerRule::add(sr, &self.pool.clone()).await {
+    Ok(result) => result.to_string(),
+    Err(error) => error.to_string(),
+  };
+  
+  Ok(Response::new(AddSpinnerRuleResponse {
+    result: result,
+  }))
+
+}
+
+async fn update_spinner_rule(&self, request: Request<UpdateSpinnerRuleRequest>, ) -> Result<Response<UpdateSpinnerRuleResponse>, Status> {
+  let _ = svc::check_is_admin(&request.metadata()).await?;
+
+  let req = request.into_inner();
+  let sr = db::spinner::SpinnerRule {
+    id: req.id.into(),
+    probability: req.probability.into(),
+    win: req.win.into(),
+    type_id: req.type_id.into()
+  };
+  
+  let result = match db::spinner::SpinnerRule::update(sr, &self.pool.clone()).await {
+    Ok(result) => result.to_string(),
+    Err(error) => error.to_string(),
+  };
+  
+  Ok(Response::new(UpdateSpinnerRuleResponse {
+    result: result,
+  }))
+
+}
+
+async fn delete_spinner_rule(&self, request: Request<DeleteSpinnerRuleRequest>, ) -> Result<Response<DeleteSpinnerRuleResponse>, Status> {
+  let _ = svc::check_is_admin(&request.metadata()).await?;
+  
+  let req = request.into_inner();
+  
+  let result = match db::spinner::SpinnerRule::delete(req.id.into(), &self.pool.clone()).await {
+    Ok(result) => result.to_string(),
+    Err(error) => error.to_string(),
+  };
+  
+  Ok(Response::new(DeleteSpinnerRuleResponse {
+    result: result,
+  }))
+}
+
+async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) -> Result<Response<ListSpinnerRuleResponse>, Status> {
+  let _ = svc::check_is_admin(&request.metadata()).await?;
+
+  //let req = request.into_inner();
+  
+  let rules = match db::spinner::SpinnerRule::list(&self.pool.clone()).await {
+    Ok(rules) => rules,
+    Err(error) => panic!("Error: {}.", error),
+  };
+  
+  let mut result: Vec<SpinnerRuleDetail> = Vec::new();
+  
+  for rule in rules {
+    
+    let li = SpinnerRuleDetail {
+      id: rule.id,
+      probability: rule.probability,
+      win: rule.win,
+      type_id: rule.type_id
+    };
+    
+    result.push(li);
+  };
+  
+  Ok(Response::new(ListSpinnerRuleResponse {
+    result: result,
+  }))
+
+}
 
 
 
