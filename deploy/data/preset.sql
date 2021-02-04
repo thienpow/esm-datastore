@@ -7,6 +7,13 @@ COPY public.config (spinner, invites, games_per_ad, days_to_claim, id) FROM stdi
 \.
 
 
+COPY public.spinner_win_type (id, title) FROM stdin;
+1	Tickets
+2	Gems
+3	Cash
+4	Free Spin
+\.
+
 --
 -- public.item_type
 --
