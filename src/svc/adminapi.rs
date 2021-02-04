@@ -25,6 +25,8 @@ use adminapi_proto::{
   // Common 
   ListStatusTypeRequest,  ListStatusTypeResponse,
   StatusTypeDetail,
+  ListTimezonesRequest,  ListTimezonesResponse,
+  TimezonesDetail,
   // User
   SignInRequest, SignInResponse,
   AddUserRequest, AddUserResponse,
@@ -194,6 +196,33 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
   }
 
+  async fn list_timezones(&self, request: Request<ListTimezonesRequest>, ) -> Result<Response<ListTimezonesResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+
+    let timezones = match db::config::Config::list_timezones(&self.pool.clone()).await {
+      Ok(timezones) => timezones,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<TimezonesDetail> = Vec::new();
+    
+    for s in timezones {
+      
+      let li = TimezonesDetail {
+        id: s.id,
+        offset: s.offset,
+        stext: s.stext,
+        ltext: s.ltext
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListTimezonesResponse {
+      result: result,
+    }))
+
+  }
 
 
   /*************************************** User ***************************************

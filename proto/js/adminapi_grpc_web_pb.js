@@ -234,6 +234,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listStatusType =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListTimezonesRequest,
+ *   !proto.adminapi.esm.ListTimezonesResponse>}
+ */
+const methodDescriptor_AdminApi_ListTimezones = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListTimezones',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListTimezonesRequest,
+  proto.adminapi.esm.ListTimezonesResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListTimezonesRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListTimezonesResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListTimezonesRequest,
+ *   !proto.adminapi.esm.ListTimezonesResponse>}
+ */
+const methodInfo_AdminApi_ListTimezones = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListTimezonesResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListTimezonesRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListTimezonesResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListTimezonesRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListTimezonesResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListTimezonesResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listTimezones =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListTimezones',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListTimezones,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListTimezonesRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListTimezonesResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listTimezones =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListTimezones',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListTimezones);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.AddUserRequest,
  *   !proto.adminapi.esm.AddUserResponse>}
  */

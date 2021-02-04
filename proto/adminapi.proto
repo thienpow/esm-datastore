@@ -12,6 +12,7 @@ service AdminApi {
 
   // Common
   rpc ListStatusType(ListStatusTypeRequest) returns (ListStatusTypeResponse) {}
+  rpc ListTimezones(ListTimezonesRequest) returns (ListTimezonesResponse) {}
 
   // User
   rpc AddUser(AddUserRequest) returns (AddUserResponse) {}
@@ -140,6 +141,23 @@ message StatusTypeDetail {
   int32 id = 1;
   string title = 2;
 }
+
+//Get Timezones from db
+message ListTimezonesRequest {
+}
+message ListTimezonesResponse {
+  repeated TimezonesDetail result = 1;
+}
+message TimezonesDetail {
+  int32 id = 1;
+  double offset = 2;
+  string stext = 3;
+  string ltext = 4;
+}
+
+
+
+
 
 /*
 *************************************** User ***************************************

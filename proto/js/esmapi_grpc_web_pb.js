@@ -154,6 +154,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listStatusType =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.ListTimezonesRequest,
+ *   !proto.api.esm.ListTimezonesResponse>}
+ */
+const methodDescriptor_EsmApi_ListTimezones = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListTimezones',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.ListTimezonesRequest,
+  proto.api.esm.ListTimezonesResponse,
+  /**
+   * @param {!proto.api.esm.ListTimezonesRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListTimezonesResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.ListTimezonesRequest,
+ *   !proto.api.esm.ListTimezonesResponse>}
+ */
+const methodInfo_EsmApi_ListTimezones = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListTimezonesResponse,
+  /**
+   * @param {!proto.api.esm.ListTimezonesRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListTimezonesResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.ListTimezonesRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListTimezonesResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListTimezonesResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.listTimezones =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/ListTimezones',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListTimezones,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.ListTimezonesRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.ListTimezonesResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.listTimezones =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/ListTimezones',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListTimezones);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.SignInRequest,
  *   !proto.api.esm.SignInResponse>}
  */

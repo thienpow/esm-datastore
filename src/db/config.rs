@@ -14,6 +14,13 @@ pub struct StatusType {
   pub title: String
 }
 
+pub struct Timezones {
+  pub id: i32,
+  pub offset: f64,
+  pub stext: String,
+  pub ltext: String
+}
+
 impl Config {
     
     pub async fn update(config: Config, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
@@ -52,6 +59,26 @@ impl Config {
         let t = StatusType {
           id: row.get(0),
           title: row.get(1),
+        };
+
+        vec.push(t);
+      }
+      
+      Ok(vec)
+    }
+
+    pub async fn list_timezones(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Timezones>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, \"offset\", stext, ltext FROM public.\"timezones\" ORDER BY id ASC;").await?;
+    
+      let mut vec: Vec<Timezones> = Vec::new();
+      for row in conn.query(&stmt, &[]).await? {
+        let t = Timezones {
+          id: row.get(0),
+          offset: row.get(1),
+          stext: row.get(2),
+          ltext: row.get(3),
         };
 
         vec.push(t);
