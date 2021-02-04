@@ -73,7 +73,7 @@ COPY public."user" (id, username, passhash, email, phone, firstname, lastname, c
 --
 -- public.timezones
 --
-COPY public.timezones (offset, stext, ltext) FROM stdin;
+COPY public."timezones" (offset, stext, ltext) FROM stdin;
 -12	GMT -12:00	(GMT -12:00) Eniwetok, Kwajalein
 -11	GMT -11:00	(GMT -11:00) Midway Island, Samoa
 -10	GMT -10:00	(GMT -10:00) Hawaii
