@@ -745,6 +745,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     result.push(li);
   };
   
+  println!("result={}", result.len());
   Ok(Response::new(ListSpinnerRuleResponse {
     result: result,
   }))

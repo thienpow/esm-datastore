@@ -64,7 +64,7 @@ impl SpinnerRule {
 
         vec.push(rule);
       }
-      
+      println!("{}", vec.len());
       Ok(vec)
     }
 
