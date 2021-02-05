@@ -154,6 +154,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listStatusType =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.ListWinTypeRequest,
+ *   !proto.api.esm.ListWinTypeResponse>}
+ */
+const methodDescriptor_EsmApi_ListWinType = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListWinType',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.ListWinTypeRequest,
+  proto.api.esm.ListWinTypeResponse,
+  /**
+   * @param {!proto.api.esm.ListWinTypeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListWinTypeResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.ListWinTypeRequest,
+ *   !proto.api.esm.ListWinTypeResponse>}
+ */
+const methodInfo_EsmApi_ListWinType = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListWinTypeResponse,
+  /**
+   * @param {!proto.api.esm.ListWinTypeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListWinTypeResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.ListWinTypeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListWinTypeResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListWinTypeResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.listWinType =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/ListWinType',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListWinType,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.ListWinTypeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.ListWinTypeResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.listWinType =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/ListWinType',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListWinType);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.ListTimezonesRequest,
  *   !proto.api.esm.ListTimezonesResponse>}
  */
@@ -1108,6 +1188,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.getConfig =
       request,
       metadata || {},
       methodDescriptor_EsmApi_GetConfig);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.ListSpinnerRuleRequest,
+ *   !proto.api.esm.ListSpinnerRuleResponse>}
+ */
+const methodDescriptor_EsmApi_ListSpinnerRule = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListSpinnerRule',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.ListSpinnerRuleRequest,
+  proto.api.esm.ListSpinnerRuleResponse,
+  /**
+   * @param {!proto.api.esm.ListSpinnerRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListSpinnerRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.ListSpinnerRuleRequest,
+ *   !proto.api.esm.ListSpinnerRuleResponse>}
+ */
+const methodInfo_EsmApi_ListSpinnerRule = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListSpinnerRuleResponse,
+  /**
+   * @param {!proto.api.esm.ListSpinnerRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListSpinnerRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.ListSpinnerRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListSpinnerRuleResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListSpinnerRuleResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.listSpinnerRule =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/ListSpinnerRule',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListSpinnerRule,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.ListSpinnerRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.ListSpinnerRuleResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.listSpinnerRule =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/ListSpinnerRule',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListSpinnerRule);
 };
 
 

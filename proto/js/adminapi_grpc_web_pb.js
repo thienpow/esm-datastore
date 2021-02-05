@@ -234,6 +234,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listStatusType =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListWinTypeRequest,
+ *   !proto.adminapi.esm.ListWinTypeResponse>}
+ */
+const methodDescriptor_AdminApi_ListWinType = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListWinType',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListWinTypeRequest,
+  proto.adminapi.esm.ListWinTypeResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListWinTypeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListWinTypeResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListWinTypeRequest,
+ *   !proto.adminapi.esm.ListWinTypeResponse>}
+ */
+const methodInfo_AdminApi_ListWinType = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListWinTypeResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListWinTypeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListWinTypeResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListWinTypeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListWinTypeResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListWinTypeResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listWinType =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListWinType',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListWinType,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListWinTypeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListWinTypeResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listWinType =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListWinType',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListWinType);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.ListTimezonesRequest,
  *   !proto.adminapi.esm.ListTimezonesResponse>}
  */
@@ -1268,6 +1348,326 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.getConfig =
       request,
       metadata || {},
       methodDescriptor_AdminApi_GetConfig);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.AddSpinnerRuleRequest,
+ *   !proto.adminapi.esm.AddSpinnerRuleResponse>}
+ */
+const methodDescriptor_AdminApi_AddSpinnerRule = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/AddSpinnerRule',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.AddSpinnerRuleRequest,
+  proto.adminapi.esm.AddSpinnerRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.AddSpinnerRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.AddSpinnerRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.AddSpinnerRuleRequest,
+ *   !proto.adminapi.esm.AddSpinnerRuleResponse>}
+ */
+const methodInfo_AdminApi_AddSpinnerRule = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.AddSpinnerRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.AddSpinnerRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.AddSpinnerRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.AddSpinnerRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.AddSpinnerRuleResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.AddSpinnerRuleResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.addSpinnerRule =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/AddSpinnerRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_AddSpinnerRule,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.AddSpinnerRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.AddSpinnerRuleResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.addSpinnerRule =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/AddSpinnerRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_AddSpinnerRule);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.UpdateSpinnerRuleRequest,
+ *   !proto.adminapi.esm.UpdateSpinnerRuleResponse>}
+ */
+const methodDescriptor_AdminApi_UpdateSpinnerRule = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/UpdateSpinnerRule',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.UpdateSpinnerRuleRequest,
+  proto.adminapi.esm.UpdateSpinnerRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.UpdateSpinnerRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.UpdateSpinnerRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.UpdateSpinnerRuleRequest,
+ *   !proto.adminapi.esm.UpdateSpinnerRuleResponse>}
+ */
+const methodInfo_AdminApi_UpdateSpinnerRule = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.UpdateSpinnerRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.UpdateSpinnerRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.UpdateSpinnerRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.UpdateSpinnerRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.UpdateSpinnerRuleResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.UpdateSpinnerRuleResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.updateSpinnerRule =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/UpdateSpinnerRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_UpdateSpinnerRule,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.UpdateSpinnerRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.UpdateSpinnerRuleResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.updateSpinnerRule =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/UpdateSpinnerRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_UpdateSpinnerRule);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.DeleteSpinnerRuleRequest,
+ *   !proto.adminapi.esm.DeleteSpinnerRuleResponse>}
+ */
+const methodDescriptor_AdminApi_DeleteSpinnerRule = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/DeleteSpinnerRule',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.DeleteSpinnerRuleRequest,
+  proto.adminapi.esm.DeleteSpinnerRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.DeleteSpinnerRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.DeleteSpinnerRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.DeleteSpinnerRuleRequest,
+ *   !proto.adminapi.esm.DeleteSpinnerRuleResponse>}
+ */
+const methodInfo_AdminApi_DeleteSpinnerRule = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.DeleteSpinnerRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.DeleteSpinnerRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.DeleteSpinnerRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.DeleteSpinnerRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.DeleteSpinnerRuleResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.DeleteSpinnerRuleResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.deleteSpinnerRule =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/DeleteSpinnerRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_DeleteSpinnerRule,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.DeleteSpinnerRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.DeleteSpinnerRuleResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.deleteSpinnerRule =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/DeleteSpinnerRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_DeleteSpinnerRule);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListSpinnerRuleRequest,
+ *   !proto.adminapi.esm.ListSpinnerRuleResponse>}
+ */
+const methodDescriptor_AdminApi_ListSpinnerRule = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListSpinnerRule',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListSpinnerRuleRequest,
+  proto.adminapi.esm.ListSpinnerRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListSpinnerRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListSpinnerRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListSpinnerRuleRequest,
+ *   !proto.adminapi.esm.ListSpinnerRuleResponse>}
+ */
+const methodInfo_AdminApi_ListSpinnerRule = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListSpinnerRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListSpinnerRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListSpinnerRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListSpinnerRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListSpinnerRuleResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListSpinnerRuleResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listSpinnerRule =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListSpinnerRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListSpinnerRule,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListSpinnerRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListSpinnerRuleResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listSpinnerRule =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListSpinnerRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListSpinnerRule);
 };
 
 

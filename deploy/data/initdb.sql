@@ -5,7 +5,7 @@
 -- Dumped from database version 12.5 (Ubuntu 12.5-0ubuntu0.20.04.1)
 -- Dumped by pg_dump version 13.1
 
--- Started on 2021-02-04 23:59:47 +08
+-- Started on 2021-02-05 00:50:17 +08
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -392,9 +392,9 @@ ALTER SEQUENCE public.shop_buy_id_seq OWNED BY public.shop_buy.id;
 
 CREATE TABLE public.spinner_rule (
     id integer NOT NULL,
-    probability integer,
+    probability double precision,
     win double precision,
-    type integer
+    type_id integer
 );
 
 
@@ -1285,7 +1285,7 @@ CREATE INDEX tournament_lower_idx ON public.tournament USING btree (lower((title
 CREATE INDEX tournament_set_lower_idx ON public.tournament_set USING btree (lower((title)::text));
 
 
--- Completed on 2021-02-04 23:59:52 +08
+-- Completed on 2021-02-05 00:50:22 +08
 
 --
 -- PostgreSQL database dump complete
