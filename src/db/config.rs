@@ -3,7 +3,6 @@ use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
 
 pub struct Config {
-  pub spinner: Vec<i32>,
   pub invites: i32,
   pub games_per_ad: i32,
   pub days_to_claim: i32,
@@ -26,9 +25,9 @@ impl Config {
     pub async fn update(config: Config, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"config\" SET spinner=$1, invites=$2, games_per_ad=$3, days_to_claim=$4;").await?;
+      let stmt = conn.prepare("UPDATE public.\"config\" SET invites=$1, games_per_ad=$2, days_to_claim=$3;").await?;
       let n = conn.execute(&stmt, 
-                  &[&config.spinner, &config.invites,
+                  &[&config.invites,
                   &config.games_per_ad, &config.days_to_claim]).await?;
     
       Ok(n)
@@ -37,14 +36,13 @@ impl Config {
     pub async fn get(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Config, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT spinner, invites, games_per_ad, days_to_claim FROM public.\"config\";").await?;
+      let stmt = conn.prepare("SELECT invites, games_per_ad, days_to_claim FROM public.\"config\";").await?;
       let row = conn.query_one(&stmt, &[]).await?;
 
       Ok(Config {
-        spinner: row.get(0),
-        invites: row.get(1),
-        games_per_ad: row.get(2),
-        days_to_claim: row.get(3)
+        invites: row.get(0),
+        games_per_ad: row.get(1),
+        days_to_claim: row.get(2)
       })
     }
 

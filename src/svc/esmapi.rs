@@ -551,7 +551,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
         Ok(Response::new(GetConfigResponse {
           result: Some(ConfigDetail {
-            spinner: result.spinner,
             invites: result.invites,
             games_per_ad: result.games_per_ad,
             days_to_claim: result.days_to_claim

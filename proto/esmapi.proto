@@ -307,10 +307,9 @@ message GetConfigResponse {
   ConfigDetail result = 1;
 }
 message ConfigDetail {
-  repeated int32 spinner = 1;
-  int32 invites = 2;
-  int32 games_per_ad = 3;
-  int32 days_to_claim = 4;
+  int32 invites = 1;
+  int32 games_per_ad = 2;
+  int32 days_to_claim = 3;
 }
 
 

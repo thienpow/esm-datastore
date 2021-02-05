@@ -877,7 +877,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.api.esm.ConfigDetail = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.api.esm.ConfigDetail.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
 goog.inherits(proto.api.esm.ConfigDetail, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -9049,13 +9049,6 @@ proto.api.esm.GetConfigResponse.prototype.hasResult = function() {
 
 
 
-/**
- * List of repeated fields within this message type.
- * @private {!Array<number>}
- * @const
- */
-proto.api.esm.ConfigDetail.repeatedFields_ = [1];
-
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -9087,10 +9080,9 @@ proto.api.esm.ConfigDetail.prototype.toObject = function(opt_includeInstance) {
  */
 proto.api.esm.ConfigDetail.toObject = function(includeInstance, msg) {
   var f, obj = {
-    spinnerList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f,
-    invites: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    gamesPerAd: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    daysToClaim: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    invites: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    gamesPerAd: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    daysToClaim: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -9128,18 +9120,14 @@ proto.api.esm.ConfigDetail.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!Array<number>} */ (reader.readPackedInt32());
-      msg.setSpinnerList(value);
-      break;
-    case 2:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setInvites(value);
       break;
-    case 3:
+    case 2:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGamesPerAd(value);
       break;
-    case 4:
+    case 3:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setDaysToClaim(value);
       break;
@@ -9172,31 +9160,24 @@ proto.api.esm.ConfigDetail.prototype.serializeBinary = function() {
  */
 proto.api.esm.ConfigDetail.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getSpinnerList();
-  if (f.length > 0) {
-    writer.writePackedInt32(
-      1,
-      f
-    );
-  }
   f = message.getInvites();
   if (f !== 0) {
     writer.writeInt32(
-      2,
+      1,
       f
     );
   }
   f = message.getGamesPerAd();
   if (f !== 0) {
     writer.writeInt32(
-      3,
+      2,
       f
     );
   }
   f = message.getDaysToClaim();
   if (f !== 0) {
     writer.writeInt32(
-      4,
+      3,
       f
     );
   }
@@ -9204,48 +9185,11 @@ proto.api.esm.ConfigDetail.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * repeated int32 spinner = 1;
- * @return {!Array<number>}
- */
-proto.api.esm.ConfigDetail.prototype.getSpinnerList = function() {
-  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 1));
-};
-
-
-/**
- * @param {!Array<number>} value
- * @return {!proto.api.esm.ConfigDetail} returns this
- */
-proto.api.esm.ConfigDetail.prototype.setSpinnerList = function(value) {
-  return jspb.Message.setField(this, 1, value || []);
-};
-
-
-/**
- * @param {number} value
- * @param {number=} opt_index
- * @return {!proto.api.esm.ConfigDetail} returns this
- */
-proto.api.esm.ConfigDetail.prototype.addSpinner = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 1, value, opt_index);
-};
-
-
-/**
- * Clears the list making it empty but non-null.
- * @return {!proto.api.esm.ConfigDetail} returns this
- */
-proto.api.esm.ConfigDetail.prototype.clearSpinnerList = function() {
-  return this.setSpinnerList([]);
-};
-
-
-/**
- * optional int32 invites = 2;
+ * optional int32 invites = 1;
  * @return {number}
  */
 proto.api.esm.ConfigDetail.prototype.getInvites = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
@@ -9254,16 +9198,16 @@ proto.api.esm.ConfigDetail.prototype.getInvites = function() {
  * @return {!proto.api.esm.ConfigDetail} returns this
  */
 proto.api.esm.ConfigDetail.prototype.setInvites = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional int32 games_per_ad = 3;
+ * optional int32 games_per_ad = 2;
  * @return {number}
  */
 proto.api.esm.ConfigDetail.prototype.getGamesPerAd = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
@@ -9272,16 +9216,16 @@ proto.api.esm.ConfigDetail.prototype.getGamesPerAd = function() {
  * @return {!proto.api.esm.ConfigDetail} returns this
  */
 proto.api.esm.ConfigDetail.prototype.setGamesPerAd = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
 /**
- * optional int32 days_to_claim = 4;
+ * optional int32 days_to_claim = 3;
  * @return {number}
  */
 proto.api.esm.ConfigDetail.prototype.getDaysToClaim = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
@@ -9290,7 +9234,7 @@ proto.api.esm.ConfigDetail.prototype.getDaysToClaim = function() {
  * @return {!proto.api.esm.ConfigDetail} returns this
  */
 proto.api.esm.ConfigDetail.prototype.setDaysToClaim = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 

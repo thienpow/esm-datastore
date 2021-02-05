@@ -618,7 +618,6 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
     let req = request.into_inner();
     let config = db::config::Config {
-      spinner: req.spinner.into(),
       invites: req.invites.into(),
       games_per_ad: req.games_per_ad.into(),
       days_to_claim: req.days_to_claim.into(),
@@ -644,7 +643,6 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
         Ok(Response::new(GetConfigResponse {
           result: Some(ConfigDetail {
-            spinner: result.spinner,
             invites: result.invites,
             games_per_ad: result.games_per_ad,
             days_to_claim: result.days_to_claim
@@ -745,7 +743,6 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     result.push(li);
   };
   
-  println!("result={}", result.len());
   Ok(Response::new(ListSpinnerRuleResponse {
     result: result,
   }))
