@@ -18,14 +18,14 @@ pub struct WinType {
 
 impl SpinnerRule {
     
-    pub async fn add(sr: SpinnerRule, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn add(sr: SpinnerRule, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i32, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"spinner_rule\" (probability, win, type_id) VALUES ($1, $2, $3) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
                   &[&sr.probability, &sr.win, &sr.type_id]).await?;
     
-      Ok(row.get::<usize, i64>(0))
+      Ok(row.get::<usize, i32>(0))
     }
     
     pub async fn update(sr: SpinnerRule, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
@@ -39,7 +39,7 @@ impl SpinnerRule {
       Ok(n)
     }
     
-    pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn delete(id: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("DELETE FROM public.\"spinner_rule\" WHERE id=$1;").await?;
