@@ -51,7 +51,7 @@ impl SpinnerRule {
     pub async fn list(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<SpinnerRule>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, probability, win, type_id FROM public.\"spinner_rule\" WHERE id=$1;").await?;
+      let stmt = conn.prepare("SELECT id, probability, win, type_id FROM public.\"spinner_rule\" ORDER BY id ASC;").await?;
     
       let mut vec: Vec<SpinnerRule> = Vec::new();
       for row in conn.query(&stmt, &[]).await? {
