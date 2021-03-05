@@ -1275,7 +1275,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     let req = request.into_inner();
     
-    let tournaments = match db::tournament::Tournament::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
+    let tournaments = match db::tournament::Tournament::list(0, 0, "".to_string(), 0, req.tour_ids.into(), &self.pool.clone()).await {
       Ok(tournaments) => tournaments,
       Err(error) => panic!("Error: {}.", error),
     };

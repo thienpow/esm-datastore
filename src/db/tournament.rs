@@ -124,7 +124,7 @@ impl Tournament {
       Ok(n)
     }
     
-    pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Tournament>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, ids: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Tournament>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<Tournament> = Vec::new();
@@ -147,22 +147,41 @@ impl Tournament {
         }
         
       } else {
-        let mut sql_string = "SELECT id, title, tour_set_ids, status FROM public.\"tournament\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
-        if status > 0 {
-          sql_string = format!("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE status={} LIMIT $1 OFFSET $2;", status);
-        }
-        
-        let stmt = conn.prepare(&sql_string).await?;
+        if ids.len() > 0 {
+          let sql_string = "SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE id IN ($1);".to_string();
+          
+          let stmt = conn.prepare(&sql_string).await?;
+      
+          for row in conn.query(&stmt, &[&ids]).await? {
+            let tournament = Tournament {
+              id: row.get(0),
+              title: row.get(1),
+              tour_set_ids:  row.get(2),
+              status: row.get(3)
+            };
     
-        for row in conn.query(&stmt, &[&limit, &offset]).await? {
-          let tournament = Tournament {
-            id: row.get(0),
-            title: row.get(1),
-            tour_set_ids:  row.get(2),
-            status: row.get(3)
-          };
-  
-          vec.push(tournament);
+            vec.push(tournament);
+          }
+          
+        } else {
+          let mut sql_string = "SELECT id, title, tour_set_ids, status FROM public.\"tournament\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
+          if status > 0 {
+            sql_string = format!("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE status={} LIMIT $1 OFFSET $2;", status);
+          }
+          
+          let stmt = conn.prepare(&sql_string).await?;
+      
+          for row in conn.query(&stmt, &[&limit, &offset]).await? {
+            let tournament = Tournament {
+              id: row.get(0),
+              title: row.get(1),
+              tour_set_ids:  row.get(2),
+              status: row.get(3)
+            };
+    
+            vec.push(tournament);
+          }
+          
         }
         
       }

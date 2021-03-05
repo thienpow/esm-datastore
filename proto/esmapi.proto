@@ -861,8 +861,7 @@ message SubscriptionTypeDetail {
 */
 //Get tournament from db
 message ListTournamentRequest {
-  int64 limit = 1;
-  int64 offset = 2;
+  string tour_ids = 1;
 }
 message ListTournamentResponse {
   repeated TournamentDetail result = 1;

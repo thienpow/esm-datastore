@@ -21600,8 +21600,7 @@ proto.api.esm.ListTournamentRequest.prototype.toObject = function(opt_includeIns
  */
 proto.api.esm.ListTournamentRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    limit: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    offset: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    tourIds: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -21639,12 +21638,8 @@ proto.api.esm.ListTournamentRequest.deserializeBinaryFromReader = function(msg, 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setLimit(value);
-      break;
-    case 2:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setOffset(value);
+      var value = /** @type {string} */ (reader.readString());
+      msg.setTourIds(value);
       break;
     default:
       reader.skipField();
@@ -21675,56 +21670,31 @@ proto.api.esm.ListTournamentRequest.prototype.serializeBinary = function() {
  */
 proto.api.esm.ListTournamentRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getLimit();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getTourIds();
+  if (f.length > 0) {
+    writer.writeString(
       1,
       f
     );
   }
-  f = message.getOffset();
-  if (f !== 0) {
-    writer.writeInt64(
-      2,
-      f
-    );
-  }
 };
 
 
 /**
- * optional int64 limit = 1;
- * @return {number}
+ * optional string tour_ids = 1;
+ * @return {string}
  */
-proto.api.esm.ListTournamentRequest.prototype.getLimit = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+proto.api.esm.ListTournamentRequest.prototype.getTourIds = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * @param {number} value
+ * @param {string} value
  * @return {!proto.api.esm.ListTournamentRequest} returns this
  */
-proto.api.esm.ListTournamentRequest.prototype.setLimit = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-/**
- * optional int64 offset = 2;
- * @return {number}
- */
-proto.api.esm.ListTournamentRequest.prototype.getOffset = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.api.esm.ListTournamentRequest} returns this
- */
-proto.api.esm.ListTournamentRequest.prototype.setOffset = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+proto.api.esm.ListTournamentRequest.prototype.setTourIds = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 

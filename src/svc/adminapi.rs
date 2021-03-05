@@ -2136,7 +2136,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let tournaments = match db::tournament::Tournament::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), &self.pool.clone()).await {
+    let tournaments = match db::tournament::Tournament::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), "".to_string(), &self.pool.clone()).await {
       Ok(tournaments) => tournaments,
       Err(error) => panic!("Error: {}.", error),
     };
