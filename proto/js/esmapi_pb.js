@@ -22608,7 +22608,7 @@ proto.api.esm.ListTournamentSetRequest.prototype.toObject = function(opt_include
  */
 proto.api.esm.ListTournamentSetRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    formatIds: jspb.Message.getFieldWithDefault(msg, 3, "")
+    formatIds: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -22645,7 +22645,7 @@ proto.api.esm.ListTournamentSetRequest.deserializeBinaryFromReader = function(ms
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 3:
+    case 1:
       var value = /** @type {string} */ (reader.readString());
       msg.setFormatIds(value);
       break;
@@ -22681,7 +22681,7 @@ proto.api.esm.ListTournamentSetRequest.serializeBinaryToWriter = function(messag
   f = message.getFormatIds();
   if (f.length > 0) {
     writer.writeString(
-      3,
+      1,
       f
     );
   }
@@ -22689,11 +22689,11 @@ proto.api.esm.ListTournamentSetRequest.serializeBinaryToWriter = function(messag
 
 
 /**
- * optional string format_ids = 3;
+ * optional string format_ids = 1;
  * @return {string}
  */
 proto.api.esm.ListTournamentSetRequest.prototype.getFormatIds = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
@@ -22702,7 +22702,7 @@ proto.api.esm.ListTournamentSetRequest.prototype.getFormatIds = function() {
  * @return {!proto.api.esm.ListTournamentSetRequest} returns this
  */
 proto.api.esm.ListTournamentSetRequest.prototype.setFormatIds = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 

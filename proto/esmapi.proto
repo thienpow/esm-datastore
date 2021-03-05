@@ -889,7 +889,7 @@ message TournamentCount {
 
 //List tournament Set  
 message ListTournamentSetRequest {
-  string format_ids = 3;
+  string format_ids = 1;
 }
 message ListTournamentSetResponse {
   repeated TournamentSetDetail result = 1;
