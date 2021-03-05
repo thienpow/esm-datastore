@@ -90,7 +90,9 @@ use esmapi_proto::{
 
   // Tournament
   ListTournamentRequest, ListTournamentResponse, 
-  TournamentDetail, 
+  ListTournamentSetRequest, ListTournamentSetResponse, 
+  ListTournamentSetGameRuleRequest, ListTournamentSetGameRuleResponse, 
+  TournamentDetail, TournamentSetDetail, TournamentSetGameRuleDetail,
 
   // Winner
   ListWinnerRequest, ListWinnerResponse, 
@@ -1303,6 +1305,74 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
   }
 
+
+  async fn list_tournament_set(&self, request: Request<ListTournamentSetRequest>, ) -> Result<Response<ListTournamentSetResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+    
+    let req = request.into_inner();
+    
+    let sets = match db::tournament::Tournament::list_set(0, 0, "".to_string(), req.format_ids.into(), &self.pool.clone()).await {
+      Ok(sets) => sets,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<TournamentSetDetail> = Vec::new();
+    
+    for set in sets {
+      
+      //let seconds_off = tournament.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
+        
+      let li = TournamentSetDetail {
+        id: set.id,
+        title: set.title,
+        duration_days: set.duration_days,
+        duration_hours: set.duration_hours,
+        is_group: set.is_group
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListTournamentSetResponse {
+      result: result,
+    }))
+
+  }
+
+  async fn list_tournament_set_game_rule(&self, request: Request<ListTournamentSetGameRuleRequest>, ) -> Result<Response<ListTournamentSetGameRuleResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+    
+    let req = request.into_inner();
+    
+    let rules = match db::tournament::Tournament::list_set_game_rule(req.id.into(), &self.pool.clone()).await {
+      Ok(rules) => rules,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<TournamentSetGameRuleDetail> = Vec::new();
+    
+    for rule in rules {
+      
+      //let seconds_off = tournament.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
+        
+      let li = TournamentSetGameRuleDetail {
+        id: rule.id,
+        set_id: rule.set_id,
+        game_id: rule.game_id,
+        duration_days: rule.duration_days,
+        duration_hours: rule.duration_hours,
+        duration_minutes: rule.duration_minutes,
+        group_id: rule.group_id
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListTournamentSetGameRuleResponse {
+      result: result,
+    }))
+
+  }
 
 
 

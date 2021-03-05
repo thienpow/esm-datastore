@@ -170,7 +170,7 @@ impl Tournament {
       Ok(vec)
     }
 
-    pub async fn list_set(limit: i64, offset: i64, search_title: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<TournamentSet>, RunError<tokio_postgres::Error>> {
+    pub async fn list_set(limit: i64, offset: i64, search_title: String, ids: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<TournamentSet>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<TournamentSet> = Vec::new();
@@ -191,19 +191,39 @@ impl Tournament {
         }
         
       } else {
-        let sql_string = "SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
-        let stmt = conn.prepare(&sql_string).await?;
+
+        if ids.len() > 0 {
+          let sql_string = "SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE id IN ($1);".to_string();
+
+          let stmt = conn.prepare(&sql_string).await?;
+      
+          for row in conn.query(&stmt, &[&ids]).await? {
+            let set = TournamentSet {
+              id: row.get(0),
+              title: row.get(1), 
+              duration_days: row.get(2),
+              duration_hours: row.get(3), 
+              is_group: row.get(4), 
+            };
     
-        for row in conn.query(&stmt, &[&limit, &offset]).await? {
-          let set = TournamentSet {
-            id: row.get(0),
-            title: row.get(1), 
-            duration_days: row.get(2),
-            duration_hours: row.get(3), 
-            is_group: row.get(4), 
-          };
-  
-          vec.push(set);
+            vec.push(set);
+          }
+        } else {
+          let sql_string = "SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
+
+          let stmt = conn.prepare(&sql_string).await?;
+      
+          for row in conn.query(&stmt, &[&limit, &offset]).await? {
+            let set = TournamentSet {
+              id: row.get(0),
+              title: row.get(1), 
+              duration_days: row.get(2),
+              duration_hours: row.get(3), 
+              is_group: row.get(4), 
+            };
+    
+            vec.push(set);
+          }
         }
         
       }
