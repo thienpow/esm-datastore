@@ -149,10 +149,10 @@ impl Tournament {
       } else {
         if ids.len() > 0 {
           let sql_string = format!("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE id IN ({});", ids);
-          print!("sql_string: {}.", sql_string);
+          //print!("sql_string: {}.", sql_string);
           let stmt = conn.prepare(&sql_string).await?;
       
-          for row in conn.query(&stmt, &[&ids]).await? {
+          for row in conn.query(&stmt, &[]).await? {
             let tournament = Tournament {
               id: row.get(0),
               title: row.get(1),
@@ -212,11 +212,11 @@ impl Tournament {
       } else {
 
         if ids.len() > 0 {
-          let sql_string = "SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE id IN ($1);".to_string();
+          let sql_string = format!("SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE id IN ({});", ids);
 
           let stmt = conn.prepare(&sql_string).await?;
       
-          for row in conn.query(&stmt, &[&ids]).await? {
+          for row in conn.query(&stmt, &[]).await? {
             let set = TournamentSet {
               id: row.get(0),
               title: row.get(1), 
