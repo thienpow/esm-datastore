@@ -1211,6 +1211,11 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         type_id: sub.type_id,
         price: sub.price,
         quantity: sub.quantity,
+        one_time_gem: sub.one_time_gem,
+        one_time_multiplier: sub.one_time_multiplier,
+        one_time_is_firstonly: sub.one_time_is_firstonly,
+        daily_gem: sub.daily_gem,
+        daily_multiplier: sub.daily_multiplier,
         status: sub.status
       };
       

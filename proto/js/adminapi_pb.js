@@ -29027,7 +29027,12 @@ proto.adminapi.esm.AddSubscriptionRequest.toObject = function(includeInstance, m
     typeId: jspb.Message.getFieldWithDefault(msg, 5, 0),
     price: jspb.Message.getFloatingPointFieldWithDefault(msg, 6, 0.0),
     quantity: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 8, 0)
+    oneTimeGem: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    oneTimeMultiplier: jspb.Message.getFloatingPointFieldWithDefault(msg, 9, 0.0),
+    oneTimeIsFirstonly: jspb.Message.getBooleanFieldWithDefault(msg, 10, false),
+    dailyGem: jspb.Message.getFieldWithDefault(msg, 11, 0),
+    dailyMultiplier: jspb.Message.getFloatingPointFieldWithDefault(msg, 12, 0.0),
+    status: jspb.Message.getFieldWithDefault(msg, 13, 0)
   };
 
   if (includeInstance) {
@@ -29093,6 +29098,26 @@ proto.adminapi.esm.AddSubscriptionRequest.deserializeBinaryFromReader = function
       msg.setQuantity(value);
       break;
     case 8:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setOneTimeGem(value);
+      break;
+    case 9:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setOneTimeMultiplier(value);
+      break;
+    case 10:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setOneTimeIsFirstonly(value);
+      break;
+    case 11:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setDailyGem(value);
+      break;
+    case 12:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setDailyMultiplier(value);
+      break;
+    case 13:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
@@ -29174,10 +29199,45 @@ proto.adminapi.esm.AddSubscriptionRequest.serializeBinaryToWriter = function(mes
       f
     );
   }
+  f = message.getOneTimeGem();
+  if (f !== 0) {
+    writer.writeInt64(
+      8,
+      f
+    );
+  }
+  f = message.getOneTimeMultiplier();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      9,
+      f
+    );
+  }
+  f = message.getOneTimeIsFirstonly();
+  if (f) {
+    writer.writeBool(
+      10,
+      f
+    );
+  }
+  f = message.getDailyGem();
+  if (f !== 0) {
+    writer.writeInt64(
+      11,
+      f
+    );
+  }
+  f = message.getDailyMultiplier();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      12,
+      f
+    );
+  }
   f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
-      8,
+      13,
       f
     );
   }
@@ -29311,10 +29371,10 @@ proto.adminapi.esm.AddSubscriptionRequest.prototype.setQuantity = function(value
 
 
 /**
- * optional int32 status = 8;
+ * optional int64 one_time_gem = 8;
  * @return {number}
  */
-proto.adminapi.esm.AddSubscriptionRequest.prototype.getStatus = function() {
+proto.adminapi.esm.AddSubscriptionRequest.prototype.getOneTimeGem = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
@@ -29323,8 +29383,98 @@ proto.adminapi.esm.AddSubscriptionRequest.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.AddSubscriptionRequest} returns this
  */
-proto.adminapi.esm.AddSubscriptionRequest.prototype.setStatus = function(value) {
+proto.adminapi.esm.AddSubscriptionRequest.prototype.setOneTimeGem = function(value) {
   return jspb.Message.setProto3IntField(this, 8, value);
+};
+
+
+/**
+ * optional double one_time_multiplier = 9;
+ * @return {number}
+ */
+proto.adminapi.esm.AddSubscriptionRequest.prototype.getOneTimeMultiplier = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 9, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.AddSubscriptionRequest} returns this
+ */
+proto.adminapi.esm.AddSubscriptionRequest.prototype.setOneTimeMultiplier = function(value) {
+  return jspb.Message.setProto3FloatField(this, 9, value);
+};
+
+
+/**
+ * optional bool one_time_is_firstonly = 10;
+ * @return {boolean}
+ */
+proto.adminapi.esm.AddSubscriptionRequest.prototype.getOneTimeIsFirstonly = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 10, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.adminapi.esm.AddSubscriptionRequest} returns this
+ */
+proto.adminapi.esm.AddSubscriptionRequest.prototype.setOneTimeIsFirstonly = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 10, value);
+};
+
+
+/**
+ * optional int64 daily_gem = 11;
+ * @return {number}
+ */
+proto.adminapi.esm.AddSubscriptionRequest.prototype.getDailyGem = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.AddSubscriptionRequest} returns this
+ */
+proto.adminapi.esm.AddSubscriptionRequest.prototype.setDailyGem = function(value) {
+  return jspb.Message.setProto3IntField(this, 11, value);
+};
+
+
+/**
+ * optional double daily_multiplier = 12;
+ * @return {number}
+ */
+proto.adminapi.esm.AddSubscriptionRequest.prototype.getDailyMultiplier = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 12, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.AddSubscriptionRequest} returns this
+ */
+proto.adminapi.esm.AddSubscriptionRequest.prototype.setDailyMultiplier = function(value) {
+  return jspb.Message.setProto3FloatField(this, 12, value);
+};
+
+
+/**
+ * optional int32 status = 13;
+ * @return {number}
+ */
+proto.adminapi.esm.AddSubscriptionRequest.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 13, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.AddSubscriptionRequest} returns this
+ */
+proto.adminapi.esm.AddSubscriptionRequest.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 13, value);
 };
 
 
@@ -29498,7 +29648,12 @@ proto.adminapi.esm.UpdateSubscriptionRequest.toObject = function(includeInstance
     typeId: jspb.Message.getFieldWithDefault(msg, 6, 0),
     price: jspb.Message.getFloatingPointFieldWithDefault(msg, 7, 0.0),
     quantity: jspb.Message.getFieldWithDefault(msg, 8, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 9, 0)
+    oneTimeGem: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    oneTimeMultiplier: jspb.Message.getFloatingPointFieldWithDefault(msg, 10, 0.0),
+    oneTimeIsFirstonly: jspb.Message.getBooleanFieldWithDefault(msg, 11, false),
+    dailyGem: jspb.Message.getFieldWithDefault(msg, 12, 0),
+    dailyMultiplier: jspb.Message.getFloatingPointFieldWithDefault(msg, 13, 0.0),
+    status: jspb.Message.getFieldWithDefault(msg, 14, 0)
   };
 
   if (includeInstance) {
@@ -29568,6 +29723,26 @@ proto.adminapi.esm.UpdateSubscriptionRequest.deserializeBinaryFromReader = funct
       msg.setQuantity(value);
       break;
     case 9:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setOneTimeGem(value);
+      break;
+    case 10:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setOneTimeMultiplier(value);
+      break;
+    case 11:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setOneTimeIsFirstonly(value);
+      break;
+    case 12:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setDailyGem(value);
+      break;
+    case 13:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setDailyMultiplier(value);
+      break;
+    case 14:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
@@ -29656,10 +29831,45 @@ proto.adminapi.esm.UpdateSubscriptionRequest.serializeBinaryToWriter = function(
       f
     );
   }
+  f = message.getOneTimeGem();
+  if (f !== 0) {
+    writer.writeInt64(
+      9,
+      f
+    );
+  }
+  f = message.getOneTimeMultiplier();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      10,
+      f
+    );
+  }
+  f = message.getOneTimeIsFirstonly();
+  if (f) {
+    writer.writeBool(
+      11,
+      f
+    );
+  }
+  f = message.getDailyGem();
+  if (f !== 0) {
+    writer.writeInt64(
+      12,
+      f
+    );
+  }
+  f = message.getDailyMultiplier();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      13,
+      f
+    );
+  }
   f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
-      9,
+      14,
       f
     );
   }
@@ -29811,10 +30021,10 @@ proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setQuantity = function(va
 
 
 /**
- * optional int32 status = 9;
+ * optional int64 one_time_gem = 9;
  * @return {number}
  */
-proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getStatus = function() {
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getOneTimeGem = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
 };
 
@@ -29823,8 +30033,98 @@ proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.UpdateSubscriptionRequest} returns this
  */
-proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setStatus = function(value) {
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setOneTimeGem = function(value) {
   return jspb.Message.setProto3IntField(this, 9, value);
+};
+
+
+/**
+ * optional double one_time_multiplier = 10;
+ * @return {number}
+ */
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getOneTimeMultiplier = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 10, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.UpdateSubscriptionRequest} returns this
+ */
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setOneTimeMultiplier = function(value) {
+  return jspb.Message.setProto3FloatField(this, 10, value);
+};
+
+
+/**
+ * optional bool one_time_is_firstonly = 11;
+ * @return {boolean}
+ */
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getOneTimeIsFirstonly = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 11, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.adminapi.esm.UpdateSubscriptionRequest} returns this
+ */
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setOneTimeIsFirstonly = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 11, value);
+};
+
+
+/**
+ * optional int64 daily_gem = 12;
+ * @return {number}
+ */
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getDailyGem = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.UpdateSubscriptionRequest} returns this
+ */
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setDailyGem = function(value) {
+  return jspb.Message.setProto3IntField(this, 12, value);
+};
+
+
+/**
+ * optional double daily_multiplier = 13;
+ * @return {number}
+ */
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getDailyMultiplier = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 13, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.UpdateSubscriptionRequest} returns this
+ */
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setDailyMultiplier = function(value) {
+  return jspb.Message.setProto3FloatField(this, 13, value);
+};
+
+
+/**
+ * optional int32 status = 14;
+ * @return {number}
+ */
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 14, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.UpdateSubscriptionRequest} returns this
+ */
+proto.adminapi.esm.UpdateSubscriptionRequest.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 14, value);
 };
 
 
@@ -30638,7 +30938,12 @@ proto.adminapi.esm.SubscriptionDetail.toObject = function(includeInstance, msg) 
     typeId: jspb.Message.getFieldWithDefault(msg, 6, 0),
     price: jspb.Message.getFloatingPointFieldWithDefault(msg, 7, 0.0),
     quantity: jspb.Message.getFieldWithDefault(msg, 8, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 9, 0)
+    oneTimeGem: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    oneTimeMultiplier: jspb.Message.getFloatingPointFieldWithDefault(msg, 10, 0.0),
+    oneTimeIsFirstonly: jspb.Message.getBooleanFieldWithDefault(msg, 11, false),
+    dailyGem: jspb.Message.getFieldWithDefault(msg, 12, 0),
+    dailyMultiplier: jspb.Message.getFloatingPointFieldWithDefault(msg, 13, 0.0),
+    status: jspb.Message.getFieldWithDefault(msg, 14, 0)
   };
 
   if (includeInstance) {
@@ -30708,6 +31013,26 @@ proto.adminapi.esm.SubscriptionDetail.deserializeBinaryFromReader = function(msg
       msg.setQuantity(value);
       break;
     case 9:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setOneTimeGem(value);
+      break;
+    case 10:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setOneTimeMultiplier(value);
+      break;
+    case 11:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setOneTimeIsFirstonly(value);
+      break;
+    case 12:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setDailyGem(value);
+      break;
+    case 13:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setDailyMultiplier(value);
+      break;
+    case 14:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
@@ -30796,10 +31121,45 @@ proto.adminapi.esm.SubscriptionDetail.serializeBinaryToWriter = function(message
       f
     );
   }
+  f = message.getOneTimeGem();
+  if (f !== 0) {
+    writer.writeInt64(
+      9,
+      f
+    );
+  }
+  f = message.getOneTimeMultiplier();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      10,
+      f
+    );
+  }
+  f = message.getOneTimeIsFirstonly();
+  if (f) {
+    writer.writeBool(
+      11,
+      f
+    );
+  }
+  f = message.getDailyGem();
+  if (f !== 0) {
+    writer.writeInt64(
+      12,
+      f
+    );
+  }
+  f = message.getDailyMultiplier();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      13,
+      f
+    );
+  }
   f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
-      9,
+      14,
       f
     );
   }
@@ -30951,10 +31311,10 @@ proto.adminapi.esm.SubscriptionDetail.prototype.setQuantity = function(value) {
 
 
 /**
- * optional int32 status = 9;
+ * optional int64 one_time_gem = 9;
  * @return {number}
  */
-proto.adminapi.esm.SubscriptionDetail.prototype.getStatus = function() {
+proto.adminapi.esm.SubscriptionDetail.prototype.getOneTimeGem = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
 };
 
@@ -30963,8 +31323,98 @@ proto.adminapi.esm.SubscriptionDetail.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.SubscriptionDetail} returns this
  */
-proto.adminapi.esm.SubscriptionDetail.prototype.setStatus = function(value) {
+proto.adminapi.esm.SubscriptionDetail.prototype.setOneTimeGem = function(value) {
   return jspb.Message.setProto3IntField(this, 9, value);
+};
+
+
+/**
+ * optional double one_time_multiplier = 10;
+ * @return {number}
+ */
+proto.adminapi.esm.SubscriptionDetail.prototype.getOneTimeMultiplier = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 10, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.SubscriptionDetail} returns this
+ */
+proto.adminapi.esm.SubscriptionDetail.prototype.setOneTimeMultiplier = function(value) {
+  return jspb.Message.setProto3FloatField(this, 10, value);
+};
+
+
+/**
+ * optional bool one_time_is_firstonly = 11;
+ * @return {boolean}
+ */
+proto.adminapi.esm.SubscriptionDetail.prototype.getOneTimeIsFirstonly = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 11, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.adminapi.esm.SubscriptionDetail} returns this
+ */
+proto.adminapi.esm.SubscriptionDetail.prototype.setOneTimeIsFirstonly = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 11, value);
+};
+
+
+/**
+ * optional int64 daily_gem = 12;
+ * @return {number}
+ */
+proto.adminapi.esm.SubscriptionDetail.prototype.getDailyGem = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.SubscriptionDetail} returns this
+ */
+proto.adminapi.esm.SubscriptionDetail.prototype.setDailyGem = function(value) {
+  return jspb.Message.setProto3IntField(this, 12, value);
+};
+
+
+/**
+ * optional double daily_multiplier = 13;
+ * @return {number}
+ */
+proto.adminapi.esm.SubscriptionDetail.prototype.getDailyMultiplier = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 13, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.SubscriptionDetail} returns this
+ */
+proto.adminapi.esm.SubscriptionDetail.prototype.setDailyMultiplier = function(value) {
+  return jspb.Message.setProto3FloatField(this, 13, value);
+};
+
+
+/**
+ * optional int32 status = 14;
+ * @return {number}
+ */
+proto.adminapi.esm.SubscriptionDetail.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 14, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.SubscriptionDetail} returns this
+ */
+proto.adminapi.esm.SubscriptionDetail.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 14, value);
 };
 
 

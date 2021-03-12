@@ -1831,6 +1831,11 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       type_id: req.type_id.into(),
       price: req.price.into(),
       quantity: req.quantity.into(),
+      one_time_gem: req.one_time_gem.into(),
+      one_time_multiplier: req.one_time_multiplier.into(),
+      one_time_is_firstonly: req.one_time_is_firstonly.into(),
+      daily_gem: req.daily_gem.into(),
+      daily_multiplier: req.daily_multiplier.into(),
       status: req.status.into()
     };
     
@@ -1859,6 +1864,11 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       type_id: req.type_id.into(),
       price: req.price.into(),
       quantity: req.quantity.into(),
+      one_time_gem: req.one_time_gem.into(),
+      one_time_multiplier: req.one_time_multiplier.into(),
+      one_time_is_firstonly: req.one_time_is_firstonly.into(),
+      daily_gem: req.daily_gem.into(),
+      daily_multiplier: req.daily_multiplier.into(),
       status: req.status.into()
     };
     
@@ -1913,6 +1923,11 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
         type_id: sub.type_id,
         price: sub.price,
         quantity: sub.quantity,
+        one_time_gem: sub.one_time_gem,
+        one_time_multiplier: sub.one_time_multiplier,
+        one_time_is_firstonly: sub.one_time_is_firstonly,
+        daily_gem: sub.daily_gem,
+        daily_multiplier: sub.daily_multiplier,
         status: sub.status
       };
       

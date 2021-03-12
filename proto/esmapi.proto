@@ -815,7 +815,12 @@ message SubscriptionDetail {
   int32 type_id = 6;
   double price = 7;
   int32 quantity = 8;
-  int32 status = 9;
+  int64 one_time_gem = 9;
+  double one_time_multiplier = 10;
+  bool one_time_is_firstonly = 11;
+  int64 daily_gem = 12;
+  double daily_multiplier  = 13;
+  int32 status = 14;
 }
 
 
