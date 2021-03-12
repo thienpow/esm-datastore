@@ -10955,7 +10955,10 @@ proto.adminapi.esm.UpdateConfigRequest.toObject = function(includeInstance, msg)
   var f, obj = {
     invites: jspb.Message.getFieldWithDefault(msg, 1, 0),
     gamesPerAd: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    daysToClaim: jspb.Message.getFieldWithDefault(msg, 3, 0)
+    daysToClaim: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    freespinPerDay: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    gemsPerSpin: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    adsPerSpin: jspb.Message.getFieldWithDefault(msg, 6, 0)
   };
 
   if (includeInstance) {
@@ -11004,6 +11007,18 @@ proto.adminapi.esm.UpdateConfigRequest.deserializeBinaryFromReader = function(ms
       var value = /** @type {number} */ (reader.readInt32());
       msg.setDaysToClaim(value);
       break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setFreespinPerDay(value);
+      break;
+    case 5:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setGemsPerSpin(value);
+      break;
+    case 6:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setAdsPerSpin(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -11051,6 +11066,27 @@ proto.adminapi.esm.UpdateConfigRequest.serializeBinaryToWriter = function(messag
   if (f !== 0) {
     writer.writeInt32(
       3,
+      f
+    );
+  }
+  f = message.getFreespinPerDay();
+  if (f !== 0) {
+    writer.writeInt32(
+      4,
+      f
+    );
+  }
+  f = message.getGemsPerSpin();
+  if (f !== 0) {
+    writer.writeInt32(
+      5,
+      f
+    );
+  }
+  f = message.getAdsPerSpin();
+  if (f !== 0) {
+    writer.writeInt32(
+      6,
       f
     );
   }
@@ -11108,6 +11144,60 @@ proto.adminapi.esm.UpdateConfigRequest.prototype.getDaysToClaim = function() {
  */
 proto.adminapi.esm.UpdateConfigRequest.prototype.setDaysToClaim = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int32 freespin_per_day = 4;
+ * @return {number}
+ */
+proto.adminapi.esm.UpdateConfigRequest.prototype.getFreespinPerDay = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.UpdateConfigRequest} returns this
+ */
+proto.adminapi.esm.UpdateConfigRequest.prototype.setFreespinPerDay = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional int32 gems_per_spin = 5;
+ * @return {number}
+ */
+proto.adminapi.esm.UpdateConfigRequest.prototype.getGemsPerSpin = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.UpdateConfigRequest} returns this
+ */
+proto.adminapi.esm.UpdateConfigRequest.prototype.setGemsPerSpin = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional int32 ads_per_spin = 6;
+ * @return {number}
+ */
+proto.adminapi.esm.UpdateConfigRequest.prototype.getAdsPerSpin = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.UpdateConfigRequest} returns this
+ */
+proto.adminapi.esm.UpdateConfigRequest.prototype.setAdsPerSpin = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
@@ -11527,7 +11617,10 @@ proto.adminapi.esm.ConfigDetail.toObject = function(includeInstance, msg) {
   var f, obj = {
     invites: jspb.Message.getFieldWithDefault(msg, 1, 0),
     gamesPerAd: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    daysToClaim: jspb.Message.getFieldWithDefault(msg, 3, 0)
+    daysToClaim: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    freespinPerDay: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    gemsPerSpin: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    adsPerSpin: jspb.Message.getFieldWithDefault(msg, 6, 0)
   };
 
   if (includeInstance) {
@@ -11576,6 +11669,18 @@ proto.adminapi.esm.ConfigDetail.deserializeBinaryFromReader = function(msg, read
       var value = /** @type {number} */ (reader.readInt32());
       msg.setDaysToClaim(value);
       break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setFreespinPerDay(value);
+      break;
+    case 5:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setGemsPerSpin(value);
+      break;
+    case 6:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setAdsPerSpin(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -11623,6 +11728,27 @@ proto.adminapi.esm.ConfigDetail.serializeBinaryToWriter = function(message, writ
   if (f !== 0) {
     writer.writeInt32(
       3,
+      f
+    );
+  }
+  f = message.getFreespinPerDay();
+  if (f !== 0) {
+    writer.writeInt32(
+      4,
+      f
+    );
+  }
+  f = message.getGemsPerSpin();
+  if (f !== 0) {
+    writer.writeInt32(
+      5,
+      f
+    );
+  }
+  f = message.getAdsPerSpin();
+  if (f !== 0) {
+    writer.writeInt32(
+      6,
       f
     );
   }
@@ -11680,6 +11806,60 @@ proto.adminapi.esm.ConfigDetail.prototype.getDaysToClaim = function() {
  */
 proto.adminapi.esm.ConfigDetail.prototype.setDaysToClaim = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int32 freespin_per_day = 4;
+ * @return {number}
+ */
+proto.adminapi.esm.ConfigDetail.prototype.getFreespinPerDay = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.ConfigDetail} returns this
+ */
+proto.adminapi.esm.ConfigDetail.prototype.setFreespinPerDay = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional int32 gems_per_spin = 5;
+ * @return {number}
+ */
+proto.adminapi.esm.ConfigDetail.prototype.getGemsPerSpin = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.ConfigDetail} returns this
+ */
+proto.adminapi.esm.ConfigDetail.prototype.setGemsPerSpin = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional int32 ads_per_spin = 6;
+ * @return {number}
+ */
+proto.adminapi.esm.ConfigDetail.prototype.getAdsPerSpin = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.ConfigDetail} returns this
+ */
+proto.adminapi.esm.ConfigDetail.prototype.setAdsPerSpin = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 

@@ -6,6 +6,9 @@ pub struct Config {
   pub invites: i32,
   pub games_per_ad: i32,
   pub days_to_claim: i32,
+  pub freespin_per_day: i32,
+  pub gems_per_spin: i32,
+  pub ads_per_spin: i32,
 }
 
 pub struct StatusType {
@@ -25,10 +28,14 @@ impl Config {
     pub async fn update(config: Config, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"config\" SET invites=$1, games_per_ad=$2, days_to_claim=$3;").await?;
+      let stmt = conn.prepare("UPDATE public.\"config\" SET invites=$1, games_per_ad=$2, days_to_claim=$3, freespin_per_day=$4, gems_per_spin=$5, ads_per_spin=$6;").await?;
       let n = conn.execute(&stmt, 
                   &[&config.invites,
-                  &config.games_per_ad, &config.days_to_claim]).await?;
+                  &config.games_per_ad, 
+                  &config.days_to_claim,
+                  &config.freespin_per_day,
+                  &config.gems_per_spin,
+                  &config.ads_per_spin]).await?;
     
       Ok(n)
     }
@@ -36,13 +43,16 @@ impl Config {
     pub async fn get(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Config, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT invites, games_per_ad, days_to_claim FROM public.\"config\";").await?;
+      let stmt = conn.prepare("SELECT invites, games_per_ad, days_to_claim, freespin_per_day, gems_per_spin, ads_per_spin FROM public.\"config\";").await?;
       let row = conn.query_one(&stmt, &[]).await?;
 
       Ok(Config {
         invites: row.get(0),
         games_per_ad: row.get(1),
-        days_to_claim: row.get(2)
+        days_to_claim: row.get(2),
+        freespin_per_day: row.get(3),
+        gems_per_spin: row.get(4),
+        ads_per_spin: row.get(5),
       })
     }
 

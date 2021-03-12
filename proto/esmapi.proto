@@ -312,6 +312,9 @@ message ConfigDetail {
   int32 invites = 1;
   int32 games_per_ad = 2;
   int32 days_to_claim = 3;
+  int32 freespin_per_day = 4;
+  int32 gems_per_spin = 5;
+  int32 ads_per_spin = 6;
 }
 
 

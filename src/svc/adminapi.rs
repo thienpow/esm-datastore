@@ -649,6 +649,9 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       invites: req.invites.into(),
       games_per_ad: req.games_per_ad.into(),
       days_to_claim: req.days_to_claim.into(),
+      freespin_per_day: req.freespin_per_day.into(),
+      gems_per_spin: req.gems_per_spin.into(),
+      ads_per_spin: req.ads_per_spin.into(),
     };
     
     let result = match db::config::Config::update(config, &self.pool.clone()).await {
@@ -673,7 +676,10 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
           result: Some(ConfigDetail {
             invites: result.invites,
             games_per_ad: result.games_per_ad,
-            days_to_claim: result.days_to_claim
+            days_to_claim: result.days_to_claim,
+            freespin_per_day: result.freespin_per_day,
+            gems_per_spin: result.gems_per_spin,
+            ads_per_spin: result.ads_per_spin,
           })
         }))
       },

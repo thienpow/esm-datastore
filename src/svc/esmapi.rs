@@ -555,7 +555,10 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
           result: Some(ConfigDetail {
             invites: result.invites,
             games_per_ad: result.games_per_ad,
-            days_to_claim: result.days_to_claim
+            days_to_claim: result.days_to_claim,
+            freespin_per_day: result.freespin_per_day,
+            gems_per_spin: result.gems_per_spin,
+            ads_per_spin: result.ads_per_spin,
           })
         }))
       },
