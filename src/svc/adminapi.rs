@@ -24,7 +24,8 @@ use adminapi_proto::{
 
   // Common 
   ListStatusTypeRequest,  ListStatusTypeResponse,
-  StatusTypeDetail,
+  ListUserStatusTypeRequest,  ListUserStatusTypeResponse,
+  StatusTypeDetail, UserStatusTypeDetail,
   ListWinTypeRequest, ListWinTypeResponse,
   WinTypeDetail,
   ListTimezonesRequest,  ListTimezonesResponse,
@@ -198,6 +199,32 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     };
     
     Ok(Response::new(ListStatusTypeResponse {
+      result: result,
+    }))
+
+  }
+
+  async fn list_user_status_type(&self, request: Request<ListUserStatusTypeRequest>, ) -> Result<Response<ListUserStatusTypeResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+
+    let status_types = match db::config::Config::list_user_status_type(&self.pool.clone()).await {
+      Ok(status_types) => status_types,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<UserStatusTypeDetail> = Vec::new();
+    
+    for s in status_types {
+      
+      let li = UserStatusTypeDetail {
+        id: s.id,
+        title: s.title
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListUserStatusTypeResponse {
       result: result,
     }))
 

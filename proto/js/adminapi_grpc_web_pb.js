@@ -234,6 +234,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listStatusType =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListUserStatusTypeRequest,
+ *   !proto.adminapi.esm.ListUserStatusTypeResponse>}
+ */
+const methodDescriptor_AdminApi_ListUserStatusType = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListUserStatusType',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListUserStatusTypeRequest,
+  proto.adminapi.esm.ListUserStatusTypeResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListUserStatusTypeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListUserStatusTypeResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListUserStatusTypeRequest,
+ *   !proto.adminapi.esm.ListUserStatusTypeResponse>}
+ */
+const methodInfo_AdminApi_ListUserStatusType = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListUserStatusTypeResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListUserStatusTypeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListUserStatusTypeResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListUserStatusTypeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListUserStatusTypeResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListUserStatusTypeResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listUserStatusType =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListUserStatusType',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListUserStatusType,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListUserStatusTypeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListUserStatusTypeResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listUserStatusType =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListUserStatusType',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListUserStatusType);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.ListWinTypeRequest,
  *   !proto.adminapi.esm.ListWinTypeResponse>}
  */

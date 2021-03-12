@@ -12,6 +12,7 @@ service AdminApi {
 
   // Common
   rpc ListStatusType(ListStatusTypeRequest) returns (ListStatusTypeResponse) {}
+  rpc ListUserStatusType(ListUserStatusTypeRequest) returns (ListUserStatusTypeResponse) {}
   rpc ListWinType(ListWinTypeRequest) returns (ListWinTypeResponse) {}
   rpc ListTimezones(ListTimezonesRequest) returns (ListTimezonesResponse) {}
 
@@ -145,6 +146,17 @@ message ListStatusTypeResponse {
   repeated StatusTypeDetail result = 1;
 }
 message StatusTypeDetail {
+  int32 id = 1;
+  string title = 2;
+}
+
+//Get UserStatusType from db
+message ListUserStatusTypeRequest {
+}
+message ListUserStatusTypeResponse {
+  repeated UserStatusTypeDetail result = 1;
+}
+message UserStatusTypeDetail {
   int32 id = 1;
   string title = 2;
 }
