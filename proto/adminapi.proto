@@ -302,6 +302,8 @@ message GetUserCountResponse {
 message UserCount {
   int64 active = 1;
   int64 blocked = 2;
+  int64 pending_delete = 3;
+  int64 archived = 4;
 }
 
 //Get users from db

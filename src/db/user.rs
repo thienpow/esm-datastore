@@ -293,14 +293,16 @@ impl User {
     pub async fn count(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<UserCount, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let sql = "SELECT (SELECT COUNT(id) FROM public.\"user\" WHERE status=1) AS active, (SELECT COUNT(id) FROM public.\"user\" WHERE status=2) AS blocked;";
+      let sql = "SELECT (SELECT COUNT(id) FROM public.\"user\" WHERE status=1) AS active, (SELECT COUNT(id) FROM public.\"user\" WHERE status=2) AS blocked, (SELECT COUNT(id) FROM public.\"user\" WHERE status=3) AS pending_delete, (SELECT COUNT(id) FROM public.\"user\" WHERE status=4) AS archived;";
 
       let stmt = conn.prepare(sql).await?;
       let row = conn.query_one(&stmt, &[]).await?;
       
       Ok(UserCount {
         active: row.get::<usize, i64>(0),
-        blocked: row.get::<usize, i64>(1)
+        blocked: row.get::<usize, i64>(1),
+        pending_delete: row.get::<usize, i64>(2),
+        archived: row.get::<usize, i64>(3)
       })
 
     }

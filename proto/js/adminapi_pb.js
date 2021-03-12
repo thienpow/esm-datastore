@@ -9400,7 +9400,9 @@ proto.adminapi.esm.UserCount.prototype.toObject = function(opt_includeInstance) 
 proto.adminapi.esm.UserCount.toObject = function(includeInstance, msg) {
   var f, obj = {
     active: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    blocked: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    blocked: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    pendingDelete: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    archived: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -9445,6 +9447,14 @@ proto.adminapi.esm.UserCount.deserializeBinaryFromReader = function(msg, reader)
       var value = /** @type {number} */ (reader.readInt64());
       msg.setBlocked(value);
       break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setPendingDelete(value);
+      break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setArchived(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -9488,6 +9498,20 @@ proto.adminapi.esm.UserCount.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
+  f = message.getPendingDelete();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
+      f
+    );
+  }
+  f = message.getArchived();
+  if (f !== 0) {
+    writer.writeInt64(
+      4,
+      f
+    );
+  }
 };
 
 
@@ -9524,6 +9548,42 @@ proto.adminapi.esm.UserCount.prototype.getBlocked = function() {
  */
 proto.adminapi.esm.UserCount.prototype.setBlocked = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 pending_delete = 3;
+ * @return {number}
+ */
+proto.adminapi.esm.UserCount.prototype.getPendingDelete = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.UserCount} returns this
+ */
+proto.adminapi.esm.UserCount.prototype.setPendingDelete = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int64 archived = 4;
+ * @return {number}
+ */
+proto.adminapi.esm.UserCount.prototype.getArchived = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.UserCount} returns this
+ */
+proto.adminapi.esm.UserCount.prototype.setArchived = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
