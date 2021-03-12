@@ -18,9 +18,9 @@ impl Rank {
     pub async fn add(rank: Rank, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"rank\" (title, exp, gem, multiplier) VALUES ($1, $2, $3, $4) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"rank\" (id, title, exp, gem, multiplier) VALUES ($1, $2, $3, $4, $5) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
-                  &[&rank.title, &rank.exp, &rank.gem, &rank.multiplier]).await?;
+                  &[&rank.id, &rank.title, &rank.exp, &rank.gem, &rank.multiplier]).await?;
     
       Ok(row.get::<usize, i64>(0))
     }

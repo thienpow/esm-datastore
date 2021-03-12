@@ -26959,10 +26959,11 @@ proto.adminapi.esm.AddRankRequest.prototype.toObject = function(opt_includeInsta
  */
 proto.adminapi.esm.AddRankRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    title: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    exp: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    gem: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    multiplier: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0)
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    title: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    exp: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    gem: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    multiplier: jspb.Message.getFloatingPointFieldWithDefault(msg, 5, 0.0)
   };
 
   if (includeInstance) {
@@ -27000,18 +27001,22 @@ proto.adminapi.esm.AddRankRequest.deserializeBinaryFromReader = function(msg, re
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setId(value);
+      break;
+    case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setTitle(value);
       break;
-    case 2:
+    case 3:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setExp(value);
       break;
-    case 3:
+    case 4:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setGem(value);
       break;
-    case 4:
+    case 5:
       var value = /** @type {number} */ (reader.readDouble());
       msg.setMultiplier(value);
       break;
@@ -27044,31 +27049,38 @@ proto.adminapi.esm.AddRankRequest.prototype.serializeBinary = function() {
  */
 proto.adminapi.esm.AddRankRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getId();
+  if (f !== 0) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
   f = message.getTitle();
   if (f.length > 0) {
     writer.writeString(
-      1,
+      2,
       f
     );
   }
   f = message.getExp();
   if (f !== 0) {
     writer.writeInt64(
-      2,
+      3,
       f
     );
   }
   f = message.getGem();
   if (f !== 0) {
     writer.writeInt64(
-      3,
+      4,
       f
     );
   }
   f = message.getMultiplier();
   if (f !== 0.0) {
     writer.writeDouble(
-      4,
+      5,
       f
     );
   }
@@ -27076,11 +27088,29 @@ proto.adminapi.esm.AddRankRequest.serializeBinaryToWriter = function(message, wr
 
 
 /**
- * optional string title = 1;
+ * optional int64 id = 1;
+ * @return {number}
+ */
+proto.adminapi.esm.AddRankRequest.prototype.getId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.AddRankRequest} returns this
+ */
+proto.adminapi.esm.AddRankRequest.prototype.setId = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional string title = 2;
  * @return {string}
  */
 proto.adminapi.esm.AddRankRequest.prototype.getTitle = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
@@ -27089,33 +27119,15 @@ proto.adminapi.esm.AddRankRequest.prototype.getTitle = function() {
  * @return {!proto.adminapi.esm.AddRankRequest} returns this
  */
 proto.adminapi.esm.AddRankRequest.prototype.setTitle = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional int64 exp = 2;
+ * optional int64 exp = 3;
  * @return {number}
  */
 proto.adminapi.esm.AddRankRequest.prototype.getExp = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.adminapi.esm.AddRankRequest} returns this
- */
-proto.adminapi.esm.AddRankRequest.prototype.setExp = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
-/**
- * optional int64 gem = 3;
- * @return {number}
- */
-proto.adminapi.esm.AddRankRequest.prototype.getGem = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -27124,17 +27136,35 @@ proto.adminapi.esm.AddRankRequest.prototype.getGem = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.AddRankRequest} returns this
  */
-proto.adminapi.esm.AddRankRequest.prototype.setGem = function(value) {
+proto.adminapi.esm.AddRankRequest.prototype.setExp = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
 /**
- * optional double multiplier = 4;
+ * optional int64 gem = 4;
+ * @return {number}
+ */
+proto.adminapi.esm.AddRankRequest.prototype.getGem = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.AddRankRequest} returns this
+ */
+proto.adminapi.esm.AddRankRequest.prototype.setGem = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional double multiplier = 5;
  * @return {number}
  */
 proto.adminapi.esm.AddRankRequest.prototype.getMultiplier = function() {
-  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 4, 0.0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 5, 0.0));
 };
 
 
@@ -27143,7 +27173,7 @@ proto.adminapi.esm.AddRankRequest.prototype.getMultiplier = function() {
  * @return {!proto.adminapi.esm.AddRankRequest} returns this
  */
 proto.adminapi.esm.AddRankRequest.prototype.setMultiplier = function(value) {
-  return jspb.Message.setProto3FloatField(this, 4, value);
+  return jspb.Message.setProto3FloatField(this, 5, value);
 };
 
 

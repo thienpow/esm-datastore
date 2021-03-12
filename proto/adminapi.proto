@@ -983,10 +983,11 @@ message PrizeTypeDetail {
 */
 //Add a new rank
 message AddRankRequest {
-  string title = 1;
-  int64 exp = 2;
-  int64 gem = 3;
-  double multiplier = 4;
+  int64 id = 1;
+  string title = 2;
+  int64 exp = 3;
+  int64 gem = 4;
+  double multiplier = 5;
 }
 message AddRankResponse {
   string result = 1;

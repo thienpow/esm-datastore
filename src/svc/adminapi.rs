@@ -1657,7 +1657,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
     let rank = db::rank::Rank {
-      id: 0,
+      id: req.id.into(),
       title: req.title.into(),
       exp: req.exp.into(),
       gem: req.gem.into(),
