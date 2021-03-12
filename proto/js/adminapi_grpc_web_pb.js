@@ -1994,6 +1994,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.addGameLeaderRule =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.UpdateGameLeaderRuleRequest,
+ *   !proto.adminapi.esm.UpdateGameLeaderRuleResponse>}
+ */
+const methodDescriptor_AdminApi_UpdateGameLeaderRule = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/UpdateGameLeaderRule',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.UpdateGameLeaderRuleRequest,
+  proto.adminapi.esm.UpdateGameLeaderRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.UpdateGameLeaderRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.UpdateGameLeaderRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.UpdateGameLeaderRuleRequest,
+ *   !proto.adminapi.esm.UpdateGameLeaderRuleResponse>}
+ */
+const methodInfo_AdminApi_UpdateGameLeaderRule = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.UpdateGameLeaderRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.UpdateGameLeaderRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.UpdateGameLeaderRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.UpdateGameLeaderRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.UpdateGameLeaderRuleResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.UpdateGameLeaderRuleResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.updateGameLeaderRule =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/UpdateGameLeaderRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_UpdateGameLeaderRule,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.UpdateGameLeaderRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.UpdateGameLeaderRuleResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.updateGameLeaderRule =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/UpdateGameLeaderRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_UpdateGameLeaderRule);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.DeleteGameLeaderRuleRequest,
  *   !proto.adminapi.esm.DeleteGameLeaderRuleResponse>}
  */

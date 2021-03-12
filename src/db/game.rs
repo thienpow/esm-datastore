@@ -68,6 +68,16 @@ impl Game {
       Ok(n)
     }
     
+    pub async fn update_leader_rule(rule: GameLeaderRule, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"game_leader_rule\" SET tickets=$1, exp=$2 WHERE game_id=$3 AND rank=$4;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&rule.tickets, &rule.exp, &rule.game_id, &rule.rank]).await?;
+    
+      Ok(n)
+    }
+    
     pub async fn delete_leader_rule(game_id: i64, rank: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

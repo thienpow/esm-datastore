@@ -58,6 +58,7 @@ use adminapi_proto::{
   AddGameRequest, AddGameResponse,
   UpdateGameRequest, UpdateGameResponse,
   AddGameLeaderRuleRequest, AddGameLeaderRuleResponse,
+  UpdateGameLeaderRuleRequest, UpdateGameLeaderRuleResponse,
   DeleteGameLeaderRuleRequest, DeleteGameLeaderRuleResponse,
   ListGameLeaderRuleRequest, ListGameLeaderRuleResponse,
   GameLeaderRuleDetail,
@@ -876,6 +877,28 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     };
     
     Ok(Response::new(AddGameLeaderRuleResponse {
+      result: result,
+    }))
+
+  }
+
+  async fn update_game_leader_rule(&self, request: Request<UpdateGameLeaderRuleRequest>, ) -> Result<Response<UpdateGameLeaderRuleResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+
+    let req = request.into_inner();
+    let score_rule = db::game::GameLeaderRule {
+      game_id: req.game_id.into(),
+      rank: req.rank.into(),
+      tickets: req.tickets.into(),
+      exp: req.exp.into()
+    };
+    
+    let result = match db::game::Game::update_leader_rule(score_rule, &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(UpdateGameLeaderRuleResponse {
       result: result,
     }))
 
