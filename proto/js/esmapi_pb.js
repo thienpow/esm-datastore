@@ -10264,9 +10264,10 @@ proto.api.esm.GameLeaderRuleDetail.prototype.toObject = function(opt_includeInst
 proto.api.esm.GameLeaderRuleDetail.toObject = function(includeInstance, msg) {
   var f, obj = {
     gameId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    rank: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    tickets: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    exp: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    rankFrom: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    rankTo: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    tickets: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    exp: jspb.Message.getFieldWithDefault(msg, 5, 0)
   };
 
   if (includeInstance) {
@@ -10309,13 +10310,17 @@ proto.api.esm.GameLeaderRuleDetail.deserializeBinaryFromReader = function(msg, r
       break;
     case 2:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setRank(value);
+      msg.setRankFrom(value);
       break;
     case 3:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setTickets(value);
+      msg.setRankTo(value);
       break;
     case 4:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setTickets(value);
+      break;
+    case 5:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setExp(value);
       break;
@@ -10355,24 +10360,31 @@ proto.api.esm.GameLeaderRuleDetail.serializeBinaryToWriter = function(message, w
       f
     );
   }
-  f = message.getRank();
+  f = message.getRankFrom();
   if (f !== 0) {
     writer.writeInt32(
       2,
       f
     );
   }
-  f = message.getTickets();
+  f = message.getRankTo();
   if (f !== 0) {
     writer.writeInt32(
       3,
       f
     );
   }
-  f = message.getExp();
+  f = message.getTickets();
   if (f !== 0) {
     writer.writeInt32(
       4,
+      f
+    );
+  }
+  f = message.getExp();
+  if (f !== 0) {
+    writer.writeInt32(
+      5,
       f
     );
   }
@@ -10398,10 +10410,10 @@ proto.api.esm.GameLeaderRuleDetail.prototype.setGameId = function(value) {
 
 
 /**
- * optional int32 rank = 2;
+ * optional int32 rank_from = 2;
  * @return {number}
  */
-proto.api.esm.GameLeaderRuleDetail.prototype.getRank = function() {
+proto.api.esm.GameLeaderRuleDetail.prototype.getRankFrom = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
@@ -10410,16 +10422,16 @@ proto.api.esm.GameLeaderRuleDetail.prototype.getRank = function() {
  * @param {number} value
  * @return {!proto.api.esm.GameLeaderRuleDetail} returns this
  */
-proto.api.esm.GameLeaderRuleDetail.prototype.setRank = function(value) {
+proto.api.esm.GameLeaderRuleDetail.prototype.setRankFrom = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
 /**
- * optional int32 tickets = 3;
+ * optional int32 rank_to = 3;
  * @return {number}
  */
-proto.api.esm.GameLeaderRuleDetail.prototype.getTickets = function() {
+proto.api.esm.GameLeaderRuleDetail.prototype.getRankTo = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -10428,16 +10440,16 @@ proto.api.esm.GameLeaderRuleDetail.prototype.getTickets = function() {
  * @param {number} value
  * @return {!proto.api.esm.GameLeaderRuleDetail} returns this
  */
-proto.api.esm.GameLeaderRuleDetail.prototype.setTickets = function(value) {
+proto.api.esm.GameLeaderRuleDetail.prototype.setRankTo = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
 /**
- * optional int32 exp = 4;
+ * optional int32 tickets = 4;
  * @return {number}
  */
-proto.api.esm.GameLeaderRuleDetail.prototype.getExp = function() {
+proto.api.esm.GameLeaderRuleDetail.prototype.getTickets = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
@@ -10446,8 +10458,26 @@ proto.api.esm.GameLeaderRuleDetail.prototype.getExp = function() {
  * @param {number} value
  * @return {!proto.api.esm.GameLeaderRuleDetail} returns this
  */
-proto.api.esm.GameLeaderRuleDetail.prototype.setExp = function(value) {
+proto.api.esm.GameLeaderRuleDetail.prototype.setTickets = function(value) {
   return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional int32 exp = 5;
+ * @return {number}
+ */
+proto.api.esm.GameLeaderRuleDetail.prototype.getExp = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.GameLeaderRuleDetail} returns this
+ */
+proto.api.esm.GameLeaderRuleDetail.prototype.setExp = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 

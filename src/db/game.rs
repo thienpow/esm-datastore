@@ -25,7 +25,8 @@ pub struct Game {
 
 pub struct GameLeaderRule {
   pub game_id: i64,
-  pub rank: i32,
+  pub rank_from: i32,
+  pub rank_to: i32,
   pub tickets: i32,
   pub exp: i32,
 }
@@ -61,9 +62,9 @@ impl Game {
     pub async fn add_leader_rule(rule: GameLeaderRule, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"game_leader_rule\" (game_id, rank, tickets, exp) VALUES ($1, $2, $3, $4);").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"game_leader_rule\" (game_id, rank_from, rank_to, tickets, exp) VALUES ($1, $2, $3, $4, $5);").await?;
       let n = conn.execute(&stmt, 
-                  &[&rule.game_id, &rule.rank, &rule.tickets, &rule.exp]).await?;
+                  &[&rule.game_id, &rule.rank_from, &rule.rank_to, &rule.tickets, &rule.exp]).await?;
     
       Ok(n)
     }
@@ -71,18 +72,18 @@ impl Game {
     pub async fn update_leader_rule(rule: GameLeaderRule, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"game_leader_rule\" SET tickets=$1, exp=$2 WHERE game_id=$3 AND rank=$4;").await?;
+      let stmt = conn.prepare("UPDATE public.\"game_leader_rule\" SET tickets=$1, exp=$2 WHERE game_id=$3 AND rank_from=$4;").await?;
       let n = conn.execute(&stmt, 
-                  &[&rule.tickets, &rule.exp, &rule.game_id, &rule.rank]).await?;
+                  &[&rule.tickets, &rule.exp, &rule.game_id, &rule.rank_from]).await?;
     
       Ok(n)
     }
     
-    pub async fn delete_leader_rule(game_id: i64, rank: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn delete_leader_rule(game_id: i64, rank_from: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("DELETE FROM public.\"game_leader_rule\" WHERE game_id=$1 AND rank=$2;").await?;
-      let n = conn.execute(&stmt, &[&game_id, &rank]).await?;
+      let stmt = conn.prepare("DELETE FROM public.\"game_leader_rule\" WHERE game_id=$1 AND rank_from=$2;").await?;
+      let n = conn.execute(&stmt, &[&game_id, &rank_from]).await?;
     
       Ok(n)
     }
@@ -90,15 +91,16 @@ impl Game {
     pub async fn list_leader_rule(game_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<GameLeaderRule>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT game_id, rank, tickets, exp FROM public.\"game_leader_rule\" WHERE game_id=$1 ORDER BY rank ASC;").await?;
+      let stmt = conn.prepare("SELECT game_id, rank_from, rank_to, tickets, exp FROM public.\"game_leader_rule\" WHERE game_id=$1 ORDER BY rank ASC;").await?;
     
       let mut vec: Vec<GameLeaderRule> = Vec::new();
       for row in conn.query(&stmt, &[&game_id]).await? {
         let rule = GameLeaderRule {
           game_id: row.get(0),
-          rank: row.get(1),
-          tickets: row.get(2),
-          exp: row.get(3)
+          rank_from: row.get(1),
+          rank_to: row.get(2),
+          tickets: row.get(3),
+          exp: row.get(4)
         };
 
         vec.push(rule);

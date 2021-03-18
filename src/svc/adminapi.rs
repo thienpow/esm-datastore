@@ -878,7 +878,8 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let req = request.into_inner();
     let score_rule = db::game::GameLeaderRule {
       game_id: req.game_id.into(),
-      rank: req.rank.into(),
+      rank_from: req.rank_from.into(),
+      rank_to: req.rank_to.into(),
       tickets: req.tickets.into(),
       exp: req.exp.into()
     };
@@ -900,7 +901,8 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let req = request.into_inner();
     let score_rule = db::game::GameLeaderRule {
       game_id: req.game_id.into(),
-      rank: req.rank.into(),
+      rank_from: req.rank_from.into(),
+      rank_to: req.rank_to.into(),
       tickets: req.tickets.into(),
       exp: req.exp.into()
     };
@@ -921,7 +923,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::game::Game::delete_leader_rule(req.game_id.into(), req.rank.into(), &self.pool.clone()).await {
+    let result = match db::game::Game::delete_leader_rule(req.game_id.into(), req.rank_from.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -947,7 +949,8 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       
       let li = GameLeaderRuleDetail {
         game_id: rule.game_id,
-        rank: rule.rank,
+        rank_from: rule.rank_from,
+        rank_to: rule.rank_to,
         tickets: rule.tickets,
         exp: rule.exp
       };

@@ -557,7 +557,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       
       let li = GameLeaderRuleDetail {
         game_id: rule.game_id,
-        rank: rule.rank,
+        rank_from: rule.rank_from,
+        rank_to: rule.rank_to,
         tickets: rule.tickets,
         exp: rule.exp
       };

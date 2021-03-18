@@ -504,9 +504,10 @@ message UpdateGameResponse {
 //Add a new ScoreRule
 message AddGameLeaderRuleRequest {
   int64 game_id = 1;
-  int32 rank = 2;
-  int32 tickets = 3;
-  int32 exp = 4;
+  int32 rank_from = 2;
+  int32 rank_to= 3;
+  int32 tickets = 4;
+  int32 exp = 5;
 }
 message AddGameLeaderRuleResponse {
   string result = 1;
@@ -515,9 +516,10 @@ message AddGameLeaderRuleResponse {
 //Update a ScoreRule
 message UpdateGameLeaderRuleRequest {
   int64 game_id = 1;
-  int32 rank = 2;
-  int32 tickets = 3;
-  int32 exp = 4;
+  int32 rank_from = 2;
+  int32 rank_to= 3;
+  int32 tickets = 4;
+  int32 exp = 5;
 }
 message UpdateGameLeaderRuleResponse {
   string result = 1;
@@ -526,7 +528,7 @@ message UpdateGameLeaderRuleResponse {
 //Delete an existing ScoreRule from db
 message DeleteGameLeaderRuleRequest {
   int64 game_id = 1;
-  int32 rank = 2;
+  int32 rank_from = 2;
 }
 message DeleteGameLeaderRuleResponse {
   string result = 1;
@@ -541,9 +543,10 @@ message ListGameLeaderRuleResponse {
 }
 message GameLeaderRuleDetail {
   int64 game_id = 1;
-  int32 rank = 2;
-  int32 tickets = 3;
-  int32 exp = 4;
+  int32 rank_from = 2;
+  int32 rank_to= 3;
+  int32 tickets = 4;
+  int32 exp = 5;
 }
 
 //Get the game's code from db

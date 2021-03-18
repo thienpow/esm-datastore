@@ -357,9 +357,10 @@ message ListGameLeaderRuleResponse {
 }
 message GameLeaderRuleDetail {
   int64 game_id = 1;
-  int32 rank = 2;
-  int32 tickets = 3;
-  int32 exp = 4;
+  int32 rank_from = 2;
+  int32 rank_to= 3;
+  int32 tickets = 4;
+  int32 exp = 5;
 }
 
 //Get the game's code from db
