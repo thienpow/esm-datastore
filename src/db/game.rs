@@ -91,7 +91,7 @@ impl Game {
     pub async fn list_leader_rule(game_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<GameLeaderRule>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT game_id, rank_from, rank_to, tickets, exp FROM public.\"game_leader_rule\" WHERE game_id=$1 ORDER BY rank ASC;").await?;
+      let stmt = conn.prepare("SELECT game_id, rank_from, rank_to, tickets, exp FROM public.\"game_leader_rule\" WHERE game_id=$1 ORDER BY rank_from ASC;").await?;
     
       let mut vec: Vec<GameLeaderRule> = Vec::new();
       for row in conn.query(&stmt, &[&game_id]).await? {
