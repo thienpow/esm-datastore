@@ -298,6 +298,9 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
     match db::user::User::sign_in(req.username.into(), &self.pool.clone()).await {
       Ok(user) => {
+
+        println!("sing_in ok got user");
+        
         if cryptic::verify(&user.passhash, &req.password).unwrap() {
           let jwt_token = jwt::issue_token(username.into(), user.role_id).unwrap();
 
