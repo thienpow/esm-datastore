@@ -1,5 +1,5 @@
 cd deploy/
-docker-compose stop
+docker-compose down
 rm service/esmserver
 cd ..
 cargo build --bin esmserver --release
