@@ -295,11 +295,11 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     
     let req = request.into_inner();
     let username = req.username.clone();
-    println!("trying sing_in");
+    println!("trying sign_in");
     match db::user::User::sign_in(req.username.into(), &self.pool.clone()).await {
       Ok(user) => {
 
-        println!("sing_in ok got user");
+        println!("sign_in ok got user");
 
         if cryptic::verify(&user.passhash, &req.password).unwrap() {
           let jwt_token = jwt::issue_token(username.into(), user.role_id).unwrap();
@@ -346,7 +346,10 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
           Err(Status::permission_denied("Invalid Password!"))
         }
       },
-      Err(e) => Err(Status::internal(format!("{:?}", e)))
+      Err(e) => {
+        println!("sign_in not ok {:?}", e);
+        return Err(Status::internal(format!("{:?}", e)))
+      }
     }
     
 
