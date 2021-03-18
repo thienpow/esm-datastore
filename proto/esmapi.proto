@@ -20,11 +20,9 @@ service EsmApi {
   rpc UpdateEmailConfirmed(UpdateEmailConfirmedRequest) returns (UpdateEmailConfirmedResponse) {}
   rpc UpdateSocialLinkFB(UpdateSocialLinkFBRequest) returns (UpdateSocialLinkFBResponse) {}
   rpc UpdateSocialLinkGoogle(UpdateSocialLinkGoogleRequest) returns (UpdateSocialLinkGoogleResponse) {}
-  rpc UpdateUserStatus(UpdateUserStatusRequest) returns (UpdateUserStatusResponse) {}
   rpc UpdateAddress(UpdateAddressRequest) returns (UpdateAddressResponse) {}
   rpc UpdateUserSettings(UpdateUserSettingsRequest) returns (UpdateUserSettingsResponse) {}
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
-  rpc ListUser(ListUserRequest) returns (ListUserResponse) {}
 
   // Config
   rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {}

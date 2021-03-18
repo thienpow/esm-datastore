@@ -21,7 +21,7 @@ service AdminApi {
   rpc UpdateEmailConfirmed(UpdateEmailConfirmedRequest) returns (UpdateEmailConfirmedResponse) {}
   rpc UpdateSocialLinkFB(UpdateSocialLinkFBRequest) returns (UpdateSocialLinkFBResponse) {}
   rpc UpdateSocialLinkGoogle(UpdateSocialLinkGoogleRequest) returns (UpdateSocialLinkGoogleResponse) {}
-  rpc UpdateUserStatus(UpdateUserStatusRequest) returns (UpdateUserStatusResponse) {}
+  rpc UpdateUserStatusGemBalance(UpdateUserStatusGemBalanceRequest) returns (UpdateUserStatusGemBalanceResponse) {}
   rpc UpdateAddress(UpdateAddressRequest) returns (UpdateAddressResponse) {}
   rpc UpdateUserSettings(UpdateUserSettingsRequest) returns (UpdateUserSettingsResponse) {}
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
@@ -248,11 +248,12 @@ message UpdateSocialLinkGoogleResponse {
 }
 
 //Update an existing user data
-message UpdateUserStatusRequest {
+message UpdateUserStatusGemBalanceRequest {
   int64 id = 1;
   int32 status = 2;
+  int64 gem_balance = 3;
 }
-message UpdateUserStatusResponse {
+message UpdateUserStatusGemBalanceResponse {
   string result = 1;
 }
 

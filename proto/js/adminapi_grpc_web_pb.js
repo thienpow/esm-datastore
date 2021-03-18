@@ -794,80 +794,80 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.updateSocialLinkGoogle =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.adminapi.esm.UpdateUserStatusRequest,
- *   !proto.adminapi.esm.UpdateUserStatusResponse>}
+ *   !proto.adminapi.esm.UpdateUserStatusGemBalanceRequest,
+ *   !proto.adminapi.esm.UpdateUserStatusGemBalanceResponse>}
  */
-const methodDescriptor_AdminApi_UpdateUserStatus = new grpc.web.MethodDescriptor(
-  '/adminapi.esm.AdminApi/UpdateUserStatus',
+const methodDescriptor_AdminApi_UpdateUserStatusGemBalance = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/UpdateUserStatusGemBalance',
   grpc.web.MethodType.UNARY,
-  proto.adminapi.esm.UpdateUserStatusRequest,
-  proto.adminapi.esm.UpdateUserStatusResponse,
+  proto.adminapi.esm.UpdateUserStatusGemBalanceRequest,
+  proto.adminapi.esm.UpdateUserStatusGemBalanceResponse,
   /**
-   * @param {!proto.adminapi.esm.UpdateUserStatusRequest} request
+   * @param {!proto.adminapi.esm.UpdateUserStatusGemBalanceRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.adminapi.esm.UpdateUserStatusResponse.deserializeBinary
+  proto.adminapi.esm.UpdateUserStatusGemBalanceResponse.deserializeBinary
 );
 
 
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.adminapi.esm.UpdateUserStatusRequest,
- *   !proto.adminapi.esm.UpdateUserStatusResponse>}
+ *   !proto.adminapi.esm.UpdateUserStatusGemBalanceRequest,
+ *   !proto.adminapi.esm.UpdateUserStatusGemBalanceResponse>}
  */
-const methodInfo_AdminApi_UpdateUserStatus = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.adminapi.esm.UpdateUserStatusResponse,
+const methodInfo_AdminApi_UpdateUserStatusGemBalance = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.UpdateUserStatusGemBalanceResponse,
   /**
-   * @param {!proto.adminapi.esm.UpdateUserStatusRequest} request
+   * @param {!proto.adminapi.esm.UpdateUserStatusGemBalanceRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.adminapi.esm.UpdateUserStatusResponse.deserializeBinary
+  proto.adminapi.esm.UpdateUserStatusGemBalanceResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.adminapi.esm.UpdateUserStatusRequest} request The
+ * @param {!proto.adminapi.esm.UpdateUserStatusGemBalanceRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.adminapi.esm.UpdateUserStatusResponse)}
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.UpdateUserStatusGemBalanceResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.UpdateUserStatusResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.UpdateUserStatusGemBalanceResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.adminapi.esm.AdminApiClient.prototype.updateUserStatus =
+proto.adminapi.esm.AdminApiClient.prototype.updateUserStatusGemBalance =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/adminapi.esm.AdminApi/UpdateUserStatus',
+      '/adminapi.esm.AdminApi/UpdateUserStatusGemBalance',
       request,
       metadata || {},
-      methodDescriptor_AdminApi_UpdateUserStatus,
+      methodDescriptor_AdminApi_UpdateUserStatusGemBalance,
       callback);
 };
 
 
 /**
- * @param {!proto.adminapi.esm.UpdateUserStatusRequest} request The
+ * @param {!proto.adminapi.esm.UpdateUserStatusGemBalanceRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.adminapi.esm.UpdateUserStatusResponse>}
+ * @return {!Promise<!proto.adminapi.esm.UpdateUserStatusGemBalanceResponse>}
  *     Promise that resolves to the response
  */
-proto.adminapi.esm.AdminApiPromiseClient.prototype.updateUserStatus =
+proto.adminapi.esm.AdminApiPromiseClient.prototype.updateUserStatusGemBalance =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/adminapi.esm.AdminApi/UpdateUserStatus',
+      '/adminapi.esm.AdminApi/UpdateUserStatusGemBalance',
       request,
       metadata || {},
-      methodDescriptor_AdminApi_UpdateUserStatus);
+      methodDescriptor_AdminApi_UpdateUserStatusGemBalance);
 };
 
 

@@ -33,11 +33,9 @@ use esmapi_proto::{
   UpdateEmailConfirmedRequest, UpdateEmailConfirmedResponse,
   UpdateSocialLinkFbRequest, UpdateSocialLinkFbResponse,
   UpdateSocialLinkGoogleRequest, UpdateSocialLinkGoogleResponse,
-  UpdateUserStatusRequest, UpdateUserStatusResponse,
   UpdateAddressRequest, UpdateAddressResponse,
   UpdateUserSettingsRequest, UpdateUserSettingsResponse,
   ChangePasswordRequest, ChangePasswordResponse,
-  ListUserRequest, ListUserResponse, 
   UserDetail, 
 
   //Config
@@ -369,22 +367,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
   }
 
-  async fn update_user_status(&self, request: Request<UpdateUserStatusRequest>, ) -> Result<Response<UpdateUserStatusResponse>, Status> {
-    let _ = svc::check_is_admin(&request.metadata()).await?;
-
-    let req = request.into_inner();
-    
-    let result = match db::user::User::update_status(req.id.into(), req.status.into(), &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(UpdateUserStatusResponse {
-      result: result,
-    }))
-
-  }
-
   async fn update_address(&self, request: Request<UpdateAddressRequest>, ) -> Result<Response<UpdateAddressResponse>, Status> {
     let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
@@ -458,65 +440,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     };
 
     Ok(Response::new(ChangePasswordResponse {
-      result: result,
-    }))
-
-  }
-
-
-  async fn list_user(&self, request: Request<ListUserRequest>, ) -> Result<Response<ListUserResponse>, Status> {
-    let _ = svc::check_is_admin(&request.metadata()).await?;
-
-    let req = request.into_inner();
-    
-    let users = match db::user::User::list(req.limit.into(), req.offset.into(), "".to_string(), &self.pool.clone()).await {
-      Ok(users) => users,
-      Err(error) => panic!("Error: {}.", error),
-    };
-    
-    let mut result: Vec<UserDetail> = Vec::new();
-    
-    for user in users {
-      
-      let seconds_created_on = user.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-      let seconds_last_login = user.last_login.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        
-      let li = UserDetail {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        phone: user.phone,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        created_on: seconds_created_on as i64,
-        last_login: seconds_last_login as i64,
-        role_id: user.role_id,
-        status: user.status,
-        gem_balance: user.gem_balance,
-        social_link_fb: user.social_link_fb,
-        social_link_google: user.social_link_google,
-        avatar_url: user.avatar_url,
-        exp: user.exp,
-        //address
-        full_name: user.full_name,
-        address: user.address,
-        city: user.city,
-        state: user.state,
-        zip_code: user.zip_code,
-        country: user.country,
-        country_code: user.country_code,
-        //settings
-        is_notify_allowed:  user.is_notify_allowed,
-        is_notify_new_reward:  user.is_notify_new_reward,
-        is_notify_new_tournament:  user.is_notify_new_tournament,
-        is_notify_tour_ending:  user.is_notify_tour_ending,
-        nick_name: user.nick_name
-      };
-      
-      result.push(li);
-    };
-    
-    Ok(Response::new(ListUserResponse {
       result: result,
     }))
 

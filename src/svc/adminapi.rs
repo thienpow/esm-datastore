@@ -36,7 +36,7 @@ use adminapi_proto::{
   UpdateEmailConfirmedRequest, UpdateEmailConfirmedResponse,
   UpdateSocialLinkFbRequest, UpdateSocialLinkFbResponse,
   UpdateSocialLinkGoogleRequest, UpdateSocialLinkGoogleResponse,
-  UpdateUserStatusRequest, UpdateUserStatusResponse,
+  UpdateUserStatusGemBalanceRequest, UpdateUserStatusGemBalanceResponse,
   UpdateAddressRequest, UpdateAddressResponse,
   UpdateUserSettingsRequest, UpdateUserSettingsResponse,
   ChangePasswordRequest, ChangePasswordResponse,
@@ -456,17 +456,17 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
   }
 
-  async fn update_user_status(&self, request: Request<UpdateUserStatusRequest>, ) -> Result<Response<UpdateUserStatusResponse>, Status> {
+  async fn update_user_status_gem_balance(&self, request: Request<UpdateUserStatusGemBalanceRequest>, ) -> Result<Response<UpdateUserStatusGemBalanceResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
     
-    let result = match db::user::User::update_status(req.id.into(), req.status.into(), &self.pool.clone()).await {
+    let result = match db::user::User::update_status_gem_balance(req.id.into(), req.status.into(), req.gem_balance.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
     
-    Ok(Response::new(UpdateUserStatusResponse {
+    Ok(Response::new(UpdateUserStatusGemBalanceResponse {
       result: result,
     }))
 

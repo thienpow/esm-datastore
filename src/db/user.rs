@@ -103,13 +103,32 @@ impl User {
       Ok(n)
     }
 
-    pub async fn update_status(id: i64, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update_status_gem_balance(id: i64, status: i32, gem_balance: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"user\" SET status=$1 WHERE id=$2;").await?;
-      let n = conn.execute(&stmt, 
-                  &[&status, &id]).await?;
+
+      let now = SystemTime::now();
+
+      let stmt = conn.prepare("SELECT status, gem_balance FROM public.\"user\" WHERE id=$1;").await?;
+
+      let row = conn.query_one(&stmt, 
+                  &[&id]).await?;
+
+      let old_status: i32 = row.get(0);
+      let old_gem_balance: i64 = row.get(1);
+
+      let stmt = conn.prepare("INSERT INTO public.\"user_admin_change_log\" (user_id, old_status, new_status, old_gem_balance, new_gem_balance, \
+        created_on, changed_by) \
+        VALUES ($1, $2, $3, $4, $5, $6, 1) RETURNING id;").await?;
+      let _row = conn.query_one(&stmt, 
+                  &[&id, &old_status, &status, &old_gem_balance, &gem_balance, &now]).await?;
     
+      
+      let stmt = conn.prepare("UPDATE public.\"user\" SET status=$1, gem_balance=$2 WHERE id=$3;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&status, &gem_balance, &id]).await?;
+    
+
       Ok(n)
     }
     
