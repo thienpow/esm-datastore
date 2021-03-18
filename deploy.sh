@@ -1,3 +1,4 @@
+git pull
 cd deploy/
 docker-compose down
 rm service/esmserver
