@@ -978,7 +978,6 @@ message PrizeTypeDetail {
 message AddPrizeTourRequest {
   int64 prize_id = 1;
   int64 tour_id = 2;
-  int32 status = 3;
 }
 message AddPrizeTourResponse {
   string result = 1;
