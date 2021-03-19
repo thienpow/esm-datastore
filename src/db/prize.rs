@@ -212,7 +212,7 @@ impl Prize {
     pub async fn list_prize_tour(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<PrizeTour>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, prize_id, tour_id, public.\"tournament\".title as tour_title, status FROM public.\"prize_tour\" LEFT JOIN public.\"tournament\" ON public.\"prize_tour\".tour_id = public.\"tournament\".id WHERE public.\"prize_tour\".prize_id=$1 ORDER BY id ASC;").await?;
+      let stmt = conn.prepare("SELECT pt.id, pt.prize_id, pt.tour_id, t.title as tour_title, pt.status FROM public.\"prize_tour\" as pt LEFT JOIN public.\"tournament\" as t ON pt.tour_id = t.id WHERE pt.prize_id=$1 ORDER BY pt.id ASC;").await?;
     
       let mut vec: Vec<PrizeTour> = Vec::new();
       for row in conn.query(&stmt, &[&id]).await? {
