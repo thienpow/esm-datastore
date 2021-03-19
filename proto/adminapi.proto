@@ -999,10 +999,9 @@ message ListPrizeTourResponse {
 message PrizeTourDetail {
   int64 id = 1;
   int64 prize_id = 2;
-  string prize_title = 3;
-  int64 tour_id = 4;
-  string tour_title = 5;
-  int32 status = 6;
+  int64 tour_id = 3;
+  string tour_title = 4;
+  int32 status = 5;
 }
 
 

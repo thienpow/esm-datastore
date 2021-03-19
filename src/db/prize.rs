@@ -30,7 +30,6 @@ pub struct Prize {
 pub struct PrizeTour {
   pub id: i64,
   pub prize_id: i64,
-  pub prize_title: String,
   pub tour_id: i64,
   pub tour_title: String,
   pub status: i32,
@@ -213,17 +212,16 @@ impl Prize {
     pub async fn list_prize_tour(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<PrizeTour>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, prize_id, '' as prize_title, tour_id, '' as tour_title, status FROM public.\"prize_tour\" WHERE prize_id=$1 ORDER BY id ASC;").await?;
+      let stmt = conn.prepare("SELECT id, prize_id, tour_id, public.\"tournament\".title as tour_title, status FROM public.\"prize_tour\" LEFT JOIN public.\"tournament\" ON public.\"prize_tour\".tour_id = public.\"tournament\".id WHERE public.\"prize_tour\".prize_id=$1 ORDER BY id ASC;").await?;
     
       let mut vec: Vec<PrizeTour> = Vec::new();
       for row in conn.query(&stmt, &[&id]).await? {
         let rule = PrizeTour {
           id: row.get(0),
           prize_id: row.get(1),
-          prize_title: row.get(2),
-          tour_id: row.get(3),
-          tour_title: row.get(4),
-          status: row.get(5)
+          tour_id: row.get(2),
+          tour_title: row.get(3),
+          status: row.get(4)
         };
 
         vec.push(rule);

@@ -28255,10 +28255,9 @@ proto.adminapi.esm.PrizeTourDetail.toObject = function(includeInstance, msg) {
   var f, obj = {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     prizeId: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    prizeTitle: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    tourId: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    tourTitle: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    status: jspb.Message.getFieldWithDefault(msg, 6, 0)
+    tourId: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    tourTitle: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    status: jspb.Message.getFieldWithDefault(msg, 5, 0)
   };
 
   if (includeInstance) {
@@ -28304,18 +28303,14 @@ proto.adminapi.esm.PrizeTourDetail.deserializeBinaryFromReader = function(msg, r
       msg.setPrizeId(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setPrizeTitle(value);
-      break;
-    case 4:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setTourId(value);
       break;
-    case 5:
+    case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setTourTitle(value);
       break;
-    case 6:
+    case 5:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
@@ -28362,31 +28357,24 @@ proto.adminapi.esm.PrizeTourDetail.serializeBinaryToWriter = function(message, w
       f
     );
   }
-  f = message.getPrizeTitle();
-  if (f.length > 0) {
-    writer.writeString(
-      3,
-      f
-    );
-  }
   f = message.getTourId();
   if (f !== 0) {
     writer.writeInt64(
-      4,
+      3,
       f
     );
   }
   f = message.getTourTitle();
   if (f.length > 0) {
     writer.writeString(
-      5,
+      4,
       f
     );
   }
   f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
-      6,
+      5,
       f
     );
   }
@@ -28430,29 +28418,11 @@ proto.adminapi.esm.PrizeTourDetail.prototype.setPrizeId = function(value) {
 
 
 /**
- * optional string prize_title = 3;
- * @return {string}
- */
-proto.adminapi.esm.PrizeTourDetail.prototype.getPrizeTitle = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.adminapi.esm.PrizeTourDetail} returns this
- */
-proto.adminapi.esm.PrizeTourDetail.prototype.setPrizeTitle = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
-};
-
-
-/**
- * optional int64 tour_id = 4;
+ * optional int64 tour_id = 3;
  * @return {number}
  */
 proto.adminapi.esm.PrizeTourDetail.prototype.getTourId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
@@ -28461,16 +28431,16 @@ proto.adminapi.esm.PrizeTourDetail.prototype.getTourId = function() {
  * @return {!proto.adminapi.esm.PrizeTourDetail} returns this
  */
 proto.adminapi.esm.PrizeTourDetail.prototype.setTourId = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
 /**
- * optional string tour_title = 5;
+ * optional string tour_title = 4;
  * @return {string}
  */
 proto.adminapi.esm.PrizeTourDetail.prototype.getTourTitle = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
 };
 
 
@@ -28479,16 +28449,16 @@ proto.adminapi.esm.PrizeTourDetail.prototype.getTourTitle = function() {
  * @return {!proto.adminapi.esm.PrizeTourDetail} returns this
  */
 proto.adminapi.esm.PrizeTourDetail.prototype.setTourTitle = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
 /**
- * optional int32 status = 6;
+ * optional int32 status = 5;
  * @return {number}
  */
 proto.adminapi.esm.PrizeTourDetail.prototype.getStatus = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
 
@@ -28497,7 +28467,7 @@ proto.adminapi.esm.PrizeTourDetail.prototype.getStatus = function() {
  * @return {!proto.adminapi.esm.PrizeTourDetail} returns this
  */
 proto.adminapi.esm.PrizeTourDetail.prototype.setStatus = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
+  return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 

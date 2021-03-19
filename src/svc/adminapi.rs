@@ -1657,7 +1657,6 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let p = db::prize::PrizeTour {
       id: 0,
       prize_id: req.prize_id.into(),
-      prize_title: "".to_string(),
       tour_id: req.tour_id.into(),
       tour_title: "".to_string(),
       status: 0
@@ -1706,7 +1705,6 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       let li = PrizeTourDetail {
         id: p.id,
         prize_id: p.prize_id,
-        prize_title: p.prize_title,
         tour_id: p.tour_id,
         tour_title: p.tour_title,
         status: p.status
