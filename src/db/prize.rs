@@ -27,6 +27,15 @@ pub struct Prize {
   pub tournament_ids: Vec<i64>
 }
 
+pub struct PrizeTour {
+  pub id: i64,
+  pub prize_id: i64,
+  pub prize_title: String,
+  pub tour_id: i64,
+  pub tour_title: String,
+  pub status: i32,
+}
+
 
 pub struct PrizeType {
   pub id: i32,
@@ -182,5 +191,45 @@ impl Prize {
       Ok(vec)
     }
 
+    pub async fn add_prize_tour(p: PrizeTour, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("INSERT INTO public.\"prize_tour\" (prize_id, tour_id, status) VALUES ($1, $2, $3) RETURNING id;").await?;
+      let row = conn.query_one(&stmt, 
+                  &[&p.prize_id, &p.tour_id, &p.status]).await?;
+    
+      Ok(row.get::<usize, i64>(0))
+    }
+    
+    pub async fn delete_prize_tour(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("DELETE FROM public.\"prize_tour\" WHERE id=$1;").await?;
+      let n = conn.execute(&stmt, &[&id]).await?;
+    
+      Ok(n)
+    }
+
+    pub async fn list_prize_tour(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<PrizeTour>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, prize_id, prize_title, tour_id, tour_title, status FROM public.\"prize_tour\" WHERE prize_id=$1 ORDER BY id ASC;").await?;
+    
+      let mut vec: Vec<PrizeTour> = Vec::new();
+      for row in conn.query(&stmt, &[&id]).await? {
+        let rule = PrizeTour {
+          id: row.get(0),
+          prize_id: row.get(1),
+          prize_title: row.get(2),
+          tour_id: row.get(3),
+          tour_title: row.get(4),
+          status: row.get(5)
+        };
+
+        vec.push(rule);
+      }
+      
+      Ok(vec)
+    }
 
 }

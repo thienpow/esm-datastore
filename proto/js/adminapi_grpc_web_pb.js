@@ -4154,6 +4154,246 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listPrizeType =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.AddPrizeTourRequest,
+ *   !proto.adminapi.esm.AddPrizeTourResponse>}
+ */
+const methodDescriptor_AdminApi_AddPrizeTour = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/AddPrizeTour',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.AddPrizeTourRequest,
+  proto.adminapi.esm.AddPrizeTourResponse,
+  /**
+   * @param {!proto.adminapi.esm.AddPrizeTourRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.AddPrizeTourResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.AddPrizeTourRequest,
+ *   !proto.adminapi.esm.AddPrizeTourResponse>}
+ */
+const methodInfo_AdminApi_AddPrizeTour = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.AddPrizeTourResponse,
+  /**
+   * @param {!proto.adminapi.esm.AddPrizeTourRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.AddPrizeTourResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.AddPrizeTourRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.AddPrizeTourResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.AddPrizeTourResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.addPrizeTour =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/AddPrizeTour',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_AddPrizeTour,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.AddPrizeTourRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.AddPrizeTourResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.addPrizeTour =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/AddPrizeTour',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_AddPrizeTour);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.DeletePrizeTourRequest,
+ *   !proto.adminapi.esm.DeletePrizeTourResponse>}
+ */
+const methodDescriptor_AdminApi_DeletePrizeTour = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/DeletePrizeTour',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.DeletePrizeTourRequest,
+  proto.adminapi.esm.DeletePrizeTourResponse,
+  /**
+   * @param {!proto.adminapi.esm.DeletePrizeTourRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.DeletePrizeTourResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.DeletePrizeTourRequest,
+ *   !proto.adminapi.esm.DeletePrizeTourResponse>}
+ */
+const methodInfo_AdminApi_DeletePrizeTour = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.DeletePrizeTourResponse,
+  /**
+   * @param {!proto.adminapi.esm.DeletePrizeTourRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.DeletePrizeTourResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.DeletePrizeTourRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.DeletePrizeTourResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.DeletePrizeTourResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.deletePrizeTour =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/DeletePrizeTour',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_DeletePrizeTour,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.DeletePrizeTourRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.DeletePrizeTourResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.deletePrizeTour =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/DeletePrizeTour',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_DeletePrizeTour);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListPrizeTourRequest,
+ *   !proto.adminapi.esm.ListPrizeTourResponse>}
+ */
+const methodDescriptor_AdminApi_ListPrizeTour = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListPrizeTour',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListPrizeTourRequest,
+  proto.adminapi.esm.ListPrizeTourResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListPrizeTourRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListPrizeTourResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListPrizeTourRequest,
+ *   !proto.adminapi.esm.ListPrizeTourResponse>}
+ */
+const methodInfo_AdminApi_ListPrizeTour = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListPrizeTourResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListPrizeTourRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListPrizeTourResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListPrizeTourRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListPrizeTourResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListPrizeTourResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listPrizeTour =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListPrizeTour',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListPrizeTour,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListPrizeTourRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListPrizeTourResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listPrizeTour =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListPrizeTour',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListPrizeTour);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.AddRankRequest,
  *   !proto.adminapi.esm.AddRankResponse>}
  */

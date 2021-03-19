@@ -100,6 +100,10 @@ use adminapi_proto::{
   PrizeDetail, //PrizeCount,
   ListPrizeTypeRequest, ListPrizeTypeResponse,
   PrizeTypeDetail,
+  AddPrizeTourRequest, AddPrizeTourResponse,
+  DeletePrizeTourRequest, DeletePrizeTourResponse,
+  ListPrizeTourRequest, ListPrizeTourResponse,
+  PrizeTourDetail,
 
   // Rank
   AddRankRequest, AddRankResponse,
@@ -1645,6 +1649,77 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
   }
 
+  async fn add_prize_tour(&self, request: Request<AddPrizeTourRequest>, ) -> Result<Response<AddPrizeTourResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+
+    let req = request.into_inner();
+
+    let p = db::prize::PrizeTour {
+      id: 0,
+      prize_id: req.prize_id.into(),
+      prize_title: "".to_string(),
+      tour_id: req.tour_id.into(),
+      tour_title: "".to_string(),
+      status: 0
+    };
+    
+    let result = match db::prize::Prize::add_prize_tour(p, &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(AddPrizeTourResponse {
+      result: result,
+    }))
+
+  }
+
+  async fn delete_prize_tour(&self, request: Request<DeletePrizeTourRequest>, ) -> Result<Response<DeletePrizeTourResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let result = match db::prize::Prize::delete_prize_tour(req.id.into(), &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(DeletePrizeTourResponse {
+      result: result,
+    }))
+  }
+
+  async fn list_prize_tour(&self, request: Request<ListPrizeTourRequest>, ) -> Result<Response<ListPrizeTourResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let prize_tours = match db::prize::Prize::list_prize_tour(req.id, &self.pool.clone()).await {
+      Ok(prize_tours) => prize_tours,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<PrizeTourDetail> = Vec::new();
+    
+    for p in prize_tours {
+      
+      let li = PrizeTourDetail {
+        id: p.id,
+        prize_id: p.prize_id,
+        prize_title: p.prize_title,
+        tour_id: p.tour_id,
+        tour_title: p.tour_title,
+        status: p.status
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListPrizeTourResponse {
+      result: result,
+    }))
+    
+  }
 
 
 
