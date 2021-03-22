@@ -295,11 +295,11 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     
     let req = request.into_inner();
     let username = req.username.clone();
-    println!("trying sign_in");
+    //println!("trying sign_in");
     match db::user::User::sign_in(req.username.into(), &self.pool.clone()).await {
       Ok(user) => {
 
-        println!("sign_in ok got user");
+        //println!("sign_in ok got user");
 
         if cryptic::verify(&user.passhash, &req.password).unwrap() {
           let jwt_token = jwt::issue_token(username.into(), user.role_id).unwrap();
@@ -868,7 +868,10 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let result = match db::game::Game::update(game, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
+      Err(error) => {
+        println!("update_game not ok {:?}", error);
+        return Err(Status::internal(format!("{:?}", error)))
+      }
     };
     
     Ok(Response::new(UpdateGameResponse {
