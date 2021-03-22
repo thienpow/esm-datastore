@@ -50,7 +50,7 @@ impl Game {
     pub async fn update(game: Game, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"game\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, game_code=$6, engine_id=$7, version=$8, status=$9, score_rule=$10, watch_ad_get_tickets=$11, watch_ad_get_exp=$12, use_gem_get_tickets=$13, use_gem_get_exp=$14, use_how_many_gems=$15, WHERE id=$16;").await?;
+      let stmt = conn.prepare("UPDATE public.\"game\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, game_code=$6, engine_id=$7, version=$8, status=$9, score_rule=$10, watch_ad_get_tickets=$11, watch_ad_get_exp=$12, use_gem_get_tickets=$13, use_gem_get_exp=$14, use_how_many_gems=$15 WHERE id=$16;").await?;
       let n = conn.execute(&stmt, 
                   &[&game.title, &game.subtitle, &game.img_url, &game.content, 
                   &game.type_id, &game.game_code, &game.engine_id, &game.version, &game.status,

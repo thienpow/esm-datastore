@@ -869,7 +869,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let result = match db::game::Game::update(game, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => {
-        println!("update_game not ok {:?}", error);
+        //println!("update_game not ok {:?}", error);
         return Err(Status::internal(format!("{:?}", error)))
       }
     };
