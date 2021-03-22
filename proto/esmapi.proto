@@ -311,8 +311,10 @@ message ConfigDetail {
   int32 games_per_ad = 2;
   int32 days_to_claim = 3;
   int32 freespin_per_day = 4;
-  int32 gems_per_spin = 5;
-  int32 ads_per_spin = 6;
+  int32 gems_per_spins_1 = 5;
+  int32 ads_per_spins_1 = 6;
+  int32 gems_per_spins_2 = 7;
+  int32 ads_per_spins_2 = 8;
 }
 
 
@@ -393,6 +395,7 @@ message GameDetail {
   int32 watch_ad_get_exp = 12;
   int32 use_gem_get_tickets = 13;
   int32 use_gem_get_exp = 14;
+  int32 use_how_many_gems = 15; 
 }
 
 
@@ -435,6 +438,7 @@ message LogGEnterRequest {
   string access_token = 2;
   int64 user_id = 3;
   int64 game_id = 4;
+  bool is_watched_ad = 5;
 }
 message LogGEnterResponse {
   string result = 1; //another new secret key

@@ -20,7 +20,8 @@ pub struct Game {
   pub watch_ad_get_tickets: i32,
   pub watch_ad_get_exp: i32,
   pub use_gem_get_tickets: i32,
-  pub use_gem_get_exp: i32
+  pub use_gem_get_exp: i32,
+  pub use_how_many_gems: i32,
 }
 
 pub struct GameLeaderRule {
@@ -37,11 +38,11 @@ impl Game {
     pub async fn add(game: Game, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"game\" (title, subtitle, img_url, content, type_id, game_code, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"game\" (title, subtitle, img_url, content, type_id, game_code, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp, use_how_many_gems) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
                   &[&game.title, &game.subtitle, &game.img_url, &game.content, 
                   &game.type_id, &game.game_code, &game.engine_id, &game.version, &game.status,
-                  &game.score_rule, &game.watch_ad_get_tickets, &game.watch_ad_get_exp, &game.use_gem_get_tickets, &game.use_gem_get_exp]).await?;
+                  &game.score_rule, &game.watch_ad_get_tickets, &game.watch_ad_get_exp, &game.use_gem_get_tickets, &game.use_gem_get_exp, &game.use_how_many_gems]).await?;
     
       Ok(row.get::<usize, i64>(0))
     }
@@ -49,11 +50,11 @@ impl Game {
     pub async fn update(game: Game, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"game\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, game_code=$6, engine_id=$7, version=$8, status=$9, score_rule=$10, watch_ad_get_tickets=$11, watch_ad_get_exp=$12, use_gem_get_tickets=$13, use_gem_get_exp=$14 WHERE id=$15;").await?;
+      let stmt = conn.prepare("UPDATE public.\"game\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, game_code=$6, engine_id=$7, version=$8, status=$9, score_rule=$10, watch_ad_get_tickets=$11, watch_ad_get_exp=$12, use_gem_get_tickets=$13, use_gem_get_exp=$14, use_how_many_gems=$15, WHERE id=$16;").await?;
       let n = conn.execute(&stmt, 
                   &[&game.title, &game.subtitle, &game.img_url, &game.content, 
                   &game.type_id, &game.game_code, &game.engine_id, &game.version, &game.status,
-                  &game.score_rule, &game.watch_ad_get_tickets, &game.watch_ad_get_exp, &game.use_gem_get_tickets, &game.use_gem_get_exp,
+                  &game.score_rule, &game.watch_ad_get_tickets, &game.watch_ad_get_exp, &game.use_gem_get_tickets, &game.use_gem_get_exp, &game.use_how_many_gems,
                   &game.id]).await?;
     
       Ok(n)
@@ -133,9 +134,9 @@ impl Game {
   
       let mut vec: Vec<Game> = Vec::new();
       if search_title.len() > 2 {
-        let mut sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp FROM public.\"game\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        let mut sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp, use_how_many_gems FROM public.\"game\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
         if status > 0 {
-          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp FROM public.\"game\" WHERE title ILIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
+          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp, use_how_many_gems FROM public.\"game\" WHERE title ILIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
         }
         let stmt = conn.prepare(&sql_string).await?;
     
@@ -155,15 +156,16 @@ impl Game {
             watch_ad_get_exp: row.get(11),
             use_gem_get_tickets: row.get(12),
             use_gem_get_exp: row.get(13),
+            use_how_many_gems: row.get(14),
             game_code: "".to_string() //game_code field value won't be retrieved but must be set, just ignore.
           };
   
           vec.push(game);
         }
       } else {
-        let mut sql_string = "SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp FROM public.\"game\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
+        let mut sql_string = "SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp, use_how_many_gems FROM public.\"game\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
         if status > 0 {
-          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp FROM public.\"game\" WHERE status={} LIMIT $1 OFFSET $2;", status);
+          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, engine_id, version, status, score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp, use_how_many_gems FROM public.\"game\" WHERE status={} LIMIT $1 OFFSET $2;", status);
         }
         let stmt = conn.prepare(&sql_string).await?;
     
@@ -183,6 +185,7 @@ impl Game {
             watch_ad_get_exp: row.get(11),
             use_gem_get_tickets: row.get(12),
             use_gem_get_exp: row.get(13),
+            use_how_many_gems: row.get(14),
             game_code: "".to_string() //game_code field value won't be retrieved but must be set, just ignore.
           };
   

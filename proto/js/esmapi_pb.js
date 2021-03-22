@@ -9216,8 +9216,10 @@ proto.api.esm.ConfigDetail.toObject = function(includeInstance, msg) {
     gamesPerAd: jspb.Message.getFieldWithDefault(msg, 2, 0),
     daysToClaim: jspb.Message.getFieldWithDefault(msg, 3, 0),
     freespinPerDay: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    gemsPerSpin: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    adsPerSpin: jspb.Message.getFieldWithDefault(msg, 6, 0)
+    gemsPerSpins1: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    adsPerSpins1: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    gemsPerSpins2: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    adsPerSpins2: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -9272,11 +9274,19 @@ proto.api.esm.ConfigDetail.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 5:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setGemsPerSpin(value);
+      msg.setGemsPerSpins1(value);
       break;
     case 6:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setAdsPerSpin(value);
+      msg.setAdsPerSpins1(value);
+      break;
+    case 7:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setGemsPerSpins2(value);
+      break;
+    case 8:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setAdsPerSpins2(value);
       break;
     default:
       reader.skipField();
@@ -9335,17 +9345,31 @@ proto.api.esm.ConfigDetail.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getGemsPerSpin();
+  f = message.getGemsPerSpins1();
   if (f !== 0) {
     writer.writeInt32(
       5,
       f
     );
   }
-  f = message.getAdsPerSpin();
+  f = message.getAdsPerSpins1();
   if (f !== 0) {
     writer.writeInt32(
       6,
+      f
+    );
+  }
+  f = message.getGemsPerSpins2();
+  if (f !== 0) {
+    writer.writeInt32(
+      7,
+      f
+    );
+  }
+  f = message.getAdsPerSpins2();
+  if (f !== 0) {
+    writer.writeInt32(
+      8,
       f
     );
   }
@@ -9425,10 +9449,10 @@ proto.api.esm.ConfigDetail.prototype.setFreespinPerDay = function(value) {
 
 
 /**
- * optional int32 gems_per_spin = 5;
+ * optional int32 gems_per_spins_1 = 5;
  * @return {number}
  */
-proto.api.esm.ConfigDetail.prototype.getGemsPerSpin = function() {
+proto.api.esm.ConfigDetail.prototype.getGemsPerSpins1 = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
@@ -9437,16 +9461,16 @@ proto.api.esm.ConfigDetail.prototype.getGemsPerSpin = function() {
  * @param {number} value
  * @return {!proto.api.esm.ConfigDetail} returns this
  */
-proto.api.esm.ConfigDetail.prototype.setGemsPerSpin = function(value) {
+proto.api.esm.ConfigDetail.prototype.setGemsPerSpins1 = function(value) {
   return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 
 /**
- * optional int32 ads_per_spin = 6;
+ * optional int32 ads_per_spins_1 = 6;
  * @return {number}
  */
-proto.api.esm.ConfigDetail.prototype.getAdsPerSpin = function() {
+proto.api.esm.ConfigDetail.prototype.getAdsPerSpins1 = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
@@ -9455,8 +9479,44 @@ proto.api.esm.ConfigDetail.prototype.getAdsPerSpin = function() {
  * @param {number} value
  * @return {!proto.api.esm.ConfigDetail} returns this
  */
-proto.api.esm.ConfigDetail.prototype.setAdsPerSpin = function(value) {
+proto.api.esm.ConfigDetail.prototype.setAdsPerSpins1 = function(value) {
   return jspb.Message.setProto3IntField(this, 6, value);
+};
+
+
+/**
+ * optional int32 gems_per_spins_2 = 7;
+ * @return {number}
+ */
+proto.api.esm.ConfigDetail.prototype.getGemsPerSpins2 = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.ConfigDetail} returns this
+ */
+proto.api.esm.ConfigDetail.prototype.setGemsPerSpins2 = function(value) {
+  return jspb.Message.setProto3IntField(this, 7, value);
+};
+
+
+/**
+ * optional int32 ads_per_spins_2 = 8;
+ * @return {number}
+ */
+proto.api.esm.ConfigDetail.prototype.getAdsPerSpins2 = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.ConfigDetail} returns this
+ */
+proto.api.esm.ConfigDetail.prototype.setAdsPerSpins2 = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 
@@ -11106,7 +11166,8 @@ proto.api.esm.GameDetail.toObject = function(includeInstance, msg) {
     watchAdGetTickets: jspb.Message.getFieldWithDefault(msg, 11, 0),
     watchAdGetExp: jspb.Message.getFieldWithDefault(msg, 12, 0),
     useGemGetTickets: jspb.Message.getFieldWithDefault(msg, 13, 0),
-    useGemGetExp: jspb.Message.getFieldWithDefault(msg, 14, 0)
+    useGemGetExp: jspb.Message.getFieldWithDefault(msg, 14, 0),
+    useHowManyGems: jspb.Message.getFieldWithDefault(msg, 15, 0)
   };
 
   if (includeInstance) {
@@ -11198,6 +11259,10 @@ proto.api.esm.GameDetail.deserializeBinaryFromReader = function(msg, reader) {
     case 14:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setUseGemGetExp(value);
+      break;
+    case 15:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setUseHowManyGems(value);
       break;
     default:
       reader.skipField();
@@ -11323,6 +11388,13 @@ proto.api.esm.GameDetail.serializeBinaryToWriter = function(message, writer) {
   if (f !== 0) {
     writer.writeInt32(
       14,
+      f
+    );
+  }
+  f = message.getUseHowManyGems();
+  if (f !== 0) {
+    writer.writeInt32(
+      15,
       f
     );
   }
@@ -11578,6 +11650,24 @@ proto.api.esm.GameDetail.prototype.getUseGemGetExp = function() {
  */
 proto.api.esm.GameDetail.prototype.setUseGemGetExp = function(value) {
   return jspb.Message.setProto3IntField(this, 14, value);
+};
+
+
+/**
+ * optional int32 use_how_many_gems = 15;
+ * @return {number}
+ */
+proto.api.esm.GameDetail.prototype.getUseHowManyGems = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 15, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.GameDetail} returns this
+ */
+proto.api.esm.GameDetail.prototype.setUseHowManyGems = function(value) {
+  return jspb.Message.setProto3IntField(this, 15, value);
 };
 
 
@@ -12058,7 +12148,8 @@ proto.api.esm.LogGEnterRequest.toObject = function(includeInstance, msg) {
     secret: jspb.Message.getFieldWithDefault(msg, 1, ""),
     accessToken: jspb.Message.getFieldWithDefault(msg, 2, ""),
     userId: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    gameId: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    gameId: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    isWatchedAd: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
   };
 
   if (includeInstance) {
@@ -12110,6 +12201,10 @@ proto.api.esm.LogGEnterRequest.deserializeBinaryFromReader = function(msg, reade
     case 4:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setGameId(value);
+      break;
+    case 5:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsWatchedAd(value);
       break;
     default:
       reader.skipField();
@@ -12165,6 +12260,13 @@ proto.api.esm.LogGEnterRequest.serializeBinaryToWriter = function(message, write
   if (f !== 0) {
     writer.writeInt64(
       4,
+      f
+    );
+  }
+  f = message.getIsWatchedAd();
+  if (f) {
+    writer.writeBool(
+      5,
       f
     );
   }
@@ -12240,6 +12342,24 @@ proto.api.esm.LogGEnterRequest.prototype.getGameId = function() {
  */
 proto.api.esm.LogGEnterRequest.prototype.setGameId = function(value) {
   return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional bool is_watched_ad = 5;
+ * @return {boolean}
+ */
+proto.api.esm.LogGEnterRequest.prototype.getIsWatchedAd = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.api.esm.LogGEnterRequest} returns this
+ */
+proto.api.esm.LogGEnterRequest.prototype.setIsWatchedAd = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 5, value);
 };
 
 

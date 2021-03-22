@@ -68,10 +68,6 @@ use adminapi_proto::{
   GetGameCountRequest, GetGameCountResponse,
   GameDetail, //GameCount,
 
-  // GPlayer
-  LogGEnterRequest, LogGEnterResponse,
-  LogGLeaveRequest, LogGLeaveResponse,
-
   //  Invites
   GenerateInviteUrlRequest, GenerateInviteUrlResponse,
   AddInviteRequest, AddInviteResponse,
@@ -660,8 +656,10 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       games_per_ad: req.games_per_ad.into(),
       days_to_claim: req.days_to_claim.into(),
       freespin_per_day: req.freespin_per_day.into(),
-      gems_per_spin: req.gems_per_spin.into(),
-      ads_per_spin: req.ads_per_spin.into(),
+      gems_per_spins_1: req.gems_per_spins_1.into(),
+      ads_per_spins_1: req.ads_per_spins_1.into(),
+      gems_per_spins_2: req.gems_per_spins_2.into(),
+      ads_per_spins_2: req.ads_per_spins_2.into(),
     };
     
     let result = match db::config::Config::update(config, &self.pool.clone()).await {
@@ -688,8 +686,10 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
             games_per_ad: result.games_per_ad,
             days_to_claim: result.days_to_claim,
             freespin_per_day: result.freespin_per_day,
-            gems_per_spin: result.gems_per_spin,
-            ads_per_spin: result.ads_per_spin,
+            gems_per_spins_1: result.gems_per_spins_1,
+            ads_per_spins_1: result.ads_per_spins_1,
+            gems_per_spins_2: result.gems_per_spins_2,
+            ads_per_spins_2: result.ads_per_spins_2,
           })
         }))
       },
@@ -827,7 +827,8 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       watch_ad_get_tickets: req.watch_ad_get_tickets.into(),
       watch_ad_get_exp: req.watch_ad_get_exp.into(),
       use_gem_get_tickets: req.use_gem_get_tickets.into(),
-      use_gem_get_exp: req.use_gem_get_exp.into()
+      use_gem_get_exp: req.use_gem_get_exp.into(),
+      use_how_many_gems: req.use_how_many_gems.into()
     };
     
     let result = match db::game::Game::add(game, &self.pool.clone()).await {
@@ -861,7 +862,8 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       watch_ad_get_tickets: req.watch_ad_get_tickets.into(),
       watch_ad_get_exp: req.watch_ad_get_exp.into(),
       use_gem_get_tickets: req.use_gem_get_tickets.into(),
-      use_gem_get_exp: req.use_gem_get_exp.into()
+      use_gem_get_exp: req.use_gem_get_exp.into(),
+      use_how_many_gems: req.use_how_many_gems.into()
     };
     
     let result = match db::game::Game::update(game, &self.pool.clone()).await {
@@ -1029,7 +1031,8 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
         watch_ad_get_tickets: game.watch_ad_get_tickets,
         watch_ad_get_exp: game.watch_ad_get_exp,
         use_gem_get_tickets: game.use_gem_get_tickets,
-        use_gem_get_exp: game.use_gem_get_exp
+        use_gem_get_exp: game.use_gem_get_exp,
+        use_how_many_gems: game.use_how_many_gems
       };
       
       result.push(li);
@@ -1054,91 +1057,6 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       result: Some(result),
     }))
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  /*************************************** gplayer ***************************************
-  *
-  *
-  */
-
-  async fn log_g_enter(&self, request: Request<LogGEnterRequest>, ) -> Result<Response<LogGEnterResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
-
-    let now = SystemTime::now();
-
-    //TODO: check the req.secret key see if the key is originate from our system
-    let req = request.into_inner();
-    let gplayer = db::gplayer::GPlayer {
-      id: 0,
-      game_id: req.game_id.into(),
-      user_id: req.user_id.into(),
-      enter_timestamp: now,
-      leave_timestamp: now,
-      game_score: 0
-    };
-    
-
-    //TODO: generate a new secret key to reply to user, if user are allowed to play, 
-    // if not allowed to play anymore then reply an empty string
-    // the generated secret key will then be used during log_leave
-    let result = match db::gplayer::GPlayer::enter(gplayer, &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(LogGEnterResponse {
-      result: result,
-    }))
-
-  }
-
-
-  async fn log_g_leave(&self, request: Request<LogGLeaveRequest>, ) -> Result<Response<LogGLeaveResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
-    
-    let now = SystemTime::now();
-
-    //TODO: check if the req.secret is generated during log_enter
-    // if yes, then allow recording the game score
-    // generated secret key timestamp must not allowed more than 30 minutes
-    let req = request.into_inner();
-    let gplayer = db::gplayer::GPlayer {
-      id: req.id.into(),
-      game_id: 0,
-      user_id: 0,
-      enter_timestamp: now,
-      leave_timestamp: now,
-      game_score: req.game_score.into(),
-    };
-    
-    let result = match db::gplayer::GPlayer::leave(gplayer, &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(LogGLeaveResponse {
-      result: result,
-    }))
-
-  }
-
 
 
 

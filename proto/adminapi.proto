@@ -50,10 +50,6 @@ service AdminApi {
   rpc ListGame(ListGameRequest) returns (ListGameResponse) {}
   rpc GetGameCount(GetGameCountRequest) returns (GetGameCountResponse) {}
 
-  // GPlayer
-  rpc LogGEnter(LogGEnterRequest) returns (LogGEnterResponse) {}
-  rpc LogGLeave(LogGLeaveRequest) returns (LogGLeaveResponse) {}
-
   // Invite
   rpc GenerateInviteURL(GenerateInviteUrlRequest) returns(GenerateInviteUrlResponse) {}
   rpc AddInvite(AddInviteRequest) returns (AddInviteResponse) {}
@@ -377,8 +373,10 @@ message UpdateConfigRequest {
   int32 games_per_ad = 2;
   int32 days_to_claim = 3;
   int32 freespin_per_day = 4;
-  int32 gems_per_spin = 5;
-  int32 ads_per_spin = 6;
+  int32 gems_per_spins_1 = 5;
+  int32 ads_per_spins_1 = 6;
+  int32 gems_per_spins_2 = 7;
+  int32 ads_per_spins_2 = 8;
 }
 message UpdateConfigResponse {
   string result = 1;
@@ -395,8 +393,10 @@ message ConfigDetail {
   int32 games_per_ad = 2;
   int32 days_to_claim = 3;
   int32 freespin_per_day = 4;
-  int32 gems_per_spin = 5;
-  int32 ads_per_spin = 6;
+  int32 gems_per_spins_1 = 5;
+  int32 ads_per_spins_1 = 6;
+  int32 gems_per_spins_2 = 7;
+  int32 ads_per_spins_2 = 8;
 }
 
 
@@ -476,6 +476,7 @@ message AddGameRequest {
   int32 watch_ad_get_exp = 12;
   int32 use_gem_get_tickets = 13;
   int32 use_gem_get_exp = 14;
+  int32 use_how_many_gems = 15; 
 }
 message AddGameResponse {
   string result = 1;
@@ -499,6 +500,7 @@ message UpdateGameRequest {
   int32 watch_ad_get_exp = 13;
   int32 use_gem_get_tickets = 14;
   int32 use_gem_get_exp = 15;
+  int32 use_how_many_gems = 16; 
 }
 message UpdateGameResponse {
   string result = 1;
@@ -595,6 +597,7 @@ message GameDetail {
   int32 watch_ad_get_exp = 12;
   int32 use_gem_get_tickets = 13;
   int32 use_gem_get_exp = 14;
+  int32 use_how_many_gems = 15; 
 }
 
 
@@ -608,50 +611,6 @@ message GameCount {
   int64 draft = 1;
   int64 published = 2;
   int64 archived = 3;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-*************************************** GPlayer ***************************************
-*/
-//LogEnter will response a secret key to be used for LogLeave
-//LogEnter = log the status of starting a game
-message LogGEnterRequest {
-  string secret = 1;
-  string access_token = 2;
-  int64 user_id = 3;
-  int64 game_id = 4;
-}
-message LogGEnterResponse {
-  string result = 1; //another new secret key
-}
-
-//LogLeave  is also a LogScore
-//LogLeave = log the status of quiting a game and update the score
-message LogGLeaveRequest {
-  string secret = 1; //to be use over here
-  string access_token = 2;
-  int64 id = 3;
-  int32 game_score = 4;
-}
-message LogGLeaveResponse {
-  string result = 1;
 }
 
 

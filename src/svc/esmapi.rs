@@ -480,8 +480,10 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
             games_per_ad: result.games_per_ad,
             days_to_claim: result.days_to_claim,
             freespin_per_day: result.freespin_per_day,
-            gems_per_spin: result.gems_per_spin,
-            ads_per_spin: result.ads_per_spin,
+            gems_per_spins_1: result.gems_per_spins_1,
+            ads_per_spins_1: result.ads_per_spins_1,
+            gems_per_spins_2: result.gems_per_spins_2,
+            ads_per_spins_2: result.ads_per_spins_2,
           })
         }))
       },
@@ -617,7 +619,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         watch_ad_get_tickets: game.watch_ad_get_tickets,
         watch_ad_get_exp: game.watch_ad_get_exp,
         use_gem_get_tickets: game.use_gem_get_tickets,
-        use_gem_get_exp: game.use_gem_get_exp
+        use_gem_get_exp: game.use_gem_get_exp,
+        use_how_many_gems: game.use_how_many_gems,
       };
       
       result.push(li);
@@ -665,7 +668,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       user_id: req.user_id.into(),
       enter_timestamp: now,
       leave_timestamp: now,
-      game_score: 0
+      game_score: 0,
+      is_watched_ad: req.is_watched_ad.into(),
     };
     
 
@@ -700,6 +704,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       enter_timestamp: now,
       leave_timestamp: now,
       game_score: req.game_score.into(),
+      is_watched_ad: false,
     };
     
     let result = match db::gplayer::GPlayer::leave(gplayer, &self.pool.clone()).await {
