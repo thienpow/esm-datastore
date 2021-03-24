@@ -6234,6 +6234,246 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.getTournamentSetCount =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.AddTourSetRequest,
+ *   !proto.adminapi.esm.AddTourSetResponse>}
+ */
+const methodDescriptor_AdminApi_AddTourSet = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/AddTourSet',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.AddTourSetRequest,
+  proto.adminapi.esm.AddTourSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.AddTourSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.AddTourSetResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.AddTourSetRequest,
+ *   !proto.adminapi.esm.AddTourSetResponse>}
+ */
+const methodInfo_AdminApi_AddTourSet = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.AddTourSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.AddTourSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.AddTourSetResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.AddTourSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.AddTourSetResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.AddTourSetResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.addTourSet =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/AddTourSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_AddTourSet,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.AddTourSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.AddTourSetResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.addTourSet =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/AddTourSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_AddTourSet);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.DeleteTourSetRequest,
+ *   !proto.adminapi.esm.DeleteTourSetResponse>}
+ */
+const methodDescriptor_AdminApi_DeleteTourSet = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/DeleteTourSet',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.DeleteTourSetRequest,
+  proto.adminapi.esm.DeleteTourSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.DeleteTourSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.DeleteTourSetResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.DeleteTourSetRequest,
+ *   !proto.adminapi.esm.DeleteTourSetResponse>}
+ */
+const methodInfo_AdminApi_DeleteTourSet = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.DeleteTourSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.DeleteTourSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.DeleteTourSetResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.DeleteTourSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.DeleteTourSetResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.DeleteTourSetResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.deleteTourSet =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/DeleteTourSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_DeleteTourSet,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.DeleteTourSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.DeleteTourSetResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.deleteTourSet =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/DeleteTourSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_DeleteTourSet);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListTourSetRequest,
+ *   !proto.adminapi.esm.ListTourSetResponse>}
+ */
+const methodDescriptor_AdminApi_ListTourSet = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListTourSet',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListTourSetRequest,
+  proto.adminapi.esm.ListTourSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListTourSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListTourSetResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListTourSetRequest,
+ *   !proto.adminapi.esm.ListTourSetResponse>}
+ */
+const methodInfo_AdminApi_ListTourSet = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListTourSetResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListTourSetRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListTourSetResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListTourSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListTourSetResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListTourSetResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listTourSet =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListTourSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListTourSet,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListTourSetRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListTourSetResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listTourSet =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListTourSet',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListTourSet);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.AddWinnerRequest,
  *   !proto.adminapi.esm.AddWinnerResponse>}
  */

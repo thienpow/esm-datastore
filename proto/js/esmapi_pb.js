@@ -2395,7 +2395,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.api.esm.TournamentDetail = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.api.esm.TournamentDetail.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
 goog.inherits(proto.api.esm.TournamentDetail, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -17882,7 +17882,7 @@ proto.api.esm.ListPrizeResponse.prototype.clearResultList = function() {
  * @private {!Array<number>}
  * @const
  */
-proto.api.esm.PrizeDetail.repeatedFields_ = [13,15];
+proto.api.esm.PrizeDetail.repeatedFields_ = [13];
 
 
 
@@ -17929,9 +17929,8 @@ proto.api.esm.PrizeDetail.toObject = function(includeInstance, msg) {
     isRepeat: jspb.Message.getBooleanFieldWithDefault(msg, 12, false),
     repeatedOnList: (f = jspb.Message.getRepeatedField(msg, 13)) == null ? undefined : f,
     status: jspb.Message.getFieldWithDefault(msg, 14, 0),
-    tournamentIdsList: (f = jspb.Message.getRepeatedField(msg, 15)) == null ? undefined : f,
-    statusPrize: jspb.Message.getFieldWithDefault(msg, 16, 0),
-    ticketsCollected: jspb.Message.getFieldWithDefault(msg, 17, 0)
+    statusPrize: jspb.Message.getFieldWithDefault(msg, 15, 0),
+    ticketsCollected: jspb.Message.getFieldWithDefault(msg, 16, 0)
   };
 
   if (includeInstance) {
@@ -18025,14 +18024,10 @@ proto.api.esm.PrizeDetail.deserializeBinaryFromReader = function(msg, reader) {
       msg.setStatus(value);
       break;
     case 15:
-      var value = /** @type {!Array<number>} */ (reader.readPackedInt64());
-      msg.setTournamentIdsList(value);
-      break;
-    case 16:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatusPrize(value);
       break;
-    case 17:
+    case 16:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setTicketsCollected(value);
       break;
@@ -18163,24 +18158,17 @@ proto.api.esm.PrizeDetail.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getTournamentIdsList();
-  if (f.length > 0) {
-    writer.writePackedInt64(
-      15,
-      f
-    );
-  }
   f = message.getStatusPrize();
   if (f !== 0) {
     writer.writeInt32(
-      16,
+      15,
       f
     );
   }
   f = message.getTicketsCollected();
   if (f !== 0) {
     writer.writeInt64(
-      17,
+      16,
       f
     );
   }
@@ -18459,48 +18447,11 @@ proto.api.esm.PrizeDetail.prototype.setStatus = function(value) {
 
 
 /**
- * repeated int64 tournament_ids = 15;
- * @return {!Array<number>}
- */
-proto.api.esm.PrizeDetail.prototype.getTournamentIdsList = function() {
-  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 15));
-};
-
-
-/**
- * @param {!Array<number>} value
- * @return {!proto.api.esm.PrizeDetail} returns this
- */
-proto.api.esm.PrizeDetail.prototype.setTournamentIdsList = function(value) {
-  return jspb.Message.setField(this, 15, value || []);
-};
-
-
-/**
- * @param {number} value
- * @param {number=} opt_index
- * @return {!proto.api.esm.PrizeDetail} returns this
- */
-proto.api.esm.PrizeDetail.prototype.addTournamentIds = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 15, value, opt_index);
-};
-
-
-/**
- * Clears the list making it empty but non-null.
- * @return {!proto.api.esm.PrizeDetail} returns this
- */
-proto.api.esm.PrizeDetail.prototype.clearTournamentIdsList = function() {
-  return this.setTournamentIdsList([]);
-};
-
-
-/**
- * optional int32 status_prize = 16;
+ * optional int32 status_prize = 15;
  * @return {number}
  */
 proto.api.esm.PrizeDetail.prototype.getStatusPrize = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 16, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 15, 0));
 };
 
 
@@ -18509,16 +18460,16 @@ proto.api.esm.PrizeDetail.prototype.getStatusPrize = function() {
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
 proto.api.esm.PrizeDetail.prototype.setStatusPrize = function(value) {
-  return jspb.Message.setProto3IntField(this, 16, value);
+  return jspb.Message.setProto3IntField(this, 15, value);
 };
 
 
 /**
- * optional int64 tickets_collected = 17;
+ * optional int64 tickets_collected = 16;
  * @return {number}
  */
 proto.api.esm.PrizeDetail.prototype.getTicketsCollected = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 17, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 16, 0));
 };
 
 
@@ -18527,7 +18478,7 @@ proto.api.esm.PrizeDetail.prototype.getTicketsCollected = function() {
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
 proto.api.esm.PrizeDetail.prototype.setTicketsCollected = function(value) {
-  return jspb.Message.setProto3IntField(this, 17, value);
+  return jspb.Message.setProto3IntField(this, 16, value);
 };
 
 
@@ -22249,13 +22200,6 @@ proto.api.esm.ListTournamentResponse.prototype.clearResultList = function() {
 
 
 
-/**
- * List of repeated fields within this message type.
- * @private {!Array<number>}
- * @const
- */
-proto.api.esm.TournamentDetail.repeatedFields_ = [3];
-
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -22289,8 +22233,7 @@ proto.api.esm.TournamentDetail.toObject = function(includeInstance, msg) {
   var f, obj = {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     title: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    tourSetIdsList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f,
-    status: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    status: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -22336,10 +22279,6 @@ proto.api.esm.TournamentDetail.deserializeBinaryFromReader = function(msg, reade
       msg.setTitle(value);
       break;
     case 3:
-      var value = /** @type {!Array<number>} */ (reader.readPackedInt64());
-      msg.setTourSetIdsList(value);
-      break;
-    case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
@@ -22386,17 +22325,10 @@ proto.api.esm.TournamentDetail.serializeBinaryToWriter = function(message, write
       f
     );
   }
-  f = message.getTourSetIdsList();
-  if (f.length > 0) {
-    writer.writePackedInt64(
-      3,
-      f
-    );
-  }
   f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
-      4,
+      3,
       f
     );
   }
@@ -22440,48 +22372,11 @@ proto.api.esm.TournamentDetail.prototype.setTitle = function(value) {
 
 
 /**
- * repeated int64 tour_set_ids = 3;
- * @return {!Array<number>}
- */
-proto.api.esm.TournamentDetail.prototype.getTourSetIdsList = function() {
-  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 3));
-};
-
-
-/**
- * @param {!Array<number>} value
- * @return {!proto.api.esm.TournamentDetail} returns this
- */
-proto.api.esm.TournamentDetail.prototype.setTourSetIdsList = function(value) {
-  return jspb.Message.setField(this, 3, value || []);
-};
-
-
-/**
- * @param {number} value
- * @param {number=} opt_index
- * @return {!proto.api.esm.TournamentDetail} returns this
- */
-proto.api.esm.TournamentDetail.prototype.addTourSetIds = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 3, value, opt_index);
-};
-
-
-/**
- * Clears the list making it empty but non-null.
- * @return {!proto.api.esm.TournamentDetail} returns this
- */
-proto.api.esm.TournamentDetail.prototype.clearTourSetIdsList = function() {
-  return this.setTourSetIdsList([]);
-};
-
-
-/**
- * optional int32 status = 4;
+ * optional int32 status = 3;
  * @return {number}
  */
 proto.api.esm.TournamentDetail.prototype.getStatus = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
@@ -22490,7 +22385,7 @@ proto.api.esm.TournamentDetail.prototype.getStatus = function() {
  * @return {!proto.api.esm.TournamentDetail} returns this
  */
 proto.api.esm.TournamentDetail.prototype.setStatus = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
