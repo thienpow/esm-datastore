@@ -958,7 +958,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         is_repeat: prize.is_repeat,
         repeated_on: prize.repeated_on,
         status: prize.status,
-        tournament_ids: prize.tournament_ids,
         status_prize: prize.status_prize,
         tickets_collected: prize.tickets_collected,
       };
@@ -1221,15 +1220,9 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     for tournament in tournaments {
       
-      //let seconds_on = tournament.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-      //let seconds_off = tournament.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        
       let li = TournamentDetail {
         id: tournament.id,
         title: tournament.title,
-        //scheduled_on: seconds_on as i64,
-        //scheduled_off: seconds_off as i64,
-        tour_set_ids: tournament.tour_set_ids,
         status: tournament.status
       };
       

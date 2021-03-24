@@ -110,6 +110,9 @@ service AdminApi {
   rpc ListTournamentSetGameRule(ListTournamentSetGameRuleRequest) returns (ListTournamentSetGameRuleResponse) {}
   rpc GetTournamentCount(GetTournamentCountRequest) returns (GetTournamentCountResponse) {}
   rpc GetTournamentSetCount(GetTournamentSetCountRequest) returns (GetTournamentSetCountResponse) {}
+  rpc AddTourSet(AddTourSetRequest) returns (AddTourSetResponse) {}
+  rpc DeleteTourSet(DeleteTourSetRequest) returns (DeleteTourSetResponse) {}
+  rpc ListTourSet(ListTourSetRequest) returns (ListTourSetResponse) {}
 
   // Winner
   rpc AddWinner(AddWinnerRequest) returns (AddWinnerResponse) {}
@@ -838,7 +841,6 @@ message AddPrizeRequest {
   bool is_repeat =  11;
   repeated int32 repeated_on = 12;
   int32 status = 13;
-  repeated int64 tournament_ids = 14;
 }
 message AddPrizeResponse {
   string result = 1;
@@ -861,7 +863,6 @@ message UpdatePrizeRequest {
   bool is_repeat =  12;
   repeated int32 repeated_on = 13;
   int32 status = 14;
-  repeated int64 tournament_ids = 15;
 }
 message UpdatePrizeResponse {
   string result = 1;
@@ -903,9 +904,8 @@ message PrizeDetail {
   bool is_repeat =  12;
   repeated int32 repeated_on = 13;
   int32 status = 14;
-  repeated int64 tournament_ids = 15;
-  int32 status_prize = 16;
-  int64 tickets_collected = 17;
+  int32 status_prize = 15;
+  int64 tickets_collected = 16;
 }
 
 
@@ -1207,8 +1207,7 @@ message SubscriptionTypeDetail {
 //Add a new tournament
 message AddTournamentRequest {
   string title = 1;
-  repeated int64 tour_set_ids = 2;
-  int32 status = 3;
+  int32 status = 2;
 }
 message AddTournamentResponse {
   string result = 1;
@@ -1240,8 +1239,7 @@ message AddTournamentSetGameRuleResponse {
 message UpdateTournamentRequest {
   int64 id = 1;
   string title = 2;
-  repeated int64 tour_set_ids = 3;
-  int32 status = 4;
+  int32 status = 3;
 }
 message UpdateTournamentResponse {
   string result = 1;
@@ -1306,8 +1304,7 @@ message ListTournamentResponse {
 message TournamentDetail {
   int64 id = 1;
   string title = 2;
-  repeated int64 tour_set_ids = 3;
-  int32 status = 4;
+  int32 status = 3;
 }
 
 //List tournament Set  
@@ -1365,6 +1362,36 @@ message TournamentSetCount {
   int64 total = 1;
 }
 
+
+//Add a new tour_set
+message AddTourSetRequest {
+  int64 tour_id = 1;
+  int64 set_id = 2;
+}
+message AddTourSetResponse {
+  string result = 1;
+}
+//Delete a tour_set
+message DeleteTourSetRequest {
+  int64 id = 1;
+}
+message DeleteTourSetResponse {
+  string result = 1;
+}
+//List tour_set
+message ListTourSetRequest {
+  int64 id = 1;
+}
+message ListTourSetResponse {
+  repeated TourSetDetail result = 1;
+}
+message TourSetDetail {
+  int64 id = 1;
+  int64 tour_id = 2;
+  int64 set_id = 3;
+  string set_title = 4;
+  int32 status = 5;
+}
 
 
 

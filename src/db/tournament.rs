@@ -12,7 +12,14 @@ use crate::svc;
 pub struct Tournament {
   pub id: i64,
   pub title: String,
-  pub tour_set_ids: Vec<i64>,
+  pub status: i32,
+}
+
+pub struct TourSet {
+  pub id: i64,
+  pub tour_id: i64,
+  pub set_id: i64,
+  pub set_title: String,
   pub status: i32,
 }
 
@@ -39,9 +46,9 @@ impl Tournament {
     pub async fn add(tournament: Tournament, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"tournament\" (title, tour_set_ids, status) VALUES ($1, $2, $3) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"tournament\" (title, status) VALUES ($1, $2, $3) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
-                  &[&tournament.title, &tournament.tour_set_ids, &tournament.status]).await?;
+                  &[&tournament.title, &tournament.status]).await?;
     
       Ok(row.get::<usize, i64>(0))
     }
@@ -69,9 +76,9 @@ impl Tournament {
     pub async fn update(tournament: Tournament, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"tournament\" SET title=$1, tour_set_ids=$2, status=$3 WHERE id=$4;").await?;
+      let stmt = conn.prepare("UPDATE public.\"tournament\" SET title=$1, status=$2 WHERE id=$3;").await?;
       let n = conn.execute(&stmt, 
-                  &[&tournament.title, &tournament.tour_set_ids, &tournament.status, 
+                  &[&tournament.title, &tournament.status, 
                   &tournament.id]).await?;
     
       Ok(n)
@@ -129,9 +136,9 @@ impl Tournament {
   
       let mut vec: Vec<Tournament> = Vec::new();
       if search_title.len() > 2 {
-        let mut sql_string = format!("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        let mut sql_string = format!("SELECT id, title, status FROM public.\"tournament\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
         if status > 0 {
-          sql_string = format!("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE title ILIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
+          sql_string = format!("SELECT id, title, status FROM public.\"tournament\" WHERE title ILIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
         }
         let stmt = conn.prepare(&sql_string).await?;
     
@@ -139,8 +146,7 @@ impl Tournament {
           let tournament = Tournament {
             id: row.get(0),
             title: row.get(1),
-            tour_set_ids:  row.get(2),
-            status: row.get(3)
+            status: row.get(2)
           };
   
           vec.push(tournament);
@@ -148,7 +154,7 @@ impl Tournament {
         
       } else {
         if ids.len() > 0 {
-          let sql_string = format!("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE id IN ({});", ids);
+          let sql_string = format!("SELECT id, title, status FROM public.\"tournament\" WHERE id IN ({});", ids);
           //print!("sql_string: {}.", sql_string);
           let stmt = conn.prepare(&sql_string).await?;
       
@@ -156,17 +162,16 @@ impl Tournament {
             let tournament = Tournament {
               id: row.get(0),
               title: row.get(1),
-              tour_set_ids:  row.get(2),
-              status: row.get(3)
+              status: row.get(2)
             };
     
             vec.push(tournament);
           }
           
         } else {
-          let mut sql_string = "SELECT id, title, tour_set_ids, status FROM public.\"tournament\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
+          let mut sql_string = "SELECT id, title, status FROM public.\"tournament\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
           if status > 0 {
-            sql_string = format!("SELECT id, title, tour_set_ids, status FROM public.\"tournament\" WHERE status={} LIMIT $1 OFFSET $2;", status);
+            sql_string = format!("SELECT id, title, status FROM public.\"tournament\" WHERE status={} LIMIT $1 OFFSET $2;", status);
           }
           
           let stmt = conn.prepare(&sql_string).await?;
@@ -175,8 +180,7 @@ impl Tournament {
             let tournament = Tournament {
               id: row.get(0),
               title: row.get(1),
-              tour_set_ids:  row.get(2),
-              status: row.get(3)
+              status: row.get(2)
             };
     
             vec.push(tournament);
@@ -302,5 +306,45 @@ impl Tournament {
       })
     }
 
+
+    pub async fn add_tour_set(ts: TourSet, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("INSERT INTO public.\"tour_set\" (tour_id, set_id, status) VALUES ($1, $2, $3) RETURNING id;").await?;
+      let row = conn.query_one(&stmt, 
+                  &[&ts.tour_id, &ts.set_id, &ts.status]).await?;
+    
+      Ok(row.get::<usize, i64>(0))
+    }
+    
+    pub async fn delete_tour_set(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("DELETE FROM public.\"tour_set\" WHERE id=$1;").await?;
+      let n = conn.execute(&stmt, &[&id]).await?;
+    
+      Ok(n)
+    }
+
+    pub async fn list_tour_set(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<TourSet>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT ts.id, ts.tour_id, ts.set_id, s.title as set_title, ts.status FROM public.\"tour_set\" as ts LEFT JOIN public.\"tournament_set\" as s ON s.id = ts.set_id WHERE ts.tour_id=$1 ORDER BY ts.id ASC;").await?;
+    
+      let mut vec: Vec<TourSet> = Vec::new();
+      for row in conn.query(&stmt, &[&id]).await? {
+        let rule = TourSet {
+          id: row.get(0),
+          tour_id: row.get(1),
+          set_id: row.get(2),
+          set_title: row.get(3),
+          status: row.get(4)
+        };
+
+        vec.push(rule);
+      }
+      
+      Ok(vec)
+    }
 
 }

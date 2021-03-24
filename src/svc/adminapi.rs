@@ -137,7 +137,10 @@ use adminapi_proto::{
   GetTournamentCountRequest, GetTournamentCountResponse,
   GetTournamentSetCountRequest, GetTournamentSetCountResponse,
   TournamentDetail, TournamentSetDetail, TournamentSetGameRuleDetail,
-
+  AddTourSetRequest, AddTourSetResponse,
+  DeleteTourSetRequest, DeleteTourSetResponse,
+  ListTourSetRequest, ListTourSetResponse,
+  TourSetDetail,
   // Winner
   AddWinnerRequest, AddWinnerResponse,
   DeleteWinnerRequest, DeleteWinnerResponse,
@@ -1413,7 +1416,6 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       repeated_on: req.repeated_on.into(),
       status: req.status.into(),
       status_prize: 0,
-      tournament_ids: req.tournament_ids.into(),
       tickets_collected: 0,
     };
     
@@ -1453,7 +1455,6 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       repeated_on: req.repeated_on.into(),
       status: req.status.into(),
       status_prize: 0,
-      tournament_ids: req.tournament_ids.into(),
       tickets_collected: 0,
     };
     
@@ -1516,7 +1517,6 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
         is_repeat: prize.is_repeat,
         repeated_on: prize.repeated_on,
         status: prize.status,
-        tournament_ids: prize.tournament_ids,
         status_prize: prize.status_prize,
         tickets_collected: prize.tickets_collected,
       };
@@ -2014,7 +2014,6 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let tournament = db::tournament::Tournament {
       id: 0,
       title: req.title.into(),
-      tour_set_ids: req.tour_set_ids.into(),
       status: req.status.into()
     };
     
@@ -2084,18 +2083,9 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
 
-    /*
-    let iseconds_on: i64 = req.scheduled_on.into();
-    let scheduled_on = UNIX_EPOCH + Duration::new(iseconds_on as u64, 0);
-
-    let iseconds_off: i64 = req.scheduled_off.into();
-    let scheduled_off = UNIX_EPOCH + Duration::new(iseconds_off as u64, 0);
-    */
-
     let tournament = db::tournament::Tournament {
       id: req.id.into(),
       title: req.title.into(),
-      tour_set_ids: req.tour_set_ids.into(),
       status: req.status.into()
     };
     
@@ -2219,13 +2209,9 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     for tournament in tournaments {
       
-      //let seconds_off = tournament.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        
       let li = TournamentDetail {
         id: tournament.id,
         title: tournament.title,
-        //scheduled_off: seconds_off as i64,
-        tour_set_ids: tournament.tour_set_ids,
         status: tournament.status
       };
       
@@ -2332,6 +2318,76 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     }))
   }
 
+
+  async fn add_tour_set(&self, request: Request<AddTourSetRequest>, ) -> Result<Response<AddTourSetResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+
+    let req = request.into_inner();
+
+    let p = db::tournament::TourSet {
+      id: 0,
+      tour_id: req.tour_id.into(),
+      set_id: req.set_id.into(),
+      set_title: "".to_string(),
+      status: 0
+    };
+    
+    let result = match db::tournament::Tournament::add_tour_set(p, &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(AddTourSetResponse {
+      result: result,
+    }))
+
+  }
+
+  async fn delete_tour_set(&self, request: Request<DeleteTourSetRequest>, ) -> Result<Response<DeleteTourSetResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let result = match db::tournament::Tournament::delete_tour_set(req.id.into(), &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(DeleteTourSetResponse {
+      result: result,
+    }))
+  }
+
+  async fn list_tour_set(&self, request: Request<ListTourSetRequest>, ) -> Result<Response<ListTourSetResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let tours_sets = match db::tournament::Tournament::list_tour_set(req.id, &self.pool.clone()).await {
+      Ok(tours_sets) => tours_sets,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<TourSetDetail> = Vec::new();
+    
+    for ts in tours_sets {
+      
+      let li = TourSetDetail {
+        id: ts.id,
+        tour_id: ts.tour_id,
+        set_id: ts.set_id,
+        set_title: ts.set_title,
+        status: ts.status
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListTourSetResponse {
+      result: result,
+    }))
+    
+  }
 
 
 

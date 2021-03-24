@@ -685,9 +685,8 @@ message PrizeDetail {
   bool is_repeat =  12;
   repeated int32 repeated_on = 13;
   int32 status = 14;
-  repeated int64 tournament_ids = 15;
-  int32 status_prize = 16;
-  int64 tickets_collected = 17;
+  int32 status_prize = 15;
+  int64 tickets_collected = 16;
 }
 
 
@@ -880,8 +879,7 @@ message ListTournamentResponse {
 message TournamentDetail {
   int64 id = 1;
   string title = 2;
-  repeated int64 tour_set_ids = 3;
-  int32 status = 4;
+  int32 status = 3;
 }
 
 //Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
