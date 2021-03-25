@@ -729,7 +729,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     let log_g = match db::gplayer::GPlayer::list_log_g(req.user_id, req.limit.into(), req.offset.into(), &self.pool.clone()).await {
       Ok(log_g) => log_g,
-      Err(error) => Err(e) => {
+      Err(e) => {
         println!("list_log_g not ok {:?}", e);
         return Err(Status::internal(format!("{:?}", e)))
       }
