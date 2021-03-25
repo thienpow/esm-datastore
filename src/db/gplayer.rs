@@ -7,12 +7,28 @@ use std::time::{SystemTime};
 
 pub struct GPlayer {
   pub id: i64,
-  pub game_id: i64,
   pub user_id: i64,
+  pub prize_id: i64,
+  pub game_id: i64,
   pub enter_timestamp: SystemTime,
   pub leave_timestamp: SystemTime,
   pub game_score: i32,
   pub is_watched_ad: bool,
+}
+
+pub struct LogGDetail {
+  pub id: i64,
+  pub user_id: i64,
+  pub prize_id: i64,
+  pub prize_title: String,
+  pub prize_url: String,
+  pub game_id: i64,
+  pub game_title: String,
+  pub game_url: String,
+  pub enter_timestamp: SystemTime,
+  pub leave_timestamp: SystemTime,
+  pub is_watched_ad: bool,
+  pub game_score: i32,
 }
 
 
@@ -22,9 +38,9 @@ impl GPlayer {
     pub async fn enter(gplayer: GPlayer, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"gplayer\" (game_id, user_id, enter_timestamp, is_watched_ad) VALUES ($1, $2, $3, $4) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"gplayer\" (prize_id, game_id, user_id, enter_timestamp, is_watched_ad) VALUES ($1, $2, $3, $4) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
-                  &[&gplayer.game_id, &gplayer.user_id, &gplayer.enter_timestamp, &gplayer.is_watched_ad]).await?;
+                  &[&gplayer.prize_id, &gplayer.game_id, &gplayer.user_id, &gplayer.enter_timestamp, &gplayer.is_watched_ad]).await?;
     
       Ok(row.get::<usize, i64>(0))
     }
@@ -41,4 +57,32 @@ impl GPlayer {
     }
     
     
+    pub async fn list_log_g(user_id: i64, limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<LogGDetail>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT gp.id, gp.user_id, gp.prize_id, p.title AS prize_title, p.img_url AS prize_url gp.game_id, g.title AS game_title, g.img_url AS game_url, gp.enter_timestamp, gp.leave_timestamp, gp.is_watched_ad, gp.game_score FROM public.\"gplayer\" AS gp LEFT JOIN public.\"prize\" AS p ON gp.prize_id = p.id LEFT JOIN public.\"game\" AS g ON gp.game_id = g.id WHERE user_id=$1 ORDER BY enter_timestamp DESC LIMIT $2 OFFSET $3;").await?;
+    
+      let mut vec: Vec<LogGDetail> = Vec::new();
+      for row in conn.query(&stmt, &[&user_id, &limit, &offset]).await? {
+        let log_g = LogGDetail {
+          id: row.get(0),
+          user_id: row.get(1),
+          prize_id: row.get(2),
+          prize_title: row.get(3),
+          prize_url: row.get(4),
+          game_id: row.get(5),
+          game_title: row.get(6),
+          game_url: row.get(7),
+          enter_timestamp: row.get(8),
+          leave_timestamp: row.get(9),
+          is_watched_ad: row.get(10),
+          game_score: row.get(11),
+        };
+
+        vec.push(log_g);
+      }
+      
+      Ok(vec)
+    }
+
 }

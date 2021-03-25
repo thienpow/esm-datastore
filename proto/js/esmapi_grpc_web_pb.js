@@ -1514,6 +1514,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.logGLeave =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.ListLogGRequest,
+ *   !proto.api.esm.ListLogGResponse>}
+ */
+const methodDescriptor_EsmApi_ListLogG = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListLogG',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.ListLogGRequest,
+  proto.api.esm.ListLogGResponse,
+  /**
+   * @param {!proto.api.esm.ListLogGRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListLogGResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.ListLogGRequest,
+ *   !proto.api.esm.ListLogGResponse>}
+ */
+const methodInfo_EsmApi_ListLogG = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListLogGResponse,
+  /**
+   * @param {!proto.api.esm.ListLogGRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListLogGResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.ListLogGRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListLogGResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListLogGResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.listLogG =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/ListLogG',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListLogG,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.ListLogGRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.ListLogGResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.listLogG =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/ListLogG',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListLogG);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.GenerateInviteUrlRequest,
  *   !proto.api.esm.GenerateInviteUrlResponse>}
  */

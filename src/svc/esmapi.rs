@@ -53,6 +53,8 @@ use esmapi_proto::{
   // GPlayer
   LogGEnterRequest, LogGEnterResponse,
   LogGLeaveRequest, LogGLeaveResponse,
+  ListLogGRequest, ListLogGResponse,
+  LogGDetail,
 
   //  Invites
   GenerateInviteUrlRequest, GenerateInviteUrlResponse,
@@ -664,6 +666,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let req = request.into_inner();
     let gplayer = db::gplayer::GPlayer {
       id: 0,
+      prize_id: req.prize_id.into(),
       game_id: req.game_id.into(),
       user_id: req.user_id.into(),
       enter_timestamp: now,
@@ -699,6 +702,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let req = request.into_inner();
     let gplayer = db::gplayer::GPlayer {
       id: req.id.into(),
+      prize_id: 0,
       game_id: 0,
       user_id: 0,
       enter_timestamp: now,
@@ -718,6 +722,46 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
   }
 
+  async fn list_log_g(&self, request: Request<ListLogGRequest>, ) -> Result<Response<ListLogGResponse>, Status> {
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    
+    let log_g = match db::gplayer::GPlayer::list_log_g(req.user_id, req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+      Ok(log_g) => log_g,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<LogGDetail> = Vec::new();
+    
+    for l in log_g {
+      
+      let enter_timestamp = l.enter_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let leave_timestamp = l.leave_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
+      let li = LogGDetail {
+        id: l.id,
+        user_id: l.user_id,
+        prize_id: l.prize_id,
+        prize_title: l.prize_title,
+        prize_url: l.prize_url,
+        game_id: l.game_id,
+        game_title: l.game_title,
+        game_url: l.game_url,
+        enter_timestamp: enter_timestamp as i64,
+        leave_timestamp: leave_timestamp as i64,
+        is_watched_ad: l.is_watched_ad,
+        game_score: l.game_score,
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListLogGResponse {
+      result: result,
+    }))
+
+  }
 
 
 
