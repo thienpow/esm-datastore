@@ -60,7 +60,7 @@ impl GPlayer {
     pub async fn list_log_g(user_id: i64, limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<LogGDetail>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT gp.id, gp.user_id, gp.prize_id, p.title AS prize_title, p.img_url AS prize_url gp.game_id, g.title AS game_title, g.img_url AS game_url, gp.enter_timestamp, gp.leave_timestamp, gp.is_watched_ad, gp.game_score FROM public.\"gplayer\" AS gp LEFT JOIN public.\"prize\" AS p ON gp.prize_id = p.id LEFT JOIN public.\"game\" AS g ON gp.game_id = g.id WHERE user_id=$1 ORDER BY enter_timestamp DESC LIMIT $2 OFFSET $3;").await?;
+      let stmt = conn.prepare("SELECT gp.id, gp.user_id, gp.prize_id, p.title AS prize_title, p.img_url AS prize_url, gp.game_id, g.title AS game_title, g.img_url AS game_url, gp.enter_timestamp, gp.leave_timestamp, gp.is_watched_ad, gp.game_score FROM public.\"gplayer\" AS gp LEFT JOIN public.\"prize\" AS p ON gp.prize_id = p.id LEFT JOIN public.\"game\" AS g ON gp.game_id = g.id WHERE user_id=$1 ORDER BY enter_timestamp DESC LIMIT $2 OFFSET $3;").await?;
     
       let mut vec: Vec<LogGDetail> = Vec::new();
       for row in conn.query(&stmt, &[&user_id, &limit, &offset]).await? {
