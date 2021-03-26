@@ -12212,11 +12212,10 @@ proto.api.esm.LogGEnterRequest.prototype.toObject = function(opt_includeInstance
 proto.api.esm.LogGEnterRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     secret: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    accessToken: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    userId: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    prizeId: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    gameId: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    isWatchedAd: jspb.Message.getBooleanFieldWithDefault(msg, 6, false)
+    userId: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    prizeId: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    gameId: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    isWatchedAd: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
   };
 
   if (includeInstance) {
@@ -12258,22 +12257,18 @@ proto.api.esm.LogGEnterRequest.deserializeBinaryFromReader = function(msg, reade
       msg.setSecret(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setAccessToken(value);
-      break;
-    case 3:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setUserId(value);
       break;
-    case 4:
+    case 3:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setPrizeId(value);
       break;
-    case 5:
+    case 4:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setGameId(value);
       break;
-    case 6:
+    case 5:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsWatchedAd(value);
       break;
@@ -12313,38 +12308,31 @@ proto.api.esm.LogGEnterRequest.serializeBinaryToWriter = function(message, write
       f
     );
   }
-  f = message.getAccessToken();
-  if (f.length > 0) {
-    writer.writeString(
-      2,
-      f
-    );
-  }
   f = message.getUserId();
   if (f !== 0) {
     writer.writeInt64(
-      3,
+      2,
       f
     );
   }
   f = message.getPrizeId();
   if (f !== 0) {
     writer.writeInt64(
-      4,
+      3,
       f
     );
   }
   f = message.getGameId();
   if (f !== 0) {
     writer.writeInt64(
-      5,
+      4,
       f
     );
   }
   f = message.getIsWatchedAd();
   if (f) {
     writer.writeBool(
-      6,
+      5,
       f
     );
   }
@@ -12370,29 +12358,11 @@ proto.api.esm.LogGEnterRequest.prototype.setSecret = function(value) {
 
 
 /**
- * optional string access_token = 2;
- * @return {string}
- */
-proto.api.esm.LogGEnterRequest.prototype.getAccessToken = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.api.esm.LogGEnterRequest} returns this
- */
-proto.api.esm.LogGEnterRequest.prototype.setAccessToken = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
-};
-
-
-/**
- * optional int64 user_id = 3;
+ * optional int64 user_id = 2;
  * @return {number}
  */
 proto.api.esm.LogGEnterRequest.prototype.getUserId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
@@ -12401,16 +12371,16 @@ proto.api.esm.LogGEnterRequest.prototype.getUserId = function() {
  * @return {!proto.api.esm.LogGEnterRequest} returns this
  */
 proto.api.esm.LogGEnterRequest.prototype.setUserId = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
 /**
- * optional int64 prize_id = 4;
+ * optional int64 prize_id = 3;
  * @return {number}
  */
 proto.api.esm.LogGEnterRequest.prototype.getPrizeId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
@@ -12419,16 +12389,16 @@ proto.api.esm.LogGEnterRequest.prototype.getPrizeId = function() {
  * @return {!proto.api.esm.LogGEnterRequest} returns this
  */
 proto.api.esm.LogGEnterRequest.prototype.setPrizeId = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
 /**
- * optional int64 game_id = 5;
+ * optional int64 game_id = 4;
  * @return {number}
  */
 proto.api.esm.LogGEnterRequest.prototype.getGameId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
 
@@ -12437,16 +12407,16 @@ proto.api.esm.LogGEnterRequest.prototype.getGameId = function() {
  * @return {!proto.api.esm.LogGEnterRequest} returns this
  */
 proto.api.esm.LogGEnterRequest.prototype.setGameId = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
 /**
- * optional bool is_watched_ad = 6;
+ * optional bool is_watched_ad = 5;
  * @return {boolean}
  */
 proto.api.esm.LogGEnterRequest.prototype.getIsWatchedAd = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 6, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
 };
 
 
@@ -12455,7 +12425,7 @@ proto.api.esm.LogGEnterRequest.prototype.getIsWatchedAd = function() {
  * @return {!proto.api.esm.LogGEnterRequest} returns this
  */
 proto.api.esm.LogGEnterRequest.prototype.setIsWatchedAd = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 6, value);
+  return jspb.Message.setProto3BooleanField(this, 5, value);
 };
 
 
@@ -12622,9 +12592,8 @@ proto.api.esm.LogGLeaveRequest.prototype.toObject = function(opt_includeInstance
 proto.api.esm.LogGLeaveRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     secret: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    accessToken: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    id: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    gameScore: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    id: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    gameScore: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -12666,14 +12635,10 @@ proto.api.esm.LogGLeaveRequest.deserializeBinaryFromReader = function(msg, reade
       msg.setSecret(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setAccessToken(value);
-      break;
-    case 3:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setId(value);
       break;
-    case 4:
+    case 3:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGameScore(value);
       break;
@@ -12713,24 +12678,17 @@ proto.api.esm.LogGLeaveRequest.serializeBinaryToWriter = function(message, write
       f
     );
   }
-  f = message.getAccessToken();
-  if (f.length > 0) {
-    writer.writeString(
-      2,
-      f
-    );
-  }
   f = message.getId();
   if (f !== 0) {
     writer.writeInt64(
-      3,
+      2,
       f
     );
   }
   f = message.getGameScore();
   if (f !== 0) {
     writer.writeInt32(
-      4,
+      3,
       f
     );
   }
@@ -12756,29 +12714,11 @@ proto.api.esm.LogGLeaveRequest.prototype.setSecret = function(value) {
 
 
 /**
- * optional string access_token = 2;
- * @return {string}
- */
-proto.api.esm.LogGLeaveRequest.prototype.getAccessToken = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.api.esm.LogGLeaveRequest} returns this
- */
-proto.api.esm.LogGLeaveRequest.prototype.setAccessToken = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
-};
-
-
-/**
- * optional int64 id = 3;
+ * optional int64 id = 2;
  * @return {number}
  */
 proto.api.esm.LogGLeaveRequest.prototype.getId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
@@ -12787,16 +12727,16 @@ proto.api.esm.LogGLeaveRequest.prototype.getId = function() {
  * @return {!proto.api.esm.LogGLeaveRequest} returns this
  */
 proto.api.esm.LogGLeaveRequest.prototype.setId = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
 /**
- * optional int32 game_score = 4;
+ * optional int32 game_score = 3;
  * @return {number}
  */
 proto.api.esm.LogGLeaveRequest.prototype.getGameScore = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
@@ -12805,7 +12745,7 @@ proto.api.esm.LogGLeaveRequest.prototype.getGameScore = function() {
  * @return {!proto.api.esm.LogGLeaveRequest} returns this
  */
 proto.api.esm.LogGLeaveRequest.prototype.setGameScore = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 

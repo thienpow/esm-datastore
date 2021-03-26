@@ -436,11 +436,10 @@ message GameCount {
 //LogEnter = log the status of starting a game
 message LogGEnterRequest {
   string secret = 1;
-  string access_token = 2;
-  int64 user_id = 3;
-  int64 prize_id = 4;
-  int64 game_id = 5;
-  bool is_watched_ad = 6;
+  int64 user_id = 2;
+  int64 prize_id = 3;
+  int64 game_id = 4;
+  bool is_watched_ad = 5;
 }
 message LogGEnterResponse {
   string result = 1; //another new secret key
@@ -450,9 +449,8 @@ message LogGEnterResponse {
 //LogLeave = log the status of quiting a game and update the score
 message LogGLeaveRequest {
   string secret = 1; //to be use over here
-  string access_token = 2;
-  int64 id = 3;
-  int32 game_score = 4;
+  int64 id = 2;
+  int32 game_score = 3;
 }
 message LogGLeaveResponse {
   string result = 1;
