@@ -6871,5 +6871,85 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.getWinnerCount =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListLogGRequest,
+ *   !proto.adminapi.esm.ListLogGResponse>}
+ */
+const methodDescriptor_AdminApi_ListLogG = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListLogG',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListLogGRequest,
+  proto.adminapi.esm.ListLogGResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListLogGRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListLogGResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListLogGRequest,
+ *   !proto.adminapi.esm.ListLogGResponse>}
+ */
+const methodInfo_AdminApi_ListLogG = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListLogGResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListLogGRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListLogGResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListLogGRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListLogGResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListLogGResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listLogG =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListLogG',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListLogG,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListLogGRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListLogGResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listLogG =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListLogG',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListLogG);
+};
+
+
 module.exports = proto.adminapi.esm;
 

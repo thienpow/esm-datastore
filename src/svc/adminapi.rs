@@ -149,6 +149,11 @@ use adminapi_proto::{
   GetWinnerCountRequest, GetWinnerCountResponse,
   WinnerDetail, //WinnerCount,
 
+
+  // GPlayer
+  ListLogGRequest, ListLogGResponse,
+  LogGDetail,
+
 };
 
 
@@ -2516,6 +2521,53 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     Ok(Response::new(GetWinnerCountResponse {
       result: Some(result),
     }))
+  }
+
+
+
+  async fn list_log_g(&self, request: Request<ListLogGRequest>, ) -> Result<Response<ListLogGResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+
+    let req = request.into_inner();
+    
+    let log_g = match db::gplayer::GPlayer::list_log_g(req.user_id, req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+      Ok(log_g) => log_g,
+      Err(e) => {
+        println!("list_log_g not ok {:?}", e);
+        return Err(Status::internal(format!("{:?}", e)))
+      }
+    };
+    
+
+    let mut result: Vec<LogGDetail> = Vec::new();
+    
+    for l in log_g {
+      
+      let enter_timestamp = l.enter_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let leave_timestamp = l.leave_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
+      let li = LogGDetail {
+        id: l.id,
+        user_id: l.user_id,
+        prize_id: l.prize_id,
+        prize_title: l.prize_title,
+        prize_url: l.prize_url,
+        game_id: l.game_id,
+        game_title: l.game_title,
+        game_url: l.game_url,
+        enter_timestamp: enter_timestamp as i64,
+        leave_timestamp: leave_timestamp as i64,
+        is_watched_ad: l.is_watched_ad,
+        game_score: l.game_score,
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListLogGResponse {
+      result: result,
+    }))
+
   }
 
 

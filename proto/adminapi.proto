@@ -121,6 +121,7 @@ service AdminApi {
   rpc ClaimWinner(ClaimWinnerRequest) returns (ClaimWinnerResponse) {}
   rpc GetWinnerCount(GetWinnerCountRequest) returns (GetWinnerCountResponse) {}
 
+  rpc ListLogG(ListLogGRequest) returns (ListLogGResponse) {}
 }
 
 
@@ -1464,4 +1465,30 @@ message GetWinnerCountResponse {
 message WinnerCount {
   int64 active = 1;
   int64 archived = 2;
+}
+
+
+
+
+message ListLogGRequest {
+  int64 user_id = 1;
+  int64 limit = 2;
+  int64 offset = 3;
+}
+message ListLogGResponse {
+  repeated LogGDetail result = 1;
+}
+message LogGDetail {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 prize_id = 3;
+  string prize_title = 4;
+  string prize_url = 5;
+  int64 game_id = 6;
+  string game_title = 7;
+  string game_url = 8;
+  int64 enter_timestamp = 9;
+  int64 leave_timestamp = 10;
+  bool is_watched_ad = 11;
+  int32 game_score = 12;
 }
