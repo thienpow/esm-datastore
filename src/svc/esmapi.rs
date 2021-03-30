@@ -30,7 +30,6 @@ use esmapi_proto::{
   // User
   SignInRequest, SignInResponse,
   AddUserRequest, AddUserResponse,
-  UpdateEmailConfirmedRequest, UpdateEmailConfirmedResponse,
   UpdateSocialLinkFbRequest, UpdateSocialLinkFbResponse,
   UpdateSocialLinkGoogleRequest, UpdateSocialLinkGoogleResponse,
   UpdateAddressRequest, UpdateAddressResponse,
@@ -321,22 +320,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
 
-  async fn update_email_confirmed(&self, request: Request<UpdateEmailConfirmedRequest>, ) -> Result<Response<UpdateEmailConfirmedResponse>, Status> {
-    let _ = svc::check_is_admin(&request.metadata()).await?;
-
-    let req = request.into_inner();
-    
-    let result = match db::user::User::update_email_confirmed(req.id.into(), req.status.into(), &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(UpdateEmailConfirmedResponse {
-      result: result,
-    }))
-
-  }
-
   async fn update_social_link_fb(&self, request: Request<UpdateSocialLinkFbRequest>, ) -> Result<Response<UpdateSocialLinkFbResponse>, Status> {
     let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
@@ -419,7 +402,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
   }
   async fn change_password(&self, request: Request<ChangePasswordRequest>, ) -> Result<Response<ChangePasswordResponse>, Status> {
-    let _ = svc::check_is_admin(&request.metadata()).await?;
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
     

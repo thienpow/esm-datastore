@@ -17,7 +17,6 @@ service EsmApi {
   // User
   rpc SignIn(SignInRequest) returns (SignInResponse) {}
   rpc AddUser(AddUserRequest) returns (AddUserResponse) {}
-  rpc UpdateEmailConfirmed(UpdateEmailConfirmedRequest) returns (UpdateEmailConfirmedResponse) {}
   rpc UpdateSocialLinkFB(UpdateSocialLinkFBRequest) returns (UpdateSocialLinkFBResponse) {}
   rpc UpdateSocialLinkGoogle(UpdateSocialLinkGoogleRequest) returns (UpdateSocialLinkGoogleResponse) {}
   rpc UpdateAddress(UpdateAddressRequest) returns (UpdateAddressResponse) {}
@@ -156,15 +155,6 @@ message AddUserRequest {
 }
 message AddUserResponse {
   string result = 1; //response a id
-}
-
-//Update an existing user data
-message UpdateEmailConfirmedRequest {
-  int64 id = 1;
-  bool status = 2;
-}
-message UpdateEmailConfirmedResponse {
-  string result = 1;
 }
 
 //Update an existing user data
