@@ -61,9 +61,9 @@ impl User {
     pub async fn add(user: User, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"user\" (username, passhash, email, phone, firstname, lastname, \
+      let stmt = conn.prepare("INSERT INTO public.\"user\" (id, username, passhash, email, phone, firstname, lastname, \
         created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp) \
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id;").await?;
+        VALUES ((SELECT MAX(id) FROM public.\"user\")+1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
                   &[&user.username, &user.passhash, &user.email, &user.phone, 
                   &user.firstname, &user.lastname, 
