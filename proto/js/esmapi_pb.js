@@ -13265,10 +13265,10 @@ proto.api.esm.LogGDetail.toObject = function(includeInstance, msg) {
     userId: jspb.Message.getFieldWithDefault(msg, 2, 0),
     prizeId: jspb.Message.getFieldWithDefault(msg, 3, 0),
     prizeTitle: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    prizeUrl: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    prizeImgUrl: jspb.Message.getFieldWithDefault(msg, 5, ""),
     gameId: jspb.Message.getFieldWithDefault(msg, 6, 0),
     gameTitle: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    gameUrl: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    gameImgUrl: jspb.Message.getFieldWithDefault(msg, 8, ""),
     enterTimestamp: jspb.Message.getFieldWithDefault(msg, 9, 0),
     leaveTimestamp: jspb.Message.getFieldWithDefault(msg, 10, 0),
     isWatchedAd: jspb.Message.getBooleanFieldWithDefault(msg, 11, false),
@@ -13327,7 +13327,7 @@ proto.api.esm.LogGDetail.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 5:
       var value = /** @type {string} */ (reader.readString());
-      msg.setPrizeUrl(value);
+      msg.setPrizeImgUrl(value);
       break;
     case 6:
       var value = /** @type {number} */ (reader.readInt64());
@@ -13339,7 +13339,7 @@ proto.api.esm.LogGDetail.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 8:
       var value = /** @type {string} */ (reader.readString());
-      msg.setGameUrl(value);
+      msg.setGameImgUrl(value);
       break;
     case 9:
       var value = /** @type {number} */ (reader.readInt64());
@@ -13414,7 +13414,7 @@ proto.api.esm.LogGDetail.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getPrizeUrl();
+  f = message.getPrizeImgUrl();
   if (f.length > 0) {
     writer.writeString(
       5,
@@ -13435,7 +13435,7 @@ proto.api.esm.LogGDetail.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getGameUrl();
+  f = message.getGameImgUrl();
   if (f.length > 0) {
     writer.writeString(
       8,
@@ -13546,10 +13546,10 @@ proto.api.esm.LogGDetail.prototype.setPrizeTitle = function(value) {
 
 
 /**
- * optional string prize_url = 5;
+ * optional string prize_img_url = 5;
  * @return {string}
  */
-proto.api.esm.LogGDetail.prototype.getPrizeUrl = function() {
+proto.api.esm.LogGDetail.prototype.getPrizeImgUrl = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
@@ -13558,7 +13558,7 @@ proto.api.esm.LogGDetail.prototype.getPrizeUrl = function() {
  * @param {string} value
  * @return {!proto.api.esm.LogGDetail} returns this
  */
-proto.api.esm.LogGDetail.prototype.setPrizeUrl = function(value) {
+proto.api.esm.LogGDetail.prototype.setPrizeImgUrl = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
 };
 
@@ -13600,10 +13600,10 @@ proto.api.esm.LogGDetail.prototype.setGameTitle = function(value) {
 
 
 /**
- * optional string game_url = 8;
+ * optional string game_img_url = 8;
  * @return {string}
  */
-proto.api.esm.LogGDetail.prototype.getGameUrl = function() {
+proto.api.esm.LogGDetail.prototype.getGameImgUrl = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
@@ -13612,7 +13612,7 @@ proto.api.esm.LogGDetail.prototype.getGameUrl = function() {
  * @param {string} value
  * @return {!proto.api.esm.LogGDetail} returns this
  */
-proto.api.esm.LogGDetail.prototype.setGameUrl = function(value) {
+proto.api.esm.LogGDetail.prototype.setGameImgUrl = function(value) {
   return jspb.Message.setProto3StringField(this, 8, value);
 };
 
@@ -25491,10 +25491,12 @@ proto.api.esm.WinnerDetail.toObject = function(includeInstance, msg) {
   var f, obj = {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     prizeId: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    userId: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    createdOn: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    tournamentId: jspb.Message.getFieldWithDefault(msg, 6, 0)
+    prizeTitle: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    prizeImgUrl: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    userId: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    userNickName: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    createdOn: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    status: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -25540,20 +25542,28 @@ proto.api.esm.WinnerDetail.deserializeBinaryFromReader = function(msg, reader) {
       msg.setPrizeId(value);
       break;
     case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPrizeTitle(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPrizeImgUrl(value);
+      break;
+    case 5:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setUserId(value);
       break;
-    case 4:
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setUserNickName(value);
+      break;
+    case 7:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setCreatedOn(value);
       break;
-    case 5:
+    case 8:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
-      break;
-    case 6:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setTournamentId(value);
       break;
     default:
       reader.skipField();
@@ -25598,31 +25608,45 @@ proto.api.esm.WinnerDetail.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getPrizeTitle();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = message.getPrizeImgUrl();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
   f = message.getUserId();
   if (f !== 0) {
     writer.writeInt64(
-      3,
+      5,
+      f
+    );
+  }
+  f = message.getUserNickName();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
       f
     );
   }
   f = message.getCreatedOn();
   if (f !== 0) {
     writer.writeInt64(
-      4,
+      7,
       f
     );
   }
   f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
-      5,
-      f
-    );
-  }
-  f = message.getTournamentId();
-  if (f !== 0) {
-    writer.writeInt64(
-      6,
+      8,
       f
     );
   }
@@ -25666,46 +25690,46 @@ proto.api.esm.WinnerDetail.prototype.setPrizeId = function(value) {
 
 
 /**
- * optional int64 user_id = 3;
+ * optional string prize_title = 3;
+ * @return {string}
+ */
+proto.api.esm.WinnerDetail.prototype.getPrizeTitle = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api.esm.WinnerDetail} returns this
+ */
+proto.api.esm.WinnerDetail.prototype.setPrizeTitle = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string prize_img_url = 4;
+ * @return {string}
+ */
+proto.api.esm.WinnerDetail.prototype.getPrizeImgUrl = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api.esm.WinnerDetail} returns this
+ */
+proto.api.esm.WinnerDetail.prototype.setPrizeImgUrl = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional int64 user_id = 5;
  * @return {number}
  */
 proto.api.esm.WinnerDetail.prototype.getUserId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.api.esm.WinnerDetail} returns this
- */
-proto.api.esm.WinnerDetail.prototype.setUserId = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
-};
-
-
-/**
- * optional int64 created_on = 4;
- * @return {number}
- */
-proto.api.esm.WinnerDetail.prototype.getCreatedOn = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.api.esm.WinnerDetail} returns this
- */
-proto.api.esm.WinnerDetail.prototype.setCreatedOn = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
-};
-
-
-/**
- * optional int32 status = 5;
- * @return {number}
- */
-proto.api.esm.WinnerDetail.prototype.getStatus = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
@@ -25714,17 +25738,35 @@ proto.api.esm.WinnerDetail.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.api.esm.WinnerDetail} returns this
  */
-proto.api.esm.WinnerDetail.prototype.setStatus = function(value) {
+proto.api.esm.WinnerDetail.prototype.setUserId = function(value) {
   return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 
 /**
- * optional int64 tournament_id = 6;
+ * optional string user_nick_name = 6;
+ * @return {string}
+ */
+proto.api.esm.WinnerDetail.prototype.getUserNickName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api.esm.WinnerDetail} returns this
+ */
+proto.api.esm.WinnerDetail.prototype.setUserNickName = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
+ * optional int64 created_on = 7;
  * @return {number}
  */
-proto.api.esm.WinnerDetail.prototype.getTournamentId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+proto.api.esm.WinnerDetail.prototype.getCreatedOn = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
@@ -25732,8 +25774,26 @@ proto.api.esm.WinnerDetail.prototype.getTournamentId = function() {
  * @param {number} value
  * @return {!proto.api.esm.WinnerDetail} returns this
  */
-proto.api.esm.WinnerDetail.prototype.setTournamentId = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
+proto.api.esm.WinnerDetail.prototype.setCreatedOn = function(value) {
+  return jspb.Message.setProto3IntField(this, 7, value);
+};
+
+
+/**
+ * optional int32 status = 8;
+ * @return {number}
+ */
+proto.api.esm.WinnerDetail.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.WinnerDetail} returns this
+ */
+proto.api.esm.WinnerDetail.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 

@@ -2424,10 +2424,13 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let winner = db::winner::Winner {
       id: 0,
       prize_id: req.prize_id.into(),
+      prize_title: "".to_string(),
+      prize_img_url: "".to_string(),
       user_id: req.user_id.into(),
+      user_nick_name: "".to_string(),
       created_on: now,
       status: 1,
-      tournament_id: req.tournament_id.into()
+      ship_tracking: "".to_string()
     };
     
     let result = match db::winner::Winner::add(winner, &self.pool.clone()).await {
@@ -2472,15 +2475,18 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     for winner in winners {
       
-      let seconds = winner.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let created_on = winner.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
         
       let li = WinnerDetail {
         id: winner.id,
         prize_id: winner.prize_id,
+        prize_title: winner.prize_title,
+        prize_img_url: winner.prize_img_url,
         user_id: winner.user_id,
-        created_on: seconds as i64,
+        user_nick_name: winner.user_nick_name,
+        created_on: created_on as i64,
         status: winner.status,
-        tournament_id: winner.tournament_id
+        ship_tracking: winner.ship_tracking,
       };
       
       result.push(li);
@@ -2551,10 +2557,10 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
         user_id: l.user_id,
         prize_id: l.prize_id,
         prize_title: l.prize_title,
-        prize_url: l.prize_url,
+        prize_img_url: l.prize_img_url,
         game_id: l.game_id,
         game_title: l.game_title,
-        game_url: l.game_url,
+        game_img_url: l.game_img_url,
         enter_timestamp: enter_timestamp as i64,
         leave_timestamp: leave_timestamp as i64,
         is_watched_ad: l.is_watched_ad,

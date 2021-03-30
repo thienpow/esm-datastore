@@ -723,7 +723,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
   async fn list_log_g(&self, request: Request<ListLogGRequest>, ) -> Result<Response<ListLogGResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
     
@@ -748,10 +748,10 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         user_id: l.user_id,
         prize_id: l.prize_id,
         prize_title: l.prize_title,
-        prize_url: l.prize_url,
+        prize_img_url: l.prize_img_url,
         game_id: l.game_id,
         game_title: l.game_title,
-        game_url: l.game_url,
+        game_img_url: l.game_img_url,
         enter_timestamp: enter_timestamp as i64,
         leave_timestamp: leave_timestamp as i64,
         is_watched_ad: l.is_watched_ad,
@@ -1374,7 +1374,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   *
   */
   async fn list_winner(&self, request: Request<ListWinnerRequest>, ) -> Result<Response<ListWinnerResponse>, Status> {
-    let _ = svc::check_is_admin(&request.metadata()).await?;
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
     
     let req = request.into_inner();
     
@@ -1387,15 +1387,17 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     for winner in winners {
       
-      let seconds = winner.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let created_on = winner.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
         
       let li = WinnerDetail {
         id: winner.id,
         prize_id: winner.prize_id,
+        prize_title: winner.prize_title,
+        prize_img_url: winner.prize_img_url,
         user_id: winner.user_id,
-        created_on: seconds as i64,
+        user_nick_name: winner.user_nick_name,
+        created_on: created_on as i64,
         status: winner.status,
-        tournament_id: winner.tournament_id
       };
       
       result.push(li);
