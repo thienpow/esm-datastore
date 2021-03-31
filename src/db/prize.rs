@@ -188,31 +188,31 @@ impl Prize {
     pub async fn list_active(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<PrizeActive>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let sql_string = "SELECT \
+      let sql_string = "SELECT 
                           p.id AS prize_id, 
-                          p.title AS prize_title, \
-                          p.subtitle AS prize_subtitle, \
-                          p.img_url AS prize_img_url, \
-                          p.content AS prize_content, \
-                          p.duration_days AS prize_duration_days, \
-                          p.duration_hours AS prize_duration_hours, \
-                          p.type_id, p.tickets_required, p.timezone, p.scheduled_on, p.is_repeat, p.repeated_on, p.status, p.status_prize, p.tickets_collected, \
-                          pt.tour_id, t.title AS tour_title, \
-                          ts.set_id, s.title AS set_title, \
-                          tsg.game_id, g.title AS game_title, \
-                          g.subtitle AS game_sub_title, \
-                          g.img_url AS game_img_url, \
-                          g.content AS game_content, \
-                          tsg.duration_days AS game_duration_days, tsg.duration_hours AS game_duration_hours, tsg.duration_minutes AS game_duration_minutes, tsg.group_id \
-                        FROM public.\"prize\" AS p \
-                          INNER JOIN public.\"prize_tour\" AS pt ON pt.prize_id = p.id \
-                          INNER JOIN public.\"tournament\" AS t ON t.id = pt.tour_id \
-                          INNER JOIN public.\"tour_set\"  AS ts ON ts.tour_id = pt.tour_id \
-                          INNER JOIN public.\"tournament\"_set AS s ON s.id = ts.set_id \
-                          INNER JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.set_id = ts.set_id \
-                          INNER JOIN public.\"game\" AS g ON g.id = tsg.game_id \
-                        WHERE p.status = 2 AND p.scheduled_on <= NOW() \
-                        ORDER BY p.id, ts.tour_id \
+                          p.title AS prize_title, 
+                          p.subtitle AS prize_subtitle, 
+                          p.img_url AS prize_img_url, 
+                          p.content AS prize_content, 
+                          p.duration_days AS prize_duration_days, 
+                          p.duration_hours AS prize_duration_hours, 
+                          p.type_id, p.tickets_required, p.timezone, p.scheduled_on, p.is_repeat, p.repeated_on, p.status, p.status_prize, p.tickets_collected, 
+                          pt.tour_id, t.title AS tour_title, 
+                          ts.set_id, s.title AS set_title, 
+                          tsg.game_id, g.title AS game_title, 
+                          g.subtitle AS game_sub_title, 
+                          g.img_url AS game_img_url, 
+                          g.content AS game_content, 
+                          tsg.duration_days AS game_duration_days, tsg.duration_hours AS game_duration_hours, tsg.duration_minutes AS game_duration_minutes, tsg.group_id 
+                        FROM public.\"prize\" AS p 
+                          INNER JOIN public.\"prize_tour\" AS pt ON pt.prize_id = p.id 
+                          INNER JOIN public.\"tournament\" AS t ON t.id = pt.tour_id 
+                          INNER JOIN public.\"tour_set\"  AS ts ON ts.tour_id = pt.tour_id 
+                          INNER JOIN public.\"tournament\"_set AS s ON s.id = ts.set_id 
+                          INNER JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.set_id = ts.set_id 
+                          INNER JOIN public.\"game\" AS g ON g.id = tsg.game_id 
+                        WHERE p.status = 2 AND p.scheduled_on <= NOW() 
+                        ORDER BY p.id, ts.tour_id 
                         ;".to_string();
       let stmt = conn.prepare(&sql_string).await?;
   
