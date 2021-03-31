@@ -208,7 +208,7 @@ impl Prize {
                           INNER JOIN public.\"prize_tour\" AS pt ON pt.prize_id = p.id 
                           INNER JOIN public.\"tournament\" AS t ON t.id = pt.tour_id 
                           INNER JOIN public.\"tour_set\"  AS ts ON ts.tour_id = pt.tour_id 
-                          INNER JOIN public.\"tournament\"_set AS s ON s.id = ts.set_id 
+                          INNER JOIN public.\"tournament_set\" AS s ON s.id = ts.set_id 
                           INNER JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.set_id = ts.set_id 
                           INNER JOIN public.\"game\" AS g ON g.id = tsg.game_id 
                         WHERE p.status = 2 AND p.scheduled_on <= NOW() 
