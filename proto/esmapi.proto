@@ -47,10 +47,8 @@ service EsmApi {
   rpc ListItem(ListItemRequest) returns (ListItemResponse) {}
   rpc ListItemType(ListItemTypeRequest) returns (ListItemTypeResponse) {}
 
-
   // Prize
   rpc ListPrize(ListPrizeRequest) returns (ListPrizeResponse) {}
-  rpc ListPrizeType(ListPrizeTypeRequest) returns (ListPrizeTypeResponse) {}
 
   // Rank
   rpc ListRank(ListRankRequest) returns (ListRankResponse) {}
@@ -61,11 +59,6 @@ service EsmApi {
   // Subscription
   rpc ListSubscription(ListSubscriptionRequest) returns (ListSubscriptionResponse) {}
   rpc ListSubscriptionType(ListSubscriptionTypeRequest) returns (ListSubscriptionTypeResponse) {}
-
-  // Tournament
-  rpc ListTournament(ListTournamentRequest) returns (ListTournamentResponse) {}
-  rpc ListTournamentSet(ListTournamentSetRequest) returns (ListTournamentSetResponse) {}
-  rpc ListTournamentSetGameRule(ListTournamentSetGameRuleRequest) returns (ListTournamentSetGameRuleResponse) {}
 
   // Winner
   rpc ListWinner(ListWinnerRequest) returns (ListWinnerResponse) {}
@@ -675,22 +668,20 @@ message ItemTypeDetail {
 */
 //List prize from db
 message ListPrizeRequest {
-  int64 limit = 1;
-  int64 offset = 2;
 }
 message ListPrizeResponse {
   repeated PrizeDetail result = 1;
 }
 message PrizeDetail {
-  int64 id = 1;
-  string title = 2;
-  string subtitle = 3;
-  string img_url = 4;
-  string content = 5;
-  int32 type_id = 6;
-  int64 tickets_required = 7;
-  int32 duration_days = 8;
-  int32 duration_hours = 9;
+  int64 prize_id = 1;
+  string prize_title = 2;
+  string prize_subtitle = 3;
+  string prize_img_url = 4;
+  string prize_content = 5;
+  int32 prize_duration_days = 6;
+  int32 prize_duration_hours = 7;
+  int32 type_id = 8;
+  int64 tickets_required = 9;
   double timezone = 10;
   int64 scheduled_on = 11;
   bool is_repeat =  12;
@@ -698,32 +689,21 @@ message PrizeDetail {
   int32 status = 14;
   int32 status_prize = 15;
   int64 tickets_collected = 16;
+  int64 tour_id = 17;
+  string tour_title  = 18;
+  int64 set_id = 19;
+  string set_title  = 20;
+  int64 game_id = 21;
+  string game_title  = 22;
+  string game_subtitle = 23;
+  string game_img_url = 24;
+  string game_content = 25;
+  int32 game_duration_days = 26;
+  int32 game_duration_hours = 27;
+  int32 game_duration_minutes = 28;
+  int32 group_id = 29;
 }
 
-
-
-//Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
-message GetPrizeCountRequest {
-}
-message GetPrizeCountResponse {
-  PrizeCount result = 1;
-}
-message PrizeCount {
-  int64 draft = 1;
-  int64 published = 2;
-  int64 archived = 3;
-}
-
-//Get PrizeType from db
-message ListPrizeTypeRequest {
-}
-message ListPrizeTypeResponse {
-  repeated PrizeTypeDetail result = 1;
-}
-message PrizeTypeDetail {
-  int32 id = 1;
-  string title = 2;
-}
 
 
 
@@ -860,82 +840,6 @@ message SubscriptionTypeDetail {
   string title = 2;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-**************************************** Tournament ***************************************
-*/
-//Get tournament from db
-message ListTournamentRequest {
-  string tour_ids = 1;
-}
-message ListTournamentResponse {
-  repeated TournamentDetail result = 1;
-}
-message TournamentDetail {
-  int64 id = 1;
-  string title = 2;
-  int32 status = 3;
-}
-
-//Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
-message GetTournamentCountRequest {
-}
-message GetTournamentCountResponse {
-  TournamentCount result = 1;
-}
-message TournamentCount {
-  int64 draft = 1;
-  int64 published = 2;
-  int64 archived = 3;
-}
-
-
-//List tournament Set  
-message ListTournamentSetRequest {
-  string format_ids = 1;
-}
-message ListTournamentSetResponse {
-  repeated TournamentSetDetail result = 1;
-}
-message TournamentSetDetail {
-  int64 id = 1;
-  string title = 2;
-  int32 duration_days = 3;
-  int32 duration_hours = 4;
-  bool is_group = 5;
-}
-//List tournament Set Game Rule
-message ListTournamentSetGameRuleRequest {
-  int64 id = 1;
-}
-message ListTournamentSetGameRuleResponse {
-  repeated TournamentSetGameRuleDetail result = 1;
-}
-message TournamentSetGameRuleDetail {
-  int64 id = 1;
-  int64 set_id = 2;
-  int64 game_id = 3;
-  int32 duration_days = 4;
-  int32 duration_hours = 5;
-  int32 duration_minutes = 6;
-  int32 group_id = 7;
-}
 
 
 

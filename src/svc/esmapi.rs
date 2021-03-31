@@ -71,8 +71,6 @@ use esmapi_proto::{
   // Prize
   ListPrizeRequest, ListPrizeResponse, 
   PrizeDetail, 
-  ListPrizeTypeRequest, ListPrizeTypeResponse,
-  PrizeTypeDetail,
 
   // Rank
   ListRankRequest, ListRankResponse,
@@ -86,12 +84,6 @@ use esmapi_proto::{
   SubscriptionDetail, 
   ListSubscriptionTypeRequest, ListSubscriptionTypeResponse,
   SubscriptionTypeDetail,
-
-  // Tournament
-  ListTournamentRequest, ListTournamentResponse, 
-  ListTournamentSetRequest, ListTournamentSetResponse, 
-  ListTournamentSetGameRuleRequest, ListTournamentSetGameRuleResponse, 
-  TournamentDetail, TournamentSetDetail, TournamentSetGameRuleDetail,
 
   // Winner
   ListWinnerRequest, ListWinnerResponse, 
@@ -961,9 +953,9 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   async fn list_prize(&self, request: Request<ListPrizeRequest>, ) -> Result<Response<ListPrizeResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
     
-    let req = request.into_inner();
+    //let req = request.into_inner();
     
-    let prizes = match db::prize::Prize::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
+    let prizes = match db::prize::Prize::list_active(&self.pool.clone()).await {
       Ok(prizes) => prizes,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -975,15 +967,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       let seconds_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
 
       let li = PrizeDetail {
-        id: prize.id,
-        title: prize.title,
-        subtitle: prize.subtitle,
-        img_url: prize.img_url,
-        content: prize.content,
+        prize_id: prize.prize_id,
+        prize_title: prize.prize_title,
+        prize_subtitle: prize.prize_subtitle,
+        prize_img_url: prize.prize_img_url,
+        prize_content: prize.prize_content,
+        prize_duration_days: prize.prize_duration_days,
+        prize_duration_hours: prize.prize_duration_hours,
         type_id: prize.type_id,
         tickets_required: prize.tickets_required,
-        duration_days: prize.duration_days,
-        duration_hours: prize.duration_hours,
         timezone: prize.timezone,
         scheduled_on: seconds_on as i64,
         is_repeat: prize.is_repeat,
@@ -991,6 +983,19 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         status: prize.status,
         status_prize: prize.status_prize,
         tickets_collected: prize.tickets_collected,
+        tour_id: prize.tour_id,
+        tour_title: prize.tour_title,
+        set_id: prize.set_id,
+        set_title: prize.set_title,
+        game_id: prize.game_id,
+        game_title: prize.game_title,
+        game_subtitle: prize.game_subtitle,
+        game_img_url: prize.game_img_url,
+        game_content: prize.game_content,
+        game_duration_days: prize.game_duration_days,
+        game_duration_hours: prize.game_duration_hours,
+        game_duration_minutes: prize.game_duration_minutes,
+        group_id: prize.group_id
       };
       
       result.push(li);
@@ -1002,32 +1007,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
   }
 
-
-  async fn list_prize_type(&self, request: Request<ListPrizeTypeRequest>, ) -> Result<Response<ListPrizeTypeResponse>, Status> {
-    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
-
-    let prize_types = match db::prize::Prize::list_prize_type(&self.pool.clone()).await {
-      Ok(prize_types) => prize_types,
-      Err(error) => panic!("Error: {}.", error),
-    };
-    
-    let mut result: Vec<PrizeTypeDetail> = Vec::new();
-    
-    for p in prize_types {
-      
-      let li = PrizeTypeDetail {
-        id: p.id,
-        title: p.title
-      };
-      
-      result.push(li);
-    };
-    
-    Ok(Response::new(ListPrizeTypeResponse {
-      result: result,
-    }))
-
-  }
 
 
 
@@ -1210,126 +1189,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     };
     
     Ok(Response::new(ListSubscriptionTypeResponse {
-      result: result,
-    }))
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  /*************************************** Tournament ***************************************
-  *
-  *
-  */
-  async fn list_tournament(&self, request: Request<ListTournamentRequest>, ) -> Result<Response<ListTournamentResponse>, Status> {
-    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
-    
-    let req = request.into_inner();
-    
-    let tournaments = match db::tournament::Tournament::list(0, 0, "".to_string(), 0, req.tour_ids.into(), &self.pool.clone()).await {
-      Ok(tournaments) => tournaments,
-      Err(error) => panic!("Error: {}.", error),
-    };
-    
-    let mut result: Vec<TournamentDetail> = Vec::new();
-    
-    for tournament in tournaments {
-      
-      let li = TournamentDetail {
-        id: tournament.id,
-        title: tournament.title,
-        status: tournament.status
-      };
-      
-      result.push(li);
-    };
-    
-    Ok(Response::new(ListTournamentResponse {
-      result: result,
-    }))
-
-  }
-
-
-  async fn list_tournament_set(&self, request: Request<ListTournamentSetRequest>, ) -> Result<Response<ListTournamentSetResponse>, Status> {
-    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
-    
-    let req = request.into_inner();
-    
-    let sets = match db::tournament::Tournament::list_set(0, 0, "".to_string(), req.format_ids.into(), &self.pool.clone()).await {
-      Ok(sets) => sets,
-      Err(error) => panic!("Error: {}.", error),
-    };
-    
-    let mut result: Vec<TournamentSetDetail> = Vec::new();
-    
-    for set in sets {
-      
-      //let seconds_off = tournament.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        
-      let li = TournamentSetDetail {
-        id: set.id,
-        title: set.title,
-        duration_days: set.duration_days,
-        duration_hours: set.duration_hours,
-        is_group: set.is_group
-      };
-      
-      result.push(li);
-    };
-    
-    Ok(Response::new(ListTournamentSetResponse {
-      result: result,
-    }))
-
-  }
-
-  async fn list_tournament_set_game_rule(&self, request: Request<ListTournamentSetGameRuleRequest>, ) -> Result<Response<ListTournamentSetGameRuleResponse>, Status> {
-    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
-    
-    let req = request.into_inner();
-    
-    let rules = match db::tournament::Tournament::list_set_game_rule(req.id.into(), &self.pool.clone()).await {
-      Ok(rules) => rules,
-      Err(error) => panic!("Error: {}.", error),
-    };
-    
-    let mut result: Vec<TournamentSetGameRuleDetail> = Vec::new();
-    
-    for rule in rules {
-      
-      //let seconds_off = tournament.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        
-      let li = TournamentSetGameRuleDetail {
-        id: rule.id,
-        set_id: rule.set_id,
-        game_id: rule.game_id,
-        duration_days: rule.duration_days,
-        duration_hours: rule.duration_hours,
-        duration_minutes: rule.duration_minutes,
-        group_id: rule.group_id
-      };
-      
-      result.push(li);
-    };
-    
-    Ok(Response::new(ListTournamentSetGameRuleResponse {
       result: result,
     }))
 

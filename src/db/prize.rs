@@ -26,6 +26,40 @@ pub struct Prize {
   pub tickets_collected: i64
 }
 
+pub struct PrizeActive {
+  pub prize_id: i64,
+  pub prize_title: String,
+  pub prize_img_url: String,
+  pub prize_subtitle: String,
+  pub prize_content: String,
+  pub prize_duration_days: i32,
+  pub prize_duration_hours: i32,
+  
+  pub type_id: i32,
+  pub tickets_required: i64,
+  pub timezone: f64,
+  pub scheduled_on: SystemTime,
+  pub is_repeat: bool,
+  pub repeated_on: Vec<i32>,
+  pub status: i32,
+  pub status_prize: i32,
+  pub tickets_collected: i64,
+
+  pub tour_id: i64,
+  pub tour_title: String,
+  pub set_id: i64,
+  pub set_title: String,
+  pub game_id: i64,
+  pub game_title: String,
+  pub game_subtitle: String,
+  pub game_img_url: String,
+  pub game_content: String,
+  pub game_duration_days: i32,
+  pub game_duration_hours: i32,
+  pub game_duration_minutes: i32,
+  pub group_id: i32
+}
+
 pub struct PrizeTour {
   pub id: i64,
   pub prize_id: i64,
@@ -147,6 +181,78 @@ impl Prize {
         }
         
       }
+      
+      Ok(vec)
+    }
+
+    pub async fn list_active(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<PrizeActive>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let sql_string = "SELECT \
+                          p.id AS prize_id, 
+                          p.title AS prize_title, \
+                          p.subtitle AS prize_subtitle, \
+                          p.img_url AS prize_img_url, \
+                          p.content AS prize_content, \
+                          p.duration_days AS prize_duration_days, \
+                          p.duration_hours AS prize_duration_hours, \
+                          p.type_id, p.tickets_required, p.timezone, p.scheduled_on, p.is_repeat, p.repeated_on, p.status, p.status_prize, p.tickets_collected, \
+                          pt.tour_id, t.title AS tour_title, \
+                          ts.set_id, s.title AS set_title, \
+                          tsg.game_id, g.title AS game_title, \
+                          g.subtitle AS game_sub_title, \
+                          g.img_url AS game_img_url, \
+                          g.content AS game_content, \
+                          tsg.duration_days AS game_duration_days, tsg.duration_hours AS game_duration_hours, tsg.duration_minutes AS game_duration_minutes, tsg.group_id \
+                        FROM public.\"prize\" AS p \
+                          INNER JOIN public.\"prize_tour\" AS pt ON pt.prize_id = p.id \
+                          INNER JOIN public.\"tournament\" AS t ON t.id = pt.tour_id \
+                          INNER JOIN public.\"tour_set\"  AS ts ON ts.tour_id = pt.tour_id \
+                          INNER JOIN public.\"tournament\"_set AS s ON s.id = ts.set_id \
+                          INNER JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.set_id = ts.set_id \
+                          INNER JOIN public.\"game\" AS g ON g.id = tsg.game_id \
+                        WHERE p.status = 2 AND p.scheduled_on <= NOW() \
+                        ORDER BY p.id, ts.tour_id \
+                        ;".to_string();
+      let stmt = conn.prepare(&sql_string).await?;
+  
+      let mut vec: Vec<PrizeActive> = Vec::new();
+      for row in conn.query(&stmt, &[]).await? {
+        let prize = PrizeActive {
+          prize_id: row.get(0),
+          prize_title: row.get(1),
+          prize_subtitle: row.get(2),
+          prize_img_url: row.get(3),
+          prize_content: row.get(4),
+          prize_duration_days: row.get(5),
+          prize_duration_hours: row.get(6),
+          type_id: row.get(7),
+          tickets_required: row.get(8),
+          timezone: row.get(9),
+          scheduled_on: row.get(10),
+          is_repeat: row.get(11),
+          repeated_on: row.get(12),
+          status: row.get(13),
+          status_prize: row.get(14),
+          tickets_collected: row.get(15),
+          tour_id: row.get(16),
+          tour_title: row.get(17),
+          set_id: row.get(18),
+          set_title: row.get(19),
+          game_id: row.get(20),
+          game_title: row.get(21),
+          game_subtitle: row.get(22),
+          game_img_url: row.get(23),
+          game_content: row.get(24),
+          game_duration_days: row.get(25),
+          game_duration_hours: row.get(26),
+          game_duration_minutes: row.get(27),
+          group_id: row.get(28),
+        };
+
+        vec.push(prize);
+      }
+        
       
       Ok(vec)
     }
