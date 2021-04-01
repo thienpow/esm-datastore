@@ -2535,7 +2535,6 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
     
-    //TODO: create the db function for claim
     let result = match winner::Winner::claim(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),

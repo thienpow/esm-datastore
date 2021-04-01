@@ -18,10 +18,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let jwk_auth = JwkAuth::new().await;
 
-    let conf = config::get_configuration();
+    let config = config::get_configuration();
     
     //check deploy/service/start.sh for the db_conn_string
-    let pg_mgr = PostgresConnectionManager::new_from_stringlike(conf.db_conn_string, tokio_postgres::NoTls).unwrap();
+    let pg_mgr = PostgresConnectionManager::new_from_stringlike(config.db_conn_string, tokio_postgres::NoTls).unwrap();
     let pool_db: Pool<PostgresConnectionManager<tokio_postgres::NoTls>> = match Pool::builder().build(pg_mgr).await {
         Ok(pool) => pool,
         Err(e) => panic!("builder error: {:?}", e),
@@ -41,7 +41,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let adminapi_service = svc::adminapi::adminapi_proto::admin_api_server::AdminApiServer::new(adminapi_server);
     
 
-    let addr: SocketAddr = conf.listen_on.parse()?;
+    let addr: SocketAddr = config.listen_on.parse()?;
     println!("Server Running on {}", addr);
     
     Server::builder()
