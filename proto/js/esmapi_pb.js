@@ -13981,7 +13981,7 @@ proto.api.esm.ListPrizeResponse.prototype.clearResultList = function() {
  * @private {!Array<number>}
  * @const
  */
-proto.api.esm.PrizeDetail.repeatedFields_ = [13];
+proto.api.esm.PrizeDetail.repeatedFields_ = [14];
 
 
 
@@ -14025,24 +14025,25 @@ proto.api.esm.PrizeDetail.toObject = function(includeInstance, msg) {
     ticketsRequired: jspb.Message.getFieldWithDefault(msg, 9, 0),
     timezone: jspb.Message.getFloatingPointFieldWithDefault(msg, 10, 0.0),
     scheduledOn: jspb.Message.getFieldWithDefault(msg, 11, 0),
-    isRepeat: jspb.Message.getBooleanFieldWithDefault(msg, 12, false),
-    repeatedOnList: (f = jspb.Message.getRepeatedField(msg, 13)) == null ? undefined : f,
-    status: jspb.Message.getFieldWithDefault(msg, 14, 0),
-    statusPrize: jspb.Message.getFieldWithDefault(msg, 15, 0),
-    ticketsCollected: jspb.Message.getFieldWithDefault(msg, 16, 0),
-    tourId: jspb.Message.getFieldWithDefault(msg, 17, 0),
-    tourTitle: jspb.Message.getFieldWithDefault(msg, 18, ""),
-    setId: jspb.Message.getFieldWithDefault(msg, 19, 0),
-    setTitle: jspb.Message.getFieldWithDefault(msg, 20, ""),
-    gameId: jspb.Message.getFieldWithDefault(msg, 21, 0),
-    gameTitle: jspb.Message.getFieldWithDefault(msg, 22, ""),
-    gameSubtitle: jspb.Message.getFieldWithDefault(msg, 23, ""),
-    gameImgUrl: jspb.Message.getFieldWithDefault(msg, 24, ""),
-    gameContent: jspb.Message.getFieldWithDefault(msg, 25, ""),
-    gameDurationDays: jspb.Message.getFieldWithDefault(msg, 26, 0),
-    gameDurationHours: jspb.Message.getFieldWithDefault(msg, 27, 0),
-    gameDurationMinutes: jspb.Message.getFieldWithDefault(msg, 28, 0),
-    groupId: jspb.Message.getFieldWithDefault(msg, 29, 0)
+    scheduledOff: jspb.Message.getFieldWithDefault(msg, 12, 0),
+    isRepeat: jspb.Message.getBooleanFieldWithDefault(msg, 13, false),
+    repeatedOnList: (f = jspb.Message.getRepeatedField(msg, 14)) == null ? undefined : f,
+    status: jspb.Message.getFieldWithDefault(msg, 15, 0),
+    statusPrize: jspb.Message.getFieldWithDefault(msg, 16, 0),
+    ticketsCollected: jspb.Message.getFieldWithDefault(msg, 17, 0),
+    tourId: jspb.Message.getFieldWithDefault(msg, 18, 0),
+    tourTitle: jspb.Message.getFieldWithDefault(msg, 19, ""),
+    setId: jspb.Message.getFieldWithDefault(msg, 20, 0),
+    setTitle: jspb.Message.getFieldWithDefault(msg, 21, ""),
+    gameId: jspb.Message.getFieldWithDefault(msg, 22, 0),
+    gameTitle: jspb.Message.getFieldWithDefault(msg, 23, ""),
+    gameSubtitle: jspb.Message.getFieldWithDefault(msg, 24, ""),
+    gameImgUrl: jspb.Message.getFieldWithDefault(msg, 25, ""),
+    gameContent: jspb.Message.getFieldWithDefault(msg, 26, ""),
+    gameDurationDays: jspb.Message.getFieldWithDefault(msg, 27, 0),
+    gameDurationHours: jspb.Message.getFieldWithDefault(msg, 28, 0),
+    gameDurationMinutes: jspb.Message.getFieldWithDefault(msg, 29, 0),
+    groupId: jspb.Message.getFieldWithDefault(msg, 30, 0)
   };
 
   if (includeInstance) {
@@ -14124,74 +14125,78 @@ proto.api.esm.PrizeDetail.deserializeBinaryFromReader = function(msg, reader) {
       msg.setScheduledOn(value);
       break;
     case 12:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setScheduledOff(value);
+      break;
+    case 13:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsRepeat(value);
       break;
-    case 13:
+    case 14:
       var value = /** @type {!Array<number>} */ (reader.readPackedInt32());
       msg.setRepeatedOnList(value);
       break;
-    case 14:
+    case 15:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
-    case 15:
+    case 16:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatusPrize(value);
       break;
-    case 16:
+    case 17:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setTicketsCollected(value);
       break;
-    case 17:
+    case 18:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setTourId(value);
       break;
-    case 18:
+    case 19:
       var value = /** @type {string} */ (reader.readString());
       msg.setTourTitle(value);
       break;
-    case 19:
+    case 20:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setSetId(value);
       break;
-    case 20:
+    case 21:
       var value = /** @type {string} */ (reader.readString());
       msg.setSetTitle(value);
       break;
-    case 21:
+    case 22:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setGameId(value);
       break;
-    case 22:
+    case 23:
       var value = /** @type {string} */ (reader.readString());
       msg.setGameTitle(value);
       break;
-    case 23:
+    case 24:
       var value = /** @type {string} */ (reader.readString());
       msg.setGameSubtitle(value);
       break;
-    case 24:
+    case 25:
       var value = /** @type {string} */ (reader.readString());
       msg.setGameImgUrl(value);
       break;
-    case 25:
+    case 26:
       var value = /** @type {string} */ (reader.readString());
       msg.setGameContent(value);
       break;
-    case 26:
+    case 27:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGameDurationDays(value);
       break;
-    case 27:
+    case 28:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGameDurationHours(value);
       break;
-    case 28:
+    case 29:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGameDurationMinutes(value);
       break;
-    case 29:
+    case 30:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGroupId(value);
       break;
@@ -14301,129 +14306,136 @@ proto.api.esm.PrizeDetail.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getScheduledOff();
+  if (f !== 0) {
+    writer.writeInt64(
+      12,
+      f
+    );
+  }
   f = message.getIsRepeat();
   if (f) {
     writer.writeBool(
-      12,
+      13,
       f
     );
   }
   f = message.getRepeatedOnList();
   if (f.length > 0) {
     writer.writePackedInt32(
-      13,
+      14,
       f
     );
   }
   f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
-      14,
+      15,
       f
     );
   }
   f = message.getStatusPrize();
   if (f !== 0) {
     writer.writeInt32(
-      15,
+      16,
       f
     );
   }
   f = message.getTicketsCollected();
   if (f !== 0) {
     writer.writeInt64(
-      16,
+      17,
       f
     );
   }
   f = message.getTourId();
   if (f !== 0) {
     writer.writeInt64(
-      17,
+      18,
       f
     );
   }
   f = message.getTourTitle();
   if (f.length > 0) {
     writer.writeString(
-      18,
+      19,
       f
     );
   }
   f = message.getSetId();
   if (f !== 0) {
     writer.writeInt64(
-      19,
+      20,
       f
     );
   }
   f = message.getSetTitle();
   if (f.length > 0) {
     writer.writeString(
-      20,
+      21,
       f
     );
   }
   f = message.getGameId();
   if (f !== 0) {
     writer.writeInt64(
-      21,
+      22,
       f
     );
   }
   f = message.getGameTitle();
   if (f.length > 0) {
     writer.writeString(
-      22,
+      23,
       f
     );
   }
   f = message.getGameSubtitle();
   if (f.length > 0) {
     writer.writeString(
-      23,
+      24,
       f
     );
   }
   f = message.getGameImgUrl();
   if (f.length > 0) {
     writer.writeString(
-      24,
+      25,
       f
     );
   }
   f = message.getGameContent();
   if (f.length > 0) {
     writer.writeString(
-      25,
+      26,
       f
     );
   }
   f = message.getGameDurationDays();
   if (f !== 0) {
     writer.writeInt32(
-      26,
+      27,
       f
     );
   }
   f = message.getGameDurationHours();
   if (f !== 0) {
     writer.writeInt32(
-      27,
+      28,
       f
     );
   }
   f = message.getGameDurationMinutes();
   if (f !== 0) {
     writer.writeInt32(
-      28,
+      29,
       f
     );
   }
   f = message.getGroupId();
   if (f !== 0) {
     writer.writeInt32(
-      29,
+      30,
       f
     );
   }
@@ -14629,11 +14641,29 @@ proto.api.esm.PrizeDetail.prototype.setScheduledOn = function(value) {
 
 
 /**
- * optional bool is_repeat = 12;
+ * optional int64 scheduled_off = 12;
+ * @return {number}
+ */
+proto.api.esm.PrizeDetail.prototype.getScheduledOff = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.PrizeDetail} returns this
+ */
+proto.api.esm.PrizeDetail.prototype.setScheduledOff = function(value) {
+  return jspb.Message.setProto3IntField(this, 12, value);
+};
+
+
+/**
+ * optional bool is_repeat = 13;
  * @return {boolean}
  */
 proto.api.esm.PrizeDetail.prototype.getIsRepeat = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 12, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 13, false));
 };
 
 
@@ -14642,16 +14672,16 @@ proto.api.esm.PrizeDetail.prototype.getIsRepeat = function() {
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
 proto.api.esm.PrizeDetail.prototype.setIsRepeat = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 12, value);
+  return jspb.Message.setProto3BooleanField(this, 13, value);
 };
 
 
 /**
- * repeated int32 repeated_on = 13;
+ * repeated int32 repeated_on = 14;
  * @return {!Array<number>}
  */
 proto.api.esm.PrizeDetail.prototype.getRepeatedOnList = function() {
-  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 13));
+  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 14));
 };
 
 
@@ -14660,7 +14690,7 @@ proto.api.esm.PrizeDetail.prototype.getRepeatedOnList = function() {
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
 proto.api.esm.PrizeDetail.prototype.setRepeatedOnList = function(value) {
-  return jspb.Message.setField(this, 13, value || []);
+  return jspb.Message.setField(this, 14, value || []);
 };
 
 
@@ -14670,7 +14700,7 @@ proto.api.esm.PrizeDetail.prototype.setRepeatedOnList = function(value) {
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
 proto.api.esm.PrizeDetail.prototype.addRepeatedOn = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 13, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 14, value, opt_index);
 };
 
 
@@ -14684,28 +14714,10 @@ proto.api.esm.PrizeDetail.prototype.clearRepeatedOnList = function() {
 
 
 /**
- * optional int32 status = 14;
+ * optional int32 status = 15;
  * @return {number}
  */
 proto.api.esm.PrizeDetail.prototype.getStatus = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 14, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.api.esm.PrizeDetail} returns this
- */
-proto.api.esm.PrizeDetail.prototype.setStatus = function(value) {
-  return jspb.Message.setProto3IntField(this, 14, value);
-};
-
-
-/**
- * optional int32 status_prize = 15;
- * @return {number}
- */
-proto.api.esm.PrizeDetail.prototype.getStatusPrize = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 15, 0));
 };
 
@@ -14714,16 +14726,16 @@ proto.api.esm.PrizeDetail.prototype.getStatusPrize = function() {
  * @param {number} value
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
-proto.api.esm.PrizeDetail.prototype.setStatusPrize = function(value) {
+proto.api.esm.PrizeDetail.prototype.setStatus = function(value) {
   return jspb.Message.setProto3IntField(this, 15, value);
 };
 
 
 /**
- * optional int64 tickets_collected = 16;
+ * optional int32 status_prize = 16;
  * @return {number}
  */
-proto.api.esm.PrizeDetail.prototype.getTicketsCollected = function() {
+proto.api.esm.PrizeDetail.prototype.getStatusPrize = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 16, 0));
 };
 
@@ -14732,16 +14744,16 @@ proto.api.esm.PrizeDetail.prototype.getTicketsCollected = function() {
  * @param {number} value
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
-proto.api.esm.PrizeDetail.prototype.setTicketsCollected = function(value) {
+proto.api.esm.PrizeDetail.prototype.setStatusPrize = function(value) {
   return jspb.Message.setProto3IntField(this, 16, value);
 };
 
 
 /**
- * optional int64 tour_id = 17;
+ * optional int64 tickets_collected = 17;
  * @return {number}
  */
-proto.api.esm.PrizeDetail.prototype.getTourId = function() {
+proto.api.esm.PrizeDetail.prototype.getTicketsCollected = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 17, 0));
 };
 
@@ -14750,17 +14762,35 @@ proto.api.esm.PrizeDetail.prototype.getTourId = function() {
  * @param {number} value
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
-proto.api.esm.PrizeDetail.prototype.setTourId = function(value) {
+proto.api.esm.PrizeDetail.prototype.setTicketsCollected = function(value) {
   return jspb.Message.setProto3IntField(this, 17, value);
 };
 
 
 /**
- * optional string tour_title = 18;
+ * optional int64 tour_id = 18;
+ * @return {number}
+ */
+proto.api.esm.PrizeDetail.prototype.getTourId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 18, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.PrizeDetail} returns this
+ */
+proto.api.esm.PrizeDetail.prototype.setTourId = function(value) {
+  return jspb.Message.setProto3IntField(this, 18, value);
+};
+
+
+/**
+ * optional string tour_title = 19;
  * @return {string}
  */
 proto.api.esm.PrizeDetail.prototype.getTourTitle = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 18, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 19, ""));
 };
 
 
@@ -14769,16 +14799,16 @@ proto.api.esm.PrizeDetail.prototype.getTourTitle = function() {
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
 proto.api.esm.PrizeDetail.prototype.setTourTitle = function(value) {
-  return jspb.Message.setProto3StringField(this, 18, value);
+  return jspb.Message.setProto3StringField(this, 19, value);
 };
 
 
 /**
- * optional int64 set_id = 19;
+ * optional int64 set_id = 20;
  * @return {number}
  */
 proto.api.esm.PrizeDetail.prototype.getSetId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 19, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 20, 0));
 };
 
 
@@ -14787,16 +14817,16 @@ proto.api.esm.PrizeDetail.prototype.getSetId = function() {
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
 proto.api.esm.PrizeDetail.prototype.setSetId = function(value) {
-  return jspb.Message.setProto3IntField(this, 19, value);
+  return jspb.Message.setProto3IntField(this, 20, value);
 };
 
 
 /**
- * optional string set_title = 20;
+ * optional string set_title = 21;
  * @return {string}
  */
 proto.api.esm.PrizeDetail.prototype.getSetTitle = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 20, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 21, ""));
 };
 
 
@@ -14805,16 +14835,16 @@ proto.api.esm.PrizeDetail.prototype.getSetTitle = function() {
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
 proto.api.esm.PrizeDetail.prototype.setSetTitle = function(value) {
-  return jspb.Message.setProto3StringField(this, 20, value);
+  return jspb.Message.setProto3StringField(this, 21, value);
 };
 
 
 /**
- * optional int64 game_id = 21;
+ * optional int64 game_id = 22;
  * @return {number}
  */
 proto.api.esm.PrizeDetail.prototype.getGameId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 21, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 22, 0));
 };
 
 
@@ -14823,33 +14853,15 @@ proto.api.esm.PrizeDetail.prototype.getGameId = function() {
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
 proto.api.esm.PrizeDetail.prototype.setGameId = function(value) {
-  return jspb.Message.setProto3IntField(this, 21, value);
+  return jspb.Message.setProto3IntField(this, 22, value);
 };
 
 
 /**
- * optional string game_title = 22;
+ * optional string game_title = 23;
  * @return {string}
  */
 proto.api.esm.PrizeDetail.prototype.getGameTitle = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 22, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.api.esm.PrizeDetail} returns this
- */
-proto.api.esm.PrizeDetail.prototype.setGameTitle = function(value) {
-  return jspb.Message.setProto3StringField(this, 22, value);
-};
-
-
-/**
- * optional string game_subtitle = 23;
- * @return {string}
- */
-proto.api.esm.PrizeDetail.prototype.getGameSubtitle = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 23, ""));
 };
 
@@ -14858,16 +14870,16 @@ proto.api.esm.PrizeDetail.prototype.getGameSubtitle = function() {
  * @param {string} value
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
-proto.api.esm.PrizeDetail.prototype.setGameSubtitle = function(value) {
+proto.api.esm.PrizeDetail.prototype.setGameTitle = function(value) {
   return jspb.Message.setProto3StringField(this, 23, value);
 };
 
 
 /**
- * optional string game_img_url = 24;
+ * optional string game_subtitle = 24;
  * @return {string}
  */
-proto.api.esm.PrizeDetail.prototype.getGameImgUrl = function() {
+proto.api.esm.PrizeDetail.prototype.getGameSubtitle = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 24, ""));
 };
 
@@ -14876,16 +14888,16 @@ proto.api.esm.PrizeDetail.prototype.getGameImgUrl = function() {
  * @param {string} value
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
-proto.api.esm.PrizeDetail.prototype.setGameImgUrl = function(value) {
+proto.api.esm.PrizeDetail.prototype.setGameSubtitle = function(value) {
   return jspb.Message.setProto3StringField(this, 24, value);
 };
 
 
 /**
- * optional string game_content = 25;
+ * optional string game_img_url = 25;
  * @return {string}
  */
-proto.api.esm.PrizeDetail.prototype.getGameContent = function() {
+proto.api.esm.PrizeDetail.prototype.getGameImgUrl = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 25, ""));
 };
 
@@ -14894,34 +14906,34 @@ proto.api.esm.PrizeDetail.prototype.getGameContent = function() {
  * @param {string} value
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
-proto.api.esm.PrizeDetail.prototype.setGameContent = function(value) {
+proto.api.esm.PrizeDetail.prototype.setGameImgUrl = function(value) {
   return jspb.Message.setProto3StringField(this, 25, value);
 };
 
 
 /**
- * optional int32 game_duration_days = 26;
+ * optional string game_content = 26;
+ * @return {string}
+ */
+proto.api.esm.PrizeDetail.prototype.getGameContent = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 26, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api.esm.PrizeDetail} returns this
+ */
+proto.api.esm.PrizeDetail.prototype.setGameContent = function(value) {
+  return jspb.Message.setProto3StringField(this, 26, value);
+};
+
+
+/**
+ * optional int32 game_duration_days = 27;
  * @return {number}
  */
 proto.api.esm.PrizeDetail.prototype.getGameDurationDays = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 26, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.api.esm.PrizeDetail} returns this
- */
-proto.api.esm.PrizeDetail.prototype.setGameDurationDays = function(value) {
-  return jspb.Message.setProto3IntField(this, 26, value);
-};
-
-
-/**
- * optional int32 game_duration_hours = 27;
- * @return {number}
- */
-proto.api.esm.PrizeDetail.prototype.getGameDurationHours = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 27, 0));
 };
 
@@ -14930,16 +14942,16 @@ proto.api.esm.PrizeDetail.prototype.getGameDurationHours = function() {
  * @param {number} value
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
-proto.api.esm.PrizeDetail.prototype.setGameDurationHours = function(value) {
+proto.api.esm.PrizeDetail.prototype.setGameDurationDays = function(value) {
   return jspb.Message.setProto3IntField(this, 27, value);
 };
 
 
 /**
- * optional int32 game_duration_minutes = 28;
+ * optional int32 game_duration_hours = 28;
  * @return {number}
  */
-proto.api.esm.PrizeDetail.prototype.getGameDurationMinutes = function() {
+proto.api.esm.PrizeDetail.prototype.getGameDurationHours = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 28, 0));
 };
 
@@ -14948,16 +14960,16 @@ proto.api.esm.PrizeDetail.prototype.getGameDurationMinutes = function() {
  * @param {number} value
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
-proto.api.esm.PrizeDetail.prototype.setGameDurationMinutes = function(value) {
+proto.api.esm.PrizeDetail.prototype.setGameDurationHours = function(value) {
   return jspb.Message.setProto3IntField(this, 28, value);
 };
 
 
 /**
- * optional int32 group_id = 29;
+ * optional int32 game_duration_minutes = 29;
  * @return {number}
  */
-proto.api.esm.PrizeDetail.prototype.getGroupId = function() {
+proto.api.esm.PrizeDetail.prototype.getGameDurationMinutes = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 29, 0));
 };
 
@@ -14966,8 +14978,26 @@ proto.api.esm.PrizeDetail.prototype.getGroupId = function() {
  * @param {number} value
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
-proto.api.esm.PrizeDetail.prototype.setGroupId = function(value) {
+proto.api.esm.PrizeDetail.prototype.setGameDurationMinutes = function(value) {
   return jspb.Message.setProto3IntField(this, 29, value);
+};
+
+
+/**
+ * optional int32 group_id = 30;
+ * @return {number}
+ */
+proto.api.esm.PrizeDetail.prototype.getGroupId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 30, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.PrizeDetail} returns this
+ */
+proto.api.esm.PrizeDetail.prototype.setGroupId = function(value) {
+  return jspb.Message.setProto3IntField(this, 30, value);
 };
 
 
