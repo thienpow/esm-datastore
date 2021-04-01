@@ -932,6 +932,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     //let req = request.into_inner();
     
+    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+
     let prizes = match prize::Prize::list_active(&self.pool.clone()).await {
       Ok(prizes) => prizes,
       Err(error) => panic!("Error: {}.", error),
@@ -977,7 +979,10 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         group_id: prize.group_id
       };
       
-      result.push(li);
+      if scheduled_on <= now && scheduled_off >= now {
+        result.push(li);
+      }
+      
     };
     
     Ok(Response::new(ListPrizeResponse {

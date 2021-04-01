@@ -223,7 +223,7 @@ impl Prize {
                           INNER JOIN public.\"tournament_set\" AS s ON s.id = ts.set_id 
                           INNER JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.set_id = ts.set_id 
                           INNER JOIN public.\"game\" AS g ON g.id = tsg.game_id 
-                        WHERE p.status = 2 AND p.scheduled_on <= NOW() 
+                        WHERE p.status = 2 
                         ORDER BY p.id, ts.tour_id 
                         ;".to_string();
       let stmt = conn.prepare(&sql_string).await?;
