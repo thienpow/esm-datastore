@@ -47,8 +47,6 @@ use esmapi_proto::{
   ListGameLeaderRuleRequest, ListGameLeaderRuleResponse,
   GameLeaderRuleDetail,
   GetGameCodeRequest, GetGameCodeResponse,
-  ListGameRequest, ListGameResponse,
-  GameDetail,
 
   // GPlayer
   LogGEnterRequest, LogGEnterResponse,
@@ -65,6 +63,7 @@ use esmapi_proto::{
 
   // Item
   ListItemRequest, ListItemResponse, 
+  GetItemCountRequest, GetItemCountResponse,
   ItemDetail, 
   ListItemTypeRequest, ListItemTypeResponse,
   ItemTypeDetail,
@@ -82,6 +81,7 @@ use esmapi_proto::{
 
   // Subscription
   ListSubscriptionRequest, ListSubscriptionResponse, 
+  GetSubscriptionCountRequest, GetSubscriptionCountResponse,
   SubscriptionDetail, 
   ListSubscriptionTypeRequest, ListSubscriptionTypeResponse,
   SubscriptionTypeDetail,
@@ -91,6 +91,7 @@ use esmapi_proto::{
   ClaimWinnerRequest, ClaimWinnerResponse,
   WinnerDetail, 
 
+  ItemCount, SubscriptionCount
 };
 
 
@@ -569,49 +570,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
   
-  async fn list_game(&self, request: Request<ListGameRequest>, ) -> Result<Response<ListGameResponse>, Status> {
-    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
-
-    let req = request.into_inner();
-    
-    let games = match game::Game::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
-      Ok(games) => games,
-      Err(error) => panic!("Error: {}.", error),
-    };
-    
-    let mut result: Vec<GameDetail> = Vec::new();
-    
-    for game in games {
-      
-      let li = GameDetail {
-        id: game.id,
-        title: game.title,
-        subtitle: game.subtitle,
-        img_url: game.img_url,
-        content: game.content,
-        type_id: game.type_id,
-        engine_id: game.engine_id,
-        version: game.version,
-        status: game.status,
-        score_rule: game.score_rule,
-        watch_ad_get_tickets: game.watch_ad_get_tickets,
-        watch_ad_get_exp: game.watch_ad_get_exp,
-        use_gem_get_tickets: game.use_gem_get_tickets,
-        use_gem_get_exp: game.use_gem_get_exp,
-        use_how_many_gems: game.use_how_many_gems,
-      };
-      
-      result.push(li);
-    };
-    
-    Ok(Response::new(ListGameResponse {
-      result: result,
-    }))
-
-  }
-
-
-
 
 
 
@@ -903,6 +861,24 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
 
+  async fn get_item_count(&self, request: Request<GetItemCountRequest>, ) -> Result<Response<GetItemCountResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+    
+    let count = match item::Item::count(&self.pool.clone()).await {
+      Ok(result) => result,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    Ok(Response::new(GetItemCountResponse {
+      result: Some(ItemCount{
+        draft: count.draft,
+        published: count.published,
+        archived: count.archived
+      }),
+    }))
+  }
+
+
   async fn list_item_type(&self, request: Request<ListItemTypeRequest>, ) -> Result<Response<ListItemTypeResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
@@ -1167,6 +1143,23 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
   }
 
+
+  async fn get_subscription_count(&self, request: Request<GetSubscriptionCountRequest>, ) -> Result<Response<GetSubscriptionCountResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+    
+    let count = match subscription::Subscription::count(&self.pool.clone()).await {
+      Ok(result) => result,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    Ok(Response::new(GetSubscriptionCountResponse {
+      result: Some(SubscriptionCount{
+        draft: count.draft,
+        published: count.published,
+        archived: count.archived
+      }),
+    }))
+  }
 
 
   async fn list_subscription_type(&self, request: Request<ListSubscriptionTypeRequest>, ) -> Result<Response<ListSubscriptionTypeResponse>, Status> {

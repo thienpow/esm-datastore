@@ -30,7 +30,6 @@ service EsmApi {
   // Game
   rpc ListGameLeaderRule(ListGameLeaderRuleRequest) returns (ListGameLeaderRuleResponse) {}
   rpc GetGameCode(GetGameCodeRequest) returns (GetGameCodeResponse) {}
-  rpc ListGame(ListGameRequest) returns (ListGameResponse) {}
 
   // GPlayer
   rpc LogGEnter(LogGEnterRequest) returns (LogGEnterResponse) {}
@@ -45,6 +44,7 @@ service EsmApi {
 
   // Item
   rpc ListItem(ListItemRequest) returns (ListItemResponse) {}
+  rpc GetItemCount(GetItemCountRequest) returns (GetItemCountResponse) {}
   rpc ListItemType(ListItemTypeRequest) returns (ListItemTypeResponse) {}
 
   // Prize
@@ -58,6 +58,7 @@ service EsmApi {
 
   // Subscription
   rpc ListSubscription(ListSubscriptionRequest) returns (ListSubscriptionResponse) {}
+  rpc GetSubscriptionCount(GetSubscriptionCountRequest) returns (GetSubscriptionCountResponse) {}
   rpc ListSubscriptionType(ListSubscriptionTypeRequest) returns (ListSubscriptionTypeResponse) {}
 
   // Winner
@@ -215,25 +216,6 @@ message ChangePasswordResponse {
   string result = 1;
 }
 
-//Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
-message GetUserCountRequest {
-}
-message GetUserCountResponse {
-  UserCount result = 1;
-}
-message UserCount {
-  int64 active = 1;
-  int64 blocked = 2;
-}
-
-//Get users from db
-message ListUserRequest {
-  int64 limit = 1;
-  int64 offset = 2;
-}
-message ListUserResponse {
-  repeated UserDetail result = 1;
-}
 message UserDetail {
   int64 id = 1;
   string username = 2;
@@ -356,45 +338,6 @@ message GetGameCodeRequest {
 message GetGameCodeResponse {
   string result = 1;
 }
-//Get games from db
-message ListGameRequest {
-  int64 limit = 1;
-  int64 offset = 2;
-}
-message ListGameResponse {
-  repeated GameDetail result = 1;
-}
-message GameDetail {
-  int64 id = 1;
-  string title = 2;
-  string subtitle = 3;
-  string img_url = 4;
-  string content = 5;
-  int32 type_id = 6;
-  int32 engine_id = 7;
-  int32 version = 8;
-  int32 status = 9;
-  int32 score_rule = 10;
-  int32 watch_ad_get_tickets = 11;
-  int32 watch_ad_get_exp = 12;
-  int32 use_gem_get_tickets = 13;
-  int32 use_gem_get_exp = 14;
-  int32 use_how_many_gems = 15; 
-}
-
-
-//Get Count based on Status ID, 1=Draft, 2=Published, 3=Archived/Blocked
-message GetGameCountRequest {
-}
-message GetGameCountResponse {
-  GameCount result = 1;
-}
-message GameCount {
-  int64 draft = 1;
-  int64 published = 2;
-  int64 archived = 3;
-}
-
 
 
 
@@ -534,14 +477,6 @@ message GetInvitedByCountResponse {
   string result = 1;
 }
 
-//Delete an existing game from db
-message DeleteInviteRequest {
-  int64 id = 1;
-}
-message DeleteInviteResponse {
-  string result = 1;
-}
-
 
 
 
@@ -562,45 +497,6 @@ message DeleteInviteResponse {
 /*
 **************************************** Item ***************************************
 */
-//Add a new Item
-message AddItemRequest {
-  string title = 1;
-  string subtitle = 2;
-  string content = 3;
-  string img_url = 4;
-  int32 type_id = 5;
-  int32 amount = 6;
-  int32 status = 7;
-}
-message AddItemResponse {
-  string result = 1;
-}
-
-
-//Update an Item data
-message UpdateItemRequest {
-  int64 id = 1;
-  string title = 2;
-  string subtitle = 3;
-  string content = 4;
-  string img_url = 5;
-  int32 type_id = 6;
-  int32 amount = 7;
-  int32 status = 8;
-}
-message UpdateItemResponse {
-  string result = 1;
-}
-
-
-//Delete an Item from db
-message DeleteItemRequest {
-  int64 id = 1;
-}
-message DeleteItemResponse {
-  string result = 1;
-}
-
 
 //Get Item from db
 message ListItemRequest {
@@ -887,16 +783,4 @@ message WinnerDetail {
   string user_nick_name = 6;
   int64 created_on = 7;
   int32 status = 8;
-}
-
-message GetWinnerCountRequest {
-}
-message GetWinnerCountResponse {
-  WinnerCount result = 1;
-}
-message WinnerCount {
-  int64 unclaimed = 1;
-  int64 claimed = 2;
-  int64 delivered = 3;
-  int64 expired = 4;
 }

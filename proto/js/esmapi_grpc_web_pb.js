@@ -1194,86 +1194,6 @@ proto.api.esm.EsmApiPromiseClient.prototype.getGameCode =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.api.esm.ListGameRequest,
- *   !proto.api.esm.ListGameResponse>}
- */
-const methodDescriptor_EsmApi_ListGame = new grpc.web.MethodDescriptor(
-  '/api.esm.EsmApi/ListGame',
-  grpc.web.MethodType.UNARY,
-  proto.api.esm.ListGameRequest,
-  proto.api.esm.ListGameResponse,
-  /**
-   * @param {!proto.api.esm.ListGameRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.api.esm.ListGameResponse.deserializeBinary
-);
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.api.esm.ListGameRequest,
- *   !proto.api.esm.ListGameResponse>}
- */
-const methodInfo_EsmApi_ListGame = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.api.esm.ListGameResponse,
-  /**
-   * @param {!proto.api.esm.ListGameRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.api.esm.ListGameResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.api.esm.ListGameRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.api.esm.ListGameResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListGameResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.api.esm.EsmApiClient.prototype.listGame =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/api.esm.EsmApi/ListGame',
-      request,
-      metadata || {},
-      methodDescriptor_EsmApi_ListGame,
-      callback);
-};
-
-
-/**
- * @param {!proto.api.esm.ListGameRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.api.esm.ListGameResponse>}
- *     Promise that resolves to the response
- */
-proto.api.esm.EsmApiPromiseClient.prototype.listGame =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/api.esm.EsmApi/ListGame',
-      request,
-      metadata || {},
-      methodDescriptor_EsmApi_ListGame);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.LogGEnterRequest,
  *   !proto.api.esm.LogGEnterResponse>}
  */
@@ -1914,6 +1834,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listItem =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.GetItemCountRequest,
+ *   !proto.api.esm.GetItemCountResponse>}
+ */
+const methodDescriptor_EsmApi_GetItemCount = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/GetItemCount',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.GetItemCountRequest,
+  proto.api.esm.GetItemCountResponse,
+  /**
+   * @param {!proto.api.esm.GetItemCountRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetItemCountResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.GetItemCountRequest,
+ *   !proto.api.esm.GetItemCountResponse>}
+ */
+const methodInfo_EsmApi_GetItemCount = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.GetItemCountResponse,
+  /**
+   * @param {!proto.api.esm.GetItemCountRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetItemCountResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.GetItemCountRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.GetItemCountResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.GetItemCountResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.getItemCount =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/GetItemCount',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetItemCount,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.GetItemCountRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.GetItemCountResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.getItemCount =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/GetItemCount',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetItemCount);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.ListItemTypeRequest,
  *   !proto.api.esm.ListItemTypeResponse>}
  */
@@ -2308,6 +2308,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listSubscription =
       request,
       metadata || {},
       methodDescriptor_EsmApi_ListSubscription);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.GetSubscriptionCountRequest,
+ *   !proto.api.esm.GetSubscriptionCountResponse>}
+ */
+const methodDescriptor_EsmApi_GetSubscriptionCount = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/GetSubscriptionCount',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.GetSubscriptionCountRequest,
+  proto.api.esm.GetSubscriptionCountResponse,
+  /**
+   * @param {!proto.api.esm.GetSubscriptionCountRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetSubscriptionCountResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.GetSubscriptionCountRequest,
+ *   !proto.api.esm.GetSubscriptionCountResponse>}
+ */
+const methodInfo_EsmApi_GetSubscriptionCount = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.GetSubscriptionCountResponse,
+  /**
+   * @param {!proto.api.esm.GetSubscriptionCountRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetSubscriptionCountResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.GetSubscriptionCountRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.GetSubscriptionCountResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.GetSubscriptionCountResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.getSubscriptionCount =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/GetSubscriptionCount',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetSubscriptionCount,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.GetSubscriptionCountRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.GetSubscriptionCountResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.getSubscriptionCount =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/GetSubscriptionCount',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetSubscriptionCount);
 };
 
 
