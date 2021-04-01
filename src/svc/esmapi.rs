@@ -932,8 +932,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     //let req = request.into_inner();
     
-    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
-
     let prizes = match prize::Prize::list_active(&self.pool.clone()).await {
       Ok(prizes) => prizes,
       Err(error) => panic!("Error: {}.", error),
@@ -945,6 +943,9 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       
       let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
       let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let timezone_seconds = prize.timezone * (3600 as f64);
+
+      let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (8 * 3600) + (timezone_seconds as u64);
 
       let li = PrizeDetail {
         prize_id: prize.prize_id,
@@ -979,7 +980,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         group_id: prize.group_id
       };
       
-      if scheduled_on <= now && scheduled_off >= now {
+      if scheduled_on <= adjusted_now && scheduled_off >= adjusted_now {
         result.push(li);
       }
       
