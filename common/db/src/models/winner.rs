@@ -3,8 +3,6 @@ use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
 use std::time::{SystemTime};
-use svc::adminapi::adminapi_proto::WinnerCount;
-use crate::svc;
 
 pub struct Winner {
   pub id: i64,
@@ -18,6 +16,10 @@ pub struct Winner {
   pub ship_tracking: String,
 }
 
+pub struct WinnerCount {
+  pub active: i64,
+  pub archived: i64
+}
 
 impl Winner {
     
@@ -40,6 +42,15 @@ impl Winner {
       Ok(n)
     }
     
+    pub async fn claim(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"winner\" SET status=2 WHERE id=$1;").await?;
+      let n = conn.execute(&stmt, &[&id]).await?;
+    
+      Ok(n)
+    }
+
     pub async fn list(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

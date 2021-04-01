@@ -1,8 +1,6 @@
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
-use svc::adminapi::adminapi_proto::ItemCount;
-use crate::svc;
 
 
 pub struct Item {
@@ -20,6 +18,12 @@ pub struct Item {
 pub struct ItemType {
   pub id: i32,
   pub title: String
+}
+
+pub struct ItemCount {
+  pub draft: i64,
+  pub published: i64,
+  pub archived: i64 
 }
 
 impl Item {

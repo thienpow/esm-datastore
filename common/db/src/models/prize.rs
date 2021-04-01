@@ -3,9 +3,6 @@ use std::time::{SystemTime};
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
-use svc::adminapi::adminapi_proto::PrizeCount;
-use crate::svc;
-
 
 pub struct Prize {
   pub id: i64,
@@ -73,6 +70,13 @@ pub struct PrizeType {
   pub id: i32,
   pub title: String
 }
+
+pub struct PrizeCount {
+  pub draft: i64,
+  pub published: i64,
+  pub archived: i64 
+}
+
 
 impl Prize {
     

@@ -15,8 +15,9 @@ use crate::jwk::{
   JwkAuth,
 };
 
+use esm_db::{models::*};
+
 use crate::cryptic;
-use crate::db;
 use crate::svc;
 use esmapi_proto::{
 
@@ -126,7 +127,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   async fn list_status_type(&self, request: Request<ListStatusTypeRequest>, ) -> Result<Response<ListStatusTypeResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
-    let status_types = match db::config::Config::list_status_type(&self.pool.clone()).await {
+    let status_types = match config::Config::list_status_type(&self.pool.clone()).await {
       Ok(status_types) => status_types,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -152,7 +153,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   async fn list_win_type(&self, request: Request<ListWinTypeRequest>, ) -> Result<Response<ListWinTypeResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
-    let win_types = match db::spinner::SpinnerRule::list_win_type(&self.pool.clone()).await {
+    let win_types = match spinner::SpinnerRule::list_win_type(&self.pool.clone()).await {
       Ok(win_types) => win_types,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -178,7 +179,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   async fn list_timezones(&self, request: Request<ListTimezonesRequest>, ) -> Result<Response<ListTimezonesResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
-    let timezones = match db::config::Config::list_timezones(&self.pool.clone()).await {
+    let timezones = match config::Config::list_timezones(&self.pool.clone()).await {
       Ok(timezones) => timezones,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -215,7 +216,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
 
-    match db::user::User::sign_in(req.username.into(), &self.pool.clone()).await {
+    match user::User::sign_in(req.username.into(), &self.pool.clone()).await {
       Ok(user) => {
       
         let created_on = user.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
@@ -266,7 +267,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let user = db::user::User {
+    let user = user::User {
       id: 0,
       username: req.username.into(),
       passhash: cryptic::hash_password(&req.password).unwrap(),
@@ -300,7 +301,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       nick_name: "".to_string()
     };
     
-    let result = match db::user::User::add(user, &self.pool.clone()).await {
+    let result = match user::User::add(user, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -317,7 +318,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let result = match db::user::User::update_social_link_fb(req.id.into(), req.fb_id.into(), &self.pool.clone()).await {
+    let result = match user::User::update_social_link_fb(req.id.into(), req.fb_id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -333,7 +334,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let result = match db::user::User::update_social_link_google(req.id.into(), req.google_id.into(), &self.pool.clone()).await {
+    let result = match user::User::update_social_link_google(req.id.into(), req.google_id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -348,7 +349,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
-    let address = db::user::Address {
+    let address = user::Address {
       id: req.id.into(),
       full_name: req.full_name.into(),
       address: req.address.into(),
@@ -359,7 +360,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       country_code: 0,
     };
     
-    let result = match db::user::User::update_address(address, &self.pool.clone()).await {
+    let result = match user::User::update_address(address, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -374,7 +375,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
-    let settings = db::user::Settings {
+    let settings = user::Settings {
       id: req.id.into(),
       is_notify_allowed: req.is_notify_allowed.into(),
       is_notify_new_reward: req.is_notify_new_reward.into(),
@@ -383,7 +384,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       nick_name: req.nick_name.into()
     };
     
-    let result = match db::user::User::update_settings(settings, &self.pool.clone()).await {
+    let result = match user::User::update_settings(settings, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -400,11 +401,11 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     let username = req.username.clone();
 
-    let result = match db::user::User::sign_in(req.username.into(), &self.pool.clone()).await {
+    let result = match user::User::sign_in(req.username.into(), &self.pool.clone()).await {
       Ok(sign_in_user) => {
         if cryptic::verify(&sign_in_user.passhash, &req.old_password).unwrap() {
                 
-          match db::user::User::change_password(username.into(), cryptic::hash_password(&req.new_password).unwrap(), &self.pool.clone()).await {
+          match user::User::change_password(username.into(), cryptic::hash_password(&req.new_password).unwrap(), &self.pool.clone()).await {
             Ok(result) => result.to_string(),
             Err(error) => error.to_string(),
           }
@@ -448,7 +449,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   async fn get_config(&self, request: Request<GetConfigRequest>, ) -> Result<Response<GetConfigResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
-    match db::config::Config::get(&self.pool.clone()).await {
+    match config::Config::get(&self.pool.clone()).await {
       Ok(result) => {
 
         Ok(Response::new(GetConfigResponse {
@@ -480,7 +481,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   
     //let req = request.into_inner();
     
-    let rules = match db::spinner::SpinnerRule::list(&self.pool.clone()).await {
+    let rules = match spinner::SpinnerRule::list(&self.pool.clone()).await {
       Ok(rules) => rules,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -525,7 +526,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let rules = match db::game::Game::list_leader_rule(req.game_id.into(), &self.pool.clone()).await {
+    let rules = match game::Game::list_leader_rule(req.game_id.into(), &self.pool.clone()).await {
       Ok(rules) => rules,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -557,7 +558,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let result = match db::game::Game::get_game_code(req.id.into(), &self.pool.clone()).await {
+    let result = match game::Game::get_game_code(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result,
       Err(error) => error.to_string(),
     };
@@ -573,7 +574,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let games = match db::game::Game::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
+    let games = match game::Game::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
       Ok(games) => games,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -639,7 +640,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     //TODO: check the req.secret key see if the key is originate from our system
     let req = request.into_inner();
-    let gplayer = db::gplayer::GPlayer {
+    let gplayer = gplayer::GPlayer {
       id: 0,
       prize_id: req.prize_id.into(),
       game_id: req.game_id.into(),
@@ -654,7 +655,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     //TODO: generate a new secret key to reply to user, if user are allowed to play, 
     // if not allowed to play anymore then reply an empty string
     // the generated secret key will then be used during log_leave
-    let result = match db::gplayer::GPlayer::enter(gplayer, &self.pool.clone()).await {
+    let result = match gplayer::GPlayer::enter(gplayer, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -675,7 +676,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     // if yes, then allow recording the game score
     // generated secret key timestamp must not allowed more than 30 minutes
     let req = request.into_inner();
-    let gplayer = db::gplayer::GPlayer {
+    let gplayer = gplayer::GPlayer {
       id: req.id.into(),
       prize_id: 0,
       game_id: 0,
@@ -686,7 +687,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       is_watched_ad: false,
     };
     
-    let result = match db::gplayer::GPlayer::leave(gplayer, &self.pool.clone()).await {
+    let result = match gplayer::GPlayer::leave(gplayer, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -702,7 +703,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let log_g = match db::gplayer::GPlayer::list_log_g(req.user_id, req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+    let log_g = match gplayer::GPlayer::list_log_g(req.user_id, req.limit.into(), req.offset.into(), &self.pool.clone()).await {
       Ok(log_g) => log_g,
       Err(e) => {
         println!("list_log_g not ok {:?}", e);
@@ -773,7 +774,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let now = SystemTime::now();
 
     let req = request.into_inner();
-    let invites = db::invites::Invites {
+    let invites = invites::Invites {
       id: 0,
       user_id: req.user_id.into(),
       invited_by: req.invited_by.into(),
@@ -782,7 +783,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       claimed_date: now
     };
     
-    let result = match db::invites::Invites::add(invites, &self.pool.clone()).await {
+    let result = match invites::Invites::add(invites, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -798,7 +799,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     let req = request.into_inner();
     
-    let result = match db::invites::Invites::claim(req.id.into(), &self.pool.clone()).await {
+    let result = match invites::Invites::claim(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -815,7 +816,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let invites = match db::invites::Invites::list_invited_by(req.invited_by.into(), req.is_claimed.into(), &self.pool.clone()).await {
+    let invites = match invites::Invites::list_invited_by(req.invited_by.into(), req.is_claimed.into(), &self.pool.clone()).await {
       Ok(invites) => invites,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -871,7 +872,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let items = match db::item::Item::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
+    let items = match item::Item::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
       Ok(items) => items,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -905,7 +906,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   async fn list_item_type(&self, request: Request<ListItemTypeRequest>, ) -> Result<Response<ListItemTypeResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
-    let item_types = match db::item::Item::list_item_type(&self.pool.clone()).await {
+    let item_types = match item::Item::list_item_type(&self.pool.clone()).await {
       Ok(item_types) => item_types,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -955,7 +956,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     //let req = request.into_inner();
     
-    let prizes = match db::prize::Prize::list_active(&self.pool.clone()).await {
+    let prizes = match prize::Prize::list_active(&self.pool.clone()).await {
       Ok(prizes) => prizes,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -964,7 +965,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     for prize in prizes {
       
-      let seconds_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
 
       let li = PrizeDetail {
         prize_id: prize.prize_id,
@@ -977,7 +978,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         type_id: prize.type_id,
         tickets_required: prize.tickets_required,
         timezone: prize.timezone,
-        scheduled_on: seconds_on as i64,
+        scheduled_on: scheduled_on as i64,
         is_repeat: prize.is_repeat,
         repeated_on: prize.repeated_on,
         status: prize.status,
@@ -1034,7 +1035,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
     //let req = request.into_inner();
     
-    let ranks = match db::rank::Rank::list(&self.pool.clone()).await {
+    let ranks = match rank::Rank::list(&self.pool.clone()).await {
       Ok(ranks) => ranks,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1086,14 +1087,14 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
     
     let req = request.into_inner();
-    let new_buy = db::shop::NewBuy {
+    let new_buy = shop::NewBuy {
       id: 0,
       item_type_id: req.item_type_id.into(),
       item_id: req.item_id.into(),
       user_id: req.user_id.into()
     };
     
-    let result = match db::shop::Shop::buy(new_buy, &self.pool.clone()).await {
+    let result = match shop::Shop::buy(new_buy, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1131,7 +1132,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let subscriptions = match db::subscription::Subscription::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
+    let subscriptions = match subscription::Subscription::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
       Ok(subscriptions) => subscriptions,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1171,7 +1172,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   async fn list_subscription_type(&self, request: Request<ListSubscriptionTypeRequest>, ) -> Result<Response<ListSubscriptionTypeResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
-    let sub_types = match db::subscription::Subscription::list_subscription_type(&self.pool.clone()).await {
+    let sub_types = match subscription::Subscription::list_subscription_type(&self.pool.clone()).await {
       Ok(sub_types) => sub_types,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1220,7 +1221,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     let req = request.into_inner();
     
-    let winners = match db::winner::Winner::list(req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+    let winners = match winner::Winner::list(req.limit.into(), req.offset.into(), &self.pool.clone()).await {
       Ok(winners) => winners,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1253,12 +1254,11 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
 
   async fn claim_winner(&self, request: Request<ClaimWinnerRequest>, ) -> Result<Response<ClaimWinnerResponse>, Status> {
-    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
     
-    //TODO: create the db function for claim
-    let result = match db::winner::Winner::delete(req.id.into(), &self.pool.clone()).await {
+    let result = match winner::Winner::claim(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };

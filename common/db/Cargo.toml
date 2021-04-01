@@ -1,0 +1,17 @@
+[package]
+name = "esm-db"
+version = "0.1.0"
+authors = ["Ken Chong <thienpow@gmail.com>"]
+description = "ESM DB"
+publish = false
+edition = "2018"
+
+[lib]
+name = "esm_db"
+
+[dependencies]
+bb8 = "0.7.0"
+bb8-postgres = "0.7.0"
+tokio-postgres = "0.7"
+postgres = "0.19.0"
+

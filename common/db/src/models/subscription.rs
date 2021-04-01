@@ -1,9 +1,6 @@
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
-use svc::adminapi::adminapi_proto::SubscriptionCount; 
-use crate::svc;
-
 
 pub struct Subscription {
   pub id: i64,
@@ -27,6 +24,11 @@ pub struct SubscriptionType {
   pub title: String
 }
 
+pub struct SubscriptionCount {
+  pub draft: i64,
+  pub published: i64,
+  pub archived: i64 
+}
 
 impl Subscription {
     

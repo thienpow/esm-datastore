@@ -1,8 +1,6 @@
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
-use svc::adminapi::adminapi_proto::GameCount;
-use crate::svc;
 
 
 pub struct Game {
@@ -32,6 +30,11 @@ pub struct GameLeaderRule {
   pub exp: i32,
 }
 
+pub struct GameCount {
+  pub draft: i64,
+  pub published: i64,
+  pub archived: i64 
+}
 
 impl Game {
     

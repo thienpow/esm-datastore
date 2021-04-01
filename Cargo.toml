@@ -9,6 +9,9 @@ default-run = "esmserver"
 name = "esmserver"
 path = "src/main.rs"
 
+[[bin]]
+name = "checker"
+path = "src/client/checker.rs"
 #[[bin]]
 #name = "config"
 #path = "src/client/config.rs"
@@ -62,6 +65,7 @@ path = "src/main.rs"
 #path  = "src/client/test.rs"
 
 [dependencies]
+esm-db = { path = "common/db" }
 
 ring = "0.16.15"
 jsonwebtoken = "7.2.0"

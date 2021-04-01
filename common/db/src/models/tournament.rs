@@ -2,11 +2,6 @@
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
-//use std::time::{SystemTime};
-use svc::adminapi::adminapi_proto::{
-  TournamentCount, TournamentSetCount,
-};
-use crate::svc;
 
 
 pub struct Tournament {
@@ -40,6 +35,18 @@ pub struct TournamentSetGameRule {
   pub duration_minutes: i32,
   pub group_id: i32,
 }
+
+
+pub struct TournamentCount {
+  pub draft: i64,
+  pub published: i64,
+  pub archived: i64 
+}
+
+pub struct TournamentSetCount {
+  pub total: i64
+}
+
 
 impl Tournament {
     

@@ -3,8 +3,6 @@ use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
 use std::time::{SystemTime};
-use svc::adminapi::adminapi_proto::UserCount;
-use crate::svc;
 
 
 pub struct User {
@@ -54,6 +52,13 @@ pub struct Settings {
   pub is_notify_new_tournament: bool,
   pub is_notify_tour_ending: bool,
   pub nick_name: String,
+}
+
+pub struct UserCount {
+  pub active: i64,
+  pub blocked: i64,
+  pub pending_delete: i64,
+  pub archived: i64
 }
 
 impl User {

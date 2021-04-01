@@ -15,9 +15,10 @@ use crate::jwk::{
   JwkAuth,
 };
 
+use esm_db::{models::*};
+
 use crate::jwt;
 use crate::cryptic;
-use crate::db;
 use crate::svc;
 
 use adminapi_proto::{
@@ -154,6 +155,7 @@ use adminapi_proto::{
   ListLogGRequest, ListLogGResponse,
   LogGDetail,
 
+  UserCount, GameCount, ItemCount, PrizeCount, SubscriptionCount, TournamentCount, TournamentSetCount, WinnerCount
 };
 
 
@@ -190,7 +192,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
   async fn list_status_type(&self, request: Request<ListStatusTypeRequest>, ) -> Result<Response<ListStatusTypeResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    let status_types = match db::config::Config::list_status_type(&self.pool.clone()).await {
+    let status_types = match config::Config::list_status_type(&self.pool.clone()).await {
       Ok(status_types) => status_types,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -216,7 +218,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
   async fn list_user_status_type(&self, request: Request<ListUserStatusTypeRequest>, ) -> Result<Response<ListUserStatusTypeResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    let status_types = match db::config::Config::list_user_status_type(&self.pool.clone()).await {
+    let status_types = match config::Config::list_user_status_type(&self.pool.clone()).await {
       Ok(status_types) => status_types,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -242,7 +244,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
   async fn list_win_type(&self, request: Request<ListWinTypeRequest>, ) -> Result<Response<ListWinTypeResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    let win_types = match db::spinner::SpinnerRule::list_win_type(&self.pool.clone()).await {
+    let win_types = match spinner::SpinnerRule::list_win_type(&self.pool.clone()).await {
       Ok(win_types) => win_types,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -268,7 +270,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
   async fn list_timezones(&self, request: Request<ListTimezonesRequest>, ) -> Result<Response<ListTimezonesResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    let timezones = match db::config::Config::list_timezones(&self.pool.clone()).await {
+    let timezones = match config::Config::list_timezones(&self.pool.clone()).await {
       Ok(timezones) => timezones,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -304,7 +306,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     let req = request.into_inner();
     let username = req.username.clone();
     //println!("trying sign_in");
-    match db::user::User::sign_in(req.username.into(), &self.pool.clone()).await {
+    match user::User::sign_in(req.username.into(), &self.pool.clone()).await {
       Ok(user) => {
 
         //println!("sign_in ok got user");
@@ -370,7 +372,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
     let req = request.into_inner();
     
-    let user = db::user::User {
+    let user = user::User {
       id: 0,
       username: req.username.into(),
       passhash: cryptic::hash_password(&req.password).unwrap(),
@@ -404,7 +406,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       nick_name: "".to_string()
     };
     
-    let result = match db::user::User::add(user, &self.pool.clone()).await {
+    let result = match user::User::add(user, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -421,7 +423,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
     let req = request.into_inner();
     
-    let result = match db::user::User::update_email_confirmed(req.id.into(), req.status.into(), &self.pool.clone()).await {
+    let result = match user::User::update_email_confirmed(req.id.into(), req.status.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -437,7 +439,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
     let req = request.into_inner();
     
-    let result = match db::user::User::update_social_link_fb(req.id.into(), req.fb_id.into(), &self.pool.clone()).await {
+    let result = match user::User::update_social_link_fb(req.id.into(), req.fb_id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -453,7 +455,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
     let req = request.into_inner();
     
-    let result = match db::user::User::update_social_link_google(req.id.into(), req.google_id.into(), &self.pool.clone()).await {
+    let result = match user::User::update_social_link_google(req.id.into(), req.google_id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -469,7 +471,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
     let req = request.into_inner();
     
-    let result = match db::user::User::update_status_gem_balance(req.id.into(), req.status.into(), req.gem_balance.into(), &self.pool.clone()).await {
+    let result = match user::User::update_status_gem_balance(req.id.into(), req.status.into(), req.gem_balance.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -484,7 +486,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
-    let address = db::user::Address {
+    let address = user::Address {
       id: req.id.into(),
       full_name: req.full_name.into(),
       address: req.address.into(),
@@ -495,7 +497,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       country_code: 0,
     };
     
-    let result = match db::user::User::update_address(address, &self.pool.clone()).await {
+    let result = match user::User::update_address(address, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -510,7 +512,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
-    let settings = db::user::Settings {
+    let settings = user::Settings {
       id: req.id.into(),
       is_notify_allowed: req.is_notify_allowed.into(),
       is_notify_new_reward: req.is_notify_new_reward.into(),
@@ -519,7 +521,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       nick_name: req.nick_name.into()
     };
     
-    let result = match db::user::User::update_settings(settings, &self.pool.clone()).await {
+    let result = match user::User::update_settings(settings, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -536,11 +538,11 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     
     let username = req.username.clone();
 
-    let result = match db::user::User::sign_in(req.username.into(), &self.pool.clone()).await {
+    let result = match user::User::sign_in(req.username.into(), &self.pool.clone()).await {
       Ok(sign_in_user) => {
         if cryptic::verify(&sign_in_user.passhash, &req.old_password).unwrap() {
                 
-          match db::user::User::change_password(username.into(), cryptic::hash_password(&req.new_password).unwrap(), &self.pool.clone()).await {
+          match user::User::change_password(username.into(), cryptic::hash_password(&req.new_password).unwrap(), &self.pool.clone()).await {
             Ok(result) => result.to_string(),
             Err(error) => error.to_string(),
           }
@@ -564,7 +566,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
     let req = request.into_inner();
     
-    let users = match db::user::User::list(req.limit.into(), req.offset.into(), req.search_username.into(), &self.pool.clone()).await {
+    let users = match user::User::list(req.limit.into(), req.offset.into(), req.search_username.into(), &self.pool.clone()).await {
       Ok(users) => users,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -622,13 +624,20 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
   async fn get_user_count(&self, request: Request<GetUserCountRequest>, ) -> Result<Response<GetUserCountResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
     
-    let result = match db::user::User::count(&self.pool.clone()).await {
+    let count = match user::User::count(&self.pool.clone()).await {
       Ok(result) => result,
       Err(error) => panic!("Error: {}.", error),
     };
     
     Ok(Response::new(GetUserCountResponse {
-      result: Some(result),
+      result: Some(
+        UserCount{
+          active: count.active,
+          blocked: count.blocked,
+          pending_delete: count.pending_delete,
+          archived: count.archived,
+        }
+      ),
     }))
   }
 
@@ -659,7 +668,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
-    let config = db::config::Config {
+    let config = config::Config {
       invites: req.invites.into(),
       games_per_ad: req.games_per_ad.into(),
       days_to_claim: req.days_to_claim.into(),
@@ -670,7 +679,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       ads_per_spins_2: req.ads_per_spins_2.into(),
     };
     
-    let result = match db::config::Config::update(config, &self.pool.clone()).await {
+    let result = match config::Config::update(config, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -685,7 +694,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
   async fn get_config(&self, request: Request<GetConfigRequest>, ) -> Result<Response<GetConfigResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    match db::config::Config::get(&self.pool.clone()).await {
+    match config::Config::get(&self.pool.clone()).await {
       Ok(result) => {
 
         Ok(Response::new(GetConfigResponse {
@@ -716,14 +725,14 @@ async fn add_spinner_rule(&self, request: Request<AddSpinnerRuleRequest>, ) -> R
   let _ = svc::check_is_admin(&request.metadata()).await?;
 
   let req = request.into_inner();
-  let sr = db::spinner::SpinnerRule {
+  let sr = spinner::SpinnerRule {
     id: 0,
     probability: req.probability.into(),
     win: req.win.into(),
     type_id: req.type_id.into()
   };
   
-  let result = match db::spinner::SpinnerRule::add(sr, &self.pool.clone()).await {
+  let result = match spinner::SpinnerRule::add(sr, &self.pool.clone()).await {
     Ok(result) => result.to_string(),
     Err(error) => error.to_string(),
   };
@@ -738,14 +747,14 @@ async fn update_spinner_rule(&self, request: Request<UpdateSpinnerRuleRequest>, 
   let _ = svc::check_is_admin(&request.metadata()).await?;
 
   let req = request.into_inner();
-  let sr = db::spinner::SpinnerRule {
+  let sr = spinner::SpinnerRule {
     id: req.id.into(),
     probability: req.probability.into(),
     win: req.win.into(),
     type_id: req.type_id.into()
   };
   
-  let result = match db::spinner::SpinnerRule::update(sr, &self.pool.clone()).await {
+  let result = match spinner::SpinnerRule::update(sr, &self.pool.clone()).await {
     Ok(result) => result.to_string(),
     Err(error) => error.to_string(),
   };
@@ -761,7 +770,7 @@ async fn delete_spinner_rule(&self, request: Request<DeleteSpinnerRuleRequest>, 
   
   let req = request.into_inner();
   
-  let result = match db::spinner::SpinnerRule::delete(req.id.into(), &self.pool.clone()).await {
+  let result = match spinner::SpinnerRule::delete(req.id.into(), &self.pool.clone()).await {
     Ok(result) => result.to_string(),
     Err(error) => error.to_string(),
   };
@@ -776,7 +785,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
   //let req = request.into_inner();
   
-  let rules = match db::spinner::SpinnerRule::list(&self.pool.clone()).await {
+  let rules = match spinner::SpinnerRule::list(&self.pool.clone()).await {
     Ok(rules) => rules,
     Err(error) => panic!("Error: {}.", error),
   };
@@ -820,7 +829,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
-    let game = db::game::Game {
+    let game = game::Game {
       id: 0,
       title: req.title.into(),
       subtitle: req.subtitle.into(),
@@ -839,7 +848,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       use_how_many_gems: req.use_how_many_gems.into()
     };
     
-    let result = match db::game::Game::add(game, &self.pool.clone()).await {
+    let result = match game::Game::add(game, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -855,7 +864,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
-    let game = db::game::Game {
+    let game = game::Game {
       id: req.id.into(),
       title: req.title.into(),
       subtitle: req.subtitle.into(),
@@ -874,7 +883,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       use_how_many_gems: req.use_how_many_gems.into()
     };
     
-    let result = match db::game::Game::update(game, &self.pool.clone()).await {
+    let result = match game::Game::update(game, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => {
         //println!("update_game not ok {:?}", error);
@@ -893,7 +902,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
-    let score_rule = db::game::GameLeaderRule {
+    let score_rule = game::GameLeaderRule {
       game_id: req.game_id.into(),
       rank_from: req.rank_from.into(),
       rank_to: req.rank_to.into(),
@@ -901,7 +910,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       exp: req.exp.into()
     };
     
-    let result = match db::game::Game::add_leader_rule(score_rule, &self.pool.clone()).await {
+    let result = match game::Game::add_leader_rule(score_rule, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -916,7 +925,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
-    let score_rule = db::game::GameLeaderRule {
+    let score_rule = game::GameLeaderRule {
       game_id: req.game_id.into(),
       rank_from: req.rank_from.into(),
       rank_to: req.rank_to.into(),
@@ -924,7 +933,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       exp: req.exp.into()
     };
     
-    let result = match db::game::Game::update_leader_rule(score_rule, &self.pool.clone()).await {
+    let result = match game::Game::update_leader_rule(score_rule, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -940,7 +949,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::game::Game::delete_leader_rule(req.game_id.into(), req.rank_from.into(), &self.pool.clone()).await {
+    let result = match game::Game::delete_leader_rule(req.game_id.into(), req.rank_from.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -955,7 +964,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
     
-    let rules = match db::game::Game::list_leader_rule(req.game_id.into(), &self.pool.clone()).await {
+    let rules = match game::Game::list_leader_rule(req.game_id.into(), &self.pool.clone()).await {
       Ok(rules) => rules,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -987,7 +996,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
     
-    let result = match db::game::Game::get_game_code(req.id.into(), &self.pool.clone()).await {
+    let result = match game::Game::get_game_code(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result,
       Err(error) => error.to_string(),
     };
@@ -1003,7 +1012,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::game::Game::delete(req.id.into(), &self.pool.clone()).await {
+    let result = match game::Game::delete(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1019,7 +1028,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
     
-    let games = match db::game::Game::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), &self.pool.clone()).await {
+    let games = match game::Game::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), &self.pool.clone()).await {
       Ok(games) => games,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1059,13 +1068,17 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
   async fn get_game_count(&self, request: Request<GetGameCountRequest>, ) -> Result<Response<GetGameCountResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
     
-    let result = match db::game::Game::count(&self.pool.clone()).await {
+    let count = match game::Game::count(&self.pool.clone()).await {
       Ok(result) => result,
       Err(error) => panic!("Error: {}.", error),
     };
     
     Ok(Response::new(GetGameCountResponse {
-      result: Some(result),
+      result: Some(GameCount{
+        draft: count.draft,
+        published: count.published,
+        archived: count.archived
+      }),
     }))
   }
 
@@ -1101,7 +1114,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let now = SystemTime::now();
 
     let req = request.into_inner();
-    let invites = db::invites::Invites {
+    let invites = invites::Invites {
       id: 0,
       user_id: req.user_id.into(),
       invited_by: req.invited_by.into(),
@@ -1110,7 +1123,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       claimed_date: now
     };
     
-    let result = match db::invites::Invites::add(invites, &self.pool.clone()).await {
+    let result = match invites::Invites::add(invites, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1126,7 +1139,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::invites::Invites::claim(req.id.into(), &self.pool.clone()).await {
+    let result = match invites::Invites::claim(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1143,7 +1156,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
     
-    let invites = match db::invites::Invites::list_invited_by(req.invited_by.into(), req.is_claimed.into(), &self.pool.clone()).await {
+    let invites = match invites::Invites::list_invited_by(req.invited_by.into(), req.is_claimed.into(), &self.pool.clone()).await {
       Ok(invites) => invites,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1179,7 +1192,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::invites::Invites::get_invited_by_count(req.invited_by.into(), &self.pool.clone()).await {
+    let result = match invites::Invites::get_invited_by_count(req.invited_by.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1195,7 +1208,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::invites::Invites::delete(req.id.into(), &self.pool.clone()).await {
+    let result = match invites::Invites::delete(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1231,7 +1244,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
-    let item = db::item::Item {
+    let item = item::Item {
       id: 0,
       title: req.title.into(),
       subtitle: req.subtitle.into(),
@@ -1243,7 +1256,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       status: req.status.into()
     };
     
-    let result = match db::item::Item::add(item, &self.pool.clone()).await {
+    let result = match item::Item::add(item, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1259,7 +1272,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
-    let item = db::item::Item {
+    let item = item::Item {
       id: req.id.into(),
       title: req.title.into(),
       subtitle: req.subtitle.into(),
@@ -1271,7 +1284,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       status: req.status.into()
     };
     
-    let result = match db::item::Item::update(item, &self.pool.clone()).await {
+    let result = match item::Item::update(item, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1288,7 +1301,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
     
-    let result = match db::item::Item::delete(req.id.into(), &self.pool.clone()).await {
+    let result = match item::Item::delete(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1304,7 +1317,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
     
-    let items = match db::item::Item::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), &self.pool.clone()).await {
+    let items = match item::Item::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), &self.pool.clone()).await {
       Ok(items) => items,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1339,20 +1352,24 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
   async fn get_item_count(&self, request: Request<GetItemCountRequest>, ) -> Result<Response<GetItemCountResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
     
-    let result = match db::item::Item::count(&self.pool.clone()).await {
+    let count = match item::Item::count(&self.pool.clone()).await {
       Ok(result) => result,
       Err(error) => panic!("Error: {}.", error),
     };
     
     Ok(Response::new(GetItemCountResponse {
-      result: Some(result),
+      result: Some(ItemCount{
+        draft: count.draft,
+        published: count.published,
+        archived: count.archived
+      }),
     }))
   }
 
   async fn list_item_type(&self, request: Request<ListItemTypeRequest>, ) -> Result<Response<ListItemTypeResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    let item_types = match db::item::Item::list_item_type(&self.pool.clone()).await {
+    let item_types = match item::Item::list_item_type(&self.pool.clone()).await {
       Ok(item_types) => item_types,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1405,7 +1422,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let iseconds_on: i64 = req.scheduled_on.into();
     let scheduled_on = UNIX_EPOCH + Duration::new(iseconds_on as u64, 0);
 
-    let prize = db::prize::Prize {
+    let prize = prize::Prize {
       id: 0,
       title: req.title.into(),
       subtitle: req.subtitle.into(),
@@ -1424,7 +1441,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       tickets_collected: 0,
     };
     
-    let result = match db::prize::Prize::add(prize, &self.pool.clone()).await {
+    let result = match prize::Prize::add(prize, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1444,7 +1461,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let iseconds_on: i64 = req.scheduled_on.into();
     let scheduled_on = UNIX_EPOCH + Duration::new(iseconds_on as u64, 0);
 
-    let prize = db::prize::Prize {
+    let prize = prize::Prize {
       id: req.id.into(),
       title: req.title.into(),
       subtitle: req.subtitle.into(),
@@ -1463,7 +1480,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       tickets_collected: 0,
     };
     
-    let result = match db::prize::Prize::update(prize, &self.pool.clone()).await {
+    let result = match prize::Prize::update(prize, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1480,7 +1497,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::prize::Prize::delete(req.id.into(), &self.pool.clone()).await {
+    let result = match prize::Prize::delete(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1496,7 +1513,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let prizes = match db::prize::Prize::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), &self.pool.clone()).await {
+    let prizes = match prize::Prize::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), &self.pool.clone()).await {
       Ok(prizes) => prizes,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1539,20 +1556,24 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
   async fn get_prize_count(&self, request: Request<GetPrizeCountRequest>, ) -> Result<Response<GetPrizeCountResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    let result = match db::prize::Prize::count(&self.pool.clone()).await {
+    let count = match prize::Prize::count(&self.pool.clone()).await {
       Ok(result) => result,
       Err(error) => panic!("Error: {}.", error),
     };
     
     Ok(Response::new(GetPrizeCountResponse {
-      result: Some(result),
+      result: Some(PrizeCount{
+        draft: count.draft,
+        published: count.published,
+        archived: count.archived
+      }),
     }))
   }
 
   async fn list_prize_type(&self, request: Request<ListPrizeTypeRequest>, ) -> Result<Response<ListPrizeTypeResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    let prize_types = match db::prize::Prize::list_prize_type(&self.pool.clone()).await {
+    let prize_types = match prize::Prize::list_prize_type(&self.pool.clone()).await {
       Ok(prize_types) => prize_types,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1580,7 +1601,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
 
-    let p = db::prize::PrizeTour {
+    let p = prize::PrizeTour {
       id: 0,
       prize_id: req.prize_id.into(),
       tour_id: req.tour_id.into(),
@@ -1588,7 +1609,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       status: 0
     };
     
-    let result = match db::prize::Prize::add_prize_tour(p, &self.pool.clone()).await {
+    let result = match prize::Prize::add_prize_tour(p, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1604,7 +1625,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::prize::Prize::delete_prize_tour(req.id.into(), &self.pool.clone()).await {
+    let result = match prize::Prize::delete_prize_tour(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1619,7 +1640,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let prize_tours = match db::prize::Prize::list_prize_tour(req.id, &self.pool.clone()).await {
+    let prize_tours = match prize::Prize::list_prize_tour(req.id, &self.pool.clone()).await {
       Ok(prize_tours) => prize_tours,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1670,7 +1691,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
-    let rank = db::rank::Rank {
+    let rank = rank::Rank {
       id: req.id.into(),
       title: req.title.into(),
       exp: req.exp.into(),
@@ -1678,7 +1699,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       multiplier: req.multiplier.into()
     };
     
-    let result = match db::rank::Rank::add(rank, &self.pool.clone()).await {
+    let result = match rank::Rank::add(rank, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1694,7 +1715,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
-    let rank = db::rank::Rank {
+    let rank = rank::Rank {
       id: req.id.into(),
       title: req.title.into(),
       exp: req.exp.into(),
@@ -1702,7 +1723,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       multiplier: req.multiplier.into()
     };
     
-    let result = match db::rank::Rank::update(rank, &self.pool.clone()).await {
+    let result = match rank::Rank::update(rank, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1719,7 +1740,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::rank::Rank::delete(req.id.into(), &self.pool.clone()).await {
+    let result = match rank::Rank::delete(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1734,7 +1755,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
     //let req = request.into_inner();
     
-    let ranks = match db::rank::Rank::list(&self.pool.clone()).await {
+    let ranks = match rank::Rank::list(&self.pool.clone()).await {
       Ok(ranks) => ranks,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1786,14 +1807,14 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
     
     let req = request.into_inner();
-    let new_buy = db::shop::NewBuy {
+    let new_buy = shop::NewBuy {
       id: 0,
       item_type_id: req.item_type_id.into(),
       item_id: req.item_id.into(),
       user_id: req.user_id.into()
     };
     
-    let result = match db::shop::Shop::buy(new_buy, &self.pool.clone()).await {
+    let result = match shop::Shop::buy(new_buy, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1830,7 +1851,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
-    let sub = db::subscription::Subscription {
+    let sub = subscription::Subscription {
       id: 0,
       title: req.title.into(),
       subtitle: req.subtitle.into(),
@@ -1847,7 +1868,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       status: req.status.into()
     };
     
-    let result = match db::subscription::Subscription::add(sub, &self.pool.clone()).await {
+    let result = match subscription::Subscription::add(sub, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1863,7 +1884,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
-    let sub = db::subscription::Subscription {
+    let sub = subscription::Subscription {
       id: req.id.into(),
       title: req.title.into(),
       subtitle: req.subtitle.into(),
@@ -1880,7 +1901,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       status: req.status.into()
     };
     
-    let result = match db::subscription::Subscription::update(sub, &self.pool.clone()).await {
+    let result = match subscription::Subscription::update(sub, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1897,7 +1918,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
     
-    let result = match db::subscription::Subscription::delete(req.id.into(), &self.pool.clone()).await {
+    let result = match subscription::Subscription::delete(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -1913,7 +1934,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
     
-    let subscriptions = match db::subscription::Subscription::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), &self.pool.clone()).await {
+    let subscriptions = match subscription::Subscription::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), &self.pool.clone()).await {
       Ok(subscriptions) => subscriptions,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1953,20 +1974,24 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
   async fn get_subscription_count(&self, request: Request<GetSubscriptionCountRequest>, ) -> Result<Response<GetSubscriptionCountResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
     
-    let result = match db::subscription::Subscription::count(&self.pool.clone()).await {
+    let count = match subscription::Subscription::count(&self.pool.clone()).await {
       Ok(result) => result,
       Err(error) => panic!("Error: {}.", error),
     };
     
     Ok(Response::new(GetSubscriptionCountResponse {
-      result: Some(result),
+      result: Some(SubscriptionCount{
+        draft: count.draft,
+        published: count.published,
+        archived: count.archived
+      }),
     }))
   }
 
   async fn list_subscription_type(&self, request: Request<ListSubscriptionTypeRequest>, ) -> Result<Response<ListSubscriptionTypeResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    let sub_types = match db::subscription::Subscription::list_subscription_type(&self.pool.clone()).await {
+    let sub_types = match subscription::Subscription::list_subscription_type(&self.pool.clone()).await {
       Ok(sub_types) => sub_types,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -2016,13 +2041,13 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
 
-    let tournament = db::tournament::Tournament {
+    let tournament = tournament::Tournament {
       id: 0,
       title: req.title.into(),
       status: req.status.into()
     };
     
-    let result = match db::tournament::Tournament::add(tournament, &self.pool.clone()).await {
+    let result = match tournament::Tournament::add(tournament, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2037,7 +2062,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
 
-    let tournament_set = db::tournament::TournamentSet {
+    let tournament_set = tournament::TournamentSet {
       id: 0,
       title: req.title.into(),
       duration_days: req.duration_days.into(),
@@ -2045,7 +2070,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       is_group: req.is_group.into()
     };
     
-    let result = match db::tournament::Tournament::add_set(tournament_set, &self.pool.clone()).await {
+    let result = match tournament::Tournament::add_set(tournament_set, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2061,7 +2086,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
 
-    let rule = db::tournament::TournamentSetGameRule {
+    let rule = tournament::TournamentSetGameRule {
       id: 0,
       set_id: req.set_id.into(),
       game_id: req.game_id.into(),
@@ -2071,7 +2096,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       group_id: req.group_id.into()
     };
     
-    let result = match db::tournament::Tournament::add_set_game_rule(rule, &self.pool.clone()).await {
+    let result = match tournament::Tournament::add_set_game_rule(rule, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2088,13 +2113,13 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
 
-    let tournament = db::tournament::Tournament {
+    let tournament = tournament::Tournament {
       id: req.id.into(),
       title: req.title.into(),
       status: req.status.into()
     };
     
-    let result = match db::tournament::Tournament::update(tournament, &self.pool.clone()).await {
+    let result = match tournament::Tournament::update(tournament, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2109,7 +2134,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
 
-    let tournament_set = db::tournament::TournamentSet {
+    let tournament_set = tournament::TournamentSet {
       id: req.id.into(),
       title: req.title.into(),
       duration_days: req.duration_days.into(),
@@ -2117,7 +2142,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       is_group: req.is_group.into()
     };
     
-    let result = match db::tournament::Tournament::update_set(tournament_set, &self.pool.clone()).await {
+    let result = match tournament::Tournament::update_set(tournament_set, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2133,7 +2158,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
 
-    let rule = db::tournament::TournamentSetGameRule {
+    let rule = tournament::TournamentSetGameRule {
       id: req.id.into(),
       set_id: req.set_id.into(),
       game_id: req.game_id.into(),
@@ -2143,7 +2168,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       group_id: req.group_id.into()
     };
     
-    let result = match db::tournament::Tournament::update_set_game_rule(rule, &self.pool.clone()).await {
+    let result = match tournament::Tournament::update_set_game_rule(rule, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2159,7 +2184,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::tournament::Tournament::delete(req.id.into(), &self.pool.clone()).await {
+    let result = match tournament::Tournament::delete(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2174,7 +2199,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::tournament::Tournament::delete_set(req.id.into(), &self.pool.clone()).await {
+    let result = match tournament::Tournament::delete_set(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2189,7 +2214,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::tournament::Tournament::delete_set_game_rule(req.id.into(), &self.pool.clone()).await {
+    let result = match tournament::Tournament::delete_set_game_rule(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2205,7 +2230,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let tournaments = match db::tournament::Tournament::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), "".to_string(), &self.pool.clone()).await {
+    let tournaments = match tournament::Tournament::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), "".to_string(), &self.pool.clone()).await {
       Ok(tournaments) => tournaments,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -2234,7 +2259,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let sets = match db::tournament::Tournament::list_set(req.limit.into(), req.offset.into(), req.search_title.into(), "".to_string(), &self.pool.clone()).await {
+    let sets = match tournament::Tournament::list_set(req.limit.into(), req.offset.into(), req.search_title.into(), "".to_string(), &self.pool.clone()).await {
       Ok(sets) => sets,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -2267,7 +2292,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let rules = match db::tournament::Tournament::list_set_game_rule(req.id.into(), &self.pool.clone()).await {
+    let rules = match tournament::Tournament::list_set_game_rule(req.id.into(), &self.pool.clone()).await {
       Ok(rules) => rules,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -2300,26 +2325,32 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
   async fn get_tournament_count(&self, request: Request<GetTournamentCountRequest>, ) -> Result<Response<GetTournamentCountResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    let result = match db::tournament::Tournament::count(&self.pool.clone()).await {
+    let count = match tournament::Tournament::count(&self.pool.clone()).await {
       Ok(result) => result,
       Err(error) => panic!("Error: {}.", error),
     };
     
     Ok(Response::new(GetTournamentCountResponse {
-      result: Some(result),
+      result: Some(TournamentCount{
+        draft: count.draft,
+        published: count.published,
+        archived: count.archived
+      }),
     }))
   }
 
   async fn get_tournament_set_count(&self, request: Request<GetTournamentSetCountRequest>, ) -> Result<Response<GetTournamentSetCountResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    let result = match db::tournament::Tournament::count_set(&self.pool.clone()).await {
+    let count = match tournament::Tournament::count_set(&self.pool.clone()).await {
       Ok(result) => result,
       Err(error) => panic!("Error: {}.", error),
     };
     
     Ok(Response::new(GetTournamentSetCountResponse {
-      result: Some(result),
+      result: Some(TournamentSetCount{
+        total: count.total
+      }),
     }))
   }
 
@@ -2329,7 +2360,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
 
-    let p = db::tournament::TourSet {
+    let p = tournament::TourSet {
       id: 0,
       tour_id: req.tour_id.into(),
       set_id: req.set_id.into(),
@@ -2337,7 +2368,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       status: 0
     };
     
-    let result = match db::tournament::Tournament::add_tour_set(p, &self.pool.clone()).await {
+    let result = match tournament::Tournament::add_tour_set(p, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2353,7 +2384,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let result = match db::tournament::Tournament::delete_tour_set(req.id.into(), &self.pool.clone()).await {
+    let result = match tournament::Tournament::delete_tour_set(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2368,7 +2399,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let tours_sets = match db::tournament::Tournament::list_tour_set(req.id, &self.pool.clone()).await {
+    let tours_sets = match tournament::Tournament::list_tour_set(req.id, &self.pool.clone()).await {
       Ok(tours_sets) => tours_sets,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -2421,7 +2452,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let now = SystemTime::now();
 
     let req = request.into_inner();
-    let winner = db::winner::Winner {
+    let winner = winner::Winner {
       id: 0,
       prize_id: req.prize_id.into(),
       prize_title: "".to_string(),
@@ -2433,7 +2464,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       ship_tracking: "".to_string()
     };
     
-    let result = match db::winner::Winner::add(winner, &self.pool.clone()).await {
+    let result = match winner::Winner::add(winner, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2450,7 +2481,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
     
-    let result = match db::winner::Winner::delete(req.id.into(), &self.pool.clone()).await {
+    let result = match winner::Winner::delete(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2466,7 +2497,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let winners = match db::winner::Winner::list(req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+    let winners = match winner::Winner::list(req.limit.into(), req.offset.into(), &self.pool.clone()).await {
       Ok(winners) => winners,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -2505,7 +2536,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let req = request.into_inner();
     
     //TODO: create the db function for claim
-    let result = match db::winner::Winner::delete(req.id.into(), &self.pool.clone()).await {
+    let result = match winner::Winner::claim(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -2519,13 +2550,16 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
   async fn get_winner_count(&self, request: Request<GetWinnerCountRequest>, ) -> Result<Response<GetWinnerCountResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    let result = match db::winner::Winner::count(&self.pool.clone()).await {
+    let count = match winner::Winner::count(&self.pool.clone()).await {
       Ok(result) => result,
       Err(error) => panic!("Error: {}.", error),
     };
     
     Ok(Response::new(GetWinnerCountResponse {
-      result: Some(result),
+      result: Some(WinnerCount{
+        active: count.active,
+        archived: count.archived
+      }),
     }))
   }
 
@@ -2536,7 +2570,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
     
-    let log_g = match db::gplayer::GPlayer::list_log_g(req.user_id, req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+    let log_g = match gplayer::GPlayer::list_log_g(req.user_id, req.limit.into(), req.offset.into(), &self.pool.clone()).await {
       Ok(log_g) => log_g,
       Err(e) => {
         println!("list_log_g not ok {:?}", e);
