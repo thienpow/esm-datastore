@@ -895,6 +895,8 @@ message GetWinnerCountResponse {
   WinnerCount result = 1;
 }
 message WinnerCount {
-  int64 active = 1;
-  int64 archived = 2;
+  int64 unclaimed = 1;
+  int64 claimed = 2;
+  int64 delivered = 3;
+  int64 expired = 4;
 }

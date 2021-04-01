@@ -2556,8 +2556,10 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     Ok(Response::new(GetWinnerCountResponse {
       result: Some(WinnerCount{
-        active: count.active,
-        archived: count.archived
+        unclaimed: count.unclaimed,
+        claimed: count.claimed,
+        delivered: count.delivered,
+        expired: count.expired
       }),
     }))
   }

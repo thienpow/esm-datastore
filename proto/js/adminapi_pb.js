@@ -41668,8 +41668,10 @@ proto.adminapi.esm.WinnerCount.prototype.toObject = function(opt_includeInstance
  */
 proto.adminapi.esm.WinnerCount.toObject = function(includeInstance, msg) {
   var f, obj = {
-    active: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    archived: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    unclaimed: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    claimed: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    delivered: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    expired: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -41708,11 +41710,19 @@ proto.adminapi.esm.WinnerCount.deserializeBinaryFromReader = function(msg, reade
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setActive(value);
+      msg.setUnclaimed(value);
       break;
     case 2:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setArchived(value);
+      msg.setClaimed(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setDelivered(value);
+      break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setExpired(value);
       break;
     default:
       reader.skipField();
@@ -41743,17 +41753,31 @@ proto.adminapi.esm.WinnerCount.prototype.serializeBinary = function() {
  */
 proto.adminapi.esm.WinnerCount.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getActive();
+  f = message.getUnclaimed();
   if (f !== 0) {
     writer.writeInt64(
       1,
       f
     );
   }
-  f = message.getArchived();
+  f = message.getClaimed();
   if (f !== 0) {
     writer.writeInt64(
       2,
+      f
+    );
+  }
+  f = message.getDelivered();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
+      f
+    );
+  }
+  f = message.getExpired();
+  if (f !== 0) {
+    writer.writeInt64(
+      4,
       f
     );
   }
@@ -41761,10 +41785,10 @@ proto.adminapi.esm.WinnerCount.serializeBinaryToWriter = function(message, write
 
 
 /**
- * optional int64 active = 1;
+ * optional int64 unclaimed = 1;
  * @return {number}
  */
-proto.adminapi.esm.WinnerCount.prototype.getActive = function() {
+proto.adminapi.esm.WinnerCount.prototype.getUnclaimed = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -41773,16 +41797,16 @@ proto.adminapi.esm.WinnerCount.prototype.getActive = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.WinnerCount} returns this
  */
-proto.adminapi.esm.WinnerCount.prototype.setActive = function(value) {
+proto.adminapi.esm.WinnerCount.prototype.setUnclaimed = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional int64 archived = 2;
+ * optional int64 claimed = 2;
  * @return {number}
  */
-proto.adminapi.esm.WinnerCount.prototype.getArchived = function() {
+proto.adminapi.esm.WinnerCount.prototype.getClaimed = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
@@ -41791,8 +41815,44 @@ proto.adminapi.esm.WinnerCount.prototype.getArchived = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.WinnerCount} returns this
  */
-proto.adminapi.esm.WinnerCount.prototype.setArchived = function(value) {
+proto.adminapi.esm.WinnerCount.prototype.setClaimed = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 delivered = 3;
+ * @return {number}
+ */
+proto.adminapi.esm.WinnerCount.prototype.getDelivered = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.WinnerCount} returns this
+ */
+proto.adminapi.esm.WinnerCount.prototype.setDelivered = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int64 expired = 4;
+ * @return {number}
+ */
+proto.adminapi.esm.WinnerCount.prototype.getExpired = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.WinnerCount} returns this
+ */
+proto.adminapi.esm.WinnerCount.prototype.setExpired = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 

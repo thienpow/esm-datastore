@@ -17,8 +17,10 @@ pub struct Winner {
 }
 
 pub struct WinnerCount {
-  pub active: i64,
-  pub archived: i64
+  pub unclaimed: i64,
+  pub claimed: i64,
+  pub delivered: i64,
+  pub expired: i64
 }
 
 impl Winner {
@@ -80,14 +82,16 @@ impl Winner {
     pub async fn count(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<WinnerCount, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let sql = "SELECT ((SELECT COUNT(id) FROM public.\"winner\" WHERE status=1) AS active, (SELECT COUNT(id) FROM public.\"winner\" WHERE status=2) AS archived;";
+      let sql = "SELECT (SELECT COUNT(id) FROM public.\"winner\" WHERE status=1) AS unclaimed, (SELECT COUNT(id) FROM public.\"winner\" WHERE status=2) AS claimed, (SELECT COUNT(id) FROM public.\"winner\" WHERE status=3) AS delivered, (SELECT COUNT(id) FROM public.\"winner\" WHERE status=4) AS expired;";
 
       let stmt = conn.prepare(sql).await?;
       let row = conn.query_one(&stmt, &[]).await?;
       
       Ok(WinnerCount {
-        active: row.get::<usize, i64>(0),
-        archived: row.get::<usize, i64>(1)
+        unclaimed: row.get::<usize, i64>(0),
+        claimed: row.get::<usize, i64>(1),
+        delivered: row.get::<usize, i64>(2),
+        expired: row.get::<usize, i64>(3)
       })
     }
 

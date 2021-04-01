@@ -31,6 +31,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     for prize in prizes {
         let _scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
+        //TODO: check the following requirements,
+        // 1: update the published prize that is suppose to be running to "running" for the prize_status
+        // 2: closing the prize, update the prize_status to closing, and generate winners
+        // 3: finally, close the prize, update the prize status to "closed" after winners is generated.
+        // 4: only if the prize_status is closed then only allowed user to claim.
+
     }  
     
 
