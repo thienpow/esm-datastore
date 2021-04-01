@@ -942,6 +942,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     for prize in prizes {
       
       let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
 
       let li = PrizeDetail {
         prize_id: prize.prize_id,
@@ -955,6 +956,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         tickets_required: prize.tickets_required,
         timezone: prize.timezone,
         scheduled_on: scheduled_on as i64,
+        scheduled_off: scheduled_off as i64,
         is_repeat: prize.is_repeat,
         repeated_on: prize.repeated_on,
         status: prize.status,

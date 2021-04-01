@@ -580,24 +580,25 @@ message PrizeDetail {
   int64 tickets_required = 9;
   double timezone = 10;
   int64 scheduled_on = 11;
-  bool is_repeat =  12;
-  repeated int32 repeated_on = 13;
-  int32 status = 14;
-  int32 status_prize = 15;
-  int64 tickets_collected = 16;
-  int64 tour_id = 17;
-  string tour_title  = 18;
-  int64 set_id = 19;
-  string set_title  = 20;
-  int64 game_id = 21;
-  string game_title  = 22;
-  string game_subtitle = 23;
-  string game_img_url = 24;
-  string game_content = 25;
-  int32 game_duration_days = 26;
-  int32 game_duration_hours = 27;
-  int32 game_duration_minutes = 28;
-  int32 group_id = 29;
+  int64 scheduled_off = 12;
+  bool is_repeat =  13;
+  repeated int32 repeated_on = 14;
+  int32 status = 15;
+  int32 status_prize = 16;
+  int64 tickets_collected = 17;
+  int64 tour_id = 18;
+  string tour_title  = 19;
+  int64 set_id = 20;
+  string set_title  = 21;
+  int64 game_id = 22;
+  string game_title  = 23;
+  string game_subtitle = 24;
+  string game_img_url = 25;
+  string game_content = 26;
+  int32 game_duration_days = 27;
+  int32 game_duration_hours = 28;
+  int32 game_duration_minutes = 29;
+  int32 group_id = 30;
 }
 
 

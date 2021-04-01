@@ -16,6 +16,7 @@ pub struct Prize {
   pub duration_hours: i32,
   pub timezone: f64,
   pub scheduled_on: SystemTime,
+  pub scheduled_off: SystemTime,
   pub is_repeat: bool,
   pub repeated_on: Vec<i32>,
   pub status: i32,
@@ -36,6 +37,7 @@ pub struct PrizeActive {
   pub tickets_required: i64,
   pub timezone: f64,
   pub scheduled_on: SystemTime,
+  pub scheduled_off: SystemTime,
   pub is_repeat: bool,
   pub repeated_on: Vec<i32>,
   pub status: i32,
@@ -83,12 +85,13 @@ impl Prize {
     pub async fn add(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"prize\" (title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, is_repeat, repeated_on, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"prize\" (title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, scheduled_off, is_repeat, repeated_on, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
                   &[&prize.title, &prize.subtitle, &prize.img_url, &prize.content, 
                   &prize.type_id, &prize.tickets_required, 
                   &prize.duration_days, &prize.duration_hours,
-                  &prize.timezone, &prize.scheduled_on, 
+                  &prize.timezone, 
+                  &prize.scheduled_on, &prize.scheduled_off,
                   &prize.is_repeat, &prize.repeated_on, 
                   &prize.status]).await?;
     
@@ -98,12 +101,13 @@ impl Prize {
     pub async fn update(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"prize\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, tickets_required=$6, duration_days=$7, duration_hours=$8, timezone=$9, scheduled_on=$10, is_repeat=$11, repeated_on=$12, status=$13 WHERE id=$14;").await?;
+      let stmt = conn.prepare("UPDATE public.\"prize\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, tickets_required=$6, duration_days=$7, duration_hours=$8, timezone=$9, scheduled_on=$10, scheduled_off=$11, is_repeat=$12, repeated_on=$13, status=$14 WHERE id=$15;").await?;
       let n = conn.execute(&stmt, 
                   &[&prize.title, &prize.subtitle, &prize.img_url, &prize.content, 
                   &prize.type_id, &prize.tickets_required, 
                   &prize.duration_days, &prize.duration_hours,
-                  &prize.timezone, &prize.scheduled_on, 
+                  &prize.timezone, 
+                  &prize.scheduled_on, &prize.scheduled_off,
                   &prize.is_repeat, &prize.repeated_on, 
                   &prize.status,
                   &prize.id]).await?;
@@ -125,9 +129,9 @@ impl Prize {
   
       let mut vec: Vec<Prize> = Vec::new();
       if search_title.len() > 2 {
-        let mut sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, is_repeat, repeated_on, status, status_prize, tickets_collected FROM public.\"prize\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        let mut sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, scheduled_off, is_repeat, repeated_on, status, status_prize, tickets_collected FROM public.\"prize\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
         if status > 0 {
-          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, is_repeat, repeated_on, status, status_prize, tickets_collected FROM public.\"prize\" WHERE title ILIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
+          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, scheduled_off, is_repeat, repeated_on, status, status_prize, tickets_collected FROM public.\"prize\" WHERE title ILIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
         }
         let stmt = conn.prepare(&sql_string).await?;
     
@@ -144,20 +148,21 @@ impl Prize {
             duration_hours: row.get(8),
             timezone: row.get(9),
             scheduled_on: row.get(10),
-            is_repeat: row.get(11),
-            repeated_on: row.get(12),
-            status: row.get(13),
-            status_prize: row.get(14),
-            tickets_collected: row.get(15),
+            scheduled_off: row.get(11),
+            is_repeat: row.get(12),
+            repeated_on: row.get(13),
+            status: row.get(14),
+            status_prize: row.get(15),
+            tickets_collected: row.get(16),
           };
   
           vec.push(prize);
         }
         
       } else {
-        let mut sql_string = "SELECT id, title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, is_repeat, repeated_on, status, status_prize, tickets_collected FROM public.\"prize\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
+        let mut sql_string = "SELECT id, title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, scheduled_off, is_repeat, repeated_on, status, status_prize, tickets_collected FROM public.\"prize\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
         if status > 0 {
-          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, is_repeat, repeated_on, status, status_prize, tickets_collected FROM public.\"prize\" WHERE status={} LIMIT $1 OFFSET $2;", status);
+          sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, scheduled_off, is_repeat, repeated_on, status, status_prize, tickets_collected FROM public.\"prize\" WHERE status={} LIMIT $1 OFFSET $2;", status);
         }
         let stmt = conn.prepare(&sql_string).await?;
     
@@ -174,11 +179,12 @@ impl Prize {
             duration_hours: row.get(8),
             timezone: row.get(9),
             scheduled_on: row.get(10),
-            is_repeat: row.get(11),
-            repeated_on: row.get(12),
-            status: row.get(13),
-            status_prize: row.get(14),
-            tickets_collected: row.get(15),
+            scheduled_off: row.get(11),
+            is_repeat: row.get(12),
+            repeated_on: row.get(13),
+            status: row.get(14),
+            status_prize: row.get(15),
+            tickets_collected: row.get(16),
           };
   
           vec.push(prize);
@@ -200,7 +206,9 @@ impl Prize {
                           p.content AS prize_content, 
                           p.duration_days AS prize_duration_days, 
                           p.duration_hours AS prize_duration_hours, 
-                          p.type_id, p.tickets_required, p.timezone, p.scheduled_on, p.is_repeat, p.repeated_on, p.status, p.status_prize, p.tickets_collected, 
+                          p.type_id, p.tickets_required, p.timezone, 
+                          p.scheduled_on, p.scheduled_off, 
+                          p.is_repeat, p.repeated_on, p.status, p.status_prize, p.tickets_collected, 
                           pt.tour_id, t.title AS tour_title, 
                           ts.set_id, s.title AS set_title, 
                           tsg.game_id, g.title AS game_title, 
@@ -234,24 +242,25 @@ impl Prize {
           tickets_required: row.get(8),
           timezone: row.get(9),
           scheduled_on: row.get(10),
-          is_repeat: row.get(11),
-          repeated_on: row.get(12),
-          status: row.get(13),
-          status_prize: row.get(14),
-          tickets_collected: row.get(15),
-          tour_id: row.get(16),
-          tour_title: row.get(17),
-          set_id: row.get(18),
-          set_title: row.get(19),
-          game_id: row.get(20),
-          game_title: row.get(21),
-          game_subtitle: row.get(22),
-          game_img_url: row.get(23),
-          game_content: row.get(24),
-          game_duration_days: row.get(25),
-          game_duration_hours: row.get(26),
-          game_duration_minutes: row.get(27),
-          group_id: row.get(28),
+          scheduled_off: row.get(11),
+          is_repeat: row.get(12),
+          repeated_on: row.get(13),
+          status: row.get(14),
+          status_prize: row.get(15),
+          tickets_collected: row.get(16),
+          tour_id: row.get(17),
+          tour_title: row.get(18),
+          set_id: row.get(19),
+          set_title: row.get(20),
+          game_id: row.get(21),
+          game_title: row.get(22),
+          game_subtitle: row.get(23),
+          game_img_url: row.get(24),
+          game_content: row.get(25),
+          game_duration_days: row.get(26),
+          game_duration_hours: row.get(27),
+          game_duration_minutes: row.get(28),
+          group_id: row.get(29),
         };
 
         vec.push(prize);

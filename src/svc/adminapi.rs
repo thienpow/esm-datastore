@@ -1419,8 +1419,14 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
 
+    let duration_days = req.duration_days.into();
+    let duration_hours = req.duration_hours.into();
     let iseconds_on: i64 = req.scheduled_on.into();
+    let iseconds_duration_days: i64 = (duration_days as i64) * 86400;
+    let iseconds_duration_hours: i64 = (duration_hours as i64) * 3600;
+    let iseconds_off: i64 = iseconds_on + iseconds_duration_days + iseconds_duration_hours;
     let scheduled_on = UNIX_EPOCH + Duration::new(iseconds_on as u64, 0);
+    let scheduled_off = UNIX_EPOCH + Duration::new(iseconds_off as u64, 0);
 
     let prize = prize::Prize {
       id: 0,
@@ -1430,10 +1436,11 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       content: req.content.into(),
       type_id: req.type_id.into(),
       tickets_required: req.tickets_required.into(),
-      duration_days: req.duration_days.into(),
-      duration_hours: req.duration_hours.into(),
+      duration_days: duration_days,
+      duration_hours: duration_hours,
       timezone: req.timezone.into(),
       scheduled_on: scheduled_on,
+      scheduled_off: scheduled_off,
       is_repeat: req.is_repeat.into(),
       repeated_on: req.repeated_on.into(),
       status: req.status.into(),
@@ -1458,8 +1465,14 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
     let req = request.into_inner();
 
+    let duration_days = req.duration_days.into();
+    let duration_hours = req.duration_hours.into();
     let iseconds_on: i64 = req.scheduled_on.into();
+    let iseconds_duration_days: i64 = (duration_days as i64) * 86400;
+    let iseconds_duration_hours: i64 = (duration_hours as i64) * 3600;
+    let iseconds_off: i64 = iseconds_on + iseconds_duration_days + iseconds_duration_hours;
     let scheduled_on = UNIX_EPOCH + Duration::new(iseconds_on as u64, 0);
+    let scheduled_off = UNIX_EPOCH + Duration::new(iseconds_off as u64, 0);
 
     let prize = prize::Prize {
       id: req.id.into(),
@@ -1469,10 +1482,11 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       content: req.content.into(),
       type_id: req.type_id.into(),
       tickets_required: req.tickets_required.into(),
-      duration_days: req.duration_days.into(),
-      duration_hours: req.duration_hours.into(),
+      duration_days: duration_days,
+      duration_hours: duration_hours,
       timezone: req.timezone.into(),
       scheduled_on: scheduled_on,
+      scheduled_off: scheduled_off,
       is_repeat: req.is_repeat.into(),
       repeated_on: req.repeated_on.into(),
       status: req.status.into(),
@@ -1523,6 +1537,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     for prize in prizes {
       
       let seconds_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let seconds_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
 
       let li = PrizeDetail {
         id: prize.id,
@@ -1536,6 +1551,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
         duration_hours: prize.duration_hours,
         timezone: prize.timezone,
         scheduled_on: seconds_on as i64,
+        scheduled_off: seconds_off as i64,
         is_repeat: prize.is_repeat,
         repeated_on: prize.repeated_on,
         status: prize.status,
