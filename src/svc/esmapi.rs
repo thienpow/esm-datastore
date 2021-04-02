@@ -983,8 +983,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       if prize.type_id == 1 || prize.type_id == 2 {
         result.push(li);
       } else if prize.type_id == 3 || prize.type_id == 4 {
-        if scheduled_on <= adjusted_now && scheduled_off >= adjusted_now {
-          result.push(li);
+        if scheduled_on <= adjusted_now {
+          if prize.is_repeat {
+            result.push(li);
+          } else {
+            if scheduled_off >= adjusted_now {
+              result.push(li);
+            }
+          }
+          
         }
       }
       

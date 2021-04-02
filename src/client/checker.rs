@@ -26,7 +26,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
     println!("{}", now.to_string());
-    /*
+    
     let prizes = match prize::Prize::list_active(&pool_db.clone()).await {
         Ok(prizes) => prizes,
         Err(error) => panic!("Error: {}.", error),
@@ -43,7 +43,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // 4: only if the prize_status is closed then only allowed user to claim.
 
     }  
-    */
+    
     
 
     Ok(())
