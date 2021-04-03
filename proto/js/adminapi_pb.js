@@ -25461,7 +25461,7 @@ proto.adminapi.esm.PrizeDetail.toObject = function(includeInstance, msg) {
     isRepeat: jspb.Message.getBooleanFieldWithDefault(msg, 13, false),
     repeatedOnList: (f = jspb.Message.getRepeatedField(msg, 14)) == null ? undefined : f,
     status: jspb.Message.getFieldWithDefault(msg, 15, 0),
-    statusPrize: jspb.Message.getFieldWithDefault(msg, 16, 0),
+    statusProgress: jspb.Message.getFieldWithDefault(msg, 16, 0),
     ticketsCollected: jspb.Message.getFieldWithDefault(msg, 17, 0)
   };
 
@@ -25561,7 +25561,7 @@ proto.adminapi.esm.PrizeDetail.deserializeBinaryFromReader = function(msg, reade
       break;
     case 16:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setStatusPrize(value);
+      msg.setStatusProgress(value);
       break;
     case 17:
       var value = /** @type {number} */ (reader.readInt64());
@@ -25701,7 +25701,7 @@ proto.adminapi.esm.PrizeDetail.serializeBinaryToWriter = function(message, write
       f
     );
   }
-  f = message.getStatusPrize();
+  f = message.getStatusProgress();
   if (f !== 0) {
     writer.writeInt32(
       16,
@@ -26008,10 +26008,10 @@ proto.adminapi.esm.PrizeDetail.prototype.setStatus = function(value) {
 
 
 /**
- * optional int32 status_prize = 16;
+ * optional int32 status_progress = 16;
  * @return {number}
  */
-proto.adminapi.esm.PrizeDetail.prototype.getStatusPrize = function() {
+proto.adminapi.esm.PrizeDetail.prototype.getStatusProgress = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 16, 0));
 };
 
@@ -26020,7 +26020,7 @@ proto.adminapi.esm.PrizeDetail.prototype.getStatusPrize = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.PrizeDetail} returns this
  */
-proto.adminapi.esm.PrizeDetail.prototype.setStatusPrize = function(value) {
+proto.adminapi.esm.PrizeDetail.prototype.setStatusProgress = function(value) {
   return jspb.Message.setProto3IntField(this, 16, value);
 };
 

@@ -14029,7 +14029,7 @@ proto.api.esm.PrizeDetail.toObject = function(includeInstance, msg) {
     isRepeat: jspb.Message.getBooleanFieldWithDefault(msg, 13, false),
     repeatedOnList: (f = jspb.Message.getRepeatedField(msg, 14)) == null ? undefined : f,
     status: jspb.Message.getFieldWithDefault(msg, 15, 0),
-    statusPrize: jspb.Message.getFieldWithDefault(msg, 16, 0),
+    statusProgress: jspb.Message.getFieldWithDefault(msg, 16, 0),
     ticketsCollected: jspb.Message.getFieldWithDefault(msg, 17, 0),
     tourId: jspb.Message.getFieldWithDefault(msg, 18, 0),
     tourTitle: jspb.Message.getFieldWithDefault(msg, 19, ""),
@@ -14142,7 +14142,7 @@ proto.api.esm.PrizeDetail.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 16:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setStatusPrize(value);
+      msg.setStatusProgress(value);
       break;
     case 17:
       var value = /** @type {number} */ (reader.readInt64());
@@ -14334,7 +14334,7 @@ proto.api.esm.PrizeDetail.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getStatusPrize();
+  f = message.getStatusProgress();
   if (f !== 0) {
     writer.writeInt32(
       16,
@@ -14732,10 +14732,10 @@ proto.api.esm.PrizeDetail.prototype.setStatus = function(value) {
 
 
 /**
- * optional int32 status_prize = 16;
+ * optional int32 status_progress = 16;
  * @return {number}
  */
-proto.api.esm.PrizeDetail.prototype.getStatusPrize = function() {
+proto.api.esm.PrizeDetail.prototype.getStatusProgress = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 16, 0));
 };
 
@@ -14744,7 +14744,7 @@ proto.api.esm.PrizeDetail.prototype.getStatusPrize = function() {
  * @param {number} value
  * @return {!proto.api.esm.PrizeDetail} returns this
  */
-proto.api.esm.PrizeDetail.prototype.setStatusPrize = function(value) {
+proto.api.esm.PrizeDetail.prototype.setStatusProgress = function(value) {
   return jspb.Message.setProto3IntField(this, 16, value);
 };
 

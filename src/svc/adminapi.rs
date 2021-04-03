@@ -1444,7 +1444,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       is_repeat: req.is_repeat.into(),
       repeated_on: req.repeated_on.into(),
       status: req.status.into(),
-      status_prize: 0,
+      status_progress: 0,
       tickets_collected: 0,
     };
     
@@ -1490,7 +1490,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       is_repeat: req.is_repeat.into(),
       repeated_on: req.repeated_on.into(),
       status: req.status.into(),
-      status_prize: 0,
+      status_progress: 0,
       tickets_collected: 0,
     };
     
@@ -1555,7 +1555,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
         is_repeat: prize.is_repeat,
         repeated_on: prize.repeated_on,
         status: prize.status,
-        status_prize: prize.status_prize,
+        status_progress: prize.status_progress,
         tickets_collected: prize.tickets_collected,
       };
       

@@ -99,6 +99,7 @@ use esmapi_proto::{
 pub struct EsmApiServer {
   pub jwk: JwkAuth,
   pub pool: Pool<PostgresConnectionManager<tokio_postgres::NoTls>>,
+  pub server_timezone: u64,
 }
 
 
@@ -945,7 +946,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
       let timezone_seconds = prize.timezone * (3600 as f64);
 
-      let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (8 * 3600) + (timezone_seconds as u64);
+      let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (self.server_timezone * 3600) + (timezone_seconds as u64);
 
       let li = PrizeDetail {
         prize_id: prize.prize_id,
@@ -963,7 +964,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         is_repeat: prize.is_repeat,
         repeated_on: prize.repeated_on,
         status: prize.status,
-        status_prize: prize.status_prize,
+        status_progress: prize.status_progress,
         tickets_collected: prize.tickets_collected,
         tour_id: prize.tour_id,
         tour_title: prize.tour_title,

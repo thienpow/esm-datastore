@@ -30,6 +30,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let esmapi_server = svc::esmapi::EsmApiServer {
         jwk: jwk_auth.clone(),
         pool: pool_db.clone(),
+        server_timezone: config.server_timezone,
     };
     let esmapi_service = svc::esmapi::esmapi_proto::esm_api_server::EsmApiServer::new(esmapi_server);
 

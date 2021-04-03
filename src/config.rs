@@ -5,6 +5,7 @@ pub struct Configuration {
     pub listen_on: String,
     pub db_conn_string: String,
     pub before_login_token: String,
+    pub server_timezone: u64,
 }
 
 #[cfg(debug_assertions)]
@@ -25,5 +26,6 @@ pub fn get_configuration() -> Configuration {
         listen_on: expect_env_var("LISTEN_ON", "0.0.0.0:50051"),
         db_conn_string: expect_env_var("DB_CONN_STRING", "postgresql://postgres:notezpass99~-~@159.65.137.25:5432/esmstore"),
         before_login_token: expect_env_var("BEFORE_LOGIN_TOKEN", "Bearer before_login_token"),
+        server_timezone: expect_env_var("SERVER_TIMEZONE", "8").parse::<u64>().unwrap(),
     }
 }

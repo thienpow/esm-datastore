@@ -584,7 +584,7 @@ message PrizeDetail {
   bool is_repeat =  13;
   repeated int32 repeated_on = 14;
   int32 status = 15;
-  int32 status_prize = 16;
+  int32 status_progress = 16;
   int64 tickets_collected = 17;
   int64 tour_id = 18;
   string tour_title  = 19;
