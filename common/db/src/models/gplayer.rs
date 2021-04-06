@@ -22,6 +22,7 @@ pub struct LogGDetail {
   pub prize_id: i64,
   pub prize_title: String,
   pub prize_img_url: String,
+  pub type_id: i32,
   pub game_id: i64,
   pub game_title: String,
   pub game_img_url: String,
@@ -60,7 +61,7 @@ impl GPlayer {
     pub async fn list_log_g(user_id: i64, limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<LogGDetail>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT gp.id, gp.user_id, gp.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, gp.game_id, g.title AS game_title, g.img_url AS game_img_url, gp.enter_timestamp, gp.leave_timestamp, gp.is_watched_ad, gp.game_score FROM public.\"gplayer\" AS gp LEFT JOIN public.\"prize\" AS p ON gp.prize_id = p.id LEFT JOIN public.\"game\" AS g ON gp.game_id = g.id WHERE user_id=$1 ORDER BY enter_timestamp DESC LIMIT $2 OFFSET $3;").await?;
+      let stmt = conn.prepare("SELECT gp.id, gp.user_id, gp.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id, gp.game_id, g.title AS game_title, g.img_url AS game_img_url, gp.enter_timestamp, gp.leave_timestamp, gp.is_watched_ad, gp.game_score FROM public.\"gplayer\" AS gp LEFT JOIN public.\"prize\" AS p ON gp.prize_id = p.id LEFT JOIN public.\"game\" AS g ON gp.game_id = g.id WHERE user_id=$1 ORDER BY enter_timestamp DESC LIMIT $2 OFFSET $3;").await?;
     
       let mut vec: Vec<LogGDetail> = Vec::new();
       for row in conn.query(&stmt, &[&user_id, &limit, &offset]).await? {
@@ -70,13 +71,14 @@ impl GPlayer {
           prize_id: row.get(2),
           prize_title: row.get(3),
           prize_img_url: row.get(4),
-          game_id: row.get(5),
-          game_title: row.get(6),
-          game_img_url: row.get(7),
-          enter_timestamp: row.get(8),
-          leave_timestamp: row.get(9),
-          is_watched_ad: row.get(10),
-          game_score: row.get(11),
+          type_id: row.get(5),
+          game_id: row.get(6),
+          game_title: row.get(7),
+          game_img_url: row.get(8),
+          enter_timestamp: row.get(9),
+          leave_timestamp: row.get(10),
+          is_watched_ad: row.get(11),
+          game_score: row.get(12),
         };
 
         vec.push(log_g);

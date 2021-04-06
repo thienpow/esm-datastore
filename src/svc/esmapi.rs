@@ -684,6 +684,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         prize_id: l.prize_id,
         prize_title: l.prize_title,
         prize_img_url: l.prize_img_url,
+        type_id: l.type_id,
         game_id: l.game_id,
         game_title: l.game_title,
         game_img_url: l.game_img_url,

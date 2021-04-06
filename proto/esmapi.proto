@@ -396,13 +396,14 @@ message LogGDetail {
   int64 prize_id = 3;
   string prize_title = 4;
   string prize_img_url = 5;
-  int64 game_id = 6;
-  string game_title = 7;
-  string game_img_url = 8;
-  int64 enter_timestamp = 9;
-  int64 leave_timestamp = 10;
-  bool is_watched_ad = 11;
-  int32 game_score = 12;
+  int32 type_id = 6;
+  int64 game_id = 7;
+  string game_title = 8;
+  string game_img_url = 9;
+  int64 enter_timestamp = 10;
+  int64 leave_timestamp = 11;
+  bool is_watched_ad = 12;
+  int32 game_score = 13;
 }
 
 
