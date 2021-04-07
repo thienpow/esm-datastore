@@ -55,9 +55,7 @@ use esmapi_proto::{
   LogGDetail,
 
   //  Invites
-  GenerateInviteUrlRequest, GenerateInviteUrlResponse,
   AddInviteRequest, AddInviteResponse,
-  ClaimInviteRequest, ClaimInviteResponse,
   ListInvitedByRequest, ListInvitedByResponse,
   InvitedByDetail,
 
@@ -724,11 +722,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   *
   *
   */
-  async fn generate_invite_url(&self, _request: Request<GenerateInviteUrlRequest>, ) -> Result<Response<GenerateInviteUrlResponse>, Status> {
-    //TODO
-    unimplemented!("TODO!")
-  }
-
   async fn add_invite(&self, request: Request<AddInviteRequest>, ) -> Result<Response<AddInviteResponse>, Status> {
     
     let now = SystemTime::now();
@@ -738,9 +731,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       id: 0,
       user_id: req.user_id.into(),
       invited_by: req.invited_by.into(),
-      invited_date: now,
-      is_claimed: false,
-      claimed_date: now
+      invited_date: now
     };
     
     let result = match invites::Invites::add(invites, &self.pool.clone()).await {
@@ -753,30 +744,14 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     }))
 
   }
-
-
-  async fn claim_invite(&self, request: Request<ClaimInviteRequest>, ) -> Result<Response<ClaimInviteResponse>, Status> {
-    
-    let req = request.into_inner();
-    
-    let result = match invites::Invites::claim(req.id.into(), &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(ClaimInviteResponse {
-      result: result,
-    }))
-
-  }
-
+  
 
   async fn list_invited_by(&self, request: Request<ListInvitedByRequest>, ) -> Result<Response<ListInvitedByResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
     
-    let invites = match invites::Invites::list_invited_by(req.invited_by.into(), req.is_claimed.into(), &self.pool.clone()).await {
+    let invites = match invites::Invites::list_invited_by(req.invited_by.into(), &self.pool.clone()).await {
       Ok(invites) => invites,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -786,15 +761,12 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     for invite in invites {
       
       let invited_date = invite.invited_date.duration_since(UNIX_EPOCH).unwrap().as_secs();
-      let claimed_date = invite.claimed_date.duration_since(UNIX_EPOCH).unwrap().as_secs();
         
       let li = InvitedByDetail {
         id: invite.id,
         user_id: invite.user_id,
         invited_by: invite.invited_by,
-        invited_date: invited_date as i64,
-        is_claimed: invite.is_claimed,
-        claimed_date: claimed_date as i64
+        invited_date: invited_date as i64
       };
       
       result.push(li);

@@ -37,9 +37,7 @@ service EsmApi {
   rpc ListLogG(ListLogGRequest) returns (ListLogGResponse) {}
 
   // Invite
-  rpc GenerateInviteURL(GenerateInviteUrlRequest) returns(GenerateInviteUrlResponse) {}
   rpc AddInvite(AddInviteRequest) returns (AddInviteResponse) {}
-  rpc ClaimInvite(ClaimInviteRequest) returns (ClaimInviteResponse) {}
   rpc ListInvitedBy(ListInvitedByRequest) returns (ListInvitedByResponse) {}
 
   // Item
@@ -424,14 +422,6 @@ message LogGDetail {
 /*
 *************************************** Invite ***************************************
 */
-//this will generate an invitation url
-message GenerateInviteUrlRequest {
-  int64 invited_by = 1;
-  string target_email = 2;
-}
-message GenerateInviteUrlResponse {
-  string result = 1;  
-}
 
 //Add a new Invite, added when "new user" joined
 message AddInviteRequest {
@@ -443,19 +433,9 @@ message AddInviteResponse {
 }
 
 
-//Claim an existing Invite where invite_id
-message ClaimInviteRequest {
-  int64 id = 1;
-}
-message ClaimInviteResponse {
-  string result = 1;
-}
-
-
 //List the Invites filter by invite_by from db
 message ListInvitedByRequest {
   int64 invited_by = 1;
-  bool is_claimed = 2;
 }
 message ListInvitedByResponse {
   repeated InvitedByDetail result = 1;
@@ -465,14 +445,11 @@ message InvitedByDetail {
   int64 user_id = 2;
   int64 invited_by = 3;
   int64 invited_date = 4;
-  bool is_claimed = 5;
-  int64 claimed_date = 6;
 }
 
 //Get Invites Count based on is_claimed & invited_by, false=not claimed, true=claimed
 message GetInvitedByCountRequest {
   int64 invited_by = 1;
-  bool is_claimed = 2;
 }
 message GetInvitedByCountResponse {
   string result = 1;
