@@ -52,6 +52,7 @@ pub struct Settings {
   pub is_notify_new_tournament: bool,
   pub is_notify_tour_ending: bool,
   pub nick_name: String,
+  pub avatar_url: String,
 }
 
 pub struct UserCount {
@@ -151,9 +152,10 @@ impl User {
     pub async fn update_settings(sett: Settings, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"user\" SET is_notify_allowed=$1, is_notify_new_reward=$2, is_notify_new_tournament=$3, is_notify_tour_ending=$4, nick_name=$5 WHERE id=$6;").await?;
+      let stmt = conn.prepare("UPDATE public.\"user\" SET is_notify_allowed=$1, is_notify_new_reward=$2, is_notify_new_tournament=$3, is_notify_tour_ending=$4, nick_name=$5, avatar_url=$6 WHERE id=$6;").await?;
       let n = conn.execute(&stmt, 
-                  &[&sett.is_notify_allowed, &sett.is_notify_new_reward, &sett.is_notify_new_tournament, &sett.is_notify_tour_ending, &sett.nick_name,
+                  &[&sett.is_notify_allowed, &sett.is_notify_new_reward, &sett.is_notify_new_tournament, &sett.is_notify_tour_ending, 
+                  &sett.nick_name, &sett.avatar_url,
                   &sett.id]).await?;
     
       Ok(n)

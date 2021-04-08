@@ -199,6 +199,7 @@ message UpdateUserSettingsRequest {
   bool is_notify_new_tournament = 4;
   bool is_notify_tour_ending = 5;
   string nick_name = 6;
+  string avatar_url = 7;
 }
 message UpdateUserSettingsResponse {
   string result = 1;

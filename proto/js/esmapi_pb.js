@@ -5357,7 +5357,8 @@ proto.api.esm.UpdateUserSettingsRequest.toObject = function(includeInstance, msg
     isNotifyNewReward: jspb.Message.getBooleanFieldWithDefault(msg, 3, false),
     isNotifyNewTournament: jspb.Message.getBooleanFieldWithDefault(msg, 4, false),
     isNotifyTourEnding: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
-    nickName: jspb.Message.getFieldWithDefault(msg, 6, "")
+    nickName: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    avatarUrl: jspb.Message.getFieldWithDefault(msg, 7, "")
   };
 
   if (includeInstance) {
@@ -5417,6 +5418,10 @@ proto.api.esm.UpdateUserSettingsRequest.deserializeBinaryFromReader = function(m
     case 6:
       var value = /** @type {string} */ (reader.readString());
       msg.setNickName(value);
+      break;
+    case 7:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setAvatarUrl(value);
       break;
     default:
       reader.skipField();
@@ -5486,6 +5491,13 @@ proto.api.esm.UpdateUserSettingsRequest.serializeBinaryToWriter = function(messa
   if (f.length > 0) {
     writer.writeString(
       6,
+      f
+    );
+  }
+  f = message.getAvatarUrl();
+  if (f.length > 0) {
+    writer.writeString(
+      7,
       f
     );
   }
@@ -5597,6 +5609,24 @@ proto.api.esm.UpdateUserSettingsRequest.prototype.getNickName = function() {
  */
 proto.api.esm.UpdateUserSettingsRequest.prototype.setNickName = function(value) {
   return jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
+ * optional string avatar_url = 7;
+ * @return {string}
+ */
+proto.api.esm.UpdateUserSettingsRequest.prototype.getAvatarUrl = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api.esm.UpdateUserSettingsRequest} returns this
+ */
+proto.api.esm.UpdateUserSettingsRequest.prototype.setAvatarUrl = function(value) {
+  return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 

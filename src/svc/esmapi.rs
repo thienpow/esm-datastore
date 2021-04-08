@@ -381,7 +381,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       is_notify_new_reward: req.is_notify_new_reward.into(),
       is_notify_new_tournament: req.is_notify_new_tournament.into(),
       is_notify_tour_ending: req.is_notify_tour_ending.into(),
-      nick_name: req.nick_name.into()
+      nick_name: req.nick_name.into(),
+      avatar_url: req.avatar_url.into(),
     };
     
     let result = match user::User::update_settings(settings, &self.pool.clone()).await {
