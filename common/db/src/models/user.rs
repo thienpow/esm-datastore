@@ -334,5 +334,16 @@ impl User {
     }
 
 
+    pub async fn get_user_status_gem_balance(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<(i32, i64), RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT status, gem_balance FROM public.\"user\" WHERE id=$1;").await?;
+      let row = conn.query_one(&stmt, 
+                    &[&id]).await?;
+
+      Ok((row.get(0), row.get(1)))
+    }
+
+
     
 }

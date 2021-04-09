@@ -728,16 +728,38 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let now = SystemTime::now();
 
     let req = request.into_inner();
+    let invited_by = req.invited_by.into();
     let invites = invites::Invites {
       id: 0,
       user_id: req.user_id.into(),
-      invited_by: req.invited_by.into(),
+      invited_by: invited_by,
       invited_date: now
     };
     
     let result = match invites::Invites::add(invites, &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
+      Ok(result) => {
+        match config::Config::get(&self.pool.clone()).await {
+          Ok(conf) => {
+            let gems_per_invite = conf.invites;
+
+            match user::User::get_user_status_gem_balance(invited_by, &self.pool.clone()).await {
+              Ok((status, gem_balance)) => {
+
+                match user::User::update_status_gem_balance(invited_by, status, gem_balance + gems_per_invite as i64, &self.pool.clone()).await {
+                  Ok(_) => {
+
+                  },
+                  Err(error) => panic!("Error: {}.", error),
+                }
+              },
+              Err(error) => panic!("Error: {}.", error),
+            }
+          },
+          Err(error) => panic!("Error: {}.", error),
+        };
+        result.to_string()
+      },
+      Err(error) => panic!("Error: {}.", error),
     };
     
     Ok(Response::new(AddInviteResponse {
