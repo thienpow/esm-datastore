@@ -1434,6 +1434,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listLogG =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.ListLogGByGameRequest,
+ *   !proto.api.esm.ListLogGByGameResponse>}
+ */
+const methodDescriptor_EsmApi_ListLogGByGame = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListLogGByGame',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.ListLogGByGameRequest,
+  proto.api.esm.ListLogGByGameResponse,
+  /**
+   * @param {!proto.api.esm.ListLogGByGameRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListLogGByGameResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.ListLogGByGameRequest,
+ *   !proto.api.esm.ListLogGByGameResponse>}
+ */
+const methodInfo_EsmApi_ListLogGByGame = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListLogGByGameResponse,
+  /**
+   * @param {!proto.api.esm.ListLogGByGameRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListLogGByGameResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.ListLogGByGameRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListLogGByGameResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListLogGByGameResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.listLogGByGame =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/ListLogGByGame',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListLogGByGame,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.ListLogGByGameRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.ListLogGByGameResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.listLogGByGame =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/ListLogGByGame',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListLogGByGame);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.AddInviteRequest,
  *   !proto.api.esm.AddInviteResponse>}
  */
