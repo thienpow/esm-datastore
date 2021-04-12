@@ -35,6 +35,7 @@ service EsmApi {
   rpc LogGEnter(LogGEnterRequest) returns (LogGEnterResponse) {}
   rpc LogGLeave(LogGLeaveRequest) returns (LogGLeaveResponse) {}
   rpc ListLogG(ListLogGRequest) returns (ListLogGResponse) {}
+  rpc ListLogGByGame(ListLogGByGameRequest) returns (ListLogGByGameResponse) {}
 
   // Invite
   rpc AddInvite(AddInviteRequest) returns (AddInviteResponse) {}
@@ -387,6 +388,14 @@ message ListLogGRequest {
   int64 offset = 3;
 }
 message ListLogGResponse {
+  repeated LogGDetail result = 1;
+}
+
+message ListLogGByGameRequest {
+  int64 game_id = 1;
+  int64 prize_id = 2;
+}
+message ListLogGByGameResponse {
   repeated LogGDetail result = 1;
 }
 message LogGDetail {
