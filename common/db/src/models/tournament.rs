@@ -53,7 +53,7 @@ impl Tournament {
     pub async fn add(tournament: Tournament, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"tournament\" (title, status) VALUES ($1, $2, $3) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"tournament\" (title, status) VALUES ($1, $2) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
                   &[&tournament.title, &tournament.status]).await?;
     
