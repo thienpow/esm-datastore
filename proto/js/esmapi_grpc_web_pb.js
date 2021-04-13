@@ -474,6 +474,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.addUser =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.UpdateMsgTokenRequest,
+ *   !proto.api.esm.UpdateMsgTokenResponse>}
+ */
+const methodDescriptor_EsmApi_UpdateMsgToken = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/UpdateMsgToken',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.UpdateMsgTokenRequest,
+  proto.api.esm.UpdateMsgTokenResponse,
+  /**
+   * @param {!proto.api.esm.UpdateMsgTokenRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.UpdateMsgTokenResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.UpdateMsgTokenRequest,
+ *   !proto.api.esm.UpdateMsgTokenResponse>}
+ */
+const methodInfo_EsmApi_UpdateMsgToken = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.UpdateMsgTokenResponse,
+  /**
+   * @param {!proto.api.esm.UpdateMsgTokenRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.UpdateMsgTokenResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.UpdateMsgTokenRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.UpdateMsgTokenResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.UpdateMsgTokenResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.updateMsgToken =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/UpdateMsgToken',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_UpdateMsgToken,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.UpdateMsgTokenRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.UpdateMsgTokenResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.updateMsgToken =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/UpdateMsgToken',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_UpdateMsgToken);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.UpdateSocialLinkFBRequest,
  *   !proto.api.esm.UpdateSocialLinkFBResponse>}
  */

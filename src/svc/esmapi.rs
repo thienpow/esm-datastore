@@ -31,6 +31,7 @@ use esmapi_proto::{
   // User
   SignInRequest, SignInResponse,
   AddUserRequest, AddUserResponse,
+  UpdateMsgTokenRequest, UpdateMsgTokenResponse,
   UpdateSocialLinkFbRequest, UpdateSocialLinkFbResponse,
   UpdateSocialLinkGoogleRequest, UpdateSocialLinkGoogleResponse,
   UpdateAddressRequest, UpdateAddressResponse,
@@ -313,6 +314,22 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
   }
 
+
+  async fn update_msg_token(&self, request: Request<UpdateMsgTokenRequest>, ) -> Result<Response<UpdateMsgTokenResponse>, Status> {
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    
+    let result = match user::User::update_msg_token(req.id.into(), req.token.into(), &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(UpdateMsgTokenResponse {
+      result: result,
+    }))
+
+  }
 
   async fn update_social_link_fb(&self, request: Request<UpdateSocialLinkFbRequest>, ) -> Result<Response<UpdateSocialLinkFbResponse>, Status> {
     let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
