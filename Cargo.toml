@@ -12,6 +12,12 @@ path = "src/main.rs"
 [[bin]]
 name = "checker"
 path = "src/client/checker.rs"
+
+
+[[bin]]
+name = "msgpush"
+path = "src/client/msgpush.rs"
+
 #[[bin]]
 #name = "config"
 #path = "src/client/config.rs"
