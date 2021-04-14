@@ -698,6 +698,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       let li = LogGDetail {
         id: l.id,
         user_id: l.user_id,
+        nick_name: l.nick_name,
+        avatar_url: l.avatar_url,
         prize_id: l.prize_id,
         prize_title: l.prize_title,
         prize_img_url: l.prize_img_url,
@@ -744,6 +746,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       let li = LogGDetail {
         id: l.id,
         user_id: l.user_id,
+        nick_name: l.nick_name,
+        avatar_url: l.avatar_url,
         prize_id: l.prize_id,
         prize_title: l.prize_title,
         prize_img_url: l.prize_img_url,

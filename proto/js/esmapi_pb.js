@@ -10645,17 +10645,19 @@ proto.api.esm.LogGDetail.toObject = function(includeInstance, msg) {
   var f, obj = {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     userId: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    prizeId: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    prizeTitle: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    prizeImgUrl: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    typeId: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    gameId: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    gameTitle: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    gameImgUrl: jspb.Message.getFieldWithDefault(msg, 9, ""),
-    enterTimestamp: jspb.Message.getFieldWithDefault(msg, 10, 0),
-    leaveTimestamp: jspb.Message.getFieldWithDefault(msg, 11, 0),
-    isWatchedAd: jspb.Message.getBooleanFieldWithDefault(msg, 12, false),
-    gameScore: jspb.Message.getFieldWithDefault(msg, 13, 0)
+    nickName: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    avatarUrl: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    prizeId: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    prizeTitle: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    prizeImgUrl: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    typeId: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    gameId: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    gameTitle: jspb.Message.getFieldWithDefault(msg, 10, ""),
+    gameImgUrl: jspb.Message.getFieldWithDefault(msg, 11, ""),
+    enterTimestamp: jspb.Message.getFieldWithDefault(msg, 12, 0),
+    leaveTimestamp: jspb.Message.getFieldWithDefault(msg, 13, 0),
+    isWatchedAd: jspb.Message.getBooleanFieldWithDefault(msg, 14, false),
+    gameScore: jspb.Message.getFieldWithDefault(msg, 15, 0)
   };
 
   if (includeInstance) {
@@ -10701,46 +10703,54 @@ proto.api.esm.LogGDetail.deserializeBinaryFromReader = function(msg, reader) {
       msg.setUserId(value);
       break;
     case 3:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setPrizeId(value);
+      var value = /** @type {string} */ (reader.readString());
+      msg.setNickName(value);
       break;
     case 4:
       var value = /** @type {string} */ (reader.readString());
-      msg.setPrizeTitle(value);
+      msg.setAvatarUrl(value);
       break;
     case 5:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setPrizeId(value);
+      break;
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPrizeTitle(value);
+      break;
+    case 7:
       var value = /** @type {string} */ (reader.readString());
       msg.setPrizeImgUrl(value);
       break;
-    case 6:
+    case 8:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setTypeId(value);
       break;
-    case 7:
+    case 9:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setGameId(value);
       break;
-    case 8:
+    case 10:
       var value = /** @type {string} */ (reader.readString());
       msg.setGameTitle(value);
       break;
-    case 9:
+    case 11:
       var value = /** @type {string} */ (reader.readString());
       msg.setGameImgUrl(value);
       break;
-    case 10:
+    case 12:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setEnterTimestamp(value);
       break;
-    case 11:
+    case 13:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setLeaveTimestamp(value);
       break;
-    case 12:
+    case 14:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsWatchedAd(value);
       break;
-    case 13:
+    case 15:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGameScore(value);
       break;
@@ -10787,80 +10797,94 @@ proto.api.esm.LogGDetail.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getPrizeId();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getNickName();
+  if (f.length > 0) {
+    writer.writeString(
       3,
       f
     );
   }
-  f = message.getPrizeTitle();
+  f = message.getAvatarUrl();
   if (f.length > 0) {
     writer.writeString(
       4,
       f
     );
   }
+  f = message.getPrizeId();
+  if (f !== 0) {
+    writer.writeInt64(
+      5,
+      f
+    );
+  }
+  f = message.getPrizeTitle();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
+      f
+    );
+  }
   f = message.getPrizeImgUrl();
   if (f.length > 0) {
     writer.writeString(
-      5,
+      7,
       f
     );
   }
   f = message.getTypeId();
   if (f !== 0) {
     writer.writeInt32(
-      6,
+      8,
       f
     );
   }
   f = message.getGameId();
   if (f !== 0) {
     writer.writeInt64(
-      7,
+      9,
       f
     );
   }
   f = message.getGameTitle();
   if (f.length > 0) {
     writer.writeString(
-      8,
+      10,
       f
     );
   }
   f = message.getGameImgUrl();
   if (f.length > 0) {
     writer.writeString(
-      9,
+      11,
       f
     );
   }
   f = message.getEnterTimestamp();
   if (f !== 0) {
     writer.writeInt64(
-      10,
+      12,
       f
     );
   }
   f = message.getLeaveTimestamp();
   if (f !== 0) {
     writer.writeInt64(
-      11,
+      13,
       f
     );
   }
   f = message.getIsWatchedAd();
   if (f) {
     writer.writeBool(
-      12,
+      14,
       f
     );
   }
   f = message.getGameScore();
   if (f !== 0) {
     writer.writeInt32(
-      13,
+      15,
       f
     );
   }
@@ -10904,28 +10928,28 @@ proto.api.esm.LogGDetail.prototype.setUserId = function(value) {
 
 
 /**
- * optional int64 prize_id = 3;
- * @return {number}
- */
-proto.api.esm.LogGDetail.prototype.getPrizeId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.api.esm.LogGDetail} returns this
- */
-proto.api.esm.LogGDetail.prototype.setPrizeId = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
-};
-
-
-/**
- * optional string prize_title = 4;
+ * optional string nick_name = 3;
  * @return {string}
  */
-proto.api.esm.LogGDetail.prototype.getPrizeTitle = function() {
+proto.api.esm.LogGDetail.prototype.getNickName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api.esm.LogGDetail} returns this
+ */
+proto.api.esm.LogGDetail.prototype.setNickName = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string avatar_url = 4;
+ * @return {string}
+ */
+proto.api.esm.LogGDetail.prototype.getAvatarUrl = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
 };
 
@@ -10934,17 +10958,53 @@ proto.api.esm.LogGDetail.prototype.getPrizeTitle = function() {
  * @param {string} value
  * @return {!proto.api.esm.LogGDetail} returns this
  */
-proto.api.esm.LogGDetail.prototype.setPrizeTitle = function(value) {
+proto.api.esm.LogGDetail.prototype.setAvatarUrl = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
 /**
- * optional string prize_img_url = 5;
+ * optional int64 prize_id = 5;
+ * @return {number}
+ */
+proto.api.esm.LogGDetail.prototype.getPrizeId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.LogGDetail} returns this
+ */
+proto.api.esm.LogGDetail.prototype.setPrizeId = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional string prize_title = 6;
+ * @return {string}
+ */
+proto.api.esm.LogGDetail.prototype.getPrizeTitle = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api.esm.LogGDetail} returns this
+ */
+proto.api.esm.LogGDetail.prototype.setPrizeTitle = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
+ * optional string prize_img_url = 7;
  * @return {string}
  */
 proto.api.esm.LogGDetail.prototype.getPrizeImgUrl = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
 
@@ -10953,16 +11013,16 @@ proto.api.esm.LogGDetail.prototype.getPrizeImgUrl = function() {
  * @return {!proto.api.esm.LogGDetail} returns this
  */
 proto.api.esm.LogGDetail.prototype.setPrizeImgUrl = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
+  return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
 /**
- * optional int32 type_id = 6;
+ * optional int32 type_id = 8;
  * @return {number}
  */
 proto.api.esm.LogGDetail.prototype.getTypeId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
 
@@ -10971,16 +11031,16 @@ proto.api.esm.LogGDetail.prototype.getTypeId = function() {
  * @return {!proto.api.esm.LogGDetail} returns this
  */
 proto.api.esm.LogGDetail.prototype.setTypeId = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 
 /**
- * optional int64 game_id = 7;
+ * optional int64 game_id = 9;
  * @return {number}
  */
 proto.api.esm.LogGDetail.prototype.getGameId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
 };
 
 
@@ -10989,16 +11049,16 @@ proto.api.esm.LogGDetail.prototype.getGameId = function() {
  * @return {!proto.api.esm.LogGDetail} returns this
  */
 proto.api.esm.LogGDetail.prototype.setGameId = function(value) {
-  return jspb.Message.setProto3IntField(this, 7, value);
+  return jspb.Message.setProto3IntField(this, 9, value);
 };
 
 
 /**
- * optional string game_title = 8;
+ * optional string game_title = 10;
  * @return {string}
  */
 proto.api.esm.LogGDetail.prototype.getGameTitle = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
 };
 
 
@@ -11007,16 +11067,16 @@ proto.api.esm.LogGDetail.prototype.getGameTitle = function() {
  * @return {!proto.api.esm.LogGDetail} returns this
  */
 proto.api.esm.LogGDetail.prototype.setGameTitle = function(value) {
-  return jspb.Message.setProto3StringField(this, 8, value);
+  return jspb.Message.setProto3StringField(this, 10, value);
 };
 
 
 /**
- * optional string game_img_url = 9;
+ * optional string game_img_url = 11;
  * @return {string}
  */
 proto.api.esm.LogGDetail.prototype.getGameImgUrl = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 11, ""));
 };
 
 
@@ -11025,16 +11085,16 @@ proto.api.esm.LogGDetail.prototype.getGameImgUrl = function() {
  * @return {!proto.api.esm.LogGDetail} returns this
  */
 proto.api.esm.LogGDetail.prototype.setGameImgUrl = function(value) {
-  return jspb.Message.setProto3StringField(this, 9, value);
+  return jspb.Message.setProto3StringField(this, 11, value);
 };
 
 
 /**
- * optional int64 enter_timestamp = 10;
+ * optional int64 enter_timestamp = 12;
  * @return {number}
  */
 proto.api.esm.LogGDetail.prototype.getEnterTimestamp = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
 };
 
 
@@ -11043,51 +11103,15 @@ proto.api.esm.LogGDetail.prototype.getEnterTimestamp = function() {
  * @return {!proto.api.esm.LogGDetail} returns this
  */
 proto.api.esm.LogGDetail.prototype.setEnterTimestamp = function(value) {
-  return jspb.Message.setProto3IntField(this, 10, value);
+  return jspb.Message.setProto3IntField(this, 12, value);
 };
 
 
 /**
- * optional int64 leave_timestamp = 11;
+ * optional int64 leave_timestamp = 13;
  * @return {number}
  */
 proto.api.esm.LogGDetail.prototype.getLeaveTimestamp = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.api.esm.LogGDetail} returns this
- */
-proto.api.esm.LogGDetail.prototype.setLeaveTimestamp = function(value) {
-  return jspb.Message.setProto3IntField(this, 11, value);
-};
-
-
-/**
- * optional bool is_watched_ad = 12;
- * @return {boolean}
- */
-proto.api.esm.LogGDetail.prototype.getIsWatchedAd = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 12, false));
-};
-
-
-/**
- * @param {boolean} value
- * @return {!proto.api.esm.LogGDetail} returns this
- */
-proto.api.esm.LogGDetail.prototype.setIsWatchedAd = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 12, value);
-};
-
-
-/**
- * optional int32 game_score = 13;
- * @return {number}
- */
-proto.api.esm.LogGDetail.prototype.getGameScore = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 13, 0));
 };
 
@@ -11096,8 +11120,44 @@ proto.api.esm.LogGDetail.prototype.getGameScore = function() {
  * @param {number} value
  * @return {!proto.api.esm.LogGDetail} returns this
  */
-proto.api.esm.LogGDetail.prototype.setGameScore = function(value) {
+proto.api.esm.LogGDetail.prototype.setLeaveTimestamp = function(value) {
   return jspb.Message.setProto3IntField(this, 13, value);
+};
+
+
+/**
+ * optional bool is_watched_ad = 14;
+ * @return {boolean}
+ */
+proto.api.esm.LogGDetail.prototype.getIsWatchedAd = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 14, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.api.esm.LogGDetail} returns this
+ */
+proto.api.esm.LogGDetail.prototype.setIsWatchedAd = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 14, value);
+};
+
+
+/**
+ * optional int32 game_score = 15;
+ * @return {number}
+ */
+proto.api.esm.LogGDetail.prototype.getGameScore = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 15, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.LogGDetail} returns this
+ */
+proto.api.esm.LogGDetail.prototype.setGameScore = function(value) {
+  return jspb.Message.setProto3IntField(this, 15, value);
 };
 
 

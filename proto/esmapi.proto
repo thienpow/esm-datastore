@@ -410,17 +410,19 @@ message ListLogGByGameResponse {
 message LogGDetail {
   int64 id = 1;
   int64 user_id = 2;
-  int64 prize_id = 3;
-  string prize_title = 4;
-  string prize_img_url = 5;
-  int32 type_id = 6;
-  int64 game_id = 7;
-  string game_title = 8;
-  string game_img_url = 9;
-  int64 enter_timestamp = 10;
-  int64 leave_timestamp = 11;
-  bool is_watched_ad = 12;
-  int32 game_score = 13;
+  string nick_name = 3;
+  string avatar_url = 4;
+  int64 prize_id = 5;
+  string prize_title = 6;
+  string prize_img_url = 7;
+  int32 type_id = 8;
+  int64 game_id = 9;
+  string game_title = 10;
+  string game_img_url = 11;
+  int64 enter_timestamp = 12;
+  int64 leave_timestamp = 13;
+  bool is_watched_ad = 14;
+  int32 game_score = 15;
 }
 
 

@@ -3,30 +3,19 @@
 async fn main() -> Result<(), reqwest::Error> {
     
     let echo_json: serde_json::Value = reqwest::Client::new()
-        .post("https://jsonplaceholder.typicode.com/posts")
-        //.post("https://fcm.googleapis.com/fcm/send")
+        .post("https://fcm.googleapis.com/fcm/send")
+        .header("authorization", "key=AAAAzT8d8lM:APA91bHtFSHVIBiiSDUWSaUkrYNrcBSyhMY_JBYSeaaoWpkrxSgBO-7xgHtySH3qfTvsgHHTIsrh_SwwirCvTTuOWBl0--JhddEV8MFnEgWuGRPOXPVyTBHym5k9gh8WrCxr-rY13Y54")
         .json(&serde_json::json!({
-          "mode": "cors",
-          "method": "POST",
-          "headers": {
-            "authorization": "key=SERVER ID",
-            "content-type": "application/json"
-          },
-          "body": {
-	          "collapse_key" : "type_a",
-            "notification" : {
-              "body" : "Body of Your Notification",
-              "title": "Title of Your Notification",
-	            "icon": "http://www.liberaldictionary.com/wp-content/uploads/2019/02/icon-0326.jpg"
-            },
             "data" : {
-              "body" : "Body of Your Notification in Data",
-              "title": "Title of Your Notification in Title",
+              "body" : "Some important message",
+              "title": "ESM Push Test! 28888",
               "key_1" : "Value for key_1",
-              "key_2" : "Value for key_2"
+              "key_2" : "Value for key_2",
+              "messaround": "abcxyz",
             },
-	          "to": "cpMyI31Yb0_XILFhNTRE0R:APA91bFudP9-f_8oDIXiziGPQMTNWcmk2g7YJblbMAxkL2WnMze47mKfklXnuPAuiMIeGiKZmqKlo5948PqUju2B2SLuqBNcSgu52OTqIBDMGeld4n6181oIkszi40XUXKuc2wp17H2x"
-          }
+	        "to": "c0ncfy3krhbZxyCJPMQcVh:APA91bH76237L94gryvXOx0Ky9SQAQvxxt45CelCo2WQHa5GEsmS4ckxQ147a9dY2KSSHRLlUuFg0BmhNmCk4mB3Y28tid7nLW0MNy6vQ2USlbWEOLIS1zdg2H7KATIbut98v3qon4Qi"
+            //"to": "f18gb342bpbt1MWR6goOAJ:APA91bEGMyhFt9ZcmMI4BBrhgb_emtALklyxDz3kab7h0a4j9qF4buSqRXKzoh6aYNVo8u4P0lqvHV-B2a96vOQv4v4TYtIydnbCZ4lH-VCsB4K-MoaOid6nKakOF-aAkUMfxB6gF7"
+          
         }))
         .send()
         .await?
