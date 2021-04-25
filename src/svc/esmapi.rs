@@ -320,7 +320,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
 
-    let _ = match svc::notify_test(&req.token).await {
+    let _ = match svc::notify("System Notification", "Your Message Token is Updated", &req.token).await {
       Ok(_) => {},
       Err(error) => panic!("Error: {}.", error),
     };
