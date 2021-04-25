@@ -319,6 +319,11 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
+
+    let _ = match svc::notify_test(&req.token).await {
+      Ok(_) => {},
+      Err(error) => panic!("Error: {}.", error),
+    };
     
     let result = match user::User::update_msg_token(req.id.into(), req.token.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
