@@ -818,18 +818,28 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
           Ok(conf) => {
             let gems_per_invite = conf.invites;
 
-            match user::User::get_user_status_gem_balance(invited_by, &self.pool.clone()).await {
-              Ok((status, gem_balance)) => {
 
-                match user::User::update_status_gem_balance(invited_by, status, gem_balance + gems_per_invite as i64, &self.pool.clone()).await {
+            match user::User::get(invited_by, &self.pool.clone()).await {
+              Ok(user) => {
+
+                let new_gem_balance: i64 = user.gem_balance + gems_per_invite as i64;
+                match user::User::update_status_gem_balance(invited_by, user.status, new_gem_balance, &self.pool.clone()).await {
                   Ok(_) => {
 
+                    match svc::notify("You got a Gem reward!", format!("Your invited friend has just joined! As a reward, Your Gem Balance is Updated to {}", new_gem_balance).as_str(), &user.msg_token).await {
+                      Ok(_) => {},
+                      Err(error) => panic!("Error: {}.", error),
+                    };
+                    
+                    
                   },
                   Err(error) => panic!("Error: {}.", error),
                 }
+
               },
               Err(error) => panic!("Error: {}.", error),
             }
+
           },
           Err(error) => panic!("Error: {}.", error),
         };

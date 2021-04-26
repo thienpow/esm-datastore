@@ -231,6 +231,54 @@ impl User {
     }
 
 
+    pub async fn get(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<User, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+
+      let stmt = conn.prepare("SELECT id, username, passhash, email, phone, firstname, lastname, \
+      created_on, last_login, role_id, status, gem_balance, \
+      social_link_fb, social_link_google, avatar_url, exp, \
+      full_name, address, city, state, zip_code, country, country_code, \
+      is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token \
+      FROM public.\"user\" WHERE status=1 AND id=$1;").await?;
+
+      let row = conn.query_one(&stmt, 
+                  &[&id]).await?;
+
+      let user = User {
+        id: row.get(0),
+        username: row.get(1),
+        passhash: row.get(2),
+        email: row.get(3),
+        phone: row.get(4),
+        firstname: row.get(5),
+        lastname: row.get(6),
+        created_on: row.get(7),
+        last_login: row.get(8),
+        role_id: row.get(9),
+        status: row.get(10),
+        gem_balance: row.get(11),
+        social_link_fb: row.get(12), 
+        social_link_google: row.get(13), 
+        avatar_url: row.get(14), 
+        exp: row.get(15),
+        full_name: row.get(16), 
+        address: row.get(17), 
+        city: row.get(18), 
+        state: row.get(19), 
+        zip_code: row.get(20), 
+        country: row.get(21), 
+        country_code: row.get(22), 
+        is_notify_allowed: row.get(23), 
+        is_notify_new_reward: row.get(24), 
+        is_notify_new_tournament: row.get(25), 
+        is_notify_tour_ending: row.get(26), 
+        nick_name: row.get(27),
+        msg_token: row.get(28),
+      };
+
+      Ok(user)
+    }
+
     pub async fn list(limit: i64, offset: i64, search_username: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<User>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
@@ -399,7 +447,7 @@ impl User {
 
     }
 
-
+    /*
     pub async fn get_user_status_gem_balance(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<(i32, i64), RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
@@ -409,6 +457,7 @@ impl User {
 
       Ok((row.get(0), row.get(1)))
     }
+    */
 
 
     
