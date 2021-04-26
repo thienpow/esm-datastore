@@ -11,6 +11,7 @@ pub struct Winner {
   pub prize_img_url: String,
   pub user_id: i64,
   pub user_nick_name: String,
+  pub user_avatar_url: String,
   pub created_on: SystemTime,
   pub status: i32,
   pub ship_tracking: String,
@@ -56,7 +57,7 @@ impl Winner {
     pub async fn list(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, w.user_id, u.nick_name AS user_nick_name, w.created_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id ORDER BY w.id DESC LIMIT $1 OFFSET $2;").await?;
+      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id ORDER BY w.id DESC LIMIT $1 OFFSET $2;").await?;
     
       let mut vec: Vec<Winner> = Vec::new();
       for row in conn.query(&stmt, &[&limit, &offset]).await? {
@@ -67,9 +68,36 @@ impl Winner {
           prize_img_url:  row.get(3),
           user_id:  row.get(4),
           user_nick_name:  row.get(5),
-          created_on:  row.get(6),
-          status:  row.get(7),
-          ship_tracking:  row.get(8),
+          user_avatar_url: row.get(6),
+          created_on:  row.get(7),
+          status:  row.get(8),
+          ship_tracking:  row.get(9),
+        };
+
+        vec.push(winner);
+      }
+      
+      Ok(vec)
+    }
+
+    pub async fn list_recent(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id ORDER BY w.created_on DESC LIMIT 20 OFFSET 0;").await?;
+    
+      let mut vec: Vec<Winner> = Vec::new();
+      for row in conn.query(&stmt, &[]).await? {
+        let winner = Winner {
+          id: row.get(0),
+          prize_id: row.get(1),
+          prize_title:  row.get(2),
+          prize_img_url:  row.get(3),
+          user_id:  row.get(4),
+          user_nick_name:  row.get(5),
+          user_avatar_url: row.get(6),
+          created_on:  row.get(7),
+          status:  row.get(8),
+          ship_tracking:  row.get(9),
         };
 
         vec.push(winner);

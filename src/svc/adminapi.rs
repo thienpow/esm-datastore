@@ -2448,6 +2448,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       prize_img_url: "".to_string(),
       user_id: req.user_id.into(),
       user_nick_name: "".to_string(),
+      user_avatar_url: "".to_string(),
       created_on: now,
       status: 1,
       ship_tracking: "".to_string()

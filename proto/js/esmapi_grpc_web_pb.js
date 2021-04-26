@@ -2474,6 +2474,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listSubscriptionType =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.ListWinnerRecentRequest,
+ *   !proto.api.esm.ListWinnerRecentResponse>}
+ */
+const methodDescriptor_EsmApi_ListWinnerRecent = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListWinnerRecent',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.ListWinnerRecentRequest,
+  proto.api.esm.ListWinnerRecentResponse,
+  /**
+   * @param {!proto.api.esm.ListWinnerRecentRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListWinnerRecentResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.ListWinnerRecentRequest,
+ *   !proto.api.esm.ListWinnerRecentResponse>}
+ */
+const methodInfo_EsmApi_ListWinnerRecent = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListWinnerRecentResponse,
+  /**
+   * @param {!proto.api.esm.ListWinnerRecentRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListWinnerRecentResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.ListWinnerRecentRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListWinnerRecentResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListWinnerRecentResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.listWinnerRecent =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/ListWinnerRecent',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListWinnerRecent,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.ListWinnerRecentRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.ListWinnerRecentResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.listWinnerRecent =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/ListWinnerRecent',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListWinnerRecent);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.ListWinnerRequest,
  *   !proto.api.esm.ListWinnerResponse>}
  */
