@@ -17,6 +17,12 @@ use crate::jwt;
 //use reqwest::Response;
 //use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};
 
+pub async fn notify_all(title: &str, body: &str) -> Result<bool, reqwest::Error> {
+
+  Ok(true)
+
+}
+
 pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwest::Error> {
 
   let echo_json: serde_json::Value = reqwest::Client::new()

@@ -254,6 +254,7 @@ message UserDetail {
   bool is_notify_new_tournament = 25;
   bool is_notify_tour_ending = 26;
   string nick_name = 27;
+  string msg_token = 28;
 }
 
 

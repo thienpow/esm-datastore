@@ -401,7 +401,8 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       is_notify_new_reward:  true,
       is_notify_new_tournament:  true,
       is_notify_tour_ending:  true,
-      nick_name: "".to_string()
+      nick_name: "".to_string(),
+      msg_token: "".to_string(),
     };
     
     let result = match user::User::add(user, &self.pool.clone()).await {
