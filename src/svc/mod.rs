@@ -1,3 +1,8 @@
+use tokio_postgres;
+use bb8::{Pool};
+use bb8_postgres::PostgresConnectionManager;
+
+use esm_db::{models::*};
 
 pub mod esmapi;
 pub mod adminapi;
@@ -13,11 +18,22 @@ use crate::jwk::{
 };
 
 use crate::jwt;
-//use reqwest::StatusCode;
-//use reqwest::Response;
-//use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};
 
-pub async fn notify_all(title: &str, body: &str) -> Result<bool, reqwest::Error> {
+pub async fn notify_all(title: &str, body: &str, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<bool, reqwest::Error> {
+
+
+  match user::User::list_player_active(pool).await {
+    Ok(users) => {
+
+      for user in users {
+
+        notify(title, body, &user.msg_token).await?;
+        
+      }
+    },
+    Err(error) => panic!("Error: {}.", error),
+  };
+  
 
   Ok(true)
 
@@ -37,8 +53,7 @@ pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwes
         //"messaround": "abcxyz",
       },
     "to": token
-      //"to": "f18gb342bpbt1MWR6goOAJ:APA91bEGMyhFt9ZcmMI4BBrhgb_emtALklyxDz3kab7h0a4j9qF4buSqRXKzoh6aYNVo8u4P0lqvHV-B2a96vOQv4v4TYtIydnbCZ4lH-VCsB4K-MoaOid6nKakOF-aAkUMfxB6gF7"
-    
+   
   }))
   .send()
   .await?
