@@ -62,8 +62,10 @@ service EsmApi {
   rpc ListSubscriptionType(ListSubscriptionTypeRequest) returns (ListSubscriptionTypeResponse) {}
 
   // Winner
-  rpc ListWinnerRecent(ListWinnerRecentRequest) returns (ListWinnerRecentResponse) {}
+  
   rpc ListWinner(ListWinnerRequest) returns (ListWinnerResponse) {}
+  rpc ListWinnerRecent(ListWinnerRecentRequest) returns (ListWinnerRecentResponse) {}
+  rpc ListWinnerUnclaimed(ListWinnerUnclaimedRequest) returns (ListWinnerUnclaimedResponse) {}
   rpc ClaimWinner(ClaimWinnerRequest) returns (ClaimWinnerResponse) {}
 
 }
@@ -779,6 +781,12 @@ message ListWinnerResponse {
 message ListWinnerRecentRequest {
 }
 message ListWinnerRecentResponse {
+  repeated WinnerDetail result = 1;
+}
+message ListWinnerUnclaimedRequest {
+  int64 user_id = 1;
+}
+message ListWinnerUnclaimedResponse {
   repeated WinnerDetail result = 1;
 }
 message WinnerDetail {
