@@ -2474,6 +2474,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listSubscriptionType =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.ListWinnerRequest,
+ *   !proto.api.esm.ListWinnerResponse>}
+ */
+const methodDescriptor_EsmApi_ListWinner = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListWinner',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.ListWinnerRequest,
+  proto.api.esm.ListWinnerResponse,
+  /**
+   * @param {!proto.api.esm.ListWinnerRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListWinnerResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.ListWinnerRequest,
+ *   !proto.api.esm.ListWinnerResponse>}
+ */
+const methodInfo_EsmApi_ListWinner = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListWinnerResponse,
+  /**
+   * @param {!proto.api.esm.ListWinnerRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListWinnerResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.ListWinnerRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListWinnerResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListWinnerResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.listWinner =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/ListWinner',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListWinner,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.ListWinnerRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.ListWinnerResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.listWinner =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/ListWinner',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListWinner);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.ListWinnerRecentRequest,
  *   !proto.api.esm.ListWinnerRecentResponse>}
  */
@@ -2554,80 +2634,80 @@ proto.api.esm.EsmApiPromiseClient.prototype.listWinnerRecent =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.api.esm.ListWinnerRequest,
- *   !proto.api.esm.ListWinnerResponse>}
+ *   !proto.api.esm.ListWinnerUnclaimedRequest,
+ *   !proto.api.esm.ListWinnerUnclaimedResponse>}
  */
-const methodDescriptor_EsmApi_ListWinner = new grpc.web.MethodDescriptor(
-  '/api.esm.EsmApi/ListWinner',
+const methodDescriptor_EsmApi_ListWinnerUnclaimed = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListWinnerUnclaimed',
   grpc.web.MethodType.UNARY,
-  proto.api.esm.ListWinnerRequest,
-  proto.api.esm.ListWinnerResponse,
+  proto.api.esm.ListWinnerUnclaimedRequest,
+  proto.api.esm.ListWinnerUnclaimedResponse,
   /**
-   * @param {!proto.api.esm.ListWinnerRequest} request
+   * @param {!proto.api.esm.ListWinnerUnclaimedRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.api.esm.ListWinnerResponse.deserializeBinary
+  proto.api.esm.ListWinnerUnclaimedResponse.deserializeBinary
 );
 
 
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.api.esm.ListWinnerRequest,
- *   !proto.api.esm.ListWinnerResponse>}
+ *   !proto.api.esm.ListWinnerUnclaimedRequest,
+ *   !proto.api.esm.ListWinnerUnclaimedResponse>}
  */
-const methodInfo_EsmApi_ListWinner = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.api.esm.ListWinnerResponse,
+const methodInfo_EsmApi_ListWinnerUnclaimed = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListWinnerUnclaimedResponse,
   /**
-   * @param {!proto.api.esm.ListWinnerRequest} request
+   * @param {!proto.api.esm.ListWinnerUnclaimedRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.api.esm.ListWinnerResponse.deserializeBinary
+  proto.api.esm.ListWinnerUnclaimedResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.api.esm.ListWinnerRequest} request The
+ * @param {!proto.api.esm.ListWinnerUnclaimedRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.api.esm.ListWinnerResponse)}
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListWinnerUnclaimedResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListWinnerResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListWinnerUnclaimedResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.api.esm.EsmApiClient.prototype.listWinner =
+proto.api.esm.EsmApiClient.prototype.listWinnerUnclaimed =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/api.esm.EsmApi/ListWinner',
+      '/api.esm.EsmApi/ListWinnerUnclaimed',
       request,
       metadata || {},
-      methodDescriptor_EsmApi_ListWinner,
+      methodDescriptor_EsmApi_ListWinnerUnclaimed,
       callback);
 };
 
 
 /**
- * @param {!proto.api.esm.ListWinnerRequest} request The
+ * @param {!proto.api.esm.ListWinnerUnclaimedRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.api.esm.ListWinnerResponse>}
+ * @return {!Promise<!proto.api.esm.ListWinnerUnclaimedResponse>}
  *     Promise that resolves to the response
  */
-proto.api.esm.EsmApiPromiseClient.prototype.listWinner =
+proto.api.esm.EsmApiPromiseClient.prototype.listWinnerUnclaimed =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/api.esm.EsmApi/ListWinner',
+      '/api.esm.EsmApi/ListWinnerUnclaimed',
       request,
       metadata || {},
-      methodDescriptor_EsmApi_ListWinner);
+      methodDescriptor_EsmApi_ListWinnerUnclaimed);
 };
 
 
