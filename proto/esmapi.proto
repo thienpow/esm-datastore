@@ -761,8 +761,6 @@ message SubscriptionTypeDetail {
 //Claim
 message ClaimWinnerRequest {
   int64 id = 1;
-  int64 user_id = 2;
-  string id_token = 3;
 }
 message ClaimWinnerResponse {
   string result = 1;

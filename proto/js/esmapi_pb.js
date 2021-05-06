@@ -17731,9 +17731,7 @@ proto.api.esm.ClaimWinnerRequest.prototype.toObject = function(opt_includeInstan
  */
 proto.api.esm.ClaimWinnerRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    userId: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    idToken: jspb.Message.getFieldWithDefault(msg, 3, "")
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -17774,14 +17772,6 @@ proto.api.esm.ClaimWinnerRequest.deserializeBinaryFromReader = function(msg, rea
       var value = /** @type {number} */ (reader.readInt64());
       msg.setId(value);
       break;
-    case 2:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setUserId(value);
-      break;
-    case 3:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setIdToken(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -17818,20 +17808,6 @@ proto.api.esm.ClaimWinnerRequest.serializeBinaryToWriter = function(message, wri
       f
     );
   }
-  f = message.getUserId();
-  if (f !== 0) {
-    writer.writeInt64(
-      2,
-      f
-    );
-  }
-  f = message.getIdToken();
-  if (f.length > 0) {
-    writer.writeString(
-      3,
-      f
-    );
-  }
 };
 
 
@@ -17850,42 +17826,6 @@ proto.api.esm.ClaimWinnerRequest.prototype.getId = function() {
  */
 proto.api.esm.ClaimWinnerRequest.prototype.setId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-/**
- * optional int64 user_id = 2;
- * @return {number}
- */
-proto.api.esm.ClaimWinnerRequest.prototype.getUserId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.api.esm.ClaimWinnerRequest} returns this
- */
-proto.api.esm.ClaimWinnerRequest.prototype.setUserId = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
-/**
- * optional string id_token = 3;
- * @return {string}
- */
-proto.api.esm.ClaimWinnerRequest.prototype.getIdToken = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.api.esm.ClaimWinnerRequest} returns this
- */
-proto.api.esm.ClaimWinnerRequest.prototype.setIdToken = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
