@@ -1399,7 +1399,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
   async fn list_winner_unclaimed(&self, request: Request<ListWinnerUnclaimedRequest>, ) -> Result<Response<ListWinnerUnclaimedResponse>, Status> {
-    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
     
     let req = request.into_inner();
     
