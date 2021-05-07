@@ -314,6 +314,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listUserStatusType =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListWinnerStatusTypeRequest,
+ *   !proto.adminapi.esm.ListWinnerStatusTypeResponse>}
+ */
+const methodDescriptor_AdminApi_ListWinnerStatusType = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListWinnerStatusType',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListWinnerStatusTypeRequest,
+  proto.adminapi.esm.ListWinnerStatusTypeResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListWinnerStatusTypeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListWinnerStatusTypeResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListWinnerStatusTypeRequest,
+ *   !proto.adminapi.esm.ListWinnerStatusTypeResponse>}
+ */
+const methodInfo_AdminApi_ListWinnerStatusType = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListWinnerStatusTypeResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListWinnerStatusTypeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListWinnerStatusTypeResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListWinnerStatusTypeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListWinnerStatusTypeResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListWinnerStatusTypeResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listWinnerStatusType =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListWinnerStatusType',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListWinnerStatusType,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListWinnerStatusTypeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListWinnerStatusTypeResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listWinnerStatusType =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListWinnerStatusType',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListWinnerStatusType);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.ListWinTypeRequest,
  *   !proto.adminapi.esm.ListWinTypeResponse>}
  */

@@ -99,6 +99,24 @@ impl Config {
       Ok(vec)
     }
 
+    pub async fn list_winner_status_type(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<StatusType>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, title FROM public.\"winner_status_type\" ORDER BY id ASC;").await?;
+    
+      let mut vec: Vec<StatusType> = Vec::new();
+      for row in conn.query(&stmt, &[]).await? {
+        let t = StatusType {
+          id: row.get(0),
+          title: row.get(1),
+        };
+
+        vec.push(t);
+      }
+      
+      Ok(vec)
+    }
+
     pub async fn list_timezones(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Timezones>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

@@ -26,7 +26,8 @@ use adminapi_proto::{
   // Common 
   ListStatusTypeRequest,  ListStatusTypeResponse,
   ListUserStatusTypeRequest,  ListUserStatusTypeResponse,
-  StatusTypeDetail, UserStatusTypeDetail,
+  ListWinnerStatusTypeRequest,  ListWinnerStatusTypeResponse,
+  StatusTypeDetail, UserStatusTypeDetail, WinnerStatusTypeDetail,
   ListWinTypeRequest, ListWinTypeResponse,
   WinTypeDetail,
   ListTimezonesRequest,  ListTimezonesResponse,
@@ -234,6 +235,32 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     };
     
     Ok(Response::new(ListUserStatusTypeResponse {
+      result: result,
+    }))
+
+  }
+
+  async fn list_winner_status_type(&self, request: Request<ListWinnerStatusTypeRequest>, ) -> Result<Response<ListWinnerStatusTypeResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+
+    let status_types = match config::Config::list_winner_status_type(&self.pool.clone()).await {
+      Ok(status_types) => status_types,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<WinnerStatusTypeDetail> = Vec::new();
+    
+    for s in status_types {
+      
+      let li = WinnerStatusTypeDetail {
+        id: s.id,
+        title: s.title
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListWinnerStatusTypeResponse {
       result: result,
     }))
 

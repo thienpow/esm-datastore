@@ -13,6 +13,7 @@ service AdminApi {
   // Common
   rpc ListStatusType(ListStatusTypeRequest) returns (ListStatusTypeResponse) {}
   rpc ListUserStatusType(ListUserStatusTypeRequest) returns (ListUserStatusTypeResponse) {}
+  rpc ListWinnerStatusType(ListWinnerStatusTypeRequest) returns (ListWinnerStatusTypeResponse) {}
   rpc ListWinType(ListWinTypeRequest) returns (ListWinTypeResponse) {}
   rpc ListTimezones(ListTimezonesRequest) returns (ListTimezonesResponse) {}
 
@@ -163,6 +164,15 @@ message UserStatusTypeDetail {
   string title = 2;
 }
 
+message ListWinnerStatusTypeRequest {
+}
+message ListWinnerStatusTypeResponse {
+  repeated WinnerStatusTypeDetail result = 1;
+}
+message WinnerStatusTypeDetail {
+  int32 id = 1;
+  string title = 2;
+}
 //Get WinType from db
 message ListWinTypeRequest {
 }
