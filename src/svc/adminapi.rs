@@ -44,6 +44,7 @@ use adminapi_proto::{
   ChangePasswordRequest, ChangePasswordResponse,
   ListUserRequest, ListUserResponse, 
   GetUserCountRequest, GetUserCountResponse,
+  GetUserRequest, GetUserResponse,
   UserDetail, //UserCount,
 
   //Config
@@ -668,6 +669,56 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     }))
   }
 
+  async fn get_user(&self, request: Request<GetUserRequest>, ) -> Result<Response<GetUserResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let user = match user::User::get(req.id.into(), &self.pool.clone()).await {
+      Ok(user) => user,
+      Err(error) => panic!("Error: {}.", error),
+    };
+
+
+    let seconds_created_on = user.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+    let seconds_last_login = user.last_login.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      
+    Ok(Response::new(GetUserResponse {
+      result: Some(UserDetail {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        phone: user.phone,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        created_on: seconds_created_on as i64,
+        last_login: seconds_last_login as i64,
+        role_id: user.role_id,
+        status: user.status,
+        gem_balance: user.gem_balance,
+        social_link_fb: user.social_link_fb,
+        social_link_google: user.social_link_google,
+        avatar_url: user.avatar_url,
+        exp: user.exp,
+        //Address
+        full_name: user.full_name,
+        address: user.address,
+        city: user.city,
+        state: user.state,
+        zip_code: user.zip_code,
+        country: user.country,
+        country_code: user.country_code,
+        //Settings
+        is_notify_allowed: user.is_notify_allowed,
+        is_notify_new_reward: user.is_notify_new_reward,
+        is_notify_new_tournament: user.is_notify_new_tournament,
+        is_notify_tour_ending: user.is_notify_tour_ending,
+        nick_name: user.nick_name,
+        jwt_token: "".to_string()
+      }),
+    }))
+    
+  }
 
 
 

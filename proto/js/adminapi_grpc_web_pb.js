@@ -1354,6 +1354,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.getUserCount =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.GetUserRequest,
+ *   !proto.adminapi.esm.GetUserResponse>}
+ */
+const methodDescriptor_AdminApi_GetUser = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/GetUser',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.GetUserRequest,
+  proto.adminapi.esm.GetUserResponse,
+  /**
+   * @param {!proto.adminapi.esm.GetUserRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.GetUserResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.GetUserRequest,
+ *   !proto.adminapi.esm.GetUserResponse>}
+ */
+const methodInfo_AdminApi_GetUser = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.GetUserResponse,
+  /**
+   * @param {!proto.adminapi.esm.GetUserRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.GetUserResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.GetUserRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.GetUserResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.GetUserResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.getUser =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/GetUser',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_GetUser,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.GetUserRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.GetUserResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.getUser =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/GetUser',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_GetUser);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.UpdateConfigRequest,
  *   !proto.adminapi.esm.UpdateConfigResponse>}
  */

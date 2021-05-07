@@ -28,6 +28,7 @@ service AdminApi {
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
   rpc ListUser(ListUserRequest) returns (ListUserResponse) {}
   rpc GetUserCount(GetUserCountRequest) returns (GetUserCountResponse) {}
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
 
   // Config
   rpc UpdateConfig(UpdateConfigRequest) returns (UpdateConfigResponse) {}
@@ -328,6 +329,12 @@ message ListUserRequest {
 }
 message ListUserResponse {
   repeated UserDetail result = 1;
+}
+message GetUserRequest {
+  int64 id = 1;
+}
+message GetUserResponse {
+  UserDetail result = 1;
 }
 message UserDetail {
   int64 id = 1;
