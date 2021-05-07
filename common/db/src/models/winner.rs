@@ -110,7 +110,7 @@ impl Winner {
     pub async fn list_unclaimed(user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
 
-      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.id=$1 ORDER BY w.created_on DESC;").await?;
+      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.user_id=$1 AND w.status=1 ORDER BY w.created_on DESC;").await?;
     
       let mut vec: Vec<Winner> = Vec::new();
       for row in conn.query(&stmt, &[&user_id]).await? {
