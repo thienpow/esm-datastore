@@ -6474,160 +6474,80 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listTourSet =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.adminapi.esm.AddWinnerRequest,
- *   !proto.adminapi.esm.AddWinnerResponse>}
+ *   !proto.adminapi.esm.UpdateWinnerRequest,
+ *   !proto.adminapi.esm.UpdateWinnerResponse>}
  */
-const methodDescriptor_AdminApi_AddWinner = new grpc.web.MethodDescriptor(
-  '/adminapi.esm.AdminApi/AddWinner',
+const methodDescriptor_AdminApi_UpdateWinner = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/UpdateWinner',
   grpc.web.MethodType.UNARY,
-  proto.adminapi.esm.AddWinnerRequest,
-  proto.adminapi.esm.AddWinnerResponse,
+  proto.adminapi.esm.UpdateWinnerRequest,
+  proto.adminapi.esm.UpdateWinnerResponse,
   /**
-   * @param {!proto.adminapi.esm.AddWinnerRequest} request
+   * @param {!proto.adminapi.esm.UpdateWinnerRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.adminapi.esm.AddWinnerResponse.deserializeBinary
+  proto.adminapi.esm.UpdateWinnerResponse.deserializeBinary
 );
 
 
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.adminapi.esm.AddWinnerRequest,
- *   !proto.adminapi.esm.AddWinnerResponse>}
+ *   !proto.adminapi.esm.UpdateWinnerRequest,
+ *   !proto.adminapi.esm.UpdateWinnerResponse>}
  */
-const methodInfo_AdminApi_AddWinner = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.adminapi.esm.AddWinnerResponse,
+const methodInfo_AdminApi_UpdateWinner = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.UpdateWinnerResponse,
   /**
-   * @param {!proto.adminapi.esm.AddWinnerRequest} request
+   * @param {!proto.adminapi.esm.UpdateWinnerRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.adminapi.esm.AddWinnerResponse.deserializeBinary
+  proto.adminapi.esm.UpdateWinnerResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.adminapi.esm.AddWinnerRequest} request The
+ * @param {!proto.adminapi.esm.UpdateWinnerRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.adminapi.esm.AddWinnerResponse)}
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.UpdateWinnerResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.AddWinnerResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.UpdateWinnerResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.adminapi.esm.AdminApiClient.prototype.addWinner =
+proto.adminapi.esm.AdminApiClient.prototype.updateWinner =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/adminapi.esm.AdminApi/AddWinner',
+      '/adminapi.esm.AdminApi/UpdateWinner',
       request,
       metadata || {},
-      methodDescriptor_AdminApi_AddWinner,
+      methodDescriptor_AdminApi_UpdateWinner,
       callback);
 };
 
 
 /**
- * @param {!proto.adminapi.esm.AddWinnerRequest} request The
+ * @param {!proto.adminapi.esm.UpdateWinnerRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.adminapi.esm.AddWinnerResponse>}
+ * @return {!Promise<!proto.adminapi.esm.UpdateWinnerResponse>}
  *     Promise that resolves to the response
  */
-proto.adminapi.esm.AdminApiPromiseClient.prototype.addWinner =
+proto.adminapi.esm.AdminApiPromiseClient.prototype.updateWinner =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/adminapi.esm.AdminApi/AddWinner',
+      '/adminapi.esm.AdminApi/UpdateWinner',
       request,
       metadata || {},
-      methodDescriptor_AdminApi_AddWinner);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.adminapi.esm.DeleteWinnerRequest,
- *   !proto.adminapi.esm.DeleteWinnerResponse>}
- */
-const methodDescriptor_AdminApi_DeleteWinner = new grpc.web.MethodDescriptor(
-  '/adminapi.esm.AdminApi/DeleteWinner',
-  grpc.web.MethodType.UNARY,
-  proto.adminapi.esm.DeleteWinnerRequest,
-  proto.adminapi.esm.DeleteWinnerResponse,
-  /**
-   * @param {!proto.adminapi.esm.DeleteWinnerRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.adminapi.esm.DeleteWinnerResponse.deserializeBinary
-);
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.adminapi.esm.DeleteWinnerRequest,
- *   !proto.adminapi.esm.DeleteWinnerResponse>}
- */
-const methodInfo_AdminApi_DeleteWinner = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.adminapi.esm.DeleteWinnerResponse,
-  /**
-   * @param {!proto.adminapi.esm.DeleteWinnerRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.adminapi.esm.DeleteWinnerResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.adminapi.esm.DeleteWinnerRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.adminapi.esm.DeleteWinnerResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.DeleteWinnerResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.adminapi.esm.AdminApiClient.prototype.deleteWinner =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/adminapi.esm.AdminApi/DeleteWinner',
-      request,
-      metadata || {},
-      methodDescriptor_AdminApi_DeleteWinner,
-      callback);
-};
-
-
-/**
- * @param {!proto.adminapi.esm.DeleteWinnerRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.adminapi.esm.DeleteWinnerResponse>}
- *     Promise that resolves to the response
- */
-proto.adminapi.esm.AdminApiPromiseClient.prototype.deleteWinner =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/adminapi.esm.AdminApi/DeleteWinner',
-      request,
-      metadata || {},
-      methodDescriptor_AdminApi_DeleteWinner);
+      methodDescriptor_AdminApi_UpdateWinner);
 };
 
 
@@ -6708,86 +6628,6 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listWinner =
       request,
       metadata || {},
       methodDescriptor_AdminApi_ListWinner);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.adminapi.esm.ClaimWinnerRequest,
- *   !proto.adminapi.esm.ClaimWinnerResponse>}
- */
-const methodDescriptor_AdminApi_ClaimWinner = new grpc.web.MethodDescriptor(
-  '/adminapi.esm.AdminApi/ClaimWinner',
-  grpc.web.MethodType.UNARY,
-  proto.adminapi.esm.ClaimWinnerRequest,
-  proto.adminapi.esm.ClaimWinnerResponse,
-  /**
-   * @param {!proto.adminapi.esm.ClaimWinnerRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.adminapi.esm.ClaimWinnerResponse.deserializeBinary
-);
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.adminapi.esm.ClaimWinnerRequest,
- *   !proto.adminapi.esm.ClaimWinnerResponse>}
- */
-const methodInfo_AdminApi_ClaimWinner = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.adminapi.esm.ClaimWinnerResponse,
-  /**
-   * @param {!proto.adminapi.esm.ClaimWinnerRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.adminapi.esm.ClaimWinnerResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.adminapi.esm.ClaimWinnerRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ClaimWinnerResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ClaimWinnerResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.adminapi.esm.AdminApiClient.prototype.claimWinner =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/adminapi.esm.AdminApi/ClaimWinner',
-      request,
-      metadata || {},
-      methodDescriptor_AdminApi_ClaimWinner,
-      callback);
-};
-
-
-/**
- * @param {!proto.adminapi.esm.ClaimWinnerRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.adminapi.esm.ClaimWinnerResponse>}
- *     Promise that resolves to the response
- */
-proto.adminapi.esm.AdminApiPromiseClient.prototype.claimWinner =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/adminapi.esm.AdminApi/ClaimWinner',
-      request,
-      metadata || {},
-      methodDescriptor_AdminApi_ClaimWinner);
 };
 
 

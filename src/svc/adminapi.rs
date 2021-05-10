@@ -143,10 +143,8 @@ use adminapi_proto::{
   ListTourSetRequest, ListTourSetResponse,
   TourSetDetail,
   // Winner
-  AddWinnerRequest, AddWinnerResponse,
-  DeleteWinnerRequest, DeleteWinnerResponse,
+  UpdateWinnerRequest, UpdateWinnerResponse,
   ListWinnerRequest, ListWinnerResponse, 
-  ClaimWinnerRequest, ClaimWinnerResponse,
   GetWinnerCountRequest, GetWinnerCountResponse,
   WinnerDetail, //WinnerCount,
 
@@ -2514,50 +2512,20 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
   *
   *
   */
-  async fn add_winner(&self, request: Request<AddWinnerRequest>, ) -> Result<Response<AddWinnerResponse>, Status> {
-    let _ = svc::check_is_admin(&request.metadata()).await?;
-
-    let now = SystemTime::now();
-
-    let req = request.into_inner();
-    let winner = winner::Winner {
-      id: 0,
-      prize_id: req.prize_id.into(),
-      prize_title: "".to_string(),
-      prize_img_url: "".to_string(),
-      user_id: req.user_id.into(),
-      user_nick_name: "".to_string(),
-      user_avatar_url: "".to_string(),
-      created_on: now,
-      status: 1,
-      ship_tracking: "".to_string()
-    };
-    
-    let result = match winner::Winner::add(winner, &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(AddWinnerResponse {
-      result: result,
-    }))
-
-  }
-
-
-  async fn delete_winner(&self, request: Request<DeleteWinnerRequest>, ) -> Result<Response<DeleteWinnerResponse>, Status> {
+  async fn update_winner(&self, request: Request<UpdateWinnerRequest>, ) -> Result<Response<UpdateWinnerResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
     
-    let result = match winner::Winner::delete(req.id.into(), &self.pool.clone()).await {
+    let result = match winner::Winner::update(req.id.into(), req.status.into(), req.ship_tracking.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
     
-    Ok(Response::new(DeleteWinnerResponse {
+    Ok(Response::new(UpdateWinnerResponse {
       result: result,
     }))
+
   }
 
 
@@ -2596,22 +2564,6 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       result: result,
     }))
 
-  }
-
-
-  async fn claim_winner(&self, request: Request<ClaimWinnerRequest>, ) -> Result<Response<ClaimWinnerResponse>, Status> {
-    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
-
-    let req = request.into_inner();
-    
-    let result = match winner::Winner::claim(req.id.into(), &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(ClaimWinnerResponse {
-      result: result,
-    }))
   }
 
 

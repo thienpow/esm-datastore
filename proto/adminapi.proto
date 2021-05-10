@@ -115,10 +115,8 @@ service AdminApi {
   rpc ListTourSet(ListTourSetRequest) returns (ListTourSetResponse) {}
 
   // Winner
-  rpc AddWinner(AddWinnerRequest) returns (AddWinnerResponse) {}
-  rpc DeleteWinner(DeleteWinnerRequest) returns (DeleteWinnerResponse) {}
+  rpc UpdateWinner(UpdateWinnerRequest) returns (UpdateWinnerResponse) {}
   rpc ListWinner(ListWinnerRequest) returns (ListWinnerResponse) {}
-  rpc ClaimWinner(ClaimWinnerRequest) returns (ClaimWinnerResponse) {}
   rpc GetWinnerCount(GetWinnerCountRequest) returns (GetWinnerCountResponse) {}
 
   rpc ListLogG(ListLogGRequest) returns (ListLogGResponse) {}
@@ -1410,31 +1408,12 @@ message TourSetDetail {
 /*
 **************************************** Winner ***************************************
 */
-//Add a new winner
-message AddWinnerRequest {
-  int64 prize_id = 1;
-  int64 user_id = 2;
-  int64 tournament_id = 3;
-}
-message AddWinnerResponse {
-  string result = 1;
-}
-
-//Delete an existing winner from db
-message DeleteWinnerRequest {
+message UpdateWinnerRequest {
   int64 id = 1;
+  int32 status = 2;
+  string ship_tracking = 3;
 }
-message DeleteWinnerResponse {
-  string result = 1;
-}
-
-//Claim
-message ClaimWinnerRequest {
-  int64 id = 1;
-  int64 user_id = 2;
-  string id_token = 3;
-}
-message ClaimWinnerResponse {
+message UpdateWinnerResponse {
   string result = 1;
 }
 

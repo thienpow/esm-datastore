@@ -36,12 +36,32 @@ impl Winner {
       Ok(row.get::<usize, i64>(0))
     }
     
-    pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update(id: i64, status: i32, ship_tracking: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("DELETE FROM public.\"winner\" WHERE id=$1;").await?;
-      let n = conn.execute(&stmt, &[&id]).await?;
+
+      let now = SystemTime::now();
+
+      let stmt = conn.prepare("SELECT status, ship_tracking FROM public.\"winner\" WHERE id=$1;").await?;
+
+      let row = conn.query_one(&stmt, 
+                  &[&id]).await?;
+
+      let old_status: i32 = row.get(0);
+      let old_ship_tracking: String = row.get(1);
+
+      let stmt = conn.prepare("INSERT INTO public.\"winner_change_log\" (winner_id, old_status, new_status, old_ship_tracking, new_ship_tracking, \
+        created_on, changed_by) \
+        VALUES ($1, $2, $3, $4, $5, $6, 1) RETURNING id;").await?;
+      let _row = conn.query_one(&stmt, 
+                  &[&id, &old_status, &status, &old_ship_tracking, &ship_tracking, &now]).await?;
     
+      
+      let stmt = conn.prepare("UPDATE public.\"winner\" SET status=$1, ship_tracking=$2 WHERE id=$3;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&status, &ship_tracking, &id]).await?;
+    
+
       Ok(n)
     }
     
