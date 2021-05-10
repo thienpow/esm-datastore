@@ -152,6 +152,7 @@ impl User {
     pub async fn update_address(addr: Address, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
+      println!("update address!!! {}", addr.id);
       let stmt = conn.prepare("UPDATE public.\"user\" SET full_name=$1, address=$2, city=$3, state=$4, zip_code=$5, country=$6, country_code=$7 WHERE id=$8;").await?;
       let n = conn.execute(&stmt, 
                   &[&addr.full_name, &addr.address, &addr.city, &addr.state, &addr.zip_code, &addr.country, &addr.country_code, 
