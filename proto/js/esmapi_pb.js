@@ -5355,7 +5355,7 @@ proto.api.esm.UpdateAddressRequest.toObject = function(includeInstance, msg) {
     state: jspb.Message.getFieldWithDefault(msg, 5, ""),
     zipCode: jspb.Message.getFieldWithDefault(msg, 6, ""),
     country: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    countryCode: jspb.Message.getFieldWithDefault(msg, 8, "")
+    countryCode: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -5421,7 +5421,7 @@ proto.api.esm.UpdateAddressRequest.deserializeBinaryFromReader = function(msg, r
       msg.setCountry(value);
       break;
     case 8:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setCountryCode(value);
       break;
     default:
@@ -5503,8 +5503,8 @@ proto.api.esm.UpdateAddressRequest.serializeBinaryToWriter = function(message, w
     );
   }
   f = message.getCountryCode();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f !== 0) {
+    writer.writeInt32(
       8,
       f
     );
@@ -5639,20 +5639,20 @@ proto.api.esm.UpdateAddressRequest.prototype.setCountry = function(value) {
 
 
 /**
- * optional string country_code = 8;
- * @return {string}
+ * optional int32 country_code = 8;
+ * @return {number}
  */
 proto.api.esm.UpdateAddressRequest.prototype.getCountryCode = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
 
 /**
- * @param {string} value
+ * @param {number} value
  * @return {!proto.api.esm.UpdateAddressRequest} returns this
  */
 proto.api.esm.UpdateAddressRequest.prototype.setCountryCode = function(value) {
-  return jspb.Message.setProto3StringField(this, 8, value);
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 

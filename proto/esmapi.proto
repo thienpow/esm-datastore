@@ -198,7 +198,7 @@ message UpdateAddressRequest {
   string state = 5;
   string zip_code= 6;
   string country = 7;
-  string country_code = 8;
+  int32 country_code = 8;
 }
 message UpdateAddressResponse {
   string result = 1;

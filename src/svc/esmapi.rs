@@ -384,7 +384,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       state: req.state.into(),
       zip_code: req.zip_code.into(),
       country: req.country.into(),
-      country_code: 0,
+      country_code: req.country_code.into(),
     };
     
     let result = match user::User::update_address(address, &self.pool.clone()).await {
