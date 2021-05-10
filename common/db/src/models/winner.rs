@@ -29,9 +29,9 @@ impl Winner {
     pub async fn add(winner: Winner, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"winner\" (prize_id, user_id, created_on, status) VALUES ($1, $2, $3, $4) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"winner\" (prize_id, user_id, created_on, status, ship_tracking) VALUES ($1, $2, $3, $4, $5) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
-                  &[&winner.prize_id, &winner.user_id, &winner.created_on, &winner.status]).await?;
+                  &[&winner.prize_id, &winner.user_id, &winner.created_on, &winner.status, &winner.ship_tracking]).await?;
     
       Ok(row.get::<usize, i64>(0))
     }
