@@ -19249,7 +19249,8 @@ proto.api.esm.WinnerDetail.toObject = function(includeInstance, msg) {
     userNickName: jspb.Message.getFieldWithDefault(msg, 7, ""),
     userAvatarUrl: jspb.Message.getFieldWithDefault(msg, 8, ""),
     createdOn: jspb.Message.getFieldWithDefault(msg, 9, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 10, 0)
+    claimedOn: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    status: jspb.Message.getFieldWithDefault(msg, 11, 0)
   };
 
   if (includeInstance) {
@@ -19323,6 +19324,10 @@ proto.api.esm.WinnerDetail.deserializeBinaryFromReader = function(msg, reader) {
       msg.setCreatedOn(value);
       break;
     case 10:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setClaimedOn(value);
+      break;
+    case 11:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
@@ -19418,10 +19423,17 @@ proto.api.esm.WinnerDetail.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getClaimedOn();
+  if (f !== 0) {
+    writer.writeInt64(
+      10,
+      f
+    );
+  }
   f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
-      10,
+      11,
       f
     );
   }
@@ -19591,10 +19603,10 @@ proto.api.esm.WinnerDetail.prototype.setCreatedOn = function(value) {
 
 
 /**
- * optional int32 status = 10;
+ * optional int64 claimed_on = 10;
  * @return {number}
  */
-proto.api.esm.WinnerDetail.prototype.getStatus = function() {
+proto.api.esm.WinnerDetail.prototype.getClaimedOn = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
 };
 
@@ -19603,8 +19615,26 @@ proto.api.esm.WinnerDetail.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.api.esm.WinnerDetail} returns this
  */
-proto.api.esm.WinnerDetail.prototype.setStatus = function(value) {
+proto.api.esm.WinnerDetail.prototype.setClaimedOn = function(value) {
   return jspb.Message.setProto3IntField(this, 10, value);
+};
+
+
+/**
+ * optional int32 status = 11;
+ * @return {number}
+ */
+proto.api.esm.WinnerDetail.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.WinnerDetail} returns this
+ */
+proto.api.esm.WinnerDetail.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 11, value);
 };
 
 

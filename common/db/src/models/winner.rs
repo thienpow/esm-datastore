@@ -14,6 +14,7 @@ pub struct Winner {
   pub user_nick_name: String,
   pub user_avatar_url: String,
   pub created_on: SystemTime,
+  pub claimed_on: SystemTime,
   pub status: i32,
   pub ship_tracking: String,
 }
@@ -70,8 +71,10 @@ impl Winner {
     pub async fn claim(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"winner\" SET status=2 WHERE id=$1 AND status=1;").await?;
-      let n = conn.execute(&stmt, &[&id]).await?;
+      let now = SystemTime::now();
+
+      let stmt = conn.prepare("UPDATE public.\"winner\" SET status=2, claimed_on=$1 WHERE id=$2 AND status=1;").await?;
+      let n = conn.execute(&stmt, &[&now, &id]).await?;
     
       Ok(n)
     }
@@ -79,7 +82,7 @@ impl Winner {
     pub async fn list(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id ORDER BY w.id DESC LIMIT $1 OFFSET $2;").await?;
+      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id ORDER BY w.id DESC LIMIT $1 OFFSET $2;").await?;
     
       let mut vec: Vec<Winner> = Vec::new();
       for row in conn.query(&stmt, &[&limit, &offset]).await? {
@@ -93,8 +96,9 @@ impl Winner {
           user_nick_name:  row.get(6),
           user_avatar_url: row.get(7),
           created_on:  row.get(8),
-          status:  row.get(9),
-          ship_tracking:  row.get(10),
+          claimed_on: row.get(9),
+          status:  row.get(10),
+          ship_tracking:  row.get(11),
         };
 
         vec.push(winner);
@@ -106,7 +110,7 @@ impl Winner {
     pub async fn list_recent(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id ORDER BY w.created_on DESC LIMIT 20 OFFSET 0;").await?;
+      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id ORDER BY w.created_on DESC LIMIT 20 OFFSET 0;").await?;
     
       let mut vec: Vec<Winner> = Vec::new();
       for row in conn.query(&stmt, &[]).await? {
@@ -120,8 +124,9 @@ impl Winner {
           user_nick_name:  row.get(6),
           user_avatar_url: row.get(7),
           created_on:  row.get(8),
-          status:  row.get(9),
-          ship_tracking:  row.get(10),
+          claimed_on: row.get(9),
+          status:  row.get(10),
+          ship_tracking:  row.get(11),
         };
 
         vec.push(winner);
@@ -133,7 +138,7 @@ impl Winner {
     pub async fn list_unclaimed(user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
 
-      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.user_id=$1 AND w.status=1 ORDER BY w.created_on DESC;").await?;
+      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.user_id=$1 AND w.status=1 ORDER BY w.created_on DESC;").await?;
     
       let mut vec: Vec<Winner> = Vec::new();
       for row in conn.query(&stmt, &[&user_id]).await? {
@@ -147,8 +152,9 @@ impl Winner {
           user_nick_name:  row.get(6),
           user_avatar_url: row.get(7),
           created_on:  row.get(8),
-          status:  row.get(9),
-          ship_tracking:  row.get(10),
+          claimed_on: row.get(9),
+          status:  row.get(10),
+          ship_tracking:  row.get(11),
         };
 
         vec.push(winner);
@@ -160,7 +166,7 @@ impl Winner {
     pub async fn list_claimed(user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
 
-      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.user_id=$1 AND w.status>1 ORDER BY w.created_on DESC;").await?;
+      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.user_id=$1 AND w.status>1 ORDER BY w.created_on DESC;").await?;
     
       let mut vec: Vec<Winner> = Vec::new();
       for row in conn.query(&stmt, &[&user_id]).await? {
@@ -174,8 +180,9 @@ impl Winner {
           user_nick_name:  row.get(6),
           user_avatar_url: row.get(7),
           created_on:  row.get(8),
-          status:  row.get(9),
-          ship_tracking:  row.get(10),
+          claimed_on: row.get(9),
+          status:  row.get(10),
+          ship_tracking:  row.get(11),
         };
 
         vec.push(winner);

@@ -1342,6 +1342,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     for winner in winners {
       
       let created_on = winner.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let claimed_on = winner.claimed_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
         
       let li = WinnerDetail {
         id: winner.id,
@@ -1353,6 +1354,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         user_nick_name: winner.user_nick_name,
         user_avatar_url: winner.user_avatar_url,
         created_on: created_on as i64,
+        claimed_on: claimed_on as i64,
         status: winner.status,
       };
       
@@ -1378,7 +1380,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     for winner in winners {
       
       let created_on = winner.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        
+      let claimed_on = winner.claimed_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
       let li = WinnerDetail {
         id: winner.id,
         prize_id: winner.prize_id,
@@ -1389,6 +1392,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         user_nick_name: winner.user_nick_name,
         user_avatar_url: winner.user_avatar_url,
         created_on: created_on as i64,
+        claimed_on: claimed_on as i64,
         status: winner.status,
       };
       
@@ -1416,6 +1420,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     for winner in winners {
       
       let created_on = winner.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let claimed_on = winner.claimed_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
         
       let li = WinnerDetail {
         id: winner.id,
@@ -1427,6 +1432,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         user_nick_name: winner.user_nick_name,
         user_avatar_url: winner.user_avatar_url,
         created_on: created_on as i64,
+        claimed_on: claimed_on as i64,
         status: winner.status,
       };
       
@@ -1454,7 +1460,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     for winner in winners {
       
       let created_on = winner.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        
+      let claimed_on = winner.claimed_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      
       let li = WinnerDetail {
         id: winner.id,
         prize_id: winner.prize_id,
@@ -1465,6 +1472,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         user_nick_name: winner.user_nick_name,
         user_avatar_url: winner.user_avatar_url,
         created_on: created_on as i64,
+        claimed_on: claimed_on as i64,
         status: winner.status,
       };
       
