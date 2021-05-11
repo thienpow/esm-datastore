@@ -79,29 +79,63 @@ impl Winner {
       Ok(n)
     }
 
-    pub async fn list(limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id ORDER BY w.id DESC LIMIT $1 OFFSET $2;").await?;
-    
       let mut vec: Vec<Winner> = Vec::new();
-      for row in conn.query(&stmt, &[&limit, &offset]).await? {
-        let winner = Winner {
-          id: row.get(0),
-          prize_id: row.get(1),
-          prize_title:  row.get(2),
-          prize_img_url:  row.get(3),
-          prize_type_id: row.get(4),
-          user_id:  row.get(5),
-          user_nick_name:  row.get(6),
-          user_avatar_url: row.get(7),
-          created_on:  row.get(8),
-          claimed_on: row.get(9),
-          status:  row.get(10),
-          ship_tracking:  row.get(11),
-        };
+      if search_title.len() > 2 {
+        let mut sql_string = format!("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE p.title ILIKE '%{}%' OR u.nick_name ILIKE '%{}%' ORDER BY w.id DESC LIMIT {} OFFSET {};", search_title, search_title, limit, offset);
+        if status > 0 {
+          sql_string = format!("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE p.title ILIKE '%{}%' OR u.nick_name ILIKE '%{}%' AND status={} ORDER BY w.id DESC LIMIT {} OFFSET {};", search_title, search_title, status, limit, offset);
+        }
+        let stmt = conn.prepare(&sql_string).await?;
+    
+        for row in conn.query(&stmt, &[]).await? {
+          let winner = Winner {
+            id: row.get(0),
+            prize_id: row.get(1),
+            prize_title:  row.get(2),
+            prize_img_url:  row.get(3),
+            prize_type_id: row.get(4),
+            user_id:  row.get(5),
+            user_nick_name:  row.get(6),
+            user_avatar_url: row.get(7),
+            created_on:  row.get(8),
+            claimed_on: row.get(9),
+            status:  row.get(10),
+            ship_tracking:  row.get(11),
+          };
+  
+          vec.push(winner);
+        }
+        
+      } else {
 
-        vec.push(winner);
+        let mut sql_string = "SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id ORDER BY w.id DESC LIMIT $1 OFFSET $2;".to_string();
+        if status > 0 {
+          sql_string = format!("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.status={} ORDER BY w.id DESC LIMIT $1 OFFSET $2;", status);
+        }
+        let stmt = conn.prepare(&sql_string).await?;
+    
+        for row in conn.query(&stmt, &[&limit, &offset]).await? {
+          let winner = Winner {
+            id: row.get(0),
+            prize_id: row.get(1),
+            prize_title:  row.get(2),
+            prize_img_url:  row.get(3),
+            prize_type_id: row.get(4),
+            user_id:  row.get(5),
+            user_nick_name:  row.get(6),
+            user_avatar_url: row.get(7),
+            created_on:  row.get(8),
+            claimed_on: row.get(9),
+            status:  row.get(10),
+            ship_tracking:  row.get(11),
+          };
+  
+          vec.push(winner);
+        }
+        
       }
       
       Ok(vec)

@@ -1332,7 +1332,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     let req = request.into_inner();
     
-    let winners = match winner::Winner::list(req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+    let winners = match winner::Winner::list(req.limit.into(), req.offset.into(), "".to_string(), 0 as i32, &self.pool.clone()).await {
       Ok(winners) => winners,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1356,6 +1356,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         created_on: created_on as i64,
         claimed_on: claimed_on as i64,
         status: winner.status,
+        ship_tracking: winner.ship_tracking,
       };
       
       result.push(li);
@@ -1394,6 +1395,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         created_on: created_on as i64,
         claimed_on: claimed_on as i64,
         status: winner.status,
+        ship_tracking: winner.ship_tracking,
       };
       
       result.push(li);
@@ -1434,6 +1436,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         created_on: created_on as i64,
         claimed_on: claimed_on as i64,
         status: winner.status,
+        ship_tracking: winner.ship_tracking,
       };
       
       result.push(li);
@@ -1474,6 +1477,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         created_on: created_on as i64,
         claimed_on: claimed_on as i64,
         status: winner.status,
+        ship_tracking: winner.ship_tracking,
       };
       
       result.push(li);

@@ -2534,7 +2534,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let winners = match winner::Winner::list(req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+    let winners = match winner::Winner::list(req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), &self.pool.clone()).await {
       Ok(winners) => winners,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -2544,15 +2544,19 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     for winner in winners {
       
       let created_on = winner.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        
+      let claimed_on = winner.claimed_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
       let li = WinnerDetail {
         id: winner.id,
         prize_id: winner.prize_id,
         prize_title: winner.prize_title,
         prize_img_url: winner.prize_img_url,
+        prize_type_id: winner.prize_type_id,
         user_id: winner.user_id,
         user_nick_name: winner.user_nick_name,
+        user_avatar_url: winner.user_avatar_url,
         created_on: created_on as i64,
+        claimed_on: claimed_on as i64,
         status: winner.status,
         ship_tracking: winner.ship_tracking,
       };

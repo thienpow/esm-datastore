@@ -808,4 +808,5 @@ message WinnerDetail {
   int64 created_on = 9;
   int64 claimed_on = 10;
   int32 status = 11;
+  string ship_tracking = 12;
 }

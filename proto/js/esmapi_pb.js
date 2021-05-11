@@ -19250,7 +19250,8 @@ proto.api.esm.WinnerDetail.toObject = function(includeInstance, msg) {
     userAvatarUrl: jspb.Message.getFieldWithDefault(msg, 8, ""),
     createdOn: jspb.Message.getFieldWithDefault(msg, 9, 0),
     claimedOn: jspb.Message.getFieldWithDefault(msg, 10, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 11, 0)
+    status: jspb.Message.getFieldWithDefault(msg, 11, 0),
+    shipTracking: jspb.Message.getFieldWithDefault(msg, 12, "")
   };
 
   if (includeInstance) {
@@ -19330,6 +19331,10 @@ proto.api.esm.WinnerDetail.deserializeBinaryFromReader = function(msg, reader) {
     case 11:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
+      break;
+    case 12:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setShipTracking(value);
       break;
     default:
       reader.skipField();
@@ -19434,6 +19439,13 @@ proto.api.esm.WinnerDetail.serializeBinaryToWriter = function(message, writer) {
   if (f !== 0) {
     writer.writeInt32(
       11,
+      f
+    );
+  }
+  f = message.getShipTracking();
+  if (f.length > 0) {
+    writer.writeString(
+      12,
       f
     );
   }
@@ -19635,6 +19647,24 @@ proto.api.esm.WinnerDetail.prototype.getStatus = function() {
  */
 proto.api.esm.WinnerDetail.prototype.setStatus = function(value) {
   return jspb.Message.setProto3IntField(this, 11, value);
+};
+
+
+/**
+ * optional string ship_tracking = 12;
+ * @return {string}
+ */
+proto.api.esm.WinnerDetail.prototype.getShipTracking = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 12, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api.esm.WinnerDetail} returns this
+ */
+proto.api.esm.WinnerDetail.prototype.setShipTracking = function(value) {
+  return jspb.Message.setProto3StringField(this, 12, value);
 };
 
 
