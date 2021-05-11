@@ -90,6 +90,7 @@ use esmapi_proto::{
   ListWinnerRequest, ListWinnerResponse, 
   ListWinnerRecentRequest, ListWinnerRecentResponse, 
   ListWinnerUnclaimedRequest, ListWinnerUnclaimedResponse, 
+  ListWinnerClaimedRequest, ListWinnerClaimedResponse, 
   ClaimWinnerRequest, ClaimWinnerResponse,
   WinnerDetail, 
 
@@ -1437,6 +1438,45 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     }))
 
   }
+
+  async fn list_winner_claimed(&self, request: Request<ListWinnerClaimedRequest>, ) -> Result<Response<ListWinnerClaimedResponse>, Status> {
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    
+    let req = request.into_inner();
+    
+    let winners = match winner::Winner::list_claimed(req.user_id.into(), &self.pool.clone()).await {
+      Ok(winners) => winners,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<WinnerDetail> = Vec::new();
+    
+    for winner in winners {
+      
+      let created_on = winner.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+        
+      let li = WinnerDetail {
+        id: winner.id,
+        prize_id: winner.prize_id,
+        prize_title: winner.prize_title,
+        prize_img_url: winner.prize_img_url,
+        prize_type_id: winner.prize_type_id,
+        user_id: winner.user_id,
+        user_nick_name: winner.user_nick_name,
+        user_avatar_url: winner.user_avatar_url,
+        created_on: created_on as i64,
+        status: winner.status,
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListWinnerClaimedResponse {
+      result: result,
+    }))
+
+  }
+
 
 
   async fn claim_winner(&self, request: Request<ClaimWinnerRequest>, ) -> Result<Response<ClaimWinnerResponse>, Status> {

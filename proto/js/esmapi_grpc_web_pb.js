@@ -2714,6 +2714,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listWinnerUnclaimed =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.ListWinnerClaimedRequest,
+ *   !proto.api.esm.ListWinnerClaimedResponse>}
+ */
+const methodDescriptor_EsmApi_ListWinnerClaimed = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListWinnerClaimed',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.ListWinnerClaimedRequest,
+  proto.api.esm.ListWinnerClaimedResponse,
+  /**
+   * @param {!proto.api.esm.ListWinnerClaimedRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListWinnerClaimedResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.ListWinnerClaimedRequest,
+ *   !proto.api.esm.ListWinnerClaimedResponse>}
+ */
+const methodInfo_EsmApi_ListWinnerClaimed = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListWinnerClaimedResponse,
+  /**
+   * @param {!proto.api.esm.ListWinnerClaimedRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListWinnerClaimedResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.ListWinnerClaimedRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListWinnerClaimedResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListWinnerClaimedResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.listWinnerClaimed =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/ListWinnerClaimed',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListWinnerClaimed,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.ListWinnerClaimedRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.ListWinnerClaimedResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.listWinnerClaimed =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/ListWinnerClaimed',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListWinnerClaimed);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.ClaimWinnerRequest,
  *   !proto.api.esm.ClaimWinnerResponse>}
  */

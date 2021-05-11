@@ -157,6 +157,33 @@ impl Winner {
       Ok(vec)
     }
 
+    pub async fn list_claimed(user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+
+      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.user_id=$1 AND w.status>1 ORDER BY w.created_on DESC;").await?;
+    
+      let mut vec: Vec<Winner> = Vec::new();
+      for row in conn.query(&stmt, &[&user_id]).await? {
+        let winner = Winner {
+          id: row.get(0),
+          prize_id: row.get(1),
+          prize_title:  row.get(2),
+          prize_img_url:  row.get(3),
+          prize_type_id: row.get(4),
+          user_id:  row.get(5),
+          user_nick_name:  row.get(6),
+          user_avatar_url: row.get(7),
+          created_on:  row.get(8),
+          status:  row.get(9),
+          ship_tracking:  row.get(10),
+        };
+
+        vec.push(winner);
+      }
+      
+      Ok(vec)
+    }
+
     pub async fn count(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<WinnerCount, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
