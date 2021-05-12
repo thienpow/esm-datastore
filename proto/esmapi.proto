@@ -395,6 +395,7 @@ message LogGEnterRequest {
   int64 prize_id = 3;
   int64 game_id = 4;
   bool is_watched_ad = 5;
+  bool is_used_gem = 6;
 }
 message LogGEnterResponse {
   string result = 1; //another new secret key

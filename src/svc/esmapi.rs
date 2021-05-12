@@ -659,6 +659,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       leave_timestamp: now,
       game_score: 0,
       is_watched_ad: req.is_watched_ad.into(),
+      is_used_gem: req.is_used_gem.into(),
     };
     
 
@@ -695,6 +696,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       leave_timestamp: now,
       game_score: req.game_score.into(),
       is_watched_ad: false,
+      is_used_gem: false,
     };
     
     let result = match gplayer::GPlayer::leave(gplayer, &self.pool.clone()).await {
