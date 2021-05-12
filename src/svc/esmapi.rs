@@ -647,14 +647,16 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let now = SystemTime::now();
-
+    
     //TODO: check the req.secret key see if the key is originate from our system
     let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+
     let gplayer = gplayer::GPlayer {
       id: 0,
       prize_id: req.prize_id.into(),
       game_id: req.game_id.into(),
-      user_id: req.user_id.into(),
+      user_id: user_id,
       enter_timestamp: now,
       leave_timestamp: now,
       game_score: 0,
@@ -667,8 +669,32 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     // if not allowed to play anymore then reply an empty string
     // the generated secret key will then be used during log_leave
     let result = match gplayer::GPlayer::enter(gplayer, &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
+      Ok(result) => {
+
+        match user::User::get(user_id, &self.pool.clone()).await {
+          Ok(user) => {
+
+            let new_gem_balance: i64 = user.gem_balance - 1 as i64;
+            match user::User::update_status_gem_balance(user_id, user.status, new_gem_balance, &self.pool.clone()).await {
+              Ok(_) => {
+
+                match svc::notify("You got a Gem reward!", format!("You spent a gem to play, Your Gem Balance is Updated to {}", new_gem_balance).as_str(), &user.msg_token).await {
+                  Ok(_) => "1",
+                  Err(error) => panic!("Error: {}.", error),
+                };
+                
+                
+              },
+              Err(error) => panic!("Error: {}.", error),
+            }
+
+          },
+          Err(error) => panic!("Error: {}.", error),
+        };
+        result.to_string()
+        
+      },
+      Err(error) => panic!("Error: {}.", error),
     };
     
     Ok(Response::new(LogGEnterResponse {
