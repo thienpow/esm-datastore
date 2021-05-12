@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
-require("dotenv").config();
-const stripe = require("stripe")(process.env.STRIPE_SECRET_DEV);
+//require("dotenv").config();
+//const stripe = require("stripe")(process.env.STRIPE_SECRET_DEV);
+const stripe = require("stripe")("sk_test_51IOa7gBGCaV2oEVpEDw9fOn1fUn8IaPOemu7Yjkg6N75C3ahsd7sEQr3ait4JYU55wfCBbXCRPIhcUxGMVtQYA6A003YKMqkYF");
 
 router.get("/", (req, res) => {
-    res.status(200).send("hello world");
+    res.status(200).send("esm-stripe is ready!");
 });
 
 router.post("/payments/create", async (req, res) => {
