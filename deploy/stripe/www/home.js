@@ -4,7 +4,7 @@ require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_DEV);
 
 router.get("/", (req, res) => {
-    res.status(200).send("hello world");
+    res.status(200).send("esm-stripe is ready!");
 });
 
 router.post("/payments/create", async (req, res) => {
