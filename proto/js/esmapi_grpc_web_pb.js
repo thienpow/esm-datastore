@@ -1274,6 +1274,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.getGameCode =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.GetGameRulesRequest,
+ *   !proto.api.esm.GetGameRulesResponse>}
+ */
+const methodDescriptor_EsmApi_GetGameRules = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/GetGameRules',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.GetGameRulesRequest,
+  proto.api.esm.GetGameRulesResponse,
+  /**
+   * @param {!proto.api.esm.GetGameRulesRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetGameRulesResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.GetGameRulesRequest,
+ *   !proto.api.esm.GetGameRulesResponse>}
+ */
+const methodInfo_EsmApi_GetGameRules = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.GetGameRulesResponse,
+  /**
+   * @param {!proto.api.esm.GetGameRulesRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetGameRulesResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.GetGameRulesRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.GetGameRulesResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.GetGameRulesResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.getGameRules =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/GetGameRules',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetGameRules,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.GetGameRulesRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.GetGameRulesResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.getGameRules =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/GetGameRules',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetGameRules);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.LogGEnterRequest,
  *   !proto.api.esm.LogGEnterResponse>}
  */

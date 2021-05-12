@@ -30,6 +30,15 @@ pub struct GameLeaderRule {
   pub exp: i32,
 }
 
+pub struct GameRules {
+  pub score_rule: i32,
+  pub watch_ad_get_tickets: i32,
+  pub watch_ad_get_exp: i32,
+  pub use_gem_get_tickets: i32,
+  pub use_gem_get_exp: i32,
+  pub use_how_many_gems: i32,
+}
+
 pub struct GameCount {
   pub draft: i64,
   pub published: i64,
@@ -121,6 +130,23 @@ impl Game {
                     &[&id]).await?;
 
       Ok(row.get(0))
+    }
+
+    pub async fn get_game_rules(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<GameRules, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT score_rule, watch_ad_get_tickets, watch_ad_get_exp, use_gem_get_tickets, use_gem_get_exp, use_how_many_gems FROM public.\"game\" WHERE id=$1;").await?;
+      let row = conn.query_one(&stmt, 
+                    &[&id]).await?;
+
+      Ok(GameRules {
+        score_rule: row.get(0),
+        watch_ad_get_tickets: row.get(1),
+        watch_ad_get_exp: row.get(2),
+        use_gem_get_tickets: row.get(3),
+        use_gem_get_exp: row.get(4),
+        use_how_many_gems: row.get(5)
+      })
     }
 
     pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {

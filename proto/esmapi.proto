@@ -31,6 +31,7 @@ service EsmApi {
   // Game
   rpc ListGameLeaderRule(ListGameLeaderRuleRequest) returns (ListGameLeaderRuleResponse) {}
   rpc GetGameCode(GetGameCodeRequest) returns (GetGameCodeResponse) {}
+  rpc GetGameRules(GetGameRulesRequest) returns (GetGameRulesResponse) {}
 
   // GPlayer
   rpc LogGEnter(LogGEnterRequest) returns (LogGEnterResponse) {}
@@ -353,7 +354,21 @@ message GetGameCodeResponse {
   string result = 1;
 }
 
-
+//Get the game's code from db
+message GetGameRulesRequest {
+  int64 game_id = 1;
+}
+message GetGameRulesResponse {
+  GameRulesDetail result = 1;
+}
+message GameRulesDetail {
+  int32 score_rule = 1;
+  int32 watch_ad_get_tickets = 2;
+  int32 watch_ad_get_exp = 3;
+  int32 use_gem_get_tickets = 4;
+  int32 use_gem_get_exp = 5;
+  int32 use_how_many_gems = 6; 
+}
 
 
 
