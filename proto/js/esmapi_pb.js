@@ -10066,7 +10066,8 @@ proto.api.esm.LogGEnterRequest.toObject = function(includeInstance, msg) {
     userId: jspb.Message.getFieldWithDefault(msg, 2, 0),
     prizeId: jspb.Message.getFieldWithDefault(msg, 3, 0),
     gameId: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    isWatchedAd: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
+    isWatchedAd: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
+    isUsedGem: jspb.Message.getBooleanFieldWithDefault(msg, 6, false)
   };
 
   if (includeInstance) {
@@ -10122,6 +10123,10 @@ proto.api.esm.LogGEnterRequest.deserializeBinaryFromReader = function(msg, reade
     case 5:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsWatchedAd(value);
+      break;
+    case 6:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsUsedGem(value);
       break;
     default:
       reader.skipField();
@@ -10184,6 +10189,13 @@ proto.api.esm.LogGEnterRequest.serializeBinaryToWriter = function(message, write
   if (f) {
     writer.writeBool(
       5,
+      f
+    );
+  }
+  f = message.getIsUsedGem();
+  if (f) {
+    writer.writeBool(
+      6,
       f
     );
   }
@@ -10277,6 +10289,24 @@ proto.api.esm.LogGEnterRequest.prototype.getIsWatchedAd = function() {
  */
 proto.api.esm.LogGEnterRequest.prototype.setIsWatchedAd = function(value) {
   return jspb.Message.setProto3BooleanField(this, 5, value);
+};
+
+
+/**
+ * optional bool is_used_gem = 6;
+ * @return {boolean}
+ */
+proto.api.esm.LogGEnterRequest.prototype.getIsUsedGem = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 6, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.api.esm.LogGEnterRequest} returns this
+ */
+proto.api.esm.LogGEnterRequest.prototype.setIsUsedGem = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 6, value);
 };
 
 
