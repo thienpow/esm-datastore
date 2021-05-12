@@ -95,7 +95,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // 2: closing the prize, update the prize_status to closing, and generate winners
         // 3: finally, close the prize, update the prize status to "closed" after winners is generated.
         // 4: only if the prize_status is closed then only allowed user to claim.
-
+        // 5: if user din't logGLeave, and gem was deducted, then we should return it for the user.
     }  
     
     
