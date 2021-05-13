@@ -80,6 +80,8 @@ use esmapi_proto::{
 
   // Shop
   BuyRequest, BuyResponse,
+  ListBuyRequest, ListBuyResponse,
+  BuyDetail,
 
   // Subscription
   ListSubscriptionRequest, ListSubscriptionResponse, 
@@ -1230,14 +1232,17 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   *
   */
   async fn buy(&self, request: Request<BuyRequest>, ) -> Result<Response<BuyResponse>, Status> {
-    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
     
     let req = request.into_inner();
     let new_buy = shop::NewBuy {
       id: 0,
       item_type_id: req.item_type_id.into(),
       item_id: req.item_id.into(),
-      user_id: req.user_id.into()
+      item_title: "".to_string(),
+      user_id: req.user_id.into(),
+      payment_id: req.payment_id.into(),
+      price: req.price.into(),
     };
     
     let result = match shop::Shop::buy(new_buy, &self.pool.clone()).await {
@@ -1251,6 +1256,39 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
   }
 
+
+  async fn list_buy(&self, request: Request<ListBuyRequest>, ) -> Result<Response<ListBuyResponse>, Status> {
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    let buys = match shop::Shop::list(req.user_id.into(), req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+      Ok(buys) => buys,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<BuyDetail> = Vec::new();
+    
+    for buy in buys {
+      
+      let li = BuyDetail {
+        id: buy.id,
+        item_type_id: buy.item_type_id,
+        item_id: buy.item_id,
+        item_title: buy.item_title,
+        payment_id: buy.payment_id,
+        price: buy.price
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListBuyResponse {
+      result: result,
+    }))
+
+  }
+
+  
 
 
 

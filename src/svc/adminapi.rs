@@ -110,7 +110,7 @@ use adminapi_proto::{
   RankDetail,
 
   // Shop
-  BuyRequest, BuyResponse,
+  
 
   // Subscription
   AddSubscriptionRequest, AddSubscriptionResponse,
@@ -1869,27 +1869,6 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
   *
   *
   */
-  async fn buy(&self, request: Request<BuyRequest>, ) -> Result<Response<BuyResponse>, Status> {
-    let _ = svc::check_is_admin(&request.metadata()).await?;
-    
-    let req = request.into_inner();
-    let new_buy = shop::NewBuy {
-      id: 0,
-      item_type_id: req.item_type_id.into(),
-      item_id: req.item_id.into(),
-      user_id: req.user_id.into()
-    };
-    
-    let result = match shop::Shop::buy(new_buy, &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(BuyResponse {
-      result: result,
-    }))
-
-  }
 
 
 

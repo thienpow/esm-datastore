@@ -2314,6 +2314,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.buy =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.ListBuyRequest,
+ *   !proto.api.esm.ListBuyResponse>}
+ */
+const methodDescriptor_EsmApi_ListBuy = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListBuy',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.ListBuyRequest,
+  proto.api.esm.ListBuyResponse,
+  /**
+   * @param {!proto.api.esm.ListBuyRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListBuyResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.ListBuyRequest,
+ *   !proto.api.esm.ListBuyResponse>}
+ */
+const methodInfo_EsmApi_ListBuy = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListBuyResponse,
+  /**
+   * @param {!proto.api.esm.ListBuyRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListBuyResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.ListBuyRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListBuyResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListBuyResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.listBuy =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/ListBuy',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListBuy,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.ListBuyRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.ListBuyResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.listBuy =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/ListBuy',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListBuy);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.ListSubscriptionRequest,
  *   !proto.api.esm.ListSubscriptionResponse>}
  */

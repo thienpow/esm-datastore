@@ -85,7 +85,6 @@ service AdminApi {
   rpc ListRank(ListRankRequest) returns (ListRankResponse) {}
 
   // Shop
-  rpc Buy(BuyRequest) returns (BuyResponse) {}
 
   // Subscription
   rpc AddSubscription(AddSubscriptionRequest) returns (AddSubscriptionResponse) {}
@@ -1046,17 +1045,6 @@ message RankDetail {
 /*
 **************************************** Shop ***************************************
 */
-//Buy an Item_Gem or Item_Subscription
-//item_type_id for gem = 1, subscription = 2
-message BuyRequest {
-  string secret = 1;
-  int32 item_type_id = 2;
-  int64 item_id = 3;
-  int64 user_id = 4;
-}
-message BuyResponse {
-  string result = 1;
-}
 
 
 
