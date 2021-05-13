@@ -88,10 +88,9 @@ impl Shop {
           b.payment_id, b.price, b.created_on 
           FROM public.\"shop_buy\" AS b 
           LEFT JOIN public.\"user\" AS u ON u.id = b.user_id 
-          WHERE b.user_id=$1 
-          LIMIT $2 OFFSET $3;").await?;
+          LIMIT $1 OFFSET $2;").await?;
 
-        for row in conn.query(&stmt, &[&user_id, &limit, &offset]).await? {
+        for row in conn.query(&stmt, &[&limit, &offset]).await? {
           let new_buy = NewBuy {
             id: row.get(0),
             item_type_id: row.get(1),
