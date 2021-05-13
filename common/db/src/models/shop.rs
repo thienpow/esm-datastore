@@ -85,7 +85,7 @@ impl Shop {
           b.user_id, 
           u.nick_name, 
           u.email, 
-          b.payment_id, b.price, created_on 
+          b.payment_id, b.price, b.created_on 
           FROM public.\"shop_buy\" AS b 
           LEFT JOIN public.\"user\" AS u ON u.id = b.user_id 
           WHERE b.user_id=$1 
