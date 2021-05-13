@@ -1241,6 +1241,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       item_id: req.item_id.into(),
       item_title: "".to_string(),
       user_id: req.user_id.into(),
+      user_nick_name: "".to_string(),
+      user_email: "".to_string(),
       payment_id: req.payment_id.into(),
       price: req.price.into(),
     };

@@ -110,7 +110,8 @@ use adminapi_proto::{
   RankDetail,
 
   // Shop
-  
+  ListBuyRequest, ListBuyResponse,
+  BuyDetail,
 
   // Subscription
   AddSubscriptionRequest, AddSubscriptionResponse,
@@ -1869,6 +1870,40 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
   *
   *
   */
+
+  async fn list_buy(&self, request: Request<ListBuyRequest>, ) -> Result<Response<ListBuyResponse>, Status> {
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    let buys = match shop::Shop::list(0, req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+      Ok(buys) => buys,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<BuyDetail> = Vec::new();
+    
+    for buy in buys {
+      
+      let li = BuyDetail {
+        id: buy.id,
+        item_type_id: buy.item_type_id,
+        item_id: buy.item_id,
+        item_title: buy.item_title,
+        user_id: buy.user_id,
+        user_nick_name: buy.user_nick_name,
+        user_email: buy.user_email,
+        payment_id: buy.payment_id,
+        price: buy.price
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListBuyResponse {
+      result: result,
+    }))
+
+  }
 
 
 

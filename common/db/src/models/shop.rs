@@ -15,6 +15,8 @@ pub struct NewBuy {
   pub item_id: i64,
   pub item_title: String,
   pub user_id: i64,
+  pub user_nick_name: String,
+  pub user_email: String,
   pub payment_id: String,
   pub price: f64 
 }
@@ -36,29 +38,66 @@ impl Shop {
     pub async fn list(user_id: i64, limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<NewBuy>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, item_type_id, item_id, CASE
-                                  WHEN item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=item_id)
-                                  WHEN item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=item_id)
-                                  ELSE 'Unknown Item'
-                              END AS item_title, 
-                              user_id, payment_id, price FROM public.\"shop_buy\" 
-                              WHERE user_id=$1 
-                              LIMIT $2 OFFSET $3;").await?;
-    
       let mut vec: Vec<NewBuy> = Vec::new();
-      for row in conn.query(&stmt, &[&user_id, &limit, &offset]).await? {
-        let new_buy = NewBuy {
-          id: row.get(0),
-          item_type_id: row.get(1),
-          item_id: row.get(2),
-          item_title: row.get(3),
-          user_id: row.get(4),
-          payment_id: row.get(5),
-          price: row.get(6),
-        };
+      if user_id > 0 {
+        let stmt = conn.prepare("SELECT id, item_type_id, item_id, CASE
+              WHEN item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=item_id)
+              WHEN item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=item_id)
+              ELSE 'Unknown Item'
+          END AS item_title, 
+          user_id, payment_id, price FROM public.\"shop_buy\" 
+          WHERE user_id=$1 
+          LIMIT $2 OFFSET $3;").await?;
 
-        vec.push(new_buy);
+        for row in conn.query(&stmt, &[&user_id, &limit, &offset]).await? {
+          let new_buy = NewBuy {
+            id: row.get(0),
+            item_type_id: row.get(1),
+            item_id: row.get(2),
+            item_title: row.get(3),
+            user_id: row.get(4),
+            user_nick_name: "".to_string(),
+            user_email: "".to_string(),
+            payment_id: row.get(5),
+            price: row.get(6),
+          };
+  
+          vec.push(new_buy);
+        }
+
+      } else {
+
+        let stmt = conn.prepare("SELECT b.id, b.item_type_id, b.item_id, CASE
+              WHEN b.item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=b.item_id)
+              WHEN b.item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=b.item_id)
+              ELSE 'Unknown Item'
+          END AS item_title, 
+          b.user_id, 
+          u.nick_name,
+          u.email,
+          b.payment_id, b.price 
+          FROM public.\"shop_buy\" AS b
+          LEFT JOIN public.\"user\" AS u ON u.id = b.user_id
+          WHERE b.user_id=$1 
+          LIMIT $2 OFFSET $3;").await?;
+
+        for row in conn.query(&stmt, &[&user_id, &limit, &offset]).await? {
+          let new_buy = NewBuy {
+            id: row.get(0),
+            item_type_id: row.get(1),
+            item_id: row.get(2),
+            item_title: row.get(3),
+            user_id: row.get(4),
+            user_nick_name: row.get(5),
+            user_email: row.get(6),
+            payment_id: row.get(7),
+            price: row.get(8),
+          };
+
+          vec.push(new_buy);
+        }
       }
+      
       
       Ok(vec)
     }

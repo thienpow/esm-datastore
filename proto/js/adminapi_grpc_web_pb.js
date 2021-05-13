@@ -4554,6 +4554,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listRank =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListBuyRequest,
+ *   !proto.adminapi.esm.ListBuyResponse>}
+ */
+const methodDescriptor_AdminApi_ListBuy = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListBuy',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListBuyRequest,
+  proto.adminapi.esm.ListBuyResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListBuyRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListBuyResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListBuyRequest,
+ *   !proto.adminapi.esm.ListBuyResponse>}
+ */
+const methodInfo_AdminApi_ListBuy = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListBuyResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListBuyRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListBuyResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListBuyRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListBuyResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListBuyResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listBuy =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListBuy',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListBuy,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListBuyRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListBuyResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listBuy =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListBuy',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListBuy);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.AddSubscriptionRequest,
  *   !proto.adminapi.esm.AddSubscriptionResponse>}
  */
