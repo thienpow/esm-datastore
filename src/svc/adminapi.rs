@@ -110,6 +110,7 @@ use adminapi_proto::{
   RankDetail,
 
   // Shop
+  GetBuyCountRequest, GetBuyCountResponse,
   ListBuyRequest, ListBuyResponse,
   BuyDetail,
 
@@ -154,7 +155,7 @@ use adminapi_proto::{
   ListLogGRequest, ListLogGResponse,
   LogGDetail,
 
-  UserCount, GameCount, ItemCount, PrizeCount, SubscriptionCount, TournamentCount, TournamentSetCount, WinnerCount
+  UserCount, GameCount, ItemCount, PrizeCount, BuyCount, SubscriptionCount, TournamentCount, TournamentSetCount, WinnerCount
 };
 
 
@@ -1872,7 +1873,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
   */
 
   async fn list_buy(&self, request: Request<ListBuyRequest>, ) -> Result<Response<ListBuyResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
     let buys = match shop::Shop::list(0, req.limit.into(), req.offset.into(), &self.pool.clone()).await {
@@ -1905,6 +1906,22 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
   }
 
+
+  async fn get_buy_count(&self, request: Request<GetBuyCountRequest>, ) -> Result<Response<GetBuyCountResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let count = match shop::Shop::count(&self.pool.clone()).await {
+      Ok(result) => result,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    Ok(Response::new(GetBuyCountResponse {
+      result: Some(BuyCount{
+        subscription: count.subscription,
+        item: count.item,
+      }),
+    }))
+  }
 
 
 

@@ -21,6 +21,11 @@ pub struct NewBuy {
   pub price: f64 
 }
 
+pub struct BuyCount {
+  pub subscription: i64, 
+  pub item: i64,
+}
+
 
 impl Shop {
     
@@ -102,4 +107,20 @@ impl Shop {
       Ok(vec)
     }
     
+
+
+    pub async fn count(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<BuyCount, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let sql = "SELECT (SELECT COUNT(id) FROM public.\"shop_buy\" WHERE item_type_id=101) AS subscription, (SELECT COUNT(id) FROM public.\"shop_buy\" WHERE item_type_id=201) AS item;";
+
+      let stmt = conn.prepare(sql).await?;
+      let row = conn.query_one(&stmt, &[]).await?;
+      
+      Ok(BuyCount {
+        subscription: row.get::<usize, i64>(0),
+        item: row.get::<usize, i64>(1),
+      })
+    }
+
 }

@@ -86,6 +86,7 @@ service AdminApi {
 
   // Shop
   rpc ListBuy(ListBuyRequest) returns (ListBuyResponse) {}
+  rpc GetBuyCount(GetBuyCountRequest) returns (GetBuyCountResponse) {}
 
   // Subscription
   rpc AddSubscription(AddSubscriptionRequest) returns (AddSubscriptionResponse) {}
@@ -1065,7 +1066,15 @@ message BuyDetail {
   string payment_id = 8;
   double price = 9;
 }
-
+message GetBuyCountRequest {
+}
+message GetBuyCountResponse {
+  BuyCount result = 1;
+}
+message BuyCount {
+  int64 subscription = 1;
+  int64 item = 2;
+}
 
 
 

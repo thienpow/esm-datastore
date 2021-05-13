@@ -4634,6 +4634,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listBuy =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.GetBuyCountRequest,
+ *   !proto.adminapi.esm.GetBuyCountResponse>}
+ */
+const methodDescriptor_AdminApi_GetBuyCount = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/GetBuyCount',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.GetBuyCountRequest,
+  proto.adminapi.esm.GetBuyCountResponse,
+  /**
+   * @param {!proto.adminapi.esm.GetBuyCountRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.GetBuyCountResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.GetBuyCountRequest,
+ *   !proto.adminapi.esm.GetBuyCountResponse>}
+ */
+const methodInfo_AdminApi_GetBuyCount = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.GetBuyCountResponse,
+  /**
+   * @param {!proto.adminapi.esm.GetBuyCountRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.GetBuyCountResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.GetBuyCountRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.GetBuyCountResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.GetBuyCountResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.getBuyCount =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/GetBuyCount',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_GetBuyCount,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.GetBuyCountRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.GetBuyCountResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.getBuyCount =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/GetBuyCount',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_GetBuyCount);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.AddSubscriptionRequest,
  *   !proto.adminapi.esm.AddSubscriptionResponse>}
  */
