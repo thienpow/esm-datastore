@@ -1884,7 +1884,9 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let mut result: Vec<BuyDetail> = Vec::new();
     
     for buy in buys {
-      
+
+      let created_on = buy.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
       let li = BuyDetail {
         id: buy.id,
         item_type_id: buy.item_type_id,
@@ -1894,7 +1896,8 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
         user_nick_name: buy.user_nick_name,
         user_email: buy.user_email,
         payment_id: buy.payment_id,
-        price: buy.price
+        price: buy.price,
+        created_on: created_on as i64,
       };
       
       result.push(li);

@@ -3,6 +3,8 @@ use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
 
+use std::time::{SystemTime};
+
 
 pub struct Shop {
   //pub activated: bool,
@@ -18,7 +20,8 @@ pub struct NewBuy {
   pub user_nick_name: String,
   pub user_email: String,
   pub payment_id: String,
-  pub price: f64 
+  pub price: f64,
+  pub created_on: SystemTime,
 }
 
 pub struct BuyCount {
@@ -45,12 +48,13 @@ impl Shop {
   
       let mut vec: Vec<NewBuy> = Vec::new();
       if user_id > 0 {
-        let stmt = conn.prepare("SELECT id, item_type_id, item_id, CASE
-              WHEN item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=item_id)
-              WHEN item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=item_id)
-              ELSE 'Unknown Item'
+        let stmt = conn.prepare("SELECT id, item_type_id, item_id, CASE 
+              WHEN item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=item_id) 
+              WHEN item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=item_id) 
+              ELSE 'Unknown Item' 
           END AS item_title, 
-          user_id, payment_id, price FROM public.\"shop_buy\" 
+          user_id, payment_id, price, created_on 
+          FROM public.\"shop_buy\" 
           WHERE user_id=$1 
           LIMIT $2 OFFSET $3;").await?;
 
@@ -65,6 +69,7 @@ impl Shop {
             user_email: "".to_string(),
             payment_id: row.get(5),
             price: row.get(6),
+            created_on: row.get(7)
           };
   
           vec.push(new_buy);
@@ -72,17 +77,17 @@ impl Shop {
 
       } else {
 
-        let stmt = conn.prepare("SELECT b.id, b.item_type_id, b.item_id, CASE
-              WHEN b.item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=b.item_id)
-              WHEN b.item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=b.item_id)
-              ELSE 'Unknown Item'
+        let stmt = conn.prepare("SELECT b.id, b.item_type_id, b.item_id, CASE 
+              WHEN b.item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=b.item_id) 
+              WHEN b.item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=b.item_id) 
+              ELSE 'Unknown Item' 
           END AS item_title, 
           b.user_id, 
-          u.nick_name,
-          u.email,
-          b.payment_id, b.price 
-          FROM public.\"shop_buy\" AS b
-          LEFT JOIN public.\"user\" AS u ON u.id = b.user_id
+          u.nick_name, 
+          u.email, 
+          b.payment_id, b.price, created_on 
+          FROM public.\"shop_buy\" AS b 
+          LEFT JOIN public.\"user\" AS u ON u.id = b.user_id 
           WHERE b.user_id=$1 
           LIMIT $2 OFFSET $3;").await?;
 
@@ -97,6 +102,7 @@ impl Shop {
             user_email: row.get(6),
             payment_id: row.get(7),
             price: row.get(8),
+            created_on: row.get(9)
           };
 
           vec.push(new_buy);

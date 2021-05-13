@@ -17254,7 +17254,8 @@ proto.api.esm.BuyDetail.toObject = function(includeInstance, msg) {
     itemId: jspb.Message.getFieldWithDefault(msg, 3, 0),
     itemTitle: jspb.Message.getFieldWithDefault(msg, 4, ""),
     paymentId: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    price: jspb.Message.getFloatingPointFieldWithDefault(msg, 6, 0.0)
+    price: jspb.Message.getFloatingPointFieldWithDefault(msg, 6, 0.0),
+    createdOn: jspb.Message.getFieldWithDefault(msg, 7, 0)
   };
 
   if (includeInstance) {
@@ -17314,6 +17315,10 @@ proto.api.esm.BuyDetail.deserializeBinaryFromReader = function(msg, reader) {
     case 6:
       var value = /** @type {number} */ (reader.readDouble());
       msg.setPrice(value);
+      break;
+    case 7:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setCreatedOn(value);
       break;
     default:
       reader.skipField();
@@ -17383,6 +17388,13 @@ proto.api.esm.BuyDetail.serializeBinaryToWriter = function(message, writer) {
   if (f !== 0.0) {
     writer.writeDouble(
       6,
+      f
+    );
+  }
+  f = message.getCreatedOn();
+  if (f !== 0) {
+    writer.writeInt64(
+      7,
       f
     );
   }
@@ -17494,6 +17506,24 @@ proto.api.esm.BuyDetail.prototype.getPrice = function() {
  */
 proto.api.esm.BuyDetail.prototype.setPrice = function(value) {
   return jspb.Message.setProto3FloatField(this, 6, value);
+};
+
+
+/**
+ * optional int64 created_on = 7;
+ * @return {number}
+ */
+proto.api.esm.BuyDetail.prototype.getCreatedOn = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.BuyDetail} returns this
+ */
+proto.api.esm.BuyDetail.prototype.setCreatedOn = function(value) {
+  return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 

@@ -707,6 +707,7 @@ message BuyDetail {
   string item_title = 4;
   string payment_id = 5;
   double price = 6;
+  int64 created_on = 7;
 }
 
 

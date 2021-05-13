@@ -1065,6 +1065,7 @@ message BuyDetail {
   string user_email = 7;
   string payment_id = 8;
   double price = 9;
+  int64 created_on = 10; 
 }
 message GetBuyCountRequest {
 }

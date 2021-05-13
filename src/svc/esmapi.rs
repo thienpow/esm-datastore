@@ -1234,6 +1234,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   async fn buy(&self, request: Request<BuyRequest>, ) -> Result<Response<BuyResponse>, Status> {
     let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
     
+    let now = SystemTime::now();
+
     let req = request.into_inner();
     let new_buy = shop::NewBuy {
       id: 0,
@@ -1245,6 +1247,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       user_email: "".to_string(),
       payment_id: req.payment_id.into(),
       price: req.price.into(),
+      created_on: now
     };
     
     let result = match shop::Shop::buy(new_buy, &self.pool.clone()).await {
@@ -1272,13 +1275,16 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     for buy in buys {
       
+      let created_on = buy.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
       let li = BuyDetail {
         id: buy.id,
         item_type_id: buy.item_type_id,
         item_id: buy.item_id,
         item_title: buy.item_title,
         payment_id: buy.payment_id,
-        price: buy.price
+        price: buy.price,
+        created_on: created_on as i64
       };
       
       result.push(li);
