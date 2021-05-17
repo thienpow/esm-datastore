@@ -1354,6 +1354,246 @@ proto.api.esm.EsmApiPromiseClient.prototype.getGameRules =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.GetSpinAvailableRequest,
+ *   !proto.api.esm.GetSpinAvailableResponse>}
+ */
+const methodDescriptor_EsmApi_GetSpinAvailable = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/GetSpinAvailable',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.GetSpinAvailableRequest,
+  proto.api.esm.GetSpinAvailableResponse,
+  /**
+   * @param {!proto.api.esm.GetSpinAvailableRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetSpinAvailableResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.GetSpinAvailableRequest,
+ *   !proto.api.esm.GetSpinAvailableResponse>}
+ */
+const methodInfo_EsmApi_GetSpinAvailable = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.GetSpinAvailableResponse,
+  /**
+   * @param {!proto.api.esm.GetSpinAvailableRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetSpinAvailableResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.GetSpinAvailableRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.GetSpinAvailableResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.GetSpinAvailableResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.getSpinAvailable =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/GetSpinAvailable',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetSpinAvailable,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.GetSpinAvailableRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.GetSpinAvailableResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.getSpinAvailable =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/GetSpinAvailable',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetSpinAvailable);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.LogSEnterRequest,
+ *   !proto.api.esm.LogSEnterResponse>}
+ */
+const methodDescriptor_EsmApi_LogSEnter = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/LogSEnter',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.LogSEnterRequest,
+  proto.api.esm.LogSEnterResponse,
+  /**
+   * @param {!proto.api.esm.LogSEnterRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.LogSEnterResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.LogSEnterRequest,
+ *   !proto.api.esm.LogSEnterResponse>}
+ */
+const methodInfo_EsmApi_LogSEnter = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.LogSEnterResponse,
+  /**
+   * @param {!proto.api.esm.LogSEnterRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.LogSEnterResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.LogSEnterRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.LogSEnterResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.LogSEnterResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.logSEnter =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/LogSEnter',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_LogSEnter,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.LogSEnterRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.LogSEnterResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.logSEnter =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/LogSEnter',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_LogSEnter);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.LogSLeaveRequest,
+ *   !proto.api.esm.LogSLeaveResponse>}
+ */
+const methodDescriptor_EsmApi_LogSLeave = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/LogSLeave',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.LogSLeaveRequest,
+  proto.api.esm.LogSLeaveResponse,
+  /**
+   * @param {!proto.api.esm.LogSLeaveRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.LogSLeaveResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.LogSLeaveRequest,
+ *   !proto.api.esm.LogSLeaveResponse>}
+ */
+const methodInfo_EsmApi_LogSLeave = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.LogSLeaveResponse,
+  /**
+   * @param {!proto.api.esm.LogSLeaveRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.LogSLeaveResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.LogSLeaveRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.LogSLeaveResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.LogSLeaveResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.logSLeave =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/LogSLeave',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_LogSLeave,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.LogSLeaveRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.LogSLeaveResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.logSLeave =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/LogSLeave',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_LogSLeave);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.LogGEnterRequest,
  *   !proto.api.esm.LogGEnterResponse>}
  */

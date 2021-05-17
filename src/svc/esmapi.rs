@@ -52,6 +52,9 @@ use esmapi_proto::{
   GetGameCodeRequest, GetGameCodeResponse,
 
   // GPlayer
+  GetSpinAvailableRequest, GetSpinAvailableResponse,
+  LogSEnterRequest, LogSEnterResponse,
+  LogSLeaveRequest, LogSLeaveResponse,
   LogGEnterRequest, LogGEnterResponse,
   LogGLeaveRequest, LogGLeaveResponse,
   ListLogGRequest, ListLogGResponse,
@@ -834,6 +837,90 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
   }
 
+  async fn get_spin_available(&self, request: Request<GetSpinAvailableRequest>, ) -> Result<Response<GetSpinAvailableResponse>, Status> {
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    
+    match gplayer::GPlayer::check_spin_available(user_id, &self.pool.clone()).await {
+      Ok(spin_available) => {
+
+        Ok(Response::new(GetSpinAvailableResponse {
+          result: spin_available
+        }))
+      },
+      Err(e) => Err(Status::internal(format!("Error: get_spin_available failed! {}", e.to_string())))
+    }
+  }
+
+  
+  async fn log_s_enter(&self, request: Request<LogSEnterRequest>, ) -> Result<Response<LogSEnterResponse>, Status> {
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let now = SystemTime::now();
+    
+    let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+
+    match gplayer::GPlayer::check_spin_available(user_id, &self.pool.clone()).await {
+      Ok(spin_available) => {
+
+        if spin_available > 0 {
+
+          let spin_detail = gplayer::LogSDetail {
+            id: 0,
+            user_id: user_id,
+            enter_timestamp: now,
+            leave_timestamp: now,
+            tickets_won: 0,
+          };
+          
+          return match gplayer::GPlayer::spin_enter(spin_detail, &self.pool.clone()).await {
+            Ok(id) => {
+              Ok(Response::new(LogSEnterResponse {
+                result: id
+              }))
+            },
+            Err(e) => Err(Status::internal(format!("Error: log_s_enter ==> spin_enter failed! {}", e.to_string())))
+          }
+        } else {
+          return Err(Status::internal(format!("No more spin available.  You are not suppose to call this.")))
+        }
+        
+      },
+      Err(e) => Err(Status::internal(format!("Error: log_s_enter ==> check_spin_available failed! {}", e.to_string())))
+    }
+    
+
+  }
+  
+  async fn log_s_leave(&self, request: Request<LogSLeaveRequest>, ) -> Result<Response<LogSLeaveResponse>, Status> {
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let now = SystemTime::now();
+    
+    let req = request.into_inner();
+
+    let spin_detail = gplayer::LogSDetail {
+      id: req.id.into(),
+      user_id: 0,
+      enter_timestamp: now,
+      leave_timestamp: now,
+      tickets_won: req.tickets_won.into(),
+    };
+    
+    match gplayer::GPlayer::spin_leave(spin_detail, &self.pool.clone()).await {
+      Ok(result) => {
+        Ok(Response::new(LogSLeaveResponse {
+          result: result.to_string()
+        }))
+      },
+      Err(e) => Err(Status::internal(format!("Error: log_s_leave ==> spin_leave failed! {}", e.to_string())))
+    }
+    
+
+  }
 
 
 

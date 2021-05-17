@@ -34,6 +34,9 @@ service EsmApi {
   rpc GetGameRules(GetGameRulesRequest) returns (GetGameRulesResponse) {}
 
   // GPlayer
+  rpc GetSpinAvailable(GetSpinAvailableRequest) returns (GetSpinAvailableResponse) {}
+  rpc LogSEnter(LogSEnterRequest) returns  (LogSEnterResponse) {}
+  rpc LogSLeave(LogSLeaveRequest) returns  (LogSLeaveResponse) {}
   rpc LogGEnter(LogGEnterRequest) returns (LogGEnterResponse) {}
   rpc LogGLeave(LogGLeaveRequest) returns (LogGLeaveResponse) {}
   rpc ListLogG(ListLogGRequest) returns (ListLogGResponse) {}
@@ -447,7 +450,26 @@ message LogGDetail {
   int32 game_score = 15;
 }
 
+message GetSpinAvailableRequest {
+  int64 user_id = 1;
+}
+message GetSpinAvailableResponse {
+  int64 result = 1;
+}
 
+message LogSEnterRequest {
+  int64 user_id = 1;
+}
+message LogSEnterResponse {
+  int64 result = 1; 
+}
+message LogSLeaveRequest {
+  int64 id = 1;
+  int32 tickets_won = 2;
+}
+message LogSLeaveResponse {
+  string result = 1;
+}
 
 
 

@@ -147,7 +147,7 @@ pub async fn check_is_exact_user(meta: &MetadataMap, jwk: &JwkAuth) ->  Result<b
   match jwk.verify(&token) {
     Some(t) => {
       if t.claims.sub != uid {
-        return Err(Status::permission_denied("Not the right user  to do this!"))
+        return Err(Status::permission_denied("Not the right user to do this!"))
       }
       Ok(true)
     },
