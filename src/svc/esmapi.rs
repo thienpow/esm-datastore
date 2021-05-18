@@ -1324,10 +1324,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let now = SystemTime::now();
 
     let req = request.into_inner();
+    let item_id = req.item_id.into();
+    if item_id == 0 {
+      panic!("Error: item_id should not be 0.");
+    }
+
     let new_buy = shop::NewBuy {
       id: 0,
       item_type_id: req.item_type_id.into(),
-      item_id: req.item_id.into(),
+      item_id: item_id,
       item_title: "".to_string(),
       user_id: req.user_id.into(),
       user_nick_name: "".to_string(),

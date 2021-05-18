@@ -79,6 +79,15 @@ pub struct PrizeCount {
   pub archived: i64 
 }
 
+pub struct CurrentGame {
+  pub id: i64,
+  pub prize_id: i64,
+  pub tour_id: i64,
+  pub set_id: i64,
+  pub game_id: i64,
+  pub start_timestamp: SystemTime,
+  pub end_timestamp: SystemTime,
+}
 
 impl Prize {
     
@@ -352,6 +361,129 @@ impl Prize {
 
         vec.push(rule);
       }
+      
+      Ok(vec)
+    }
+
+
+    pub async fn list_current_game(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, game_id, start_timestamp, end_timestamp FROM public.\"current_game\" WHERE prize_id=$1 AND date(start_timestamp)=CURRENT_DATE;").await?;
+    
+      let mut vec: Vec<CurrentGame> = Vec::new();
+      for row in conn.query(&stmt, &[&prize_id]).await? {
+        let rule = CurrentGame {
+          id: row.get(0),
+          prize_id: row.get(1),
+          tour_id: row.get(2),
+          set_id: row.get(3),
+          game_id: row.get(4),
+          start_timestamp: row.get(5),
+          end_timestamp: row.get(6)
+        };
+
+        vec.push(rule);
+      }
+      
+      Ok(vec)
+    }
+
+    pub async fn list_previous_game(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, game_id, start_timestamp, end_timestamp FROM public.\"current_game\" WHERE prize_id=$1 ORDER BY id DESC LIMIT 1;").await?;
+    
+      let mut vec: Vec<CurrentGame> = Vec::new();
+      for row in conn.query(&stmt, &[&prize_id]).await? {
+        let rule = CurrentGame {
+          id: row.get(0),
+          prize_id: row.get(1),
+          tour_id: row.get(2),
+          set_id: row.get(3),
+          game_id: row.get(4),
+          start_timestamp: row.get(5),
+          end_timestamp: row.get(6)
+        };
+
+        vec.push(rule);
+      }
+      
+      Ok(vec)
+    }
+
+
+    pub async fn list_active_by_prize_id(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<PrizeActive>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let sql_string = "SELECT 
+                          p.id AS prize_id, 
+                          p.title AS prize_title, 
+                          p.subtitle AS prize_subtitle, 
+                          p.img_url AS prize_img_url, 
+                          p.content AS prize_content, 
+                          p.duration_days AS prize_duration_days, 
+                          p.duration_hours AS prize_duration_hours, 
+                          p.type_id, p.tickets_required, p.timezone, 
+                          p.scheduled_on, p.scheduled_off, 
+                          p.is_repeat, p.repeated_on, p.status, p.status_progress, p.tickets_collected, 
+                          pt.tour_id, t.title AS tour_title, 
+                          ts.set_id, s.title AS set_title, 
+                          tsg.game_id, g.title AS game_title, 
+                          g.subtitle AS game_sub_title, 
+                          g.img_url AS game_img_url, 
+                          g.content AS game_content, 
+                          tsg.duration_days AS game_duration_days, tsg.duration_hours AS game_duration_hours, tsg.duration_minutes AS game_duration_minutes, tsg.group_id 
+                        FROM public.\"prize\" AS p 
+                          INNER JOIN public.\"prize_tour\" AS pt ON pt.prize_id = p.id 
+                          INNER JOIN public.\"tournament\" AS t ON t.id = pt.tour_id 
+                          INNER JOIN public.\"tour_set\"  AS ts ON ts.tour_id = pt.tour_id 
+                          INNER JOIN public.\"tournament_set\" AS s ON s.id = ts.set_id 
+                          INNER JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.set_id = ts.set_id 
+                          INNER JOIN public.\"game\" AS g ON g.id = tsg.game_id 
+                        WHERE p.status = 2 AND p.id = $1
+                        ORDER BY p.id, ts.tour_id 
+                        ;".to_string();
+      let stmt = conn.prepare(&sql_string).await?;
+  
+      let mut vec: Vec<PrizeActive> = Vec::new();
+      for row in conn.query(&stmt, &[&prize_id]).await? {
+        let prize = PrizeActive {
+          prize_id: row.get(0),
+          prize_title: row.get(1),
+          prize_subtitle: row.get(2),
+          prize_img_url: row.get(3),
+          prize_content: row.get(4),
+          prize_duration_days: row.get(5),
+          prize_duration_hours: row.get(6),
+          type_id: row.get(7),
+          tickets_required: row.get(8),
+          timezone: row.get(9),
+          scheduled_on: row.get(10),
+          scheduled_off: row.get(11),
+          is_repeat: row.get(12),
+          repeated_on: row.get(13),
+          status: row.get(14),
+          status_progress: row.get(15),
+          tickets_collected: row.get(16),
+          tour_id: row.get(17),
+          tour_title: row.get(18),
+          set_id: row.get(19),
+          set_title: row.get(20),
+          game_id: row.get(21),
+          game_title: row.get(22),
+          game_subtitle: row.get(23),
+          game_img_url: row.get(24),
+          game_content: row.get(25),
+          game_duration_days: row.get(26),
+          game_duration_hours: row.get(27),
+          game_duration_minutes: row.get(28),
+          group_id: row.get(29),
+        };
+
+        vec.push(prize);
+      }
+        
       
       Ok(vec)
     }
