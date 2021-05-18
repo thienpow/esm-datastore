@@ -1,11 +1,11 @@
 //use std::thread;
-//use std::time::Duration;
+use std::time::Duration;
 
 use std::time::{
     SystemTime, 
     UNIX_EPOCH
 };
-use chrono::{NaiveDate, NaiveDateTime};
+//use chrono::{NaiveDate, NaiveDateTime};
 
 use tokio_postgres;
 use bb8::{Pool};
@@ -31,13 +31,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     
     let prizes = match prize::Prize::list(10000, 0, "".to_string(), 2, &pool_db.clone()).await {
-    //let prizes = match prize::Prize::list_active(&pool_db.clone()).await {
         Ok(prizes) => prizes,
         Err(error) => panic!("Error: {}.", error),
     };
     
     let mut i = 0;
-    println!("Total Prizes={}", prizes.len().to_string());
+    //println!("Total Prizes={}", prizes.len().to_string());
     for prize in prizes {
         
         i = i + 1;
@@ -50,58 +49,58 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         if prize.type_id == 1 || prize.type_id == 2 {
         
             if scheduled_on <= adjusted_now {
-                if prize.tickets_collected <= prize.tickets_required {
+                if prize.tickets_collected < prize.tickets_required {
 
-                    if prize.is_repeat {
-                        println!("{} prize_id={} Type 1/2, is Repeat and running, ", i, prize.id.to_string());
-                        list_current_games(prize, &pool_db.clone()).await?;
-                    } else {
-                        println!("{} prize_id={} Type 1/2, not Repeat and running, ", i, prize.id.to_string());
-                        list_current_games(prize, &pool_db.clone()).await?;
-                    }
+                    println!("{} prize_id={} Type 1/2, running, ", i, prize.id.to_string());
+                    process_current_games(i, prize, &pool_db.clone()).await?;
                     
                 } else {
+    
+                    //TODO: process closing here
                     if prize.is_repeat {
                         println!("{} prize_id={} Type 1/2, tickets fulled and restart need to be set here",i , prize.id.to_string());
-                        list_current_games(prize, &pool_db.clone()).await?;
+                        //TODO: update the prize scheduled_on to today and reset tickets_collected to 0;
+                        //TODO: make sure prize's ticket_collected is kept in a log, to identify previous round's data
+    
+                        process_current_games(i, prize, &pool_db.clone()).await?;
                     } else {
                         println!("{} prize_id={} Type 1/2, TICKETS FULLED, NOT REPEAT and ENDED", i, prize.id.to_string());
                     }
                 }
-                
             }
-            //For Featured and Premium prize, need to check if the tickets_collected is smaller than tickets_required, then only allow to list
-    
-          //type_id 3=Time Sensitive, 4=Automated Entry
+            
+
         } else if prize.type_id == 3 || prize.type_id == 4 {
 
-            //if it's Prize 3 or 4, we need to check if now is greater than or equal to scheduled_on, meaning it's started.
             if scheduled_on <= adjusted_now {
 
                 // if is_repeat, meaning need to always show, because it never end.
                 if prize.is_repeat {
                     //result.push(li);
                     if scheduled_off >= adjusted_now {
+                        //TODO: process closing here and update the scheduled_on and scheduled_off
                         println!("{} prize_id={} Type 3/4, is Repeat and restart need to be set here, ", i, prize.id.to_string());
-                        list_current_games(prize, &pool_db.clone()).await?;
+                        process_current_games(i, prize, &pool_db.clone()).await?;
                     } else {
                         println!("{} prize_id={} Type 3/4, is Repeat and running, ", i, prize.id.to_string());
-                        list_current_games(prize, &pool_db.clone()).await?;
+                        process_current_games(i, prize, &pool_db.clone()).await?;
                     }
                     
                 } else {
 
                     // if not repeat, then we need to check if it's still within the duration.
                     if scheduled_off >= adjusted_now {
-                        //check if prize_timebased has a record for the server_scheduled_on/off within now, if don't have then add it
                         println!("{} prize_id={} Type 3/4, not repeat and running", i, prize.id.to_string());
-                        list_current_games(prize, &pool_db.clone()).await?;
+                        process_current_games(i, prize, &pool_db.clone()).await?;
                     } else {
+
+                        //TODO: process closing here
                         println!("{} prize_id={} Type 3/4, NOT REPEAT and ENDED", i, prize.id.to_string());
                     }
-                }
+                } 
                 
-            }
+            } 
+
         }
         
         println!("");
@@ -124,14 +123,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-async fn list_current_games(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, Box<dyn std::error::Error>> {
+async fn process_current_games(index: i64, prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, Box<dyn std::error::Error>> {
 
-    let mut current_games: Vec<CurrentGame> = match prize::Prize::list_current_game(prize.id, &pool.clone()).await {
+    let mut current_games: Vec<CurrentGame> = match prize::Prize::list_current_game_by_system(prize.id, &pool.clone()).await {
         Ok(current_games) => current_games,
         Err(error) => panic!("== list_current_games Error: {}.", error),
     };
 
-    let prize_id = prize.id;
     if current_games.len() > 0 {
         println!("== prize_id={}, current_games={}", prize.id.to_string(), current_games.len().to_string());
     } else {
@@ -152,14 +150,6 @@ async fn list_current_games(prize: Prize, pool: &Pool<PostgresConnectionManager<
             Err(error) => panic!("== list_current_games Error: {}.", error),
         };
 
-        //after generating current_games, retrieve the current_game again.
-        current_games = match prize::Prize::list_current_game(prize_id, &pool.clone()).await {
-            Ok(current_games) => current_games,
-            Err(error) => panic!("== list_current_games Error: {}.", error),
-        };
-        println!("== After generating current games. new current_games {}", current_games.len().to_string());
-
-        
     }
 
     Ok(current_games)
@@ -192,26 +182,47 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
 
         for game in &active_games {
         
-            println!("==== tour_id {} set_id {} game_title {}", game.tour_id.to_string(), game.set_id.to_string(), game.game_title);
-    
             if previous_tour_id > 0 {
-                //println!("==== Generating current game start from after previous_tour_id {}", previous_tour_id.to_string());
-    
+
                 if is_after_previous {
                     end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
-                    println!("==== is_after_previous game_title {} start_timestamp {} end_timestamp {}", game.game_title, start_timestamp, end_timestamp);
+                    
+                    //append to db.current_game
+                    println!("==== TODO: need to append to db here");
+
                     start_timestamp = end_timestamp + 1;
     
+                    
                 } else {
                     if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.game_id ==  previous_game_id {
                         is_after_previous = true;
                         start_timestamp = previous_end_timestamp + 1;
                     }
                 }
+
             } else { // if 0 then means genearate from scheduled_on of prize
                 end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
-                println!("==== game_title {} start_timestamp {} end_timestamp {}", game.game_title, start_timestamp, end_timestamp);
+                
+                //append to db.current_game
+                let cg = CurrentGame {
+                    id: 0,
+                    prize_id: prize.id,
+                    tour_id: game.tour_id,
+                    set_id: game.set_id,
+                    game_id: game.game_id,
+                    start_timestamp: UNIX_EPOCH + Duration::new(start_timestamp as u64, 0),
+                    end_timestamp: UNIX_EPOCH + Duration::new(end_timestamp as u64, 0)
+                  };
+
+                match prize::Prize::add_current_game(cg, &pool.clone()).await {
+                    Ok(_) => {
+                        ()
+                    },
+                    Err(error) => panic!("==== generate_current_games.add_current_game Error: {}.", error),
+                }
+
                 start_timestamp = end_timestamp + 1;
+
             }
         }
     

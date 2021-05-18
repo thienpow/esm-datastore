@@ -76,6 +76,8 @@ use esmapi_proto::{
   // Prize
   ListPrizeRequest, ListPrizeResponse, 
   PrizeDetail, 
+  ListCurrentGameRequest, ListCurrentGameResponse,
+  CurrentGameDetail,
 
   // Rank
   ListRankRequest, ListRankResponse,
@@ -1243,6 +1245,44 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
   }
 
+  async fn list_current_game(&self, request: Request<ListCurrentGameRequest>, ) -> Result<Response<ListCurrentGameResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+    
+    let req = request.into_inner();
+    
+    let current_games = match prize::Prize::list_current_game_by_user(req.prize_id, &self.pool.clone()).await {
+      Ok(current_games) => current_games,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+
+    let mut result: Vec<CurrentGameDetail> = Vec::new();
+    for cg in current_games {
+
+      let start_timestamp = cg.start_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let end_timestamp = cg.end_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
+      let li = CurrentGameDetail {
+        current_game_id: cg.id,
+        tour_id: cg.tour_id,
+        set_id: cg.set_id,
+        game_id: cg.game_id,
+        game_title: cg.game_title,
+        game_subtitle: cg.game_subtitle,
+        game_img_url: cg.game_img_url,
+        game_content: cg.game_content,
+        start_timestamp: start_timestamp as i64,
+        end_timestamp: end_timestamp as i64
+      };
+
+      result.push(li);
+    };
+
+    Ok(Response::new(ListCurrentGameResponse {
+      result: result,
+    }))
+    
+  }
 
 
 

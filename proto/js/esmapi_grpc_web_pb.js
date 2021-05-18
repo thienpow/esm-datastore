@@ -2394,6 +2394,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listPrize =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.ListCurrentGameRequest,
+ *   !proto.api.esm.ListCurrentGameResponse>}
+ */
+const methodDescriptor_EsmApi_ListCurrentGame = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListCurrentGame',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.ListCurrentGameRequest,
+  proto.api.esm.ListCurrentGameResponse,
+  /**
+   * @param {!proto.api.esm.ListCurrentGameRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListCurrentGameResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.ListCurrentGameRequest,
+ *   !proto.api.esm.ListCurrentGameResponse>}
+ */
+const methodInfo_EsmApi_ListCurrentGame = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListCurrentGameResponse,
+  /**
+   * @param {!proto.api.esm.ListCurrentGameRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListCurrentGameResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.ListCurrentGameRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListCurrentGameResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListCurrentGameResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.listCurrentGame =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/ListCurrentGame',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListCurrentGame,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.ListCurrentGameRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.ListCurrentGameResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.listCurrentGame =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/ListCurrentGame',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListCurrentGame);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.ListRankRequest,
  *   !proto.api.esm.ListRankResponse>}
  */

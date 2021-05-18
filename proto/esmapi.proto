@@ -53,6 +53,7 @@ service EsmApi {
 
   // Prize
   rpc ListPrize(ListPrizeRequest) returns (ListPrizeResponse) {}
+  rpc ListCurrentGame(ListCurrentGameRequest) returns (ListCurrentGameResponse) {}
 
   // Rank
   rpc ListRank(ListRankRequest) returns (ListRankResponse) {}
@@ -643,8 +644,24 @@ message PrizeDetail {
   int32 game_duration_minutes = 29;
   int32 group_id = 30;
 }
-
-
+message ListCurrentGameRequest {
+  int64 prize_id = 1;
+}
+message ListCurrentGameResponse {
+  repeated CurrentGameDetail result = 1;
+}
+message CurrentGameDetail {
+  int64 current_game_id = 1;
+  int64 tour_id = 2;
+  int64 set_id = 3;
+  int64 game_id = 4;
+  string game_title  = 5;
+  string game_subtitle = 6;
+  string game_img_url = 7;
+  string game_content = 8;
+  int64 start_timestamp = 9;
+  int64 end_timestamp = 10;
+}
 
 
 

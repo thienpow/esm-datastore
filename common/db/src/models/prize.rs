@@ -89,6 +89,20 @@ pub struct CurrentGame {
   pub end_timestamp: SystemTime,
 }
 
+pub struct CurrentGameDetail {
+  pub id: i64,
+  pub prize_id: i64,
+  pub tour_id: i64,
+  pub set_id: i64,
+  pub game_id: i64,
+  pub game_title: String,
+  pub game_subtitle: String,
+  pub game_img_url: String,
+  pub game_content: String,
+  pub start_timestamp: SystemTime,
+  pub end_timestamp: SystemTime,
+}
+
 impl Prize {
     
     pub async fn add(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
@@ -107,12 +121,12 @@ impl Prize {
       Ok(row.get::<usize, i64>(0))
     }
     
-    pub async fn add_timebased(prize_id: i64, server_scheduled_on: i64, server_scheduled_off: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn add_current_game(current_game: CurrentGame, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"prize_timebased\" (prize_id, server_scheduled_on, server_scheduled_off) VALUES ($1, $2, $3) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"current_game\" (prize_id, tour_id, set_id, game_id, start_timestamp, end_timestamp) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
-                  &[&prize_id, &server_scheduled_on, &server_scheduled_off]).await?;
+                  &[&current_game.prize_id, &current_game.tour_id, &current_game.set_id, &current_game.game_id, &current_game.start_timestamp, &current_game.end_timestamp]).await?;
     
       Ok(row.get::<usize, i64>(0))
     }
@@ -366,10 +380,10 @@ impl Prize {
     }
 
 
-    pub async fn list_current_game(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
+    pub async fn list_current_game_by_system(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, game_id, start_timestamp, end_timestamp FROM public.\"current_game\" WHERE prize_id=$1 AND date(start_timestamp)=CURRENT_DATE;").await?;
+      let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, game_id, start_timestamp, end_timestamp FROM public.\"current_game\" WHERE prize_id=$1 AND start_timestamp>=NOW() AND end_timestamp<=CURRENT_DATE + INTERVAL '25 hours';").await?;
     
       let mut vec: Vec<CurrentGame> = Vec::new();
       for row in conn.query(&stmt, &[&prize_id]).await? {
@@ -381,6 +395,43 @@ impl Prize {
           game_id: row.get(4),
           start_timestamp: row.get(5),
           end_timestamp: row.get(6)
+        };
+
+        vec.push(rule);
+      }
+      
+      Ok(vec)
+    }
+
+    pub async fn list_current_game_by_user(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGameDetail>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("
+      SELECT 
+        cg.id AS current_game_id, cg.prize_id, cg.tour_id, cg.set_id, cg.game_id, 
+        g.title AS game_title, 
+        g.subtitle AS game_sub_title, 
+        g.img_url AS game_img_url, 
+        g.content AS game_content, 
+        cg.start_timestamp, cg.end_timestamp 
+      FROM public.\"current_game\" AS cg 
+        INNER JOIN public.\"game\" AS g ON g.id = cg.game_id 
+      WHERE prize_id=$1 AND start_timestamp>=NOW() AND end_timestamp<=CURRENT_DATE + INTERVAL '25 hours';").await?;
+    
+      let mut vec: Vec<CurrentGameDetail> = Vec::new();
+      for row in conn.query(&stmt, &[&prize_id]).await? {
+        let rule = CurrentGameDetail {
+          id: row.get(0),
+          prize_id: row.get(1),
+          tour_id: row.get(2),
+          set_id: row.get(3),
+          game_id: row.get(4),
+          game_title: row.get(5),
+          game_subtitle: row.get(6),
+          game_img_url: row.get(7),
+          game_content: row.get(8),
+          start_timestamp: row.get(9),
+          end_timestamp: row.get(10)
         };
 
         vec.push(rule);
