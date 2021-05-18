@@ -707,7 +707,8 @@ message BuyRequest {
   int64 item_id = 3;
   int64 user_id = 4;
   string payment_id = 5;
-  double price = 6;
+  string sub_id = 6;
+  double price = 7;
 
 }
 message BuyResponse {
@@ -728,8 +729,9 @@ message BuyDetail {
   int64 item_id = 3;
   string item_title = 4;
   string payment_id = 5;
-  double price = 6;
-  int64 created_on = 7;
+  string sub_id = 6;
+  double price = 7;
+  int64 created_on = 8;
 }
 
 

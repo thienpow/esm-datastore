@@ -1338,6 +1338,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       user_nick_name: "".to_string(),
       user_email: "".to_string(),
       payment_id: req.payment_id.into(),
+      sub_id: req.sub_id.into(),
       price: req.price.into(),
       created_on: now
     };
@@ -1375,6 +1376,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         item_id: buy.item_id,
         item_title: buy.item_title,
         payment_id: buy.payment_id,
+        sub_id: buy.sub_id,
         price: buy.price,
         created_on: created_on as i64
       };
