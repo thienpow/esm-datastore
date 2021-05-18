@@ -253,7 +253,7 @@ impl Prize {
       INNER JOIN public.\"tournament_set\" AS s ON s.id = cg.set_id 
       INNER JOIN public.\"game\" AS g ON g.id = cg.game_id 
       INNER JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.id = cg.tsg_id 
-    WHERE start_timestamp <= NOW() AND end_timestamp >= NOW();".to_string();
+    WHERE start_timestamp <= NOW() AND end_timestamp > NOW();".to_string();
       let stmt = conn.prepare(&sql_string).await?;
   
       let mut vec: Vec<PrizeActive> = Vec::new();
@@ -382,7 +382,7 @@ impl Prize {
     pub async fn list_current_game_by_system(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, tsg_id, game_id, start_timestamp, end_timestamp FROM public.\"current_game\" WHERE prize_id=$1 AND start_timestamp <= NOW() AND end_timestamp >= NOW();").await?;
+      let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, tsg_id, game_id, start_timestamp, end_timestamp FROM public.\"current_game\" WHERE prize_id=$1 AND start_timestamp <= NOW() AND end_timestamp > NOW();").await?;
     
       let mut vec: Vec<CurrentGame> = Vec::new();
       for row in conn.query(&stmt, &[&prize_id]).await? {
