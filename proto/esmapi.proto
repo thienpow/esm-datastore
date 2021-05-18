@@ -53,8 +53,6 @@ service EsmApi {
 
   // Prize
   rpc ListPrize(ListPrizeRequest) returns (ListPrizeResponse) {}
-  rpc ListCurrentGame(ListCurrentGameRequest) returns (ListCurrentGameResponse) {}
-
   // Rank
   rpc ListRank(ListRankRequest) returns (ListRankResponse) {}
 
@@ -613,57 +611,41 @@ message ListPrizeResponse {
   repeated PrizeDetail result = 1;
 }
 message PrizeDetail {
-  int64 prize_id = 1;
-  string prize_title = 2;
-  string prize_subtitle = 3;
-  string prize_img_url = 4;
-  string prize_content = 5;
-  int32 prize_duration_days = 6;
-  int32 prize_duration_hours = 7;
-  int32 type_id = 8;
-  int64 tickets_required = 9;
-  double timezone = 10;
-  int64 scheduled_on = 11;
-  int64 scheduled_off = 12;
-  bool is_repeat =  13;
-  repeated int32 repeated_on = 14;
-  int32 status = 15;
-  int32 status_progress = 16;
-  int64 tickets_collected = 17;
-  int64 tour_id = 18;
-  string tour_title  = 19;
-  int64 set_id = 20;
-  string set_title  = 21;
-  int64 game_id = 22;
-  string game_title  = 23;
-  string game_subtitle = 24;
-  string game_img_url = 25;
-  string game_content = 26;
-  int32 game_duration_days = 27;
-  int32 game_duration_hours = 28;
-  int32 game_duration_minutes = 29;
-  int32 group_id = 30;
-}
-message ListCurrentGameRequest {
-  int64 prize_id = 1;
-}
-message ListCurrentGameResponse {
-  repeated CurrentGameDetail result = 1;
-}
-message CurrentGameDetail {
   int64 current_game_id = 1;
-  int64 tour_id = 2;
-  int64 set_id = 3;
-  int64 game_id = 4;
-  string game_title  = 5;
-  string game_subtitle = 6;
-  string game_img_url = 7;
-  string game_content = 8;
-  int64 start_timestamp = 9;
-  int64 end_timestamp = 10;
+  int64 prize_id = 2;
+  string prize_title = 3;
+  string prize_subtitle = 4;
+  string prize_img_url = 5;
+  string prize_content = 6;
+  int32 prize_duration_days = 7;
+  int32 prize_duration_hours = 8;
+  int32 type_id = 9;
+  int64 tickets_required = 10;
+  double timezone = 11;
+  int64 scheduled_on = 12;
+  int64 scheduled_off = 13;
+  bool is_repeat =  14;
+  repeated int32 repeated_on = 15;
+  int32 status = 16;
+  int32 status_progress = 17;
+  int64 tickets_collected = 18;
+  int64 tour_id = 19;
+  string tour_title  = 20;
+  int64 set_id = 21;
+  string set_title  = 22;
+  int64 game_id = 23;
+  string game_title  = 24;
+  string game_subtitle = 25;
+  string game_img_url = 26;
+  string game_content = 27;
+  int64 tsg_id = 28;
+  int32 game_duration_days = 29;
+  int32 game_duration_hours = 30;
+  int32 game_duration_minutes = 31;
+  int32 group_id = 32;
+  int64 start_timestamp = 33;
+  int64 end_timestamp  = 34;
 }
-
-
 
 
 

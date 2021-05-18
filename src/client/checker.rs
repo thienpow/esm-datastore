@@ -52,7 +52,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 if prize.tickets_collected < prize.tickets_required {
 
                     println!("{} prize_id={} Type 1/2, running, ", i, prize.id.to_string());
-                    process_current_games(i, prize, &pool_db.clone()).await?;
+                    process_current_games(prize, &pool_db.clone()).await?;
                     
                 } else {
     
@@ -62,7 +62,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         //TODO: update the prize scheduled_on to today and reset tickets_collected to 0;
                         //TODO: make sure prize's ticket_collected is kept in a log, to identify previous round's data
     
-                        process_current_games(i, prize, &pool_db.clone()).await?;
+                        process_current_games(prize, &pool_db.clone()).await?;
                     } else {
                         println!("{} prize_id={} Type 1/2, TICKETS FULLED, NOT REPEAT and ENDED", i, prize.id.to_string());
                     }
@@ -80,10 +80,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     if scheduled_off >= adjusted_now {
                         //TODO: process closing here and update the scheduled_on and scheduled_off
                         println!("{} prize_id={} Type 3/4, is Repeat and restart need to be set here, ", i, prize.id.to_string());
-                        process_current_games(i, prize, &pool_db.clone()).await?;
+                        process_current_games(prize, &pool_db.clone()).await?;
                     } else {
                         println!("{} prize_id={} Type 3/4, is Repeat and running, ", i, prize.id.to_string());
-                        process_current_games(i, prize, &pool_db.clone()).await?;
+                        process_current_games(prize, &pool_db.clone()).await?;
                     }
                     
                 } else {
@@ -91,7 +91,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     // if not repeat, then we need to check if it's still within the duration.
                     if scheduled_off >= adjusted_now {
                         println!("{} prize_id={} Type 3/4, not repeat and running", i, prize.id.to_string());
-                        process_current_games(i, prize, &pool_db.clone()).await?;
+                        process_current_games(prize, &pool_db.clone()).await?;
                     } else {
 
                         //TODO: process closing here
@@ -123,9 +123,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-async fn process_current_games(index: i64, prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, Box<dyn std::error::Error>> {
+async fn process_current_games(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, Box<dyn std::error::Error>> {
 
-    let mut current_games: Vec<CurrentGame> = match prize::Prize::list_current_game_by_system(prize.id, &pool.clone()).await {
+    let current_games: Vec<CurrentGame> = match prize::Prize::list_current_game_by_system(prize.id, &pool.clone()).await {
         Ok(current_games) => current_games,
         Err(error) => panic!("== list_current_games Error: {}.", error),
     };
@@ -209,6 +209,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
                     prize_id: prize.id,
                     tour_id: game.tour_id,
                     set_id: game.set_id,
+                    tsg_id: game.tsg_id,
                     game_id: game.game_id,
                     start_timestamp: UNIX_EPOCH + Duration::new(start_timestamp as u64, 0),
                     end_timestamp: UNIX_EPOCH + Duration::new(end_timestamp as u64, 0)

@@ -76,8 +76,6 @@ use esmapi_proto::{
   // Prize
   ListPrizeRequest, ListPrizeResponse, 
   PrizeDetail, 
-  ListCurrentGameRequest, ListCurrentGameResponse,
-  CurrentGameDetail,
 
   // Rank
   ListRankRequest, ListRankResponse,
@@ -1169,6 +1167,9 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     for prize in prizes {
       
+      let start_timestamp = prize.start_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let end_timestamp = prize.end_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
       let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
       let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
       let timezone_seconds = prize.timezone * (3600 as f64);
@@ -1176,6 +1177,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (self.server_timezone * 3600) + (timezone_seconds as u64);
 
       let li = PrizeDetail {
+        current_game_id: prize.current_game_id,
         prize_id: prize.prize_id,
         prize_title: prize.prize_title,
         prize_subtitle: prize.prize_subtitle,
@@ -1202,10 +1204,13 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         game_subtitle: prize.game_subtitle,
         game_img_url: prize.game_img_url,
         game_content: prize.game_content,
+        tsg_id: prize.tsg_id,
         game_duration_days: prize.game_duration_days,
         game_duration_hours: prize.game_duration_hours,
         game_duration_minutes: prize.game_duration_minutes,
-        group_id: prize.group_id
+        group_id: prize.group_id,
+        start_timestamp: start_timestamp as i64,
+        end_timestamp: end_timestamp as i64,
       };
       
       //type_id 1=Featured, 2=Premium
@@ -1240,45 +1245,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     };
     
     Ok(Response::new(ListPrizeResponse {
-      result: result,
-    }))
-    
-  }
-
-  async fn list_current_game(&self, request: Request<ListCurrentGameRequest>, ) -> Result<Response<ListCurrentGameResponse>, Status> {
-    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
-    
-    let req = request.into_inner();
-    
-    let current_games = match prize::Prize::list_current_game_by_user(req.prize_id, &self.pool.clone()).await {
-      Ok(current_games) => current_games,
-      Err(error) => panic!("Error: {}.", error),
-    };
-    
-
-    let mut result: Vec<CurrentGameDetail> = Vec::new();
-    for cg in current_games {
-
-      let start_timestamp = cg.start_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
-      let end_timestamp = cg.end_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
-
-      let li = CurrentGameDetail {
-        current_game_id: cg.id,
-        tour_id: cg.tour_id,
-        set_id: cg.set_id,
-        game_id: cg.game_id,
-        game_title: cg.game_title,
-        game_subtitle: cg.game_subtitle,
-        game_img_url: cg.game_img_url,
-        game_content: cg.game_content,
-        start_timestamp: start_timestamp as i64,
-        end_timestamp: end_timestamp as i64
-      };
-
-      result.push(li);
-    };
-
-    Ok(Response::new(ListCurrentGameResponse {
       result: result,
     }))
     
