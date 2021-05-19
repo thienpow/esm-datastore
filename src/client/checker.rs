@@ -30,7 +30,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     loop {
 
-        let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+        let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
         let prizes = match prize::Prize::list(10000, 0, "".to_string(), 2, &pool_db.clone()).await {
             Ok(prizes) => prizes,
@@ -133,7 +133,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             // 5: if user din't logGLeave, and gem was deducted, then we should return it for the user.
         }  
 
-        let stop = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+        let stop = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
         let diff = stop - start;
         println!("Time Spent = {}", diff);
