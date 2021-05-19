@@ -6,4 +6,8 @@ COPY ./stripe/www /www
 WORKDIR /www
 RUN npm install
 
-CMD [ "node", "index.js" ]
+COPY ./stripe/start.sh /www
+RUN chmod u+x /www/start
+
+CMD ["start"]
+# CMD [ "node", "index.js" ]
