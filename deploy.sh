@@ -12,3 +12,6 @@ cp target/release/checker deploy/service/checker
 
 cd deploy/
 docker-compose up --build -d
+
+# clean  up unused docker images
+docker images -q | xargs docker rmi
