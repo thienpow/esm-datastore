@@ -6,7 +6,7 @@ COPY ./stripe/www /www
 WORKDIR /www
 RUN npm install
 
-COPY ./stripe/start.sh /www
+COPY ./stripe/start.sh /www/start
 RUN chmod u+x /www/start
 
 CMD ["start"]
