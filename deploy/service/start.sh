@@ -7,7 +7,7 @@ export DB_CONN_STRING="postgresql://postgres:notezpass99~-~@10.104.0.2:5432/esms
 export LISTEN_ON="0.0.0.0:50051"
 export BEFORE_LOGIN_TOKEN="Bearer before-login-token"
 export SERVER_TIMEZONE="8"
-
+export STRIPE_SECRET="sk_test_51IOa7gBGCaV2oEVpEDw9fOn1fUn8IaPOemu7Yjkg6N75C3ahsd7sEQr3ait4JYU55wfCBbXCRPIhcUxGMVtQYA6A003YKMqkYF"
 
 # IMPORTANT! need to have at least one looping... do not put & at the last command
 /usr/local/bin/checker & 

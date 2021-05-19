@@ -943,6 +943,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   *
   */
   async fn add_invite(&self, request: Request<AddInviteRequest>, ) -> Result<Response<AddInviteResponse>, Status> {
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
     
     let now = SystemTime::now();
 
@@ -1363,6 +1364,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
   async fn list_buy(&self, request: Request<ListBuyRequest>, ) -> Result<Response<ListBuyResponse>, Status> {
     let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    //TODO: need to check if user_id is exact user of the uid
 
     let req = request.into_inner();
     let buys = match shop::Shop::list(req.user_id.into(), req.limit.into(), req.offset.into(), &self.pool.clone()).await {

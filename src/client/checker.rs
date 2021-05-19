@@ -150,7 +150,7 @@ async fn process_current_games(prize: Prize, pool: &Pool<PostgresConnectionManag
         println!("== prize_id={}, current_games={}", prize.id.to_string(), current_games.len().to_string());
     } else {
 
-        println!("== No current_games found (we add 1 day here, so current game checking is always tomorrow.), finding previous_games...");
+        //println!("== No current_games found (we add 1 day here, so current game checking is always tomorrow.), finding previous_games...");
         let _ = match prize::Prize::list_previous_game(prize.id, &pool.clone()).await {
             Ok(previous_games) => {
                 if previous_games.len() > 0 {
