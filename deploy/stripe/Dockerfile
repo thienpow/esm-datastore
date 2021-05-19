@@ -9,5 +9,5 @@ RUN npm install
 COPY ./stripe/start.sh /www/start
 RUN chmod u+x /www/start
 
-CMD ["start"]
-# CMD [ "node", "index.js" ]
+# CMD ["start"]
+CMD [ "node", "index.js" ]
