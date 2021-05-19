@@ -1371,7 +1371,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     };
     
     let mut result: Vec<BuyDetail> = Vec::new();
-    
+    println!("DEBUG === list_buy: buys.len {}", buys.len());
     for buy in buys {
       
       let created_on = buy.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
@@ -1390,7 +1390,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       result.push(li);
     };
     
-    println!("DEBUG === list_buy: {}", result.len());
+    println!("DEBUG === list_buy: result.len {}", result.len());
     Ok(Response::new(ListBuyResponse {
       result: result,
     }))
