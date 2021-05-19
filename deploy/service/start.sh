@@ -10,5 +10,5 @@ export SERVER_TIMEZONE="8"
 
 
 # IMPORTANT! need to have at least one looping... do not put & at the last command
-# /usr/local/bin/checker & 
+/usr/local/bin/checker & 
 /usr/local/bin/esmserver

@@ -204,7 +204,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
                     end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
                     
                     //append to db.current_game
-                    println!("==== TODO: need to check here");
+                    //println!("==== TODO: need to check here");
                     let cg = CurrentGame {
                         id: 0,
                         prize_id: prize.id,
