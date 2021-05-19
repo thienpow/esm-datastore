@@ -6,7 +6,16 @@ COPY public.config (spinner, invites, games_per_ad, days_to_claim, id) FROM stdi
 {1,2,3}	5	8	30	1
 \.
 
+--
+-- public.checker_log
+--
+COPY public.checker_log (id) FROM stdin;
+1
+\.
 
+--
+-- public.spinner_win_type
+--
 COPY public.spinner_win_type (id, title) FROM stdin;
 1	Tickets
 2	Gems
