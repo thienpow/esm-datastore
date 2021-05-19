@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
-//const stripe = require("stripe")("sk_test_51IOa7gBGCaV2oEVpEDw9fOn1fUn8IaPOemu7Yjkg6N75C3ahsd7sEQr3ait4JYU55wfCBbXCRPIhcUxGMVtQYA6A003YKMqkYF");
 
 router.get("/", (req, res) => {
     res.status(200).send("esm-stripe is ready!");
@@ -108,6 +107,16 @@ router.post("/activate", async (req, res) => {
             cancel_at_period_end: false,
         });
         res.status(201).send({ response });
+    } catch (ex) {
+        console.log("ERROR: ", ex.message);
+    }
+});
+
+router.get("/get_sub", async (req, res) => {
+    const { sub_id } = req.query;
+    try {
+        const response = await stripe.subscriptions.retrieve(sub_id);
+        res.status(201).send(response);
     } catch (ex) {
         console.log("ERROR: ", ex.message);
     }
