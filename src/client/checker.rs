@@ -57,13 +57,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 } else {
     
                     //TODO: process closing here
-                    if prize.is_repeat {
+                    // after closing is called here only do reset/perm-end below
+
+                    if prize.is_repeat { //reset
                         println!("{} prize_id={} Type 1/2, tickets fulled and restart need to be set here",i , prize.id.to_string());
+                        println!("TODO: reset here!!!");
                         //TODO: update the prize scheduled_on to today and reset tickets_collected to 0;
                         //TODO: make sure prize's ticket_collected is kept in a log, to identify previous round's data
     
                         process_current_games(prize, &pool_db.clone()).await?;
-                    } else {
+                    } else { //perm-end
                         println!("{} prize_id={} Type 1/2, TICKETS FULLED, NOT REPEAT and ENDED", i, prize.id.to_string());
                     }
                 }
@@ -72,17 +75,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         } else if prize.type_id == 3 || prize.type_id == 4 {
 
-            if scheduled_on <= adjusted_now {
+            if scheduled_on <= (adjusted_now - 60) {
 
                 // if is_repeat, meaning need to always show, because it never end.
                 if prize.is_repeat {
-                    //result.push(li);
+
+                    //if repeat, prize_status=running, as always
+
                     if scheduled_off >= adjusted_now {
-                        //TODO: process closing here and update the scheduled_on and scheduled_off
-                        println!("{} prize_id={} Type 3/4, is Repeat and restart need to be set here, ", i, prize.id.to_string());
-                        process_current_games(prize, &pool_db.clone()).await?;
-                    } else {
+                        
+                        //scheduled_off is bigger than now, meaning it's not ended
+                        
                         println!("{} prize_id={} Type 3/4, is Repeat and running, ", i, prize.id.to_string());
+                        process_current_games(prize, &pool_db.clone()).await?;
+                        
+                    } else {
+
+                        //scheduled_off is already smaller than now, meaning already ended
+                        //TODO: process closing here and update the scheduled_on and scheduled_off
+
+                        println!("{} prize_id={} Type 3/4, is Repeat and restart need to be set here, ", i, prize.id.to_string());
                         process_current_games(prize, &pool_db.clone()).await?;
                     }
                     
@@ -90,11 +102,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                     // if not repeat, then we need to check if it's still within the duration.
                     if scheduled_off >= adjusted_now {
+
+                        //scheduled_off is bigger than now, meaning it's not ended
+
                         println!("{} prize_id={} Type 3/4, not repeat and running", i, prize.id.to_string());
                         process_current_games(prize, &pool_db.clone()).await?;
+
                     } else {
 
-                        //TODO: process closing here
+                        //scheduled_off is already smaller than now, meaning already ended
+                        //TODO: process closing here and update the prize_status=closed
+
                         println!("{} prize_id={} Type 3/4, NOT REPEAT and ENDED", i, prize.id.to_string());
                     }
                 } 
@@ -132,7 +150,7 @@ async fn process_current_games(prize: Prize, pool: &Pool<PostgresConnectionManag
         println!("== prize_id={}, current_games={}", prize.id.to_string(), current_games.len().to_string());
     } else {
 
-        println!("== No current_games found, finding previous_games...");
+        println!("== No current_games found (we add 1 day here, so current game checking is always tomorrow.), finding previous_games...");
         let _ = match prize::Prize::list_previous_game(prize.id, &pool.clone()).await {
             Ok(previous_games) => {
                 if previous_games.len() > 0 {
