@@ -1390,6 +1390,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       result.push(li);
     };
     
+    println!("DEBUG === list_buy: {}", result.len());
     Ok(Response::new(ListBuyResponse {
       result: result,
     }))
