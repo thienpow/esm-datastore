@@ -1,6 +1,6 @@
 //use std::thread;
 use std::time::Duration;
-
+use std::{thread, time};
 use std::time::{
     SystemTime, 
     UNIX_EPOCH
@@ -19,7 +19,6 @@ mod config;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
-    let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
     let config = config::get_configuration();
     
     let pg_mgr = PostgresConnectionManager::new_from_stringlike(config.db_conn_string, tokio_postgres::NoTls).unwrap();
@@ -29,114 +28,120 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
 
-    
-    let prizes = match prize::Prize::list(10000, 0, "".to_string(), 2, &pool_db.clone()).await {
-        Ok(prizes) => prizes,
-        Err(error) => panic!("Error: {}.", error),
-    };
-    
-    let mut i = 0;
-    //println!("Total Prizes={}", prizes.len().to_string());
-    for prize in prizes {
+    loop {
+
+        let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+
+        let prizes = match prize::Prize::list(10000, 0, "".to_string(), 2, &pool_db.clone()).await {
+            Ok(prizes) => prizes,
+            Err(error) => panic!("Error: {}.", error),
+        };
         
-        i = i + 1;
-       
-        let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        let timezone_seconds = prize.timezone * (3600 as f64);
-
-        let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (config.server_timezone * 3600) + (timezone_seconds as u64);
-        if prize.type_id == 1 || prize.type_id == 2 {
+        let mut i = 0;
         
-            if scheduled_on <= adjusted_now {
-                if prize.tickets_collected < prize.tickets_required {
+        for prize in prizes {
+            
+            i = i + 1;
+        
+            let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+            let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
+            let timezone_seconds = prize.timezone * (3600 as f64);
 
-                    println!("{} prize_id={} Type 1/2, running, ", i, prize.id.to_string());
-                    process_current_games(prize, &pool_db.clone()).await?;
-                    
-                } else {
-    
-                    //TODO: process closing here
-                    // after closing is called here only do reset/perm-end below
+            let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (config.server_timezone * 3600) + (timezone_seconds as u64);
+            if prize.type_id == 1 || prize.type_id == 2 {
+            
+                if scheduled_on <= adjusted_now {
+                    if prize.tickets_collected < prize.tickets_required {
 
-                    if prize.is_repeat { //reset
-                        println!("{} prize_id={} Type 1/2, tickets fulled and restart need to be set here",i , prize.id.to_string());
-                        println!("TODO: reset here!!!");
-                        //TODO: update the prize scheduled_on to today and reset tickets_collected to 0;
-                        //TODO: make sure prize's ticket_collected is kept in a log, to identify previous round's data
-    
+                        println!("{} prize_id={} Type 1/2, running, ", i, prize.id.to_string());
                         process_current_games(prize, &pool_db.clone()).await?;
-                    } else { //perm-end
-                        println!("{} prize_id={} Type 1/2, TICKETS FULLED, NOT REPEAT and ENDED", i, prize.id.to_string());
+                        
+                    } else {
+        
+                        //TODO: process closing here
+                        // after closing is called here only do reset/perm-end below
+
+                        if prize.is_repeat { //reset
+                            println!("{} prize_id={} Type 1/2, tickets fulled and restart need to be set here",i , prize.id.to_string());
+                            println!("TODO: reset here!!!");
+                            //TODO: update the prize scheduled_on to today and reset tickets_collected to 0;
+                            //TODO: make sure prize's ticket_collected is kept in a log, to identify previous round's data
+        
+                            process_current_games(prize, &pool_db.clone()).await?;
+                        } else { //perm-end
+                            println!("{} prize_id={} Type 1/2, TICKETS FULLED, NOT REPEAT and ENDED", i, prize.id.to_string());
+                        }
                     }
                 }
+                
+
+            } else if prize.type_id == 3 || prize.type_id == 4 {
+
+                if scheduled_on <= (adjusted_now - 60) {
+
+                    // if is_repeat, meaning need to always show, because it never end.
+                    if prize.is_repeat {
+
+                        //if repeat, prize_status=running, as always
+
+                        if scheduled_off >= adjusted_now {
+                            
+                            //scheduled_off is bigger than now, meaning it's not ended
+                            
+                            println!("{} prize_id={} Type 3/4, is Repeat and running, ", i, prize.id.to_string());
+                            process_current_games(prize, &pool_db.clone()).await?;
+                            
+                        } else {
+
+                            //scheduled_off is already smaller than now, meaning already ended
+                            //TODO: process closing here and update the scheduled_on and scheduled_off
+
+                            println!("{} prize_id={} Type 3/4, is Repeat and restart need to be set here, ", i, prize.id.to_string());
+                            process_current_games(prize, &pool_db.clone()).await?;
+                        }
+                        
+                    } else {
+
+                        // if not repeat, then we need to check if it's still within the duration.
+                        if scheduled_off >= adjusted_now {
+
+                            //scheduled_off is bigger than now, meaning it's not ended
+
+                            println!("{} prize_id={} Type 3/4, not repeat and running", i, prize.id.to_string());
+                            process_current_games(prize, &pool_db.clone()).await?;
+
+                        } else {
+
+                            //scheduled_off is already smaller than now, meaning already ended
+                            //TODO: process closing here and update the prize_status=closed
+
+                            println!("{} prize_id={} Type 3/4, NOT REPEAT and ENDED", i, prize.id.to_string());
+                        }
+                    } 
+                    
+                } 
+
             }
             
+            println!("");
+            
+            //TODO: check the following requirements,
+            // 1: update the published prize that is suppose to be running to "running" for the prize_status
+            // 2: closing the prize, update the prize_status to closing, and generate winners
+            // 3: finally, close the prize, update the prize status to "closed" after winners is generated. closed prize is recorded into closed_prize_log table
+            // 4: only if the prize is closed then only allowed user to claim.
+            // 5: if user din't logGLeave, and gem was deducted, then we should return it for the user.
+        }  
 
-        } else if prize.type_id == 3 || prize.type_id == 4 {
+        let stop = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
 
-            if scheduled_on <= (adjusted_now - 60) {
+        let diff = stop - start;
+        println!("Time Spent = {}", diff);
 
-                // if is_repeat, meaning need to always show, because it never end.
-                if prize.is_repeat {
+        let time_wait = time::Duration::from_secs(config.checker_time_wait);
+        thread::sleep(time_wait);
+    }
 
-                    //if repeat, prize_status=running, as always
-
-                    if scheduled_off >= adjusted_now {
-                        
-                        //scheduled_off is bigger than now, meaning it's not ended
-                        
-                        println!("{} prize_id={} Type 3/4, is Repeat and running, ", i, prize.id.to_string());
-                        process_current_games(prize, &pool_db.clone()).await?;
-                        
-                    } else {
-
-                        //scheduled_off is already smaller than now, meaning already ended
-                        //TODO: process closing here and update the scheduled_on and scheduled_off
-
-                        println!("{} prize_id={} Type 3/4, is Repeat and restart need to be set here, ", i, prize.id.to_string());
-                        process_current_games(prize, &pool_db.clone()).await?;
-                    }
-                    
-                } else {
-
-                    // if not repeat, then we need to check if it's still within the duration.
-                    if scheduled_off >= adjusted_now {
-
-                        //scheduled_off is bigger than now, meaning it's not ended
-
-                        println!("{} prize_id={} Type 3/4, not repeat and running", i, prize.id.to_string());
-                        process_current_games(prize, &pool_db.clone()).await?;
-
-                    } else {
-
-                        //scheduled_off is already smaller than now, meaning already ended
-                        //TODO: process closing here and update the prize_status=closed
-
-                        println!("{} prize_id={} Type 3/4, NOT REPEAT and ENDED", i, prize.id.to_string());
-                    }
-                } 
-                
-            } 
-
-        }
-        
-        println!("");
-        
-        //TODO: check the following requirements,
-        // 1: update the published prize that is suppose to be running to "running" for the prize_status
-        // 2: closing the prize, update the prize_status to closing, and generate winners
-        // 3: finally, close the prize, update the prize status to "closed" after winners is generated. closed prize is recorded into closed_prize_log table
-        // 4: only if the prize is closed then only allowed user to claim.
-        // 5: if user din't logGLeave, and gem was deducted, then we should return it for the user.
-    }  
-
-    let stop = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
-
-    let diff = stop - start;
-    println!("Time Spent = {}", diff);
-
-    Ok(())
 }
 
 async fn process_current_games(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, Box<dyn std::error::Error>> {
@@ -187,7 +192,6 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
     };
 
     let mut start_timestamp = scheduled_on;
-    
     
     let mut final_end_timestamp = scheduled_off;
     if adjusted_now > scheduled_off {

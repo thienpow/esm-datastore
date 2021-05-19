@@ -4,6 +4,7 @@ use std::env;
 pub struct Configuration {
     pub db_conn_string: String,
     pub server_timezone: u64,
+    pub checker_time_wait: u64,
 }
 
 #[cfg(debug_assertions)]
@@ -23,5 +24,6 @@ pub fn get_configuration() -> Configuration {
     Configuration {
         db_conn_string: expect_env_var("DB_CONN_STRING", "postgresql://postgres:notezpass99~-~@159.65.137.25:5432/esmstore"),
         server_timezone: expect_env_var("SERVER_TIMEZONE", "8").parse::<u64>().unwrap(),
+        checker_time_wait: expect_env_var("CHECKER_TIME_WAIT", "60").parse::<u64>().unwrap(),
     }
 }
