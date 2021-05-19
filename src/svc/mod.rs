@@ -165,6 +165,6 @@ pub async fn verify_exact_match(uid: String, user_id: i64, pool: &Pool<PostgresC
         return Err(Status::permission_denied("Not the right exact user to do this!"))
       }
     },
-    Err(error) =>  Err(Status::permission_denied(""))
+    Err(error) =>  Err(Status::permission_denied(format!("Error: verify_exact_match {}.", error)))
   }
 }

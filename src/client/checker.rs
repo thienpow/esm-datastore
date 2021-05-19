@@ -187,8 +187,8 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
     };
 
     let mut start_timestamp = scheduled_on;
-    let mut end_timestamp = 0;
-
+    
+    
     let mut final_end_timestamp = scheduled_off;
     if adjusted_now > scheduled_off {
         final_end_timestamp = adjusted_now + 3600 * 24;
@@ -201,7 +201,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
             if previous_tour_id > 0 {
 
                 if is_after_previous {
-                    end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
+                    let end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
                     
                     //append to db.current_game
                     //println!("==== TODO: need to check here");
@@ -234,7 +234,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
                 }
 
             } else { // if 0 then means genearate from scheduled_on of prize
-                end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
+                let end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
                 
                 
                 //append to db.current_game only if the end_timestamp still not yet end for now.

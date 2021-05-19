@@ -10672,7 +10672,8 @@ proto.api.esm.LogGLeaveRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     secret: jspb.Message.getFieldWithDefault(msg, 1, ""),
     id: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    gameScore: jspb.Message.getFieldWithDefault(msg, 3, 0)
+    userId: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    gameScore: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -10718,6 +10719,10 @@ proto.api.esm.LogGLeaveRequest.deserializeBinaryFromReader = function(msg, reade
       msg.setId(value);
       break;
     case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setUserId(value);
+      break;
+    case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGameScore(value);
       break;
@@ -10764,10 +10769,17 @@ proto.api.esm.LogGLeaveRequest.serializeBinaryToWriter = function(message, write
       f
     );
   }
+  f = message.getUserId();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
+      f
+    );
+  }
   f = message.getGameScore();
   if (f !== 0) {
     writer.writeInt32(
-      3,
+      4,
       f
     );
   }
@@ -10811,10 +10823,10 @@ proto.api.esm.LogGLeaveRequest.prototype.setId = function(value) {
 
 
 /**
- * optional int32 game_score = 3;
+ * optional int64 user_id = 3;
  * @return {number}
  */
-proto.api.esm.LogGLeaveRequest.prototype.getGameScore = function() {
+proto.api.esm.LogGLeaveRequest.prototype.getUserId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -10823,8 +10835,26 @@ proto.api.esm.LogGLeaveRequest.prototype.getGameScore = function() {
  * @param {number} value
  * @return {!proto.api.esm.LogGLeaveRequest} returns this
  */
-proto.api.esm.LogGLeaveRequest.prototype.setGameScore = function(value) {
+proto.api.esm.LogGLeaveRequest.prototype.setUserId = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int32 game_score = 4;
+ * @return {number}
+ */
+proto.api.esm.LogGLeaveRequest.prototype.getGameScore = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.LogGLeaveRequest} returns this
+ */
+proto.api.esm.LogGLeaveRequest.prototype.setGameScore = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
@@ -12731,7 +12761,8 @@ proto.api.esm.LogSLeaveRequest.prototype.toObject = function(opt_includeInstance
 proto.api.esm.LogSLeaveRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    ticketsWon: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    userId: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    ticketsWon: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -12773,6 +12804,10 @@ proto.api.esm.LogSLeaveRequest.deserializeBinaryFromReader = function(msg, reade
       msg.setId(value);
       break;
     case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setUserId(value);
+      break;
+    case 3:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setTicketsWon(value);
       break;
@@ -12812,10 +12847,17 @@ proto.api.esm.LogSLeaveRequest.serializeBinaryToWriter = function(message, write
       f
     );
   }
+  f = message.getUserId();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
   f = message.getTicketsWon();
   if (f !== 0) {
     writer.writeInt32(
-      2,
+      3,
       f
     );
   }
@@ -12841,10 +12883,10 @@ proto.api.esm.LogSLeaveRequest.prototype.setId = function(value) {
 
 
 /**
- * optional int32 tickets_won = 2;
+ * optional int64 user_id = 2;
  * @return {number}
  */
-proto.api.esm.LogSLeaveRequest.prototype.getTicketsWon = function() {
+proto.api.esm.LogSLeaveRequest.prototype.getUserId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
@@ -12853,8 +12895,26 @@ proto.api.esm.LogSLeaveRequest.prototype.getTicketsWon = function() {
  * @param {number} value
  * @return {!proto.api.esm.LogSLeaveRequest} returns this
  */
-proto.api.esm.LogSLeaveRequest.prototype.setTicketsWon = function(value) {
+proto.api.esm.LogSLeaveRequest.prototype.setUserId = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int32 tickets_won = 3;
+ * @return {number}
+ */
+proto.api.esm.LogSLeaveRequest.prototype.getTicketsWon = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.LogSLeaveRequest} returns this
+ */
+proto.api.esm.LogSLeaveRequest.prototype.setTicketsWon = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 

@@ -730,19 +730,24 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
 
   async fn log_g_leave(&self, request: Request<LogGLeaveRequest>, ) -> Result<Response<LogGLeaveResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
     
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
+
     let now = SystemTime::now();
 
     //TODO: check if the req.secret is generated during log_enter
     // if yes, then allow recording the game score
     // generated secret key timestamp must not allowed more than 30 minutes
-    let req = request.into_inner();
+    
     let gplayer = gplayer::GPlayer {
       id: req.id.into(),
       prize_id: 0,
       game_id: 0,
-      user_id: 0,
+      user_id: user_id,
       enter_timestamp: now,
       leave_timestamp: now,
       game_score: req.game_score.into(),
@@ -922,15 +927,19 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
   
   async fn log_s_leave(&self, request: Request<LogSLeaveRequest>, ) -> Result<Response<LogSLeaveResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
+    let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
+    
     let now = SystemTime::now();
     
-    let req = request.into_inner();
 
     let spin_detail = gplayer::LogSDetail {
       id: req.id.into(),
-      user_id: 0,
+      user_id: user_id,
       enter_timestamp: now,
       leave_timestamp: now,
       tickets_won: req.tickets_won.into(),
@@ -1744,7 +1753,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let user_id: i64 = req.user_id.into();
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
 
-    let result = match winner::Winner::claim(req.id.into(), &self.pool.clone()).await {
+    let result = match winner::Winner::claim(req.id.into(), user_id, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
