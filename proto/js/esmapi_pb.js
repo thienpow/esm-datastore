@@ -20384,7 +20384,8 @@ proto.api.esm.ClaimWinnerRequest.prototype.toObject = function(opt_includeInstan
  */
 proto.api.esm.ClaimWinnerRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    userId: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -20425,6 +20426,10 @@ proto.api.esm.ClaimWinnerRequest.deserializeBinaryFromReader = function(msg, rea
       var value = /** @type {number} */ (reader.readInt64());
       msg.setId(value);
       break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setUserId(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -20461,6 +20466,13 @@ proto.api.esm.ClaimWinnerRequest.serializeBinaryToWriter = function(message, wri
       f
     );
   }
+  f = message.getUserId();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -20479,6 +20491,24 @@ proto.api.esm.ClaimWinnerRequest.prototype.getId = function() {
  */
 proto.api.esm.ClaimWinnerRequest.prototype.setId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional int64 user_id = 2;
+ * @return {number}
+ */
+proto.api.esm.ClaimWinnerRequest.prototype.getUserId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.ClaimWinnerRequest} returns this
+ */
+proto.api.esm.ClaimWinnerRequest.prototype.setUserId = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 

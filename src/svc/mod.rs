@@ -139,7 +139,7 @@ pub async fn check_is_user_then_admin(meta: &MetadataMap, jwk: &JwkAuth) ->  Res
 */
 
 
-pub async fn check_is_exact_user(meta: &MetadataMap, jwk: &JwkAuth) ->  Result<bool, Status> {
+pub async fn check_is_exact_user(meta: &MetadataMap, jwk: &JwkAuth) ->  Result<String, Status> {
   
   let token = meta.get("authorization").unwrap().to_str().unwrap().to_string();
   let uid = meta.get("uid").unwrap().to_str().unwrap().to_string();
@@ -149,8 +149,22 @@ pub async fn check_is_exact_user(meta: &MetadataMap, jwk: &JwkAuth) ->  Result<b
       if t.claims.sub != uid {
         return Err(Status::permission_denied("Not the right user to do this!"))
       }
-      Ok(true)
+      Ok(uid)
     },
     _ =>  Err(Status::permission_denied(""))
+  }
+}
+
+pub async fn verify_exact_match(uid: String, user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<bool, Status> {
+
+  match user::User::verify_exact_match(uid, user_id, pool).await {
+    Ok(result) => {
+      if result {
+        Ok(true)
+      } else {
+        return Err(Status::permission_denied("Not the right exact user to do this!"))
+      }
+    },
+    Err(error) =>  Err(Status::permission_denied(""))
   }
 }

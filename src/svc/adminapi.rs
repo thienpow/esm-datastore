@@ -34,13 +34,8 @@ use adminapi_proto::{
   TimezonesDetail,
   // User
   SignInRequest, SignInResponse,
-  AddUserRequest, AddUserResponse,
   UpdateEmailConfirmedRequest, UpdateEmailConfirmedResponse,
-  UpdateSocialLinkFbRequest, UpdateSocialLinkFbResponse,
-  UpdateSocialLinkGoogleRequest, UpdateSocialLinkGoogleResponse,
   UpdateUserStatusGemBalanceRequest, UpdateUserStatusGemBalanceResponse,
-  UpdateAddressRequest, UpdateAddressResponse,
-  UpdateUserSettingsRequest, UpdateUserSettingsResponse,
   ChangePasswordRequest, ChangePasswordResponse,
   ListUserRequest, ListUserResponse, 
   GetUserCountRequest, GetUserCountResponse,
@@ -391,59 +386,6 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
   }
     
-  async fn add_user(&self, request: Request<AddUserRequest>, ) -> Result<Response<AddUserResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
-
-    let now = SystemTime::now();
-
-    let req = request.into_inner();
-    
-    let user = user::User {
-      id: 0,
-      username: req.username.into(),
-      passhash: cryptic::hash_password(&req.password).unwrap(),
-      email: req.email.into(),
-      phone: req.phone.into(),
-      firstname: req.firstname.into(),
-      lastname: req.lastname.into(),
-      created_on: now,
-      last_login: now,
-      role_id: 200,
-      status: 1,
-      gem_balance: 0,
-      social_link_fb: req.social_link_fb.into(),
-      social_link_google: req.social_link_google.into(),
-      avatar_url: req.avatar_url.into(),
-      exp: 0,
-
-      //address
-      full_name: "".to_string(),
-      address: "".to_string(),
-      city: "".to_string(),
-      state: "".to_string(),
-      zip_code: "".to_string(),
-      country: "".to_string(),
-      country_code: 0,
-      //settings
-      is_notify_allowed:  true,
-      is_notify_new_reward:  true,
-      is_notify_new_tournament:  true,
-      is_notify_tour_ending:  true,
-      nick_name: "".to_string(),
-      msg_token: "".to_string(),
-    };
-    
-    let result = match user::User::add(user, &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(AddUserResponse {
-      result: result,
-    }))
-
-  }
-
 
   async fn update_email_confirmed(&self, request: Request<UpdateEmailConfirmedRequest>, ) -> Result<Response<UpdateEmailConfirmedResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
@@ -461,37 +403,6 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
   }
 
-  async fn update_social_link_fb(&self, request: Request<UpdateSocialLinkFbRequest>, ) -> Result<Response<UpdateSocialLinkFbResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
-
-    let req = request.into_inner();
-    
-    let result = match user::User::update_social_link_fb(req.id.into(), req.fb_id.into(), &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(UpdateSocialLinkFbResponse {
-      result: result,
-    }))
-
-  }
-
-  async fn update_social_link_google(&self, request: Request<UpdateSocialLinkGoogleRequest>, ) -> Result<Response<UpdateSocialLinkGoogleResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
-
-    let req = request.into_inner();
-    
-    let result = match user::User::update_social_link_google(req.id.into(), req.google_id.into(), &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(UpdateSocialLinkGoogleResponse {
-      result: result,
-    }))
-
-  }
 
   async fn update_user_status_gem_balance(&self, request: Request<UpdateUserStatusGemBalanceRequest>, ) -> Result<Response<UpdateUserStatusGemBalanceResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
@@ -509,56 +420,6 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
   }
 
-  async fn update_address(&self, request: Request<UpdateAddressRequest>, ) -> Result<Response<UpdateAddressResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
-
-    let req = request.into_inner();
-    let address = user::Address {
-      id: req.id.into(),
-      full_name: req.full_name.into(),
-      address: req.address.into(),
-      city: req.city.into(),
-      state: req.state.into(),
-      zip_code: req.zip_code.into(),
-      country: req.country.into(),
-      country_code: req.country_code.into(),
-    };
-    
-    let result = match user::User::update_address(address, &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(UpdateAddressResponse {
-      result: result,
-    }))
-
-  }
-
-  async fn update_user_settings(&self, request: Request<UpdateUserSettingsRequest>, ) -> Result<Response<UpdateUserSettingsResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
-
-    let req = request.into_inner();
-    let settings = user::Settings {
-      id: req.id.into(),
-      is_notify_allowed: req.is_notify_allowed.into(),
-      is_notify_new_reward: req.is_notify_new_reward.into(),
-      is_notify_new_tournament: req.is_notify_new_tournament.into(),
-      is_notify_tour_ending: req.is_notify_tour_ending.into(),
-      nick_name: req.nick_name.into(),
-      avatar_url: req.avatar_url.into()
-    };
-    
-    let result = match user::User::update_settings(settings, &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(UpdateUserSettingsResponse {
-      result: result,
-    }))
-
-  }
   async fn change_password(&self, request: Request<ChangePasswordRequest>, ) -> Result<Response<ChangePasswordResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 

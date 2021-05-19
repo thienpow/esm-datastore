@@ -18,13 +18,8 @@ service AdminApi {
   rpc ListTimezones(ListTimezonesRequest) returns (ListTimezonesResponse) {}
 
   // User
-  rpc AddUser(AddUserRequest) returns (AddUserResponse) {}
   rpc UpdateEmailConfirmed(UpdateEmailConfirmedRequest) returns (UpdateEmailConfirmedResponse) {}
-  rpc UpdateSocialLinkFB(UpdateSocialLinkFBRequest) returns (UpdateSocialLinkFBResponse) {}
-  rpc UpdateSocialLinkGoogle(UpdateSocialLinkGoogleRequest) returns (UpdateSocialLinkGoogleResponse) {}
   rpc UpdateUserStatusGemBalance(UpdateUserStatusGemBalanceRequest) returns (UpdateUserStatusGemBalanceResponse) {}
-  rpc UpdateAddress(UpdateAddressRequest) returns (UpdateAddressResponse) {}
-  rpc UpdateUserSettings(UpdateUserSettingsRequest) returns (UpdateUserSettingsResponse) {}
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
   rpc ListUser(ListUserRequest) returns (ListUserResponse) {}
   rpc GetUserCount(GetUserCountRequest) returns (GetUserCountResponse) {}
@@ -214,23 +209,6 @@ message SignInResponse {
 }
 
 
-//Add a new user
-message AddUserRequest {
-  string username = 1;
-  string password = 2;
-  string email = 3;
-  string phone = 4;
-  string firstname = 5;
-  string lastname = 6;
-  string social_link_fb = 7;
-  string social_link_google = 8;
-  string avatar_url = 9;
-  string id_token = 10; // firebase.auth().currentUser.getIdToken
-}
-message AddUserResponse {
-  string result = 1; //response a id
-}
-
 //Update an existing user data
 message UpdateEmailConfirmedRequest {
   int64 id = 1;
@@ -241,59 +219,12 @@ message UpdateEmailConfirmedResponse {
 }
 
 //Update an existing user data
-message UpdateSocialLinkFBRequest {
-  int64 id = 1;
-  string fb_id = 2;
-}
-message UpdateSocialLinkFBResponse {
-  string result = 1;
-}
-
-//Update an existing user data
-message UpdateSocialLinkGoogleRequest {
-  int64 id = 1;
-  string google_id = 2;
-}
-message UpdateSocialLinkGoogleResponse {
-  string result = 1;
-}
-
-//Update an existing user data
 message UpdateUserStatusGemBalanceRequest {
   int64 id = 1;
   int32 status = 2;
   int64 gem_balance = 3;
 }
 message UpdateUserStatusGemBalanceResponse {
-  string result = 1;
-}
-
-//Update an existing user data
-message UpdateAddressRequest {
-  int64 id = 1;
-  string full_name = 2;
-  string address = 3;
-  string city = 4;
-  string state = 5;
-  string zip_code= 6;
-  string country = 7;
-  int32 country_code = 8;
-}
-message UpdateAddressResponse {
-  string result = 1;
-}
-
-//Update an existing user data
-message UpdateUserSettingsRequest {
-  int64 id = 1;
-  bool is_notify_allowed = 2;
-  bool is_notify_new_reward = 3;
-  bool is_notify_new_tournament = 4;
-  bool is_notify_tour_ending = 5;
-  string nick_name = 6;
-  string avatar_url = 7;
-}
-message UpdateUserSettingsResponse {
   string result = 1;
 }
 

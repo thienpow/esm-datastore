@@ -328,16 +328,19 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
 
   async fn update_msg_token(&self, request: Request<UpdateMsgTokenRequest>, ) -> Result<Response<UpdateMsgTokenResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+   
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
+    let user_id: i64 = req.id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
 
     let _ = match svc::notify("System Notification", "Your Message Token is Updated", &req.token).await {
       Ok(_) => {},
       Err(error) => panic!("Error: {}.", error),
     };
     
-    let result = match user::User::update_msg_token(req.id.into(), req.token.into(), &self.pool.clone()).await {
+    let result = match user::User::update_msg_token(user_id, req.token.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -349,11 +352,14 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
   async fn update_social_link_fb(&self, request: Request<UpdateSocialLinkFbRequest>, ) -> Result<Response<UpdateSocialLinkFbResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
+    let user_id: i64 = req.id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
     
-    let result = match user::User::update_social_link_fb(req.id.into(), req.fb_id.into(), &self.pool.clone()).await {
+    let result = match user::User::update_social_link_fb(user_id, req.fb_id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -365,11 +371,14 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
   async fn update_social_link_google(&self, request: Request<UpdateSocialLinkGoogleRequest>, ) -> Result<Response<UpdateSocialLinkGoogleResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
+    let user_id: i64 = req.id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
     
-    let result = match user::User::update_social_link_google(req.id.into(), req.google_id.into(), &self.pool.clone()).await {
+    let result = match user::User::update_social_link_google(user_id, req.google_id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),
     };
@@ -381,11 +390,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
   async fn update_address(&self, request: Request<UpdateAddressRequest>, ) -> Result<Response<UpdateAddressResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
+    let user_id: i64 = req.id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
+
     let address = user::Address {
-      id: req.id.into(),
+      id: user_id,
       full_name: req.full_name.into(),
       address: req.address.into(),
       city: req.city.into(),
@@ -407,11 +420,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
   async fn update_user_settings(&self, request: Request<UpdateUserSettingsRequest>, ) -> Result<Response<UpdateUserSettingsResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
+    let user_id: i64 = req.id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
+
     let settings = user::Settings {
-      id: req.id.into(),
+      id: user_id,
       is_notify_allowed: req.is_notify_allowed.into(),
       is_notify_new_reward: req.is_notify_new_reward.into(),
       is_notify_new_tournament: req.is_notify_new_tournament.into(),
@@ -649,14 +666,17 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   *
   */
   async fn log_g_enter(&self, request: Request<LogGEnterRequest>, ) -> Result<Response<LogGEnterResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
 
     let now = SystemTime::now();
     
     //TODO: check the req.secret key see if the key is originate from our system
-    let req = request.into_inner();
-    let user_id: i64 = req.user_id.into();
-
+    
     let gplayer = gplayer::GPlayer {
       id: 0,
       prize_id: req.prize_id.into(),
@@ -838,10 +858,13 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
   async fn get_spin_available(&self, request: Request<GetSpinAvailableRequest>, ) -> Result<Response<GetSpinAvailableResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
     let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
+
     
     match gplayer::GPlayer::check_spin_available(user_id, &self.pool.clone()).await {
       Ok(spin_available) => {
@@ -856,12 +879,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
   
   async fn log_s_enter(&self, request: Request<LogSEnterRequest>, ) -> Result<Response<LogSEnterResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
-
-    let now = SystemTime::now();
     
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
     let req = request.into_inner();
     let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
+    
+    let now = SystemTime::now();
+    
 
     match gplayer::GPlayer::check_spin_available(user_id, &self.pool.clone()).await {
       Ok(spin_available) => {
@@ -943,15 +969,19 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   *
   */
   async fn add_invite(&self, request: Request<AddInviteRequest>, ) -> Result<Response<AddInviteResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
     
     let now = SystemTime::now();
 
-    let req = request.into_inner();
     let invited_by = req.invited_by.into();
     let invites = invites::Invites {
       id: 0,
-      user_id: req.user_id.into(),
+      user_id: user_id,
       invited_by: invited_by,
       invited_date: now
     };
@@ -1326,11 +1356,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   *
   */
   async fn buy(&self, request: Request<BuyRequest>, ) -> Result<Response<BuyResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
     
     let now = SystemTime::now();
 
-    let req = request.into_inner();
     let item_id = req.item_id.into();
     if item_id == 0 {
       panic!("Error: item_id should not be 0.");
@@ -1341,7 +1375,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       item_type_id: req.item_type_id.into(),
       item_id: item_id,
       item_title: "".to_string(),
-      user_id: req.user_id.into(),
+      user_id: user_id,
       user_nick_name: "".to_string(),
       user_email: "".to_string(),
       payment_id: req.payment_id.into(),
@@ -1363,12 +1397,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
 
   async fn list_buy(&self, request: Request<ListBuyRequest>, ) -> Result<Response<ListBuyResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
-
-    //TODO: need to check if user_id is exact user of the uid
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
-    let buys = match shop::Shop::list(req.user_id.into(), req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+    let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
+
+
+    let buys = match shop::Shop::list(user_id, req.limit.into(), req.offset.into(), &self.pool.clone()).await {
       Ok(buys) => buys,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1609,11 +1646,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
   async fn list_winner_unclaimed(&self, request: Request<ListWinnerUnclaimedRequest>, ) -> Result<Response<ListWinnerUnclaimedResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
     
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
     let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
     
-    let winners = match winner::Winner::list_unclaimed(req.user_id.into(), &self.pool.clone()).await {
+    
+    let winners = match winner::Winner::list_unclaimed(user_id, &self.pool.clone()).await {
       Ok(winners) => winners,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1650,11 +1691,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
   async fn list_winner_claimed(&self, request: Request<ListWinnerClaimedRequest>, ) -> Result<Response<ListWinnerClaimedResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
     
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
     let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
     
-    let winners = match winner::Winner::list_claimed(req.user_id.into(), &self.pool.clone()).await {
+    
+    let winners = match winner::Winner::list_claimed(user_id, &self.pool.clone()).await {
       Ok(winners) => winners,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -1693,10 +1738,12 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
 
   async fn claim_winner(&self, request: Request<ClaimWinnerRequest>, ) -> Result<Response<ClaimWinnerResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
-    
+    let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
+
     let result = match winner::Winner::claim(req.id.into(), &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(error) => error.to_string(),

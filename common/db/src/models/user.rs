@@ -448,6 +448,24 @@ impl User {
 
     }
 
+    pub async fn verify_exact_match(uid: String, id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<bool, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let sql = "SELECT COUNT(id) FROM public.\"user\" WHERE status=1 AND username=$1 AND id=$2;";
+
+      let stmt = conn.prepare(sql).await?;
+      let row = conn.query_one(&stmt, &[&uid, &id]).await?;
+      
+      let count: i64 = row.get::<usize, i64>(0);
+
+      if count > 0 {
+        Ok(true)
+      } else {
+        Ok(false)
+      }
+
+    }
+
     /*
     pub async fn get_user_status_gem_balance(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<(i32, i64), RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
