@@ -69,9 +69,9 @@ impl Shop {
             user_nick_name: "".to_string(),
             user_email: "".to_string(),
             payment_id: row.get(5),
-            sub_id: row.get(7),
-            price: row.get(8),
-            created_on: row.get(9)
+            sub_id: row.get(6),
+            price: row.get(7),
+            created_on: row.get(8)
           };
   
           vec.push(new_buy);
