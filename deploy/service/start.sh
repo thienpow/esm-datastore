@@ -8,5 +8,7 @@ export LISTEN_ON="0.0.0.0:50051"
 export BEFORE_LOGIN_TOKEN="Bearer before-login-token"
 export SERVER_TIMEZONE="8"
 
-/usr/local/bin/esmserver
 
+# need to have at least one looping
+# /usr/local/bin/checker & 
+/usr/local/bin/esmserver
