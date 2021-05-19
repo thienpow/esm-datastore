@@ -4,12 +4,11 @@ FROM node:latest
 
 COPY ./stripe/www /www
 
-COPY ./stripe/start.sh /www/start
-RUN chmod u+x /www/start
+COPY ./stripe/start.sh /start
+RUN chmod u+x /start
 
 WORKDIR /www
 RUN npm install
 
 
-CMD ["/www/start"]
-# CMD [ "node", "index.js" ]
+CMD ["/start"]
