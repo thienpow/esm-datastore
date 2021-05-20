@@ -339,7 +339,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
             }
         }
     
-        println!("==== bottom start_timestamp {} == final_end_timestamp {}", start_timestamp, final_end_timestamp);
+        //println!("==== bottom start_timestamp {} == final_end_timestamp {}", start_timestamp, final_end_timestamp);
     }
     
     
