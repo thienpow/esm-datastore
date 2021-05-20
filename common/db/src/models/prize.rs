@@ -141,6 +141,16 @@ impl Prize {
       Ok(n)
     }
     
+    pub async fn reset_schedule(prize_id: i64, scheduled_on: SystemTime, scheduled_off: SystemTime, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"prize\" SET scheduled_on=$1, scheduled_off=$2, tickets_collected=0, status_progress=1 WHERE id=$3;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&scheduled_on, &scheduled_off, &prize_id]).await?;
+    
+      Ok(n)
+    }
+
     pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

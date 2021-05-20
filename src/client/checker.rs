@@ -59,12 +59,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     } else {
         
                         //TODO: process closing here
+                        println!("TODO: do closing!!!");
                         // after closing is called here only do reset/perm-end below
 
                         if prize.is_repeat { //reset
                             println!("{} prize_id={} Type 1/2, tickets fulled and restart need to be set here",i , prize.id.to_string());
-                            println!("TODO: reset here!!!");
-                            //TODO: update the prize scheduled_on to today and reset tickets_collected to 0;
+
+                            let u_new_scheduled_on: u64 = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+                            let duration_days: u64 = (prize.duration_days as u64) * 86400;
+                            let duration_hours: u64 = (prize.duration_hours as u64) * 3600;
+                            let new_scheduled_on: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on, 0);
+                            let new_scheduled_off: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on + duration_days + duration_hours, 0);
+                            
+                            //update the prize scheduled_on to today and reset tickets_collected to 0;
+                            let _ = match prize::Prize::reset_schedule(prize.id, new_scheduled_on, new_scheduled_off, &pool_db.clone()).await {
+                                Ok(_) => (),
+                                Err(error) => panic!("== reset_schedule Error: {}.", error),
+                            };
                             //TODO: make sure prize's ticket_collected is kept in a log, to identify previous round's data
         
                             process_current_games(prize, &pool_db.clone()).await?;
@@ -94,9 +105,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         } else {
 
                             //scheduled_off is already smaller than now, meaning already ended
-                            //TODO: process closing here and update the scheduled_on and scheduled_off
+                            //TODO: process closing here and 
 
                             println!("{} prize_id={} Type 3/4, is Repeat and restart need to be set here, ", i, prize.id.to_string());
+
+
+                            let u_new_scheduled_on: u64 = adjusted_now;
+                            let duration_days: u64 = (prize.duration_days as u64) * 86400;
+                            let duration_hours: u64 = (prize.duration_hours as u64) * 3600;
+                            let new_scheduled_on: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on, 0);
+                            let new_scheduled_off: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on + duration_days + duration_hours, 0);
+                            //update the scheduled_on and scheduled_off here
+                            let _ = match prize::Prize::reset_schedule(prize.id, new_scheduled_on, new_scheduled_off, &pool_db.clone()).await {
+                                Ok(_) => (),
+                                Err(error) => panic!("== Type 3/4 reset_schedule Error: {}.", error),
+                            };
+
                             process_current_games(prize, &pool_db.clone()).await?;
                         }
                         
@@ -136,7 +160,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let stop = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
         let diff = stop - start;
-        println!("Time Spent = {}", diff);
+        println!("Time Spent = {}ms", diff);
 
         let _ = match checker::Checker::update_checked(diff as i64, &pool_db.clone()).await {
             Ok(_) => (),
@@ -198,21 +222,20 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
     let mut start_timestamp = scheduled_on;
     
     let mut final_end_timestamp = scheduled_off;
-    if adjusted_now > scheduled_off {
+    //println!("==== adjusted_now {} > scheduled_off {}", adjusted_now, scheduled_off);
+    if adjusted_now + 3600 * 24 > scheduled_off {
         final_end_timestamp = adjusted_now + 3600 * 24;
     }
 
     while start_timestamp < final_end_timestamp {
-
+        //println!("==== start_timestamp {} == final_end_timestamp {}", start_timestamp, final_end_timestamp);
         for game in &active_games {
         
             if previous_tour_id > 0 {
-
                 if is_after_previous {
                     let end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
                     
                     //append to db.current_game
-                    //println!("==== TODO: need to check here");
                     let cg = CurrentGame {
                         id: 0,
                         prize_id: prize.id,
@@ -224,6 +247,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
                         end_timestamp: UNIX_EPOCH + Duration::new(end_timestamp as u64, 0)
                       };
     
+                    //println!("== add_current_game");
                     match prize::Prize::add_current_game(cg, &pool.clone()).await {
                         Ok(_) => {
                             ()
@@ -235,6 +259,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
     
                     
                 } else {
+                    
                     if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.game_id ==  previous_game_id {
                         is_after_previous = true;
                         start_timestamp = previous_end_timestamp;
@@ -242,6 +267,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
                 }
 
             } else { // if 0 then means genearate from scheduled_on of prize
+                
                 let end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
                 
                 
@@ -259,6 +285,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
                         end_timestamp: UNIX_EPOCH + Duration::new(end_timestamp as u64, 0)
                       };
     
+                    //println!("== add_current_game");
                     match prize::Prize::add_current_game(cg, &pool.clone()).await {
                         Ok(_) => {
                             ()
@@ -273,6 +300,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
             }
         }
     
+        println!("==== bottom start_timestamp {} == final_end_timestamp {}", start_timestamp, final_end_timestamp);
     }
     
     
