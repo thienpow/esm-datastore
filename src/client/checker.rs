@@ -43,6 +43,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             
             let prize_id = prize.id;
             let status_progress = prize.status_progress;
+            let tickets_collected = prize.tickets_collected;
 
             i = i + 1;
         
@@ -52,55 +53,69 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (config.server_timezone * 3600) + (timezone_seconds as u64);
             if prize.type_id == 1 || prize.type_id == 2 {
-            
-                if scheduled_on <= adjusted_now {
-                    if prize.tickets_collected < prize.tickets_required {
-
-                        println!("{} prize_id={} Type 1/2, running, ", i, prize.id.to_string());
-                        process_current_games(prize, &pool_db.clone()).await?;
-
-                        if status_progress != 1 {
-                            let _ = match prize::Prize::set_running(prize_id, &pool_db.clone()).await {
-                                Ok(_) => (),
-                                Err(error) => panic!("== set_running Error: {}.", error),
-                            };
-                        }
-                        
-                    } else {
         
-                        //TODO: process closing here
-                        println!("TODO: do closing!!!");
-                        //TODO: make sure prize's ticket_collected is kept in a log, to identify previous round's data
-        
+                if prize.tickets_collected < prize.tickets_required {
+
+                    println!("{} prize_id={} Type 1/2, running, ", i, prize.id.to_string());
+                    process_current_games(prize, &pool_db.clone()).await?;
+
+                    if status_progress != 1 {
+                        let _ = match prize::Prize::set_running(prize_id, &pool_db.clone()).await {
+                            Ok(_) => (),
+                            Err(error) => panic!("== set_running Error: {}.", error),
+                        };
+                    }
+                    
+                } else {
+    
+                    if prize.is_repeat { //close & reset
+
                         // after closing is called here only do reset/perm-end below
+                        println!("TODO: do closing!!!");
+                        //make sure prize's tickets_collected is kept in a log, to identify previous round's data
+                        let _ = match prize::Prize::log_closed(prize_id, tickets_collected, &pool_db.clone()).await {
+                            Ok(_) => (),
+                            Err(error) => panic!("== Type 1/2 log_closed Error: {}.", error),
+                        };
+                        
+                        println!("{} prize_id={} Type 1/2, tickets fulled and restart need to be set here",i , prize.id.to_string());
 
-                        if prize.is_repeat { //reset
-                            println!("{} prize_id={} Type 1/2, tickets fulled and restart need to be set here",i , prize.id.to_string());
+                        let u_new_scheduled_on: u64 = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+                        let duration_days: u64 = (prize.duration_days as u64) * 86400;
+                        let duration_hours: u64 = (prize.duration_hours as u64) * 3600;
+                        let new_scheduled_on: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on, 0);
+                        let new_scheduled_off: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on + duration_days + duration_hours, 0);
+                        
+                        //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
+                        let _ = match prize::Prize::reset_schedule(prize.id, new_scheduled_on, new_scheduled_off, &pool_db.clone()).await {
+                            Ok(_) => (),
+                            Err(error) => panic!("== reset_schedule Error: {}.", error),
+                        };
+                        
+                        process_current_games(prize, &pool_db.clone()).await?;
+                    } else { //perm-close
 
-                            let u_new_scheduled_on: u64 = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
-                            let duration_days: u64 = (prize.duration_days as u64) * 86400;
-                            let duration_hours: u64 = (prize.duration_hours as u64) * 3600;
-                            let new_scheduled_on: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on, 0);
-                            let new_scheduled_off: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on + duration_days + duration_hours, 0);
-                            
-                            //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
-                            let _ = match prize::Prize::reset_schedule(prize.id, new_scheduled_on, new_scheduled_off, &pool_db.clone()).await {
+                        if status_progress != 999 {
+                            //TODO: process closing here
+                            println!("TODO: do closing!!!");
+                            //make sure prize's tickets_collected is kept in a log, to identify previous round's data
+                            let _ = match prize::Prize::log_closed(prize_id, tickets_collected, &pool_db.clone()).await {
                                 Ok(_) => (),
-                                Err(error) => panic!("== reset_schedule Error: {}.", error),
+                                Err(error) => panic!("== Type 1/2 log_closed Error: {}.", error),
                             };
-                            
-                            process_current_games(prize, &pool_db.clone()).await?;
-                        } else { //perm-end
 
                             println!("{} prize_id={} Type 1/2, TICKETS FULLED, NOT REPEAT and ENDED", i, prize.id.to_string());
+
                             //update status_progress=closed=999
-                            let _ = match prize::Prize::set_closed(prize.id, &pool_db.clone()).await {
+                            let _ = match prize::Prize::set_permanent_closed(prize.id, &pool_db.clone()).await {
                                 Ok(_) => (),
                                 Err(error) => panic!("== set_closed Error: {}.", error),
                             };
                         }
+                        
                     }
                 }
+            
                 
 
             } else if prize.type_id == 3 || prize.type_id == 4 {
@@ -130,7 +145,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                             //scheduled_off is already smaller than now, meaning already ended
                             //TODO: process closing here 
-                            //TODO: make sure prize's ticket_collected is kept in a log, to identify previous round's data
+                            //make sure prize's tickets_collected is kept in a log, to identify previous round's data
+                            let _ = match prize::Prize::log_closed(prize_id, tickets_collected, &pool_db.clone()).await {
+                                Ok(_) => (),
+                                Err(error) => panic!("== Type 3/4 log_closed Error: {}.", error),
+                            };
 
                             println!("{} prize_id={} Type 3/4, is Repeat and restart need to be set here, ", i, prize.id.to_string());
 
@@ -170,15 +189,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         } else {
 
                             //scheduled_off is already smaller than now, meaning already ended
-                            //TODO: process closing here 
-                            //TODO: make sure prize's ticket_collected is kept in a log, to identify previous round's data
+                            
+                            if status_progress != 999 {
+                                //TODO: process closing here 
+                                //make sure prize's tickets_collected is kept in a log, to identify previous round's data
+                            
+                                let _ = match prize::Prize::log_closed(prize_id, tickets_collected, &pool_db.clone()).await {
+                                    Ok(_) => (),
+                                    Err(error) => panic!("== Type 3/4, NOT REPEAT, log_closed Error: {}.", error),
+                                };
+    
+                                println!("{} prize_id={} Type 3/4, NOT REPEAT and ENDED", i, prize.id.to_string());
 
-                            println!("{} prize_id={} Type 3/4, NOT REPEAT and ENDED", i, prize.id.to_string());
-                            //update the status_progress=closed=999
-                            let _ = match prize::Prize::set_closed(prize.id, &pool_db.clone()).await {
-                                Ok(_) => (),
-                                Err(error) => panic!("== set_closed Error: {}.", error),
-                            };
+                                //update the status_progress=closed=999
+                                let _ = match prize::Prize::set_permanent_closed(prize.id, &pool_db.clone()).await {
+                                    Ok(_) => (),
+                                    Err(error) => panic!("== set_closed Error: {}.", error),
+                                };
+                            }
+                            
                         }
                     } 
                     

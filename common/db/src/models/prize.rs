@@ -151,7 +151,7 @@ impl Prize {
       Ok(n)
     }
 
-    pub async fn set_closed(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn set_permanent_closed(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"prize\" SET status_progress=999 WHERE id=$1;").await?;
@@ -160,6 +160,17 @@ impl Prize {
     
       Ok(n)
     }
+
+    pub async fn log_closed(prize_id: i64, tickets_collected: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("INSERT INTO public.\"prize_closed\" (prize_id, tickets_collected, batch) VALUES ($1, $2, (SELECT COUNT(id) FROM public.\"prize_closed\" WHERE prize_id=$1)) RETURNING id;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&prize_id, &tickets_collected]).await?;
+    
+      Ok(n)
+    }
+    
 
     pub async fn set_running(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
