@@ -289,8 +289,8 @@ impl Prize {
       let mut vec: Vec<PrizeActive> = Vec::new();
       for row in conn.query(&stmt, &[]).await? {
         let prize = PrizeActive {
-          current_game_id: row.get(0),
-          prize_id: row.get(1),
+          prize_id: row.get(0),
+          current_game_id: row.get(1),
           prize_title: row.get(2),
           prize_subtitle: row.get(3),
           prize_img_url: row.get(4),
