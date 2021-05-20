@@ -151,10 +151,20 @@ impl Prize {
       Ok(n)
     }
 
-    pub async fn closed(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn set_closed(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"prize\" SET status_progress=999 WHERE id=$1;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&prize_id]).await?;
+    
+      Ok(n)
+    }
+
+    pub async fn set_running(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"prize\" SET status_progress=1 WHERE id=$1;").await?;
       let n = conn.execute(&stmt, 
                   &[&prize_id]).await?;
     

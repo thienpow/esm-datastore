@@ -41,6 +41,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         
         for prize in prizes {
             
+            let prize_id = prize.id;
+            let status_progress = prize.status_progress;
+
             i = i + 1;
         
             let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
@@ -55,6 +58,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                         println!("{} prize_id={} Type 1/2, running, ", i, prize.id.to_string());
                         process_current_games(prize, &pool_db.clone()).await?;
+
+                        if status_progress != 1 {
+                            let _ = match prize::Prize::set_running(prize_id, &pool_db.clone()).await {
+                                Ok(_) => (),
+                                Err(error) => panic!("== set_running Error: {}.", error),
+                            };
+                        }
                         
                     } else {
         
@@ -84,9 +94,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                             println!("{} prize_id={} Type 1/2, TICKETS FULLED, NOT REPEAT and ENDED", i, prize.id.to_string());
                             //update status_progress=closed=999
-                            let _ = match prize::Prize::closed(prize.id, &pool_db.clone()).await {
+                            let _ = match prize::Prize::set_closed(prize.id, &pool_db.clone()).await {
                                 Ok(_) => (),
-                                Err(error) => panic!("== closed Error: {}.", error),
+                                Err(error) => panic!("== set_closed Error: {}.", error),
                             };
                         }
                     }
@@ -108,7 +118,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             
                             println!("{} prize_id={} Type 3/4, is Repeat and running, ", i, prize.id.to_string());
                             process_current_games(prize, &pool_db.clone()).await?;
-                            
+
+                            if status_progress != 1 {
+                                let _ = match prize::Prize::set_running(prize_id, &pool_db.clone()).await {
+                                    Ok(_) => (),
+                                    Err(error) => panic!("== set_running Error: {}.", error),
+                                };
+                            }
+
                         } else {
 
                             //scheduled_off is already smaller than now, meaning already ended
@@ -142,6 +159,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             println!("{} prize_id={} Type 3/4, not repeat and running", i, prize.id.to_string());
                             process_current_games(prize, &pool_db.clone()).await?;
 
+                            if status_progress != 1 {
+                                let _ = match prize::Prize::set_running(prize_id, &pool_db.clone()).await {
+                                    Ok(_) => (),
+                                    Err(error) => panic!("== set_running Error: {}.", error),
+                                };
+                            }
+                            
+
                         } else {
 
                             //scheduled_off is already smaller than now, meaning already ended
@@ -150,9 +175,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                             println!("{} prize_id={} Type 3/4, NOT REPEAT and ENDED", i, prize.id.to_string());
                             //update the status_progress=closed=999
-                            let _ = match prize::Prize::closed(prize.id, &pool_db.clone()).await {
+                            let _ = match prize::Prize::set_closed(prize.id, &pool_db.clone()).await {
                                 Ok(_) => (),
-                                Err(error) => panic!("== closed Error: {}.", error),
+                                Err(error) => panic!("== set_closed Error: {}.", error),
                             };
                         }
                     } 
@@ -164,7 +189,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("");
             
             //TODO: check the following requirements,
-            // 1: update the published prize that is suppose to be running to "running" for the prize_status
+            // 1: update the published prize that is suppose to be running to "running" for the status_progress=1
             // 2: closing the prize, update the prize_status to closing, and generate winners
             // 3: finally, close the prize, update the prize status to "closed" after winners is generated. closed prize is recorded into closed_prize_log table
             // 4: only if the prize is closed then only allowed user to claim.
