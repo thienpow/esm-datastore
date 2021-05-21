@@ -12500,7 +12500,8 @@ proto.api.esm.LogSEnterRequest.prototype.toObject = function(opt_includeInstance
  */
 proto.api.esm.LogSEnterRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userId: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    userId: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    prizeId: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -12541,6 +12542,10 @@ proto.api.esm.LogSEnterRequest.deserializeBinaryFromReader = function(msg, reade
       var value = /** @type {number} */ (reader.readInt64());
       msg.setUserId(value);
       break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setPrizeId(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -12577,6 +12582,13 @@ proto.api.esm.LogSEnterRequest.serializeBinaryToWriter = function(message, write
       f
     );
   }
+  f = message.getPrizeId();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -12595,6 +12607,24 @@ proto.api.esm.LogSEnterRequest.prototype.getUserId = function() {
  */
 proto.api.esm.LogSEnterRequest.prototype.setUserId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional int64 prize_id = 2;
+ * @return {number}
+ */
+proto.api.esm.LogSEnterRequest.prototype.getPrizeId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.LogSEnterRequest} returns this
+ */
+proto.api.esm.LogSEnterRequest.prototype.setPrizeId = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
