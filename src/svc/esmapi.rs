@@ -748,6 +748,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
             let game_id = log.game_id;
             let is_watched_ad = log.is_watched_ad;
             let is_used_gem =  log.is_used_gem;
+            let game_score = log.game_score;
 
             if is_watched_ad || is_used_gem {
 
@@ -791,15 +792,20 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
                   }
 
+                  //TODO: check game_score and calculate the tickets and exp won and accumulate it into the reward_tickets and reward_exp
+
+
                   //update the user's tickets & exp
                   //println!("rewards = {}{}", reward_tickets, reward_exp);
                   //user's tickets field need to be reset to 0 while the accumulated reward_tickets is stored into prize pool.
                   match user::User::update_exp_tickets(user_id, reward_exp, 0, &self.pool.clone()).await {
                     Ok(_) => {
                       //log into prize_pool
+                      
                       match prize::Prize::log_prize_pool(prize_id, user_id, reward_tickets, &self.pool.clone()).await {
                         Ok(_) => {
                           //do something here?
+                          
                           ()
                         },
                         Err(error) => panic!("Error: {}.", error),
