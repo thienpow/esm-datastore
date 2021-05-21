@@ -38,6 +38,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let adminapi_server = svc::adminapi::AdminApiServer {
         jwk: jwk_auth.clone(),
         pool: pool_db.clone(),
+        server_timezone: config.server_timezone,
     };
     let adminapi_service = svc::adminapi::adminapi_proto::admin_api_server::AdminApiServer::new(adminapi_server);
     

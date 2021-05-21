@@ -72,6 +72,7 @@ service AdminApi {
   rpc AddPrizeTour(AddPrizeTourRequest) returns (AddPrizeTourResponse) {}
   rpc DeletePrizeTour(DeletePrizeTourRequest) returns (DeletePrizeTourResponse) {}
   rpc ListPrizeTour(ListPrizeTourRequest) returns (ListPrizeTourResponse) {}
+  rpc ListPrizeToday(ListPrizeTodayRequest) returns (ListPrizeTodayResponse) {}
 
   // Rank
   rpc AddRank(AddRankRequest) returns (AddRankResponse) {}
@@ -835,6 +836,47 @@ message PrizeDetail {
   int32 status = 15;
   int32 status_progress = 16;
   int64 tickets_collected = 17;
+}
+message ListPrizeTodayRequest {
+}
+message ListPrizeTodayResponse {
+  repeated PrizeTodayDetail result = 1;
+}
+message PrizeTodayDetail {
+  int64 current_game_id = 1;
+  int64 prize_id = 2;
+  string prize_title = 3;
+  string prize_subtitle = 4;
+  string prize_img_url = 5;
+  string prize_content = 6;
+  int32 prize_duration_days = 7;
+  int32 prize_duration_hours = 8;
+  int32 type_id = 9;
+  int64 tickets_required = 10;
+  double timezone = 11;
+  int64 scheduled_on = 12;
+  int64 scheduled_off = 13;
+  bool is_repeat =  14;
+  repeated int32 repeated_on = 15;
+  int32 status = 16;
+  int32 status_progress = 17;
+  int64 tickets_collected = 18;
+  int64 tour_id = 19;
+  string tour_title  = 20;
+  int64 set_id = 21;
+  string set_title  = 22;
+  int64 game_id = 23;
+  string game_title  = 24;
+  string game_subtitle = 25;
+  string game_img_url = 26;
+  string game_content = 27;
+  int64 tsg_id = 28;
+  int32 game_duration_days = 29;
+  int32 game_duration_hours = 30;
+  int32 game_duration_minutes = 31;
+  int32 group_id = 32;
+  int64 start_timestamp = 33;
+  int64 end_timestamp  = 34;
 }
 
 

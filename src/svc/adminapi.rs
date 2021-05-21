@@ -88,8 +88,9 @@ use adminapi_proto::{
   UpdatePrizeRequest, UpdatePrizeResponse,
   DeletePrizeRequest, DeletePrizeResponse,
   ListPrizeRequest, ListPrizeResponse, 
+  ListPrizeTodayRequest, ListPrizeTodayResponse, 
   GetPrizeCountRequest, GetPrizeCountResponse,
-  PrizeDetail, //PrizeCount,
+  PrizeDetail, PrizeTodayDetail, //PrizeCount,
   ListPrizeTypeRequest, ListPrizeTypeResponse,
   PrizeTypeDetail,
   AddPrizeTourRequest, AddPrizeTourResponse,
@@ -158,6 +159,7 @@ use adminapi_proto::{
 pub struct AdminApiServer {
   pub jwk: JwkAuth,
   pub pool: Pool<PostgresConnectionManager<tokio_postgres::NoTls>>,
+  pub server_timezone: u64,
 }
 
 
@@ -1481,6 +1483,100 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
   }
 
+  async fn list_prize_today(&self, request: Request<ListPrizeTodayRequest>, ) -> Result<Response<ListPrizeTodayResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let prizes = match prize::Prize::list_active(&self.pool.clone()).await {
+      Ok(prizes) => prizes,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<PrizeTodayDetail> = Vec::new();
+    
+    for prize in prizes {
+      
+      let start_timestamp = prize.start_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let end_timestamp = prize.end_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
+      let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let timezone_seconds = prize.timezone * (3600 as f64);
+
+      let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (self.server_timezone * 3600) + (timezone_seconds as u64);
+
+      let li = PrizeTodayDetail {
+        current_game_id: prize.current_game_id,
+        prize_id: prize.prize_id,
+        prize_title: prize.prize_title,
+        prize_subtitle: prize.prize_subtitle,
+        prize_img_url: prize.prize_img_url,
+        prize_content: prize.prize_content,
+        prize_duration_days: prize.prize_duration_days,
+        prize_duration_hours: prize.prize_duration_hours,
+        type_id: prize.type_id,
+        tickets_required: prize.tickets_required,
+        timezone: prize.timezone,
+        scheduled_on: scheduled_on as i64,
+        scheduled_off: scheduled_off as i64,
+        is_repeat: prize.is_repeat,
+        repeated_on: prize.repeated_on,
+        status: prize.status,
+        status_progress: prize.status_progress,
+        tickets_collected: prize.tickets_collected,
+        tour_id: prize.tour_id,
+        tour_title: prize.tour_title,
+        set_id: prize.set_id,
+        set_title: prize.set_title,
+        game_id: prize.game_id,
+        game_title: prize.game_title,
+        game_subtitle: prize.game_subtitle,
+        game_img_url: prize.game_img_url,
+        game_content: prize.game_content,
+        tsg_id: prize.tsg_id,
+        game_duration_days: prize.game_duration_days,
+        game_duration_hours: prize.game_duration_hours,
+        game_duration_minutes: prize.game_duration_minutes,
+        group_id: prize.group_id,
+        start_timestamp: start_timestamp as i64,
+        end_timestamp: end_timestamp as i64,
+      };
+      
+      //type_id 1=Featured, 2=Premium
+      if prize.type_id == 1 || prize.type_id == 2 {
+        
+        //For Featured and Premium prize, need to check if the tickets_collected is smaller than tickets_required, then only allow to list
+        if prize.tickets_collected <= prize.tickets_required {
+          result.push(li);
+        }
+
+      //type_id 3=Time Sensitive, 4=Automated Entry
+      } else if prize.type_id == 3 || prize.type_id == 4 {
+
+        //if it's Prize 3 or 4, we need to check if now is greater than or equal to scheduled_on, meaning it's started.
+        if scheduled_on <= adjusted_now {
+
+          // if is_repeat, meaning need to always show, because it never end.
+          if prize.is_repeat {
+            result.push(li);
+          } else {
+
+            // if not repeat, then we need to check if it's still within the duration.
+            if scheduled_off >= adjusted_now {
+              result.push(li);
+            }
+          }
+          
+        }
+      }
+      
+      
+    };
+    
+    Ok(Response::new(ListPrizeTodayResponse {
+      result: result,
+    }))
+    
+  }
 
   async fn get_prize_count(&self, request: Request<GetPrizeCountRequest>, ) -> Result<Response<GetPrizeCountResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
