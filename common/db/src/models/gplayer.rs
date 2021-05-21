@@ -67,6 +67,26 @@ impl GPlayer {
       Ok(n)
     }
     
+    pub async fn get_log_g(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<GPlayer, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, user_id, prize_id, game_id, enter_timestamp, leave_timestamp, game_score, is_watched_ad, is_used_gem FROM public.\"gplayer\" WHERE id=$1;").await?;
+      let row = conn.query_one(&stmt, 
+                    &[&id]).await?;
+
+      Ok(GPlayer {
+        id: row.get(0),
+        user_id: row.get(0),
+        prize_id: row.get(0),
+        game_id: row.get(0),
+        enter_timestamp: row.get(0),
+        leave_timestamp: row.get(0),
+        game_score: row.get(0),
+        is_watched_ad: row.get(0),
+        is_used_gem: row.get(0),
+      })
+    }
+
     
     pub async fn list_log_g(user_id: i64, limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<LogGDetail>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;

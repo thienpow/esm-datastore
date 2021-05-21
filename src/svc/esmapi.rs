@@ -312,7 +312,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       is_notify_new_tournament:  true,
       is_notify_tour_ending:  true,
       nick_name: "".to_string(),
-      msg_token: "".to_string()
+      msg_token: "".to_string(),
+      tickets: 0
     };
     
     let result = match user::User::add(user, &self.pool.clone()).await {
@@ -671,6 +672,10 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     let user_id: i64 = req.user_id.into();
+    let game_id: i64 = req.game_id.into();
+    let is_watched_ad: bool = req.is_watched_ad.into();
+    let is_used_gem: bool = req.is_used_gem.into();
+    
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
 
     let now = SystemTime::now();
@@ -680,13 +685,13 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let gplayer = gplayer::GPlayer {
       id: 0,
       prize_id: req.prize_id.into(),
-      game_id: req.game_id.into(),
+      game_id: game_id,
       user_id: user_id,
       enter_timestamp: now,
       leave_timestamp: now,
       game_score: 0,
-      is_watched_ad: req.is_watched_ad.into(),
-      is_used_gem: req.is_used_gem.into(),
+      is_watched_ad: is_watched_ad,
+      is_used_gem: is_used_gem,
     };
     
 
@@ -694,31 +699,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     // if not allowed to play anymore then reply an empty string
     // the generated secret key will then be used during log_leave
     let result = match gplayer::GPlayer::enter(gplayer, &self.pool.clone()).await {
-      Ok(result) => {
-
-        match user::User::get(user_id, &self.pool.clone()).await {
-          Ok(user) => {
-
-            let new_gem_balance: i64 = user.gem_balance - 1 as i64;
-            match user::User::update_status_gem_balance(user_id, user.status, new_gem_balance, &self.pool.clone()).await {
-              Ok(_) => {
-
-                match svc::notify("You got a Gem reward!", format!("You spent a gem to play, Your Gem Balance is Updated to {}", new_gem_balance).as_str(), &user.msg_token).await {
-                  Ok(_) => "1",
-                  Err(error) => panic!("Error: {}.", error),
-                };
-                
-                
-              },
-              Err(error) => panic!("Error: {}.", error),
-            }
-
-          },
-          Err(error) => panic!("Error: {}.", error),
-        };
-        result.to_string()
-        
-      },
+      Ok(result) => result.to_string(),
       Err(error) => panic!("Error: {}.", error),
     };
     
@@ -734,6 +715,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
+    let id: i64 = req.id.into();
     let user_id: i64 = req.user_id.into();
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
 
@@ -744,7 +726,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     // generated secret key timestamp must not allowed more than 30 minutes
     
     let gplayer = gplayer::GPlayer {
-      id: req.id.into(),
+      id: id,
       prize_id: 0,
       game_id: 0,
       user_id: user_id,
@@ -756,10 +738,93 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     };
     
     let result = match gplayer::GPlayer::leave(gplayer, &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
+      Ok(result) => { 
+
+        //check if used gem or watched ad
+        match gplayer::GPlayer::get_log_g(id, &self.pool.clone()).await {
+          Ok(log) => {
+
+            let prize_id = log.prize_id;
+            let game_id = log.game_id;
+            let is_watched_ad = log.is_watched_ad;
+            let is_used_gem =  log.is_used_gem;
+
+            if is_watched_ad || is_used_gem {
+
+              let user = match user::User::get(user_id, &self.pool.clone()).await {
+                Ok(user) => user,
+                Err(error) => panic!("Error: {}.", error),
+              };
+
+              match game::Game::get_game_rules(game_id, &self.pool.clone()).await {
+                Ok(game_rules) => {
+                  
+                  let mut reward_tickets: i32 = user.exp;
+                  let mut reward_exp: i32 = user.tickets;
+                  
+                  //check from watch_ad_get_tickets, watch_ad_get_exp, find out watch ad can get how many tickets/exp
+                  if is_watched_ad {
+                    reward_tickets = reward_tickets + game_rules.watch_ad_get_tickets;
+                    reward_exp = reward_exp + game_rules.watch_ad_get_exp;
+                  }
+        
+                  //check from use_gem_get_tickets, use_gem_get_exp, find out use gem can get how many tickets/exp
+                  if is_used_gem {
+                          
+                    //deduct a gem first
+                    let new_gem_balance: i64 = user.gem_balance - 1 as i64;
+                    match user::User::update_status_gem_balance(user_id, user.status, new_gem_balance, &self.pool.clone()).await {
+                      Ok(_) => {
+        
+                        match svc::notify("You spent a Gem!", format!("You spent a gem to play, Your Gem Balance is Updated to {}", new_gem_balance).as_str(), &user.msg_token).await {
+                          Ok(_) => "1",
+                          Err(error) => panic!("Error: {}.", error),
+                        };
+                        
+                      },
+                      Err(error) => panic!("Error: {}.", error),
+                    }
+
+                    //after deducted gem, reward the tickets/exp
+                    reward_tickets = reward_tickets + game_rules.use_gem_get_tickets;
+                    reward_exp = reward_exp + game_rules.use_gem_get_exp;
+
+                  }
+
+                  //update the user's tickets & exp
+                  //println!("rewards = {}{}", reward_tickets, reward_exp);
+                  //user's tickets field need to be reset to 0 while the accumulated reward_tickets is stored into prize pool.
+                  match user::User::update_exp_tickets(user_id, reward_exp, 0, &self.pool.clone()).await {
+                    Ok(_) => {
+                      //log into prize_pool
+                      match prize::Prize::log_prize_pool(prize_id, user_id, reward_tickets, &self.pool.clone()).await {
+                        Ok(_) => {
+                          //do something here?
+                          ()
+                        },
+                        Err(error) => panic!("Error: {}.", error),
+                      }
+                      ()
+                    },
+                    Err(error) => panic!("Error: {}.", error),
+                  }
+
+                  ()
+                },
+                Err(error) => panic!("Error: {}.", error),
+              };
+            }
+          },
+          Err(error) => panic!("Error: {}.", error),
+        }
+        
+        result.to_string()
+      },
       Err(error) => error.to_string(),
     };
     
+    
+
     Ok(Response::new(LogGLeaveResponse {
       result: result,
     }))
