@@ -38,6 +38,7 @@ pub struct LogGDetail {
 pub struct LogSDetail {
   pub id: i64,
   pub user_id: i64,
+  pub prize_id: i64,
   pub tickets_won: i64,
   pub enter_timestamp: SystemTime,
   pub leave_timestamp: SystemTime,
@@ -166,9 +167,9 @@ impl GPlayer {
     pub async fn spin_enter(spin_detail: LogSDetail, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"spinner_log\" (user_id, enter_timestamp) VALUES ($1, $2) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"spinner_log\" (user_id, prize_id, enter_timestamp) VALUES ($1, $2, $3) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
-                  &[&spin_detail.user_id, &spin_detail.enter_timestamp]).await?;
+                  &[&spin_detail.user_id, &spin_detail.prize_id, &spin_detail.enter_timestamp]).await?;
     
       Ok(row.get::<usize, i64>(0))
     }

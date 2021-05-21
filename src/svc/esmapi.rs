@@ -759,14 +759,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
               match game::Game::get_game_rules(game_id, &self.pool.clone()).await {
                 Ok(game_rules) => {
-                  
+                  let multiplier: f32 = game_score as f32 / game_rules.score_rule as f32;
                   let mut reward_tickets: i32 = user.exp;
                   let mut reward_exp: i32 = user.tickets;
                   
                   //check from watch_ad_get_tickets, watch_ad_get_exp, find out watch ad can get how many tickets/exp
                   if is_watched_ad {
-                    reward_tickets = reward_tickets + game_rules.watch_ad_get_tickets;
-                    reward_exp = reward_exp + game_rules.watch_ad_get_exp;
+                    
+                    reward_tickets = (multiplier * reward_tickets as f32 + multiplier * game_rules.watch_ad_get_tickets as f32) as i32;
+                    reward_exp = (multiplier * reward_exp as f32 + multiplier * game_rules.watch_ad_get_exp as f32) as i32;
                   }
         
                   //check from use_gem_get_tickets, use_gem_get_exp, find out use gem can get how many tickets/exp
@@ -787,8 +788,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                     }
 
                     //after deducted gem, reward the tickets/exp
-                    reward_tickets = reward_tickets + game_rules.use_gem_get_tickets;
-                    reward_exp = reward_exp + game_rules.use_gem_get_exp;
+                    reward_tickets = (multiplier * reward_tickets as f32 + multiplier * game_rules.use_gem_get_tickets as f32) as i32;
+                    reward_exp = (multiplier * reward_exp as f32 + multiplier * game_rules.use_gem_get_exp as f32) as i32;
 
                   }
 
@@ -960,6 +961,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     let user_id: i64 = req.user_id.into();
+    let prize_id: i64 = req.prize_id.into();
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
     
     let now = SystemTime::now();
@@ -973,6 +975,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
           let spin_detail = gplayer::LogSDetail {
             id: 0,
             user_id: user_id,
+            prize_id: prize_id,
             enter_timestamp: now,
             leave_timestamp: now,
             tickets_won: 0,
@@ -1011,6 +1014,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let spin_detail = gplayer::LogSDetail {
       id: req.id.into(),
       user_id: user_id,
+      prize_id: 0,
       enter_timestamp: now,
       leave_timestamp: now,
       tickets_won: req.tickets_won.into(),

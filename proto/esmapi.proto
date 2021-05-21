@@ -459,6 +459,7 @@ message GetSpinAvailableResponse {
 
 message LogSEnterRequest {
   int64 user_id = 1;
+  int64 prize_id = 2;
 }
 message LogSEnterResponse {
   int64 result = 1; 
