@@ -3434,6 +3434,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listPrize =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListPrizeTodayRequest,
+ *   !proto.adminapi.esm.ListPrizeTodayResponse>}
+ */
+const methodDescriptor_AdminApi_ListPrizeToday = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListPrizeToday',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListPrizeTodayRequest,
+  proto.adminapi.esm.ListPrizeTodayResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListPrizeTodayRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListPrizeTodayResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListPrizeTodayRequest,
+ *   !proto.adminapi.esm.ListPrizeTodayResponse>}
+ */
+const methodInfo_AdminApi_ListPrizeToday = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListPrizeTodayResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListPrizeTodayRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListPrizeTodayResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListPrizeTodayRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListPrizeTodayResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListPrizeTodayResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listPrizeToday =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListPrizeToday',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListPrizeToday,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListPrizeTodayRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListPrizeTodayResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listPrizeToday =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListPrizeToday',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListPrizeToday);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.GetPrizeCountRequest,
  *   !proto.adminapi.esm.GetPrizeCountResponse>}
  */
@@ -3828,86 +3908,6 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listPrizeTour =
       request,
       metadata || {},
       methodDescriptor_AdminApi_ListPrizeTour);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.adminapi.esm.ListPrizeTodayRequest,
- *   !proto.adminapi.esm.ListPrizeTodayResponse>}
- */
-const methodDescriptor_AdminApi_ListPrizeToday = new grpc.web.MethodDescriptor(
-  '/adminapi.esm.AdminApi/ListPrizeToday',
-  grpc.web.MethodType.UNARY,
-  proto.adminapi.esm.ListPrizeTodayRequest,
-  proto.adminapi.esm.ListPrizeTodayResponse,
-  /**
-   * @param {!proto.adminapi.esm.ListPrizeTodayRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.adminapi.esm.ListPrizeTodayResponse.deserializeBinary
-);
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.adminapi.esm.ListPrizeTodayRequest,
- *   !proto.adminapi.esm.ListPrizeTodayResponse>}
- */
-const methodInfo_AdminApi_ListPrizeToday = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.adminapi.esm.ListPrizeTodayResponse,
-  /**
-   * @param {!proto.adminapi.esm.ListPrizeTodayRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.adminapi.esm.ListPrizeTodayResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.adminapi.esm.ListPrizeTodayRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListPrizeTodayResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListPrizeTodayResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.adminapi.esm.AdminApiClient.prototype.listPrizeToday =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/adminapi.esm.AdminApi/ListPrizeToday',
-      request,
-      metadata || {},
-      methodDescriptor_AdminApi_ListPrizeToday,
-      callback);
-};
-
-
-/**
- * @param {!proto.adminapi.esm.ListPrizeTodayRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.adminapi.esm.ListPrizeTodayResponse>}
- *     Promise that resolves to the response
- */
-proto.adminapi.esm.AdminApiPromiseClient.prototype.listPrizeToday =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/adminapi.esm.AdminApi/ListPrizeToday',
-      request,
-      metadata || {},
-      methodDescriptor_AdminApi_ListPrizeToday);
 };
 
 
