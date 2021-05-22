@@ -12792,7 +12792,8 @@ proto.api.esm.LogSLeaveRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     userId: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    ticketsWon: jspb.Message.getFieldWithDefault(msg, 3, 0)
+    winType: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    winAmount: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -12839,7 +12840,11 @@ proto.api.esm.LogSLeaveRequest.deserializeBinaryFromReader = function(msg, reade
       break;
     case 3:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setTicketsWon(value);
+      msg.setWinType(value);
+      break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setWinAmount(value);
       break;
     default:
       reader.skipField();
@@ -12884,10 +12889,17 @@ proto.api.esm.LogSLeaveRequest.serializeBinaryToWriter = function(message, write
       f
     );
   }
-  f = message.getTicketsWon();
+  f = message.getWinType();
   if (f !== 0) {
     writer.writeInt32(
       3,
+      f
+    );
+  }
+  f = message.getWinAmount();
+  if (f !== 0) {
+    writer.writeInt32(
+      4,
       f
     );
   }
@@ -12931,10 +12943,10 @@ proto.api.esm.LogSLeaveRequest.prototype.setUserId = function(value) {
 
 
 /**
- * optional int32 tickets_won = 3;
+ * optional int32 win_type = 3;
  * @return {number}
  */
-proto.api.esm.LogSLeaveRequest.prototype.getTicketsWon = function() {
+proto.api.esm.LogSLeaveRequest.prototype.getWinType = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -12943,8 +12955,26 @@ proto.api.esm.LogSLeaveRequest.prototype.getTicketsWon = function() {
  * @param {number} value
  * @return {!proto.api.esm.LogSLeaveRequest} returns this
  */
-proto.api.esm.LogSLeaveRequest.prototype.setTicketsWon = function(value) {
+proto.api.esm.LogSLeaveRequest.prototype.setWinType = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int32 win_amount = 4;
+ * @return {number}
+ */
+proto.api.esm.LogSLeaveRequest.prototype.getWinAmount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.LogSLeaveRequest} returns this
+ */
+proto.api.esm.LogSLeaveRequest.prototype.setWinAmount = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 

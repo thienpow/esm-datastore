@@ -467,7 +467,8 @@ message LogSEnterResponse {
 message LogSLeaveRequest {
   int64 id = 1;
   int64 user_id = 2;
-  int32 tickets_won = 3;
+  int32 win_type = 3;
+  int32 win_amount = 4;
 }
 message LogSLeaveResponse {
   string result = 1;

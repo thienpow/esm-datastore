@@ -39,7 +39,8 @@ pub struct LogSDetail {
   pub id: i64,
   pub user_id: i64,
   pub prize_id: i64,
-  pub tickets_won: i32,
+  pub win_type: i32,
+  pub win_amount: i32,
   pub enter_timestamp: SystemTime,
   pub leave_timestamp: SystemTime,
 }
@@ -177,9 +178,9 @@ impl GPlayer {
     pub async fn spin_leave(spin_detail: LogSDetail, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"spinner_log\" SET leave_timestamp=$1, tickets_won=$2 WHERE id=$3 AND user_id=$4;").await?;
+      let stmt = conn.prepare("UPDATE public.\"spinner_log\" SET leave_timestamp=$1, win_type=$2, win_amount=$3 WHERE id=$4 AND user_id=$5;").await?;
       let n = conn.execute(&stmt, 
-                  &[&spin_detail.leave_timestamp, &spin_detail.tickets_won, &spin_detail.id, &spin_detail.user_id]).await?;
+                  &[&spin_detail.leave_timestamp, &spin_detail.win_type, &spin_detail.win_amount, &spin_detail.id, &spin_detail.user_id]).await?;
     
       Ok(n)
     }

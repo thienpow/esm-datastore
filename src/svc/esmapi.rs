@@ -976,9 +976,10 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
             id: 0,
             user_id: user_id,
             prize_id: prize_id,
+            win_type: 0,
+            win_amount: 0,
             enter_timestamp: now,
             leave_timestamp: now,
-            tickets_won: 0,
           };
           
           return match gplayer::GPlayer::spin_enter(spin_detail, &self.pool.clone()).await {
@@ -1007,7 +1008,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let req = request.into_inner();
     let id: i64 = req.id.into();
     let user_id: i64 = req.user_id.into();
-    let tickets_won: i32 = req.tickets_won.into();
+    let win_type: i32 = req.win_type.into();
+    let win_amount: i32 = req.win_amount.into();
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
     
     let now = SystemTime::now();
@@ -1017,28 +1019,33 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       id: id,
       user_id: user_id,
       prize_id: 0,
+      win_type: win_type,
+      win_amount:  win_amount,
       enter_timestamp: now,
       leave_timestamp: now,
-      tickets_won: tickets_won,
     };
     
     match gplayer::GPlayer::spin_leave(spin_detail, &self.pool.clone()).await {
       Ok(result) => {
 
-        //log into prize_pool here, game_id=0, win_from=1
-        let prize_id: i64 = match gplayer::GPlayer::get_spin_prize_id(id, &self.pool.clone()).await {
-          Ok(prize_id) => prize_id,
-          Err(error) => panic!("Error: {}.", error),
-        };
+        //if win_type=ticket=1 then log into prize_pool here, game_id=0, win_from=1
+        if win_type == 1 {
 
-        match prize::Prize::log_prize_pool(prize_id, user_id, 0, 1, tickets_won, &self.pool.clone()).await {
-          Ok(_) => {
-            //do something here?
-            
-            ()
-          },
-          Err(error) => panic!("Error: {}.", error),
+          let prize_id: i64 = match gplayer::GPlayer::get_spin_prize_id(id, &self.pool.clone()).await {
+            Ok(prize_id) => prize_id,
+            Err(error) => panic!("Error: {}.", error),
+          };
+  
+          match prize::Prize::log_prize_pool(prize_id, user_id, 0, 1, win_amount, &self.pool.clone()).await {
+            Ok(_) => {
+              //do something here?
+              
+              ()
+            },
+            Err(error) => panic!("Error: {}.", error),
+          }
         }
+        
 
         Ok(Response::new(LogSLeaveResponse {
           result: result.to_string()
