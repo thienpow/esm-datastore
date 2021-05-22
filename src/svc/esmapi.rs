@@ -313,7 +313,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       is_notify_tour_ending:  true,
       nick_name: "".to_string(),
       msg_token: "".to_string(),
-      tickets: 0
     };
     
     let result = match user::User::add(user, &self.pool.clone()).await {
@@ -760,14 +759,14 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
               match game::Game::get_game_rules(game_id, &self.pool.clone()).await {
                 Ok(game_rules) => {
                   let multiplier: f32 = game_score as f32 / game_rules.score_rule as f32;
-                  let mut reward_tickets: i32 = user.exp;
-                  let mut reward_exp: i32 = user.tickets;
+                  let mut reward_tickets: i32 = 0;
+                  let mut reward_exp: i32 = user.exp;
                   
                   //check from watch_ad_get_tickets, watch_ad_get_exp, find out watch ad can get how many tickets/exp
                   if is_watched_ad {
                     
-                    reward_tickets = (multiplier * reward_tickets as f32 + multiplier * game_rules.watch_ad_get_tickets as f32) as i32;
-                    reward_exp = (multiplier * reward_exp as f32 + multiplier * game_rules.watch_ad_get_exp as f32) as i32;
+                    reward_tickets = (reward_tickets as f32 + multiplier * game_rules.watch_ad_get_tickets as f32) as i32;
+                    reward_exp = (reward_exp as f32 + multiplier * game_rules.watch_ad_get_exp as f32) as i32;
                   }
         
                   //check from use_gem_get_tickets, use_gem_get_exp, find out use gem can get how many tickets/exp
@@ -788,18 +787,13 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                     }
 
                     //after deducted gem, reward the tickets/exp
-                    reward_tickets = (multiplier * reward_tickets as f32 + multiplier * game_rules.use_gem_get_tickets as f32) as i32;
-                    reward_exp = (multiplier * reward_exp as f32 + multiplier * game_rules.use_gem_get_exp as f32) as i32;
+                    reward_tickets = (reward_tickets as f32 + multiplier * game_rules.use_gem_get_tickets as f32) as i32;
+                    reward_exp = (reward_exp as f32 + multiplier * game_rules.use_gem_get_exp as f32) as i32;
 
                   }
 
-                  //TODO: check game_score and calculate the tickets and exp won and accumulate it into the reward_tickets and reward_exp
-
-
-                  //update the user's tickets & exp
-                  //println!("rewards = {}{}", reward_tickets, reward_exp);
-                  //user's tickets field need to be reset to 0 while the accumulated reward_tickets is stored into prize pool.
-                  match user::User::update_exp_tickets(user_id, reward_exp, 0, &self.pool.clone()).await {
+                  //update the user's exp
+                  match user::User::update_exp(user_id, reward_exp, &self.pool.clone()).await {
                     Ok(_) => {
 
                       //log into prize_pool, win_from = 2

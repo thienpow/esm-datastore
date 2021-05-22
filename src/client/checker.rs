@@ -31,6 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     loop {
 
         //TODO: add a loop to current_game table and do closing, to find out the leaderboard and tickets award and set into prize_pool
+        // check if end_timestamp < now, meaning already past, then do the closing.
 
 /*
 TODO: make sure prize_pool tickets calculated too and update it to user.tickets_collected
@@ -97,6 +98,11 @@ SELECT (
                         let new_scheduled_on: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on, 0);
                         let new_scheduled_off: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on + duration_days + duration_hours, 0);
                         
+
+                        //TODO: before reset the schedule, check if the duration_days < 7, if smaller than 7 days, we need to make sure it's within repeated_on.
+                        // let say, if duration_days is 2, we need to check if scheduled_off is already pass, and if the repeated_on is within today.
+                        // if scheduled_off is not passed, meaning we need to reset_schedule with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
+
                         //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
                         let _ = match prize::Prize::reset_schedule(prize.id, new_scheduled_on, new_scheduled_off, &pool_db.clone()).await {
                             Ok(_) => (),
@@ -171,6 +177,10 @@ SELECT (
                             let new_scheduled_on: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on, 0);
                             let new_scheduled_off: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on + duration_days + duration_hours, 0);
                             
+                            //TODO: before reset the schedule, check if the duration_days < 7, if smaller than 7 days, we need to make sure it's within repeated_on.
+                            // let say, if duration_days is 2, we need to check if scheduled_off is already pass, and if the repeated_on is within today.
+                            // if scheduled_off is not passed, meaning we need to reset_schedule with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
+
                             //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
                             let _ = match prize::Prize::reset_schedule(prize.id, new_scheduled_on, new_scheduled_off, &pool_db.clone()).await {
                                 Ok(_) => (),

@@ -22,7 +22,6 @@ pub struct User {
   pub social_link_google: String,
   pub avatar_url: String,
   pub exp: i32,
-  pub tickets: i32,
   pub full_name: String,
   pub address: String,
   pub city: String,
@@ -101,12 +100,12 @@ impl User {
       Ok(n)
     }
 
-    pub async fn update_exp_tickets(id: i64, exp: i32, tickets: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update_exp(id: i64, exp: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"user\" SET exp=$1, tickets=$2 WHERE id=$3;").await?;
+      let stmt = conn.prepare("UPDATE public.\"user\" SET exp=$1, WHERE id=$2;").await?;
       let n = conn.execute(&stmt, 
-                  &[&exp, &tickets, &id]).await?;
+                  &[&exp, &id]).await?;
     
       Ok(n)
     }
@@ -237,7 +236,6 @@ impl User {
         is_notify_tour_ending: row.get(26), 
         nick_name: row.get(27),
         msg_token: row.get(28),
-        tickets: 0,
       };
 
       Ok(user)
@@ -251,7 +249,7 @@ impl User {
       created_on, last_login, role_id, status, gem_balance, \
       social_link_fb, social_link_google, avatar_url, exp, \
       full_name, address, city, state, zip_code, country, country_code, \
-      is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token, tickets \
+      is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token \
       FROM public.\"user\" WHERE status=1 AND id=$1;").await?;
 
       let row = conn.query_one(&stmt, 
@@ -287,7 +285,6 @@ impl User {
         is_notify_tour_ending: row.get(26), 
         nick_name: row.get(27),
         msg_token: row.get(28),
-        tickets: row.get(29),
       };
 
       Ok(user)
@@ -337,7 +334,6 @@ impl User {
             is_notify_tour_ending: row.get(25),
             nick_name: row.get(26),
             msg_token: row.get(27),
-            tickets: 0
           };
   
           vec.push(user);
@@ -382,7 +378,6 @@ impl User {
             is_notify_tour_ending: row.get(25),
             nick_name: row.get(26),
             msg_token:  row.get(27),
-            tickets: 0,
           };
   
           vec.push(user);
@@ -437,7 +432,6 @@ impl User {
             is_notify_tour_ending: row.get(25),
             nick_name: row.get(26),
             msg_token:  row.get(27),
-            tickets: 0,
         };
 
         vec.push(user);
