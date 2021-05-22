@@ -62,7 +62,7 @@ impl GPlayer {
     pub async fn leave(gplayer: GPlayer, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"gplayer\" SET leave_timestamp=$1, game_score=$2 WHERE id=$3 AND user_id=$4;").await?;
+      let stmt = conn.prepare("UPDATE public.\"gplayer\" SET leave_timestamp=$1, game_score=$2, is_logged_leave=true WHERE id=$3 AND user_id=$4 AND is_logged_leave=false;").await?;
       let n = conn.execute(&stmt, 
                   &[&gplayer.leave_timestamp, &gplayer.game_score, &gplayer.id, &gplayer.user_id]).await?;
     
@@ -124,7 +124,7 @@ impl GPlayer {
     pub async fn list_log_g_by_game(game_id: i64, prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<LogGDetail>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT gp.id, gp.user_id, u.nick_name, u.avatar_url, gp.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id, gp.game_id, g.title AS game_title, g.img_url AS game_img_url, gp.enter_timestamp, gp.leave_timestamp, gp.is_watched_ad, gp.game_score FROM public.\"gplayer\" AS gp INNER JOIN public.\"user\" AS u ON gp.user_id = u.id INNER JOIN public.\"prize\" AS p ON gp.prize_id = p.id INNER JOIN public.\"game\" AS g ON gp.game_id = g.id WHERE gp.game_id=$1 AND gp.prize_id=$2 ORDER BY gp.game_score DESC LIMIT 100;").await?;
+      let stmt = conn.prepare("SELECT gp.id, gp.user_id, u.nick_name, u.avatar_url, gp.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id, gp.game_id, g.title AS game_title, g.img_url AS game_img_url, gp.enter_timestamp, gp.leave_timestamp, gp.is_watched_ad, gp.game_score FROM public.\"gplayer\" AS gp INNER JOIN public.\"user\" AS u ON gp.user_id = u.id INNER JOIN public.\"prize\" AS p ON gp.prize_id = p.id INNER JOIN public.\"game\" AS g ON gp.game_id = g.id WHERE gp.game_id=$1 AND gp.prize_id=$2 AND gp.is_logged_leave=true ORDER BY gp.game_score DESC LIMIT 100;").await?;
     
       let mut vec: Vec<LogGDetail> = Vec::new();
       for row in conn.query(&stmt, &[&game_id, &prize_id]).await? {
@@ -158,7 +158,7 @@ impl GPlayer {
   
       let stmt = conn.prepare("SELECT 
         (SELECT freespin_per_day FROM public.\"config\") - 
-        (SELECT count(id) FROM public.\"spinner_log\" WHERE user_id=$1 AND date(enter_timestamp) = CURRENT_DATE)").await?;
+        (SELECT count(id) FROM public.\"spinner_log\" WHERE user_id=$1 AND is_logged_leave=true AND date(enter_timestamp) = CURRENT_DATE)").await?;
       let row = conn.query_one(&stmt, &[&user_id]).await?;
     
       Ok(row.get::<usize, i64>(0))
@@ -178,7 +178,7 @@ impl GPlayer {
     pub async fn spin_leave(spin_detail: LogSDetail, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"spinner_log\" SET leave_timestamp=$1, win_type=$2, win_amount=$3 WHERE id=$4 AND user_id=$5;").await?;
+      let stmt = conn.prepare("UPDATE public.\"spinner_log\" SET leave_timestamp=$1, win_type=$2, win_amount=$3, is_logged_leave=true WHERE id=$4 AND user_id=$5 AND is_logged_leave=false;").await?;
       let n = conn.execute(&stmt, 
                   &[&spin_detail.leave_timestamp, &spin_detail.win_type, &spin_detail.win_amount, &spin_detail.id, &spin_detail.user_id]).await?;
     
