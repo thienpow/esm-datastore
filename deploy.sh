@@ -1,6 +1,12 @@
+
 git pull
+
+echo "building esmserver"
 cargo build --bin esmserver --release
+
+echo "building checker"
 cargo build --bin checker --release
+
 cd deploy/
 docker-compose down
 rm service/esmserver
