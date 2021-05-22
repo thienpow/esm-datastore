@@ -96,6 +96,16 @@ pub struct CurrentGame {
   pub end_timestamp: SystemTime,
 }
 
+pub struct PrizePool {
+  pub id: i64,
+  pub prize_id: i64,
+  pub game_id: i64,
+  pub win_from: i32,
+  pub tickets: i32,
+  pub created_on: SystemTime,
+  pub is_closed: bool,
+}
+
 impl Prize {
     
     pub async fn add(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
@@ -181,6 +191,29 @@ impl Prize {
       Ok(n)
     }
     
+    pub async fn list_prize_pool(user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<PrizePool>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, prize_id, game_id, win_from, tickets, created_on, is_closed FROM public.\"prize_pool\" WHERE user_id=$1 ORDER BY id DESC;").await?;
+    
+      let mut vec: Vec<PrizePool> = Vec::new();
+      for row in conn.query(&stmt, &[&user_id]).await? {
+        let t = PrizePool {
+          id: row.get(0),
+          prize_id: row.get(1),
+          game_id: row.get(2),
+          win_from: row.get(3),
+          tickets: row.get(4),
+          created_on: row.get(5),
+          is_closed: row.get(6),
+        };
+
+        vec.push(t);
+      }
+      
+      Ok(vec)
+    }
+
 
     pub async fn set_running(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
