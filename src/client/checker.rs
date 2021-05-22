@@ -30,6 +30,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     loop {
 
+        //TODO: add a loop to current_game table and do closing, to find out the leaderboard and tickets award and set into prize_pool
+
+/*
+TODO: make sure prize_pool tickets calculated too and update it to user.tickets_collected
+SELECT (
+	SELECT COALESCE(SUM(tickets), 0)
+	FROM public.prize_pool WHERE prize_id=2 AND user_id=52 AND is_closed=false
+)  AS tickets_collected;
+
+*/
+
         let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
         let prizes = match prize::Prize::list(10000, 0, "".to_string(), 2, &pool_db.clone()).await {
