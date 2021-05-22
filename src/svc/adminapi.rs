@@ -97,6 +97,8 @@ use adminapi_proto::{
   DeletePrizeTourRequest, DeletePrizeTourResponse,
   ListPrizeTourRequest, ListPrizeTourResponse,
   PrizeTourDetail,
+  ListPrizePoolRequest, ListPrizePoolResponse,
+  PrizePoolDetail,
 
   // Rank
   AddRankRequest, AddRankResponse,
@@ -1686,6 +1688,41 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     };
     
     Ok(Response::new(ListPrizeTourResponse {
+      result: result,
+    }))
+    
+  }
+
+  async fn list_prize_pool(&self, request: Request<ListPrizePoolRequest>, ) -> Result<Response<ListPrizePoolResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let prize_pool = match prize::Prize::list_prize_pool(req.user_id.into(), &self.pool.clone()).await {
+      Ok(prize_pool) => prize_pool,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<PrizePoolDetail> = Vec::new();
+    
+    for p in prize_pool {
+
+      let created_on = p.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
+      let li = PrizePoolDetail {
+        id: p.id,
+        prize_id: p.prize_id,
+        game_id: p.game_id,
+        win_from: p.win_from,
+        tickets: p.tickets,
+        created_on: created_on as i64,
+        is_closed: p.is_closed,
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListPrizePoolResponse {
       result: result,
     }))
     

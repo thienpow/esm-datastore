@@ -3914,6 +3914,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listPrizeToday =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListPrizePoolRequest,
+ *   !proto.adminapi.esm.ListPrizePoolResponse>}
+ */
+const methodDescriptor_AdminApi_ListPrizePool = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListPrizePool',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListPrizePoolRequest,
+  proto.adminapi.esm.ListPrizePoolResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListPrizePoolRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListPrizePoolResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListPrizePoolRequest,
+ *   !proto.adminapi.esm.ListPrizePoolResponse>}
+ */
+const methodInfo_AdminApi_ListPrizePool = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListPrizePoolResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListPrizePoolRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListPrizePoolResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListPrizePoolRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListPrizePoolResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListPrizePoolResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listPrizePool =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListPrizePool',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListPrizePool,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListPrizePoolRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListPrizePoolResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listPrizePool =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListPrizePool',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListPrizePool);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.AddRankRequest,
  *   !proto.adminapi.esm.AddRankResponse>}
  */

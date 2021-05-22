@@ -73,6 +73,7 @@ service AdminApi {
   rpc DeletePrizeTour(DeletePrizeTourRequest) returns (DeletePrizeTourResponse) {}
   rpc ListPrizeTour(ListPrizeTourRequest) returns (ListPrizeTourResponse) {}
   rpc ListPrizeToday(ListPrizeTodayRequest) returns (ListPrizeTodayResponse) {}
+  rpc ListPrizePool(ListPrizePoolRequest) returns (ListPrizePoolResponse) {}
 
   // Rank
   rpc AddRank(AddRankRequest) returns (AddRankResponse) {}
