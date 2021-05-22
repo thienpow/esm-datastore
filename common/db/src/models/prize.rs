@@ -171,12 +171,12 @@ impl Prize {
       Ok(n)
     }
     
-    pub async fn log_prize_pool(prize_id: i64, user_id: i64, tickets: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn log_prize_pool(prize_id: i64, user_id: i64, game_id: i64, win_from: i32, tickets: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"prize_pool\" (prize_id, user_id, tickets) VALUES ($1, $2, $3) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"prize_pool\" (prize_id, user_id, game_id, win_from, tickets) VALUES ($1, $2, $3, $4, $5) RETURNING id;").await?;
       let n = conn.execute(&stmt, 
-                  &[&prize_id, &user_id, &tickets]).await?;
+                  &[&prize_id, &user_id, &game_id, &win_from, &tickets]).await?;
     
       Ok(n)
     }

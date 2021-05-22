@@ -39,7 +39,7 @@ pub struct LogSDetail {
   pub id: i64,
   pub user_id: i64,
   pub prize_id: i64,
-  pub tickets_won: i64,
+  pub tickets_won: i32,
   pub enter_timestamp: SystemTime,
   pub leave_timestamp: SystemTime,
 }
@@ -182,5 +182,15 @@ impl GPlayer {
                   &[&spin_detail.leave_timestamp, &spin_detail.tickets_won, &spin_detail.id, &spin_detail.user_id]).await?;
     
       Ok(n)
+    }
+
+
+    pub async fn get_spin_prize_id(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT prize_id FROM public.\"spinner_log\" WHERE id=$1").await?;
+      let row = conn.query_one(&stmt, &[&id]).await?;
+    
+      Ok(row.get::<usize, i64>(0))
     }
 }

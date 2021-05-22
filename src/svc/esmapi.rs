@@ -801,9 +801,9 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                   //user's tickets field need to be reset to 0 while the accumulated reward_tickets is stored into prize pool.
                   match user::User::update_exp_tickets(user_id, reward_exp, 0, &self.pool.clone()).await {
                     Ok(_) => {
-                      //log into prize_pool
-                      
-                      match prize::Prize::log_prize_pool(prize_id, user_id, reward_tickets, &self.pool.clone()).await {
+
+                      //log into prize_pool, win_from = 2
+                      match prize::Prize::log_prize_pool(prize_id, user_id, game_id, 2, reward_tickets, &self.pool.clone()).await {
                         Ok(_) => {
                           //do something here?
                           
@@ -1005,23 +1005,41 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
+    let id: i64 = req.id.into();
     let user_id: i64 = req.user_id.into();
+    let tickets_won: i32 = req.tickets_won.into();
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
     
     let now = SystemTime::now();
     
 
     let spin_detail = gplayer::LogSDetail {
-      id: req.id.into(),
+      id: id,
       user_id: user_id,
       prize_id: 0,
       enter_timestamp: now,
       leave_timestamp: now,
-      tickets_won: req.tickets_won.into(),
+      tickets_won: tickets_won,
     };
     
     match gplayer::GPlayer::spin_leave(spin_detail, &self.pool.clone()).await {
       Ok(result) => {
+
+        //log into prize_pool here, game_id=0, win_from=1
+        let prize_id: i64 = match gplayer::GPlayer::get_spin_prize_id(id, &self.pool.clone()).await {
+          Ok(prize_id) => prize_id,
+          Err(error) => panic!("Error: {}.", error),
+        };
+
+        match prize::Prize::log_prize_pool(prize_id, user_id, 0, 1, tickets_won, &self.pool.clone()).await {
+          Ok(_) => {
+            //do something here?
+            
+            ()
+          },
+          Err(error) => panic!("Error: {}.", error),
+        }
+
         Ok(Response::new(LogSLeaveResponse {
           result: result.to_string()
         }))
