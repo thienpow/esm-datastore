@@ -262,6 +262,7 @@ message UserDetail {
   bool is_notify_tour_ending = 26;
   string nick_name = 27;
   string msg_token = 28;
+  int64 subscription_id = 29;
 }
 
 

@@ -6913,7 +6913,8 @@ proto.api.esm.UserDetail.toObject = function(includeInstance, msg) {
     isNotifyNewTournament: jspb.Message.getBooleanFieldWithDefault(msg, 25, false),
     isNotifyTourEnding: jspb.Message.getBooleanFieldWithDefault(msg, 26, false),
     nickName: jspb.Message.getFieldWithDefault(msg, 27, ""),
-    msgToken: jspb.Message.getFieldWithDefault(msg, 28, "")
+    msgToken: jspb.Message.getFieldWithDefault(msg, 28, ""),
+    subscriptionId: jspb.Message.getFieldWithDefault(msg, 29, 0)
   };
 
   if (includeInstance) {
@@ -7061,6 +7062,10 @@ proto.api.esm.UserDetail.deserializeBinaryFromReader = function(msg, reader) {
     case 28:
       var value = /** @type {string} */ (reader.readString());
       msg.setMsgToken(value);
+      break;
+    case 29:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setSubscriptionId(value);
       break;
     default:
       reader.skipField();
@@ -7284,6 +7289,13 @@ proto.api.esm.UserDetail.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       28,
+      f
+    );
+  }
+  f = message.getSubscriptionId();
+  if (f !== 0) {
+    writer.writeInt64(
+      29,
       f
     );
   }
@@ -7791,6 +7803,24 @@ proto.api.esm.UserDetail.prototype.getMsgToken = function() {
  */
 proto.api.esm.UserDetail.prototype.setMsgToken = function(value) {
   return jspb.Message.setProto3StringField(this, 28, value);
+};
+
+
+/**
+ * optional int64 subscription_id = 29;
+ * @return {number}
+ */
+proto.api.esm.UserDetail.prototype.getSubscriptionId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 29, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.UserDetail} returns this
+ */
+proto.api.esm.UserDetail.prototype.setSubscriptionId = function(value) {
+  return jspb.Message.setProto3IntField(this, 29, value);
 };
 
 

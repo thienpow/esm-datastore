@@ -265,7 +265,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
             is_notify_new_tournament: user.is_notify_new_tournament,
             is_notify_tour_ending: user.is_notify_tour_ending,
             nick_name: user.nick_name,
-            msg_token: user.msg_token
+            msg_token: user.msg_token,
+            subscription_id: user.subscription_id
           }),
         }))
       },
@@ -313,6 +314,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       is_notify_tour_ending:  true,
       nick_name: "".to_string(),
       msg_token: "".to_string(),
+      subscription_id: 0,
     };
     
     let result = match user::User::add(user, &self.pool.clone()).await {
