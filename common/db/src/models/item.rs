@@ -150,4 +150,12 @@ impl Item {
 
 
 
+    pub async fn get_quantity(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i32, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT quantity FROM public.\"item\" WHERE id=$1").await?;
+      let row = conn.query_one(&stmt, &[&id]).await?;
+    
+      Ok(row.get::<usize, i32>(0))
+    }
 }

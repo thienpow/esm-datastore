@@ -70,6 +70,32 @@ impl Subscription {
       Ok(n)
     }
     
+
+    pub async fn get(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Subscription, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, price, quantity, one_time_gem, one_time_multiplier, one_time_is_firstonly, daily_gem, daily_multiplier, status FROM public.\"subscription\" WHERE id=$1;").await?;
+      let row = conn.query_one(&stmt, 
+                    &[&id]).await?;
+
+      Ok(Subscription {
+        id: row.get(0),
+        title: row.get(1),
+        subtitle: row.get(2),
+        img_url: row.get(3),
+        content: row.get(4),
+        type_id: row.get(5),
+        price: row.get(6),
+        quantity: row.get(7),
+        one_time_gem: row.get(8),
+        one_time_multiplier: row.get(9),
+        one_time_is_firstonly: row.get(10),
+        daily_gem: row.get(11),
+        daily_multiplier: row.get(12),
+        status: row.get(13)
+      })
+    }
+
     pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Subscription>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

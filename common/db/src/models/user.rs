@@ -192,7 +192,16 @@ impl User {
     
       Ok(n)
     }
+    pub async fn update_subscription(id: i64, gem_balance: i64, subscription_id: i64, one_time_multiplier: f64, daily_gem: i64, daily_multiplier: f64, one_time_is_firstonly: bool, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=$1, subscription_id=$2, one_time_multiplier=$3, daily_gem=$4, daily_multiplier=$5, one_time_is_firstonly=$6 WHERE id=$7;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&gem_balance, &subscription_id, &one_time_multiplier, &daily_gem, &daily_multiplier, &one_time_is_firstonly, &id]).await?;
     
+      Ok(n)
+    }
+
     pub async fn sign_in(username: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<User, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
 

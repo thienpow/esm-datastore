@@ -1464,6 +1464,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     let user_id: i64 = req.user_id.into();
+    let item_type_id: i32 = req.item_type_id.into();
+    
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
     
     let now = SystemTime::now();
@@ -1475,7 +1477,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let new_buy = shop::NewBuy {
       id: 0,
-      item_type_id: req.item_type_id.into(),
+      item_type_id: item_type_id,
       item_id: item_id,
       item_title: "".to_string(),
       user_id: user_id,
@@ -1487,8 +1489,72 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       created_on: now
     };
     
+    
     let result = match shop::Shop::buy(new_buy, &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
+      Ok(result) => {
+
+        let user = match user::User::get(user_id, &self.pool.clone()).await {
+          Ok(user) => user,
+          Err(error) => panic!("Error: {}.", error),
+        };
+
+        if item_type_id == 201 { 
+          //it's Gems Pack, update user's gem amount immediately
+          
+          //check the quantity of gem for this Gem pack
+          let quantity: i64 = match item::Item::get_quantity(item_id, &self.pool.clone()).await {
+            Ok(quantity) => quantity as i64,
+            Err(error) => panic!("Error: {}.", error),
+          };
+
+          let new_gem_balance: i64 = user.gem_balance + quantity;
+          match user::User::update_status_gem_balance(user_id, user.status, new_gem_balance, &self.pool.clone()).await {
+            Ok(_) => {
+
+              match svc::notify("You Gem Balance is loaded!", format!("You bought a gem pack with {} gems! Your Gem Balance is Updated to {}", quantity, new_gem_balance).as_str(), &user.msg_token).await {
+                Ok(_) => "1",
+                Err(error) => panic!("Error: {}.", error),
+              };
+              
+            },
+            Err(error) => panic!("Error: {}.", error),
+          };
+
+        } else if item_type_id == 101 {
+          
+          match subscription::Subscription::get(item_id, &self.pool.clone()).await {
+            Ok(subscription) => {
+              let quantity = subscription.one_time_gem;
+              let new_gem_balance: i64 = user.gem_balance + quantity;
+
+              //it's Subscription purchase, update user's subscription_id
+              match user::User::update_subscription(user_id, new_gem_balance, item_id, 
+                subscription.one_time_multiplier, 
+                subscription.daily_gem, 
+                subscription.daily_multiplier, 
+                subscription.one_time_is_firstonly, 
+                &self.pool.clone()).await {
+                Ok(_) => {
+
+                  match svc::notify("You Gem Balance is loaded!", format!("You bought a subscription with {} gems as instant reward! Your Gem Balance is Updated to {}", quantity, new_gem_balance).as_str(), &user.msg_token).await {
+                    Ok(_) => "1",
+                    Err(error) => panic!("Error: {}.", error),
+                  };
+                  
+                },
+                Err(error) => panic!("Error: {}.", error),
+              };
+                
+            },
+            Err(error) => panic!("Error: {}.", error),
+          };
+          
+          
+        }
+
+        
+        result.to_string() 
+      },
       Err(error) => error.to_string(),
     };
     
