@@ -85,7 +85,6 @@ COPY public."user" (id, username, passhash, email, phone, firstname, lastname, c
 1	wukong	$argon2id$v=19$m=64,t=1,p=1$pb7+cdRKchBGWxfmx6nHinqmLY4ir5vc4+LSsPwbpDg$kwfH/p8iEmxcTjKqzyWs8sekvIns2Qt4vSvbS/Pxz9U	thienpow@gmail.com	0188888888	Black	Myth	2020-12-31 15:07:54.239332	2020-12-31 15:07:54.239332	1	1	0				0		0						f	f	f	f	f		0	0	0	0	0	0	0
 \.
 
-
 --
 -- public.timezones
 --
@@ -121,5 +120,31 @@ COPY public."timezones" (id, "offset", stext, ltext) FROM stdin;
 29	10	GMT +10:00	(GMT +10:00) Eastern Australia, Guam, Vladivostok
 30	11	GMT +11:00	(GMT +11:00) Magadan, Solomon Islands, New Caledonia
 31	12	GMT +12:00	(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka
+\.
+
+--
+-- public.rank
+--
+COPY public."rank" (id, title, "exp", gem, multiplier) FROM stdin;
+1	Level  1	0	0	0
+2	Level 2	15	1	0.02
+3	Level 3	50	1	0.03
+4	Level 4	100	1	0.04
+5	Level 5	180	1	0.05
+6	Level 6	300	2	0.06
+7	Level 7	450	2	0.07
+8	Level 8	630	2	0.08
+9	Level 9	850	2	0.09
+10	Level 10	1100	2	0.1
+11	Level 11	1850	3	0.11
+12	Level 12	2850	3	0.12
+13	Level 13	4100	3	0.13
+14	Level 14	5600	3	0.14
+15	Level 15	7350	3	0.15
+16	Level 16	9500	5	0.16
+17	Level 17	11800	5	0.17
+18	Level 18	14300	5	0.18
+19	Level 19	17050	5	0.19
+20	Level 20	20000	10	0.2
 \.
 
