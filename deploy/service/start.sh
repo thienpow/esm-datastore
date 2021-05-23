@@ -11,5 +11,5 @@ export STRIPE_SECRET="sk_test_51IOa7gBGCaV2oEVpEDw9fOn1fUn8IaPOemu7Yjkg6N75C3ahs
 export CHECKER_TIME_WAIT="900"
 
 # IMPORTANT! need to have at least one looping... do not put & at the last command
-/usr/local/bin/checker & 
+/usr/local/bin/checker_current_game & 
 /usr/local/bin/esmserver

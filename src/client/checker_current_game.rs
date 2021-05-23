@@ -29,20 +29,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 
     loop {
-        //TODO: make a daily checker for users' who subscribed and add the gem amount to user's gem
-
-        //TODO: add a loop to current_game table and do closing, to find out the leaderboard and tickets award and set into prize_pool
-        // check if end_timestamp < now, meaning already past, then do the closing.
-
-        /*
-        TODO: make sure prize_pool tickets calculated too and update it to user.tickets_collected
-        SELECT (
-            SELECT COALESCE(SUM(tickets), 0)
-            FROM public.prize_pool WHERE prize_id=2 AND user_id=52 AND is_closed=false
-        )  AS tickets_collected;
-
-        */
-
+        
         let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
         let prizes = match prize::Prize::list(10000, 0, "".to_string(), 2, &pool_db.clone()).await {
@@ -85,6 +72,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                         // after closing is called here only do reset/perm-end below
                         println!("TODO: do closing!!!");
+                        
                         //make sure prize's tickets_collected is kept in a log, to identify previous round's data
                         let _ = match prize::Prize::log_closed(prize_id, tickets_collected, &pool_db.clone()).await {
                             Ok(_) => (),

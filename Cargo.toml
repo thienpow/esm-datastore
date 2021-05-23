@@ -10,13 +10,13 @@ name = "esmserver"
 path = "src/main.rs"
 
 [[bin]]
-name = "checker"
-path = "src/client/checker.rs"
+name = "checker_current_game"
+path = "src/client/checker_current_game.rs"
 
 
-[[bin]]
-name = "msgpush"
-path = "src/client/msgpush.rs"
+#[[bin]]
+#name = "msgpush"
+#path = "src/client/msgpush.rs"
 
 #[[bin]]
 #name = "config"
