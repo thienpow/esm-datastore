@@ -337,7 +337,7 @@ impl Prize {
       INNER JOIN public.\"tournament_set\" AS s ON s.id = cg.set_id 
       INNER JOIN public.\"game\" AS g ON g.id = cg.game_id 
       INNER JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.id = cg.tsg_id 
-    WHERE start_timestamp <= NOW() + INTERVAL '3 minutes' AND end_timestamp > NOW();".to_string();
+    WHERE cg.start_timestamp <= NOW() + INTERVAL '3 minutes' AND cg.end_timestamp > NOW() ORDER BY p.type_id, cg.start_timestamp;".to_string();
       let stmt = conn.prepare(&sql_string).await?;
   
       let mut vec: Vec<PrizeActive> = Vec::new();
