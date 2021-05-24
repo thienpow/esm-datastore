@@ -137,7 +137,7 @@ impl User {
     pub async fn reward_gem(id: i64, gem: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=$1 + (SELECT gem_balance FROM public.\"user\" WHERE id=$2) WHERE id=$2;").await?;
+      let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=$1 + (SELECT gem_balance FROM public.\"user\", sub_daily_timestamp=NOW() WHERE id=$2) WHERE id=$2;").await?;
       let n = conn.execute(&stmt, 
                   &[&gem, &id]).await?;
     
