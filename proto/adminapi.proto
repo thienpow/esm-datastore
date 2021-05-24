@@ -207,9 +207,11 @@ message SignInRequest {
   string password = 2;
 }
 message SignInResponse {
-  UserDetail result = 1;
+  SignInDetail result = 1;
 }
-
+message SignInDetail {
+  string jwt_token = 1;
+}
 
 //Update an existing user data
 message UpdateEmailConfirmedRequest {
@@ -296,7 +298,12 @@ message UserDetail {
   bool is_notify_new_tournament = 25;
   bool is_notify_tour_ending = 26;
   string nick_name = 27;
-  string jwt_token =  28;
+  int64 subscription_id = 28;
+  double one_time_multiplier = 29; 
+  int32 daily_gem = 30;
+  double daily_multiplier = 32;
+  bool one_time_is_firstonly = 33; 
+  int64 sub_daily_timestamp = 34;
 }
 
 

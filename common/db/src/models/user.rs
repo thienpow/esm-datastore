@@ -37,7 +37,7 @@ pub struct User {
   pub msg_token: String,
   pub subscription_id: i64,
   pub one_time_multiplier: f64, 
-  pub daily_gem: i64, 
+  pub daily_gem: i32, 
   pub daily_multiplier: f64, 
   pub one_time_is_firstonly: bool, 
   pub sub_daily_timestamp: SystemTime,

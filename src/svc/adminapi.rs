@@ -33,7 +33,7 @@ use adminapi_proto::{
   ListTimezonesRequest,  ListTimezonesResponse,
   TimezonesDetail,
   // User
-  SignInRequest, SignInResponse,
+  SignInRequest, SignInResponse, SignInDetail,
   UpdateEmailConfirmedRequest, UpdateEmailConfirmedResponse,
   UpdateUserStatusGemBalanceRequest, UpdateUserStatusGemBalanceResponse,
   ChangePasswordRequest, ChangePasswordResponse,
@@ -334,45 +334,11 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
     match user::User::sign_in(req.username.into(), &self.pool.clone()).await {
       Ok(user) => {
 
-        //println!("sign_in ok got user");
-
         if cryptic::verify(&user.passhash, &req.password).unwrap() {
           let jwt_token = jwt::issue_token(username.into(), user.role_id).unwrap();
 
-          let created_on = user.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-          let last_login = user.last_login.duration_since(UNIX_EPOCH).unwrap().as_secs();
-
           return Ok(Response::new(SignInResponse {
-            result: Some(UserDetail {
-              id: user.id,
-              username: user.username,
-              email: user.email,
-              phone: user.phone,
-              firstname: user.firstname,
-              lastname: user.lastname,
-              created_on: created_on as i64,
-              last_login: last_login as i64,
-              role_id: user.role_id,
-              status: user.status,
-              gem_balance: user.gem_balance,
-              social_link_fb: user.social_link_fb,
-              social_link_google: user.social_link_google,
-              avatar_url: user.avatar_url,
-              exp: user.exp,
-              //Address
-              full_name: user.full_name,
-              address: user.address,
-              city: user.city,
-              state: user.state,
-              zip_code: user.zip_code,
-              country: user.country,
-              country_code: user.country_code,
-              //Settings
-              is_notify_allowed: user.is_notify_allowed,
-              is_notify_new_reward: user.is_notify_new_reward,
-              is_notify_new_tournament: user.is_notify_new_tournament,
-              is_notify_tour_ending: user.is_notify_tour_ending,
-              nick_name: user.nick_name,
+            result: Some(SignInDetail {
               jwt_token: jwt_token
             }),
           }))
@@ -470,7 +436,8 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
       
       let seconds_created_on = user.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
       let seconds_last_login = user.last_login.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        
+      let sub_daily_timestamp = user.sub_daily_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
       let li = UserDetail {
         id: user.id,
         username: user.username,
@@ -501,7 +468,12 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
         is_notify_new_tournament:  user.is_notify_new_tournament,
         is_notify_tour_ending:  user.is_notify_tour_ending,
         nick_name: user.nick_name,
-        jwt_token: "".to_string()
+        subscription_id: user.subscription_id,
+        one_time_multiplier: user.one_time_multiplier,
+        daily_gem: user.daily_gem,
+        daily_multiplier: user.daily_multiplier,
+        one_time_is_firstonly: user.one_time_is_firstonly,
+        sub_daily_timestamp: sub_daily_timestamp as i64,
       };
       
       result.push(li);
@@ -547,7 +519,8 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
 
     let seconds_created_on = user.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
     let seconds_last_login = user.last_login.duration_since(UNIX_EPOCH).unwrap().as_secs();
-      
+    let sub_daily_timestamp = user.sub_daily_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
     Ok(Response::new(GetUserResponse {
       result: Some(UserDetail {
         id: user.id,
@@ -579,7 +552,12 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
         is_notify_new_tournament: user.is_notify_new_tournament,
         is_notify_tour_ending: user.is_notify_tour_ending,
         nick_name: user.nick_name,
-        jwt_token: "".to_string()
+        subscription_id: user.subscription_id,
+        one_time_multiplier: user.one_time_multiplier,
+        daily_gem: user.daily_gem,
+        daily_multiplier: user.daily_multiplier,
+        one_time_is_firstonly: user.one_time_is_firstonly,
+        sub_daily_timestamp: sub_daily_timestamp as i64,
       }),
     }))
     
