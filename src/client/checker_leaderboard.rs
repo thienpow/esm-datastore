@@ -93,11 +93,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                                         } 
                                         
-                                        multiplier = multiplier + user.daily_multiplier + get_multiplier_from_rank(user.exp, &ranks);
+                                        let (rank_multiplier, rank_gem) = get_reward_from_rank(user.exp, &ranks);
+                                        multiplier = multiplier + user.daily_multiplier + rank_multiplier;
                                         
                                         reward_tickets = reward_tickets + (multiplier * rule.tickets as f64);
                                         println!("reward_tickets=={}", reward_tickets);
 
+                                        user::User::reward_gem(user_id, rank_gem, &pool.clone()).await?;
                                         user::User::reward_exp(user_id, rule.exp, &pool.clone()).await?;
                                         //append to prize_pool with rule.tickets, win_from=3,
                                         
@@ -141,13 +143,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 
-fn get_multiplier_from_rank(exp: i32, ranks: &Vec<rank::Rank>) -> f64 {
+fn get_reward_from_rank(exp: i32, ranks: &Vec<rank::Rank>) -> (f64, i32) {
 
     for rank in ranks {
         if exp >= rank.exp {
-            return rank.multiplier;
+            return (rank.multiplier, rank.gem);
         }
     }
 
-    return 0.0;
+    return (0.0, 0);
 }
