@@ -34,15 +34,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         //TODO: make a daily checker for users' who subscribed and yet to be rewarded with daily_gem and add the gem amount to user's gem
         match user::User::list_unrewarded_subscriber(&pool.clone()).await {
-            Ok(subscribed_users) => {
+            Ok(users) => {
                 //retrieve users that's subscribed and not yet updated with daily_gem
-                for user in subscribed_users {
-                    let daily_gem = user.daily_gem;
-                    //let new_gem_balance = user.gem_balance + daily_gem;
-                    
-                    //match user::User::update_subscribed_gem_balance(new_gem_balance, now).await {
+                for user in users {
 
-                    //}
+                    user::User::reward_gem(user.id, user.daily_gem, &pool.clone()).await?;
+
                 }
 
             },

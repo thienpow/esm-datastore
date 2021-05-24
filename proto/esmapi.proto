@@ -244,7 +244,7 @@ message UserDetail {
   int64 last_login = 8;
   int32 role_id = 9;
   int32 status = 10;
-  int64 gem_balance = 11;
+  int32 gem_balance = 11;
   string social_link_fb = 12;
   string social_link_google = 13;
   string avatar_url = 14;
@@ -773,10 +773,10 @@ message SubscriptionDetail {
   int32 type_id = 6;
   double price = 7;
   int32 quantity = 8;
-  int64 one_time_gem = 9;
+  int32 one_time_gem = 9;
   double one_time_multiplier = 10;
   bool one_time_is_firstonly = 11;
-  int64 daily_gem = 12;
+  int32 daily_gem = 12;
   double daily_multiplier  = 13;
   int32 status = 14;
 }

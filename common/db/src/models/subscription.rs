@@ -11,10 +11,10 @@ pub struct Subscription {
   pub type_id: i32,
   pub price: f64,
   pub quantity: i32,
-  pub one_time_gem: i64,
+  pub one_time_gem: i32,
   pub one_time_multiplier: f64,
   pub one_time_is_firstonly: bool,
-  pub daily_gem: i64,
+  pub daily_gem: i32,
   pub daily_multiplier: f64,
   pub status: i32,
 }

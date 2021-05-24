@@ -6992,7 +6992,7 @@ proto.api.esm.UserDetail.deserializeBinaryFromReader = function(msg, reader) {
       msg.setStatus(value);
       break;
     case 11:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setGemBalance(value);
       break;
     case 12:
@@ -7168,7 +7168,7 @@ proto.api.esm.UserDetail.serializeBinaryToWriter = function(message, writer) {
   }
   f = message.getGemBalance();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       11,
       f
     );
@@ -7483,7 +7483,7 @@ proto.api.esm.UserDetail.prototype.setStatus = function(value) {
 
 
 /**
- * optional int64 gem_balance = 11;
+ * optional int32 gem_balance = 11;
  * @return {number}
  */
 proto.api.esm.UserDetail.prototype.getGemBalance = function() {
@@ -19264,7 +19264,7 @@ proto.api.esm.SubscriptionDetail.deserializeBinaryFromReader = function(msg, rea
       msg.setQuantity(value);
       break;
     case 9:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setOneTimeGem(value);
       break;
     case 10:
@@ -19276,7 +19276,7 @@ proto.api.esm.SubscriptionDetail.deserializeBinaryFromReader = function(msg, rea
       msg.setOneTimeIsFirstonly(value);
       break;
     case 12:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setDailyGem(value);
       break;
     case 13:
@@ -19374,7 +19374,7 @@ proto.api.esm.SubscriptionDetail.serializeBinaryToWriter = function(message, wri
   }
   f = message.getOneTimeGem();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       9,
       f
     );
@@ -19395,7 +19395,7 @@ proto.api.esm.SubscriptionDetail.serializeBinaryToWriter = function(message, wri
   }
   f = message.getDailyGem();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       12,
       f
     );
@@ -19562,7 +19562,7 @@ proto.api.esm.SubscriptionDetail.prototype.setQuantity = function(value) {
 
 
 /**
- * optional int64 one_time_gem = 9;
+ * optional int32 one_time_gem = 9;
  * @return {number}
  */
 proto.api.esm.SubscriptionDetail.prototype.getOneTimeGem = function() {
@@ -19616,7 +19616,7 @@ proto.api.esm.SubscriptionDetail.prototype.setOneTimeIsFirstonly = function(valu
 
 
 /**
- * optional int64 daily_gem = 12;
+ * optional int32 daily_gem = 12;
  * @return {number}
  */
 proto.api.esm.SubscriptionDetail.prototype.getDailyGem = function() {

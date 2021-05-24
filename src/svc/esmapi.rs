@@ -780,7 +780,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                   if is_used_gem {
                           
                     //deduct a gem first
-                    let new_gem_balance: i64 = user.gem_balance - 1 as i64;
+                    let new_gem_balance: i32 = user.gem_balance - 1 as i32;
                     match user::User::update_status_gem_balance(user_id, user.status, new_gem_balance, &self.pool.clone()).await {
                       Ok(_) => {
         
@@ -1108,7 +1108,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
             match user::User::get(invited_by, &self.pool.clone()).await {
               Ok(user) => {
 
-                let new_gem_balance: i64 = user.gem_balance + gems_per_invite as i64;
+                let new_gem_balance: i32 = user.gem_balance + gems_per_invite as i32;
                 match user::User::update_status_gem_balance(invited_by, user.status, new_gem_balance, &self.pool.clone()).await {
                   Ok(_) => {
 
@@ -1511,12 +1511,12 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
           //it's Gems Pack, update user's gem amount immediately
           
           //check the quantity of gem for this Gem pack
-          let quantity: i64 = match item::Item::get_quantity(item_id, &self.pool.clone()).await {
-            Ok(quantity) => quantity as i64,
+          let quantity: i32 = match item::Item::get_quantity(item_id, &self.pool.clone()).await {
+            Ok(quantity) => quantity,
             Err(error) => panic!("Error: {}.", error),
           };
 
-          let new_gem_balance: i64 = user.gem_balance + quantity;
+          let new_gem_balance: i32 = user.gem_balance + quantity;
           match user::User::update_status_gem_balance(user_id, user.status, new_gem_balance, &self.pool.clone()).await {
             Ok(_) => {
 
@@ -1533,8 +1533,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
           
           match subscription::Subscription::get(item_id, &self.pool.clone()).await {
             Ok(subscription) => {
-              let quantity = subscription.one_time_gem;
-              let new_gem_balance: i64 = user.gem_balance + quantity;
+              
+              let new_gem_balance: i32 = user.gem_balance + subscription.one_time_gem;
 
               //it's Subscription purchase, update user's subscription_id
               match user::User::new_subscription(user_id, new_gem_balance, item_id, 
@@ -1545,7 +1545,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                 &self.pool.clone()).await {
                 Ok(_) => {
 
-                  match svc::notify("You Gem Balance is loaded!", format!("You bought a subscription with {} gems as instant reward! Your Gem Balance is Updated to {}", quantity, new_gem_balance).as_str(), &user.msg_token).await {
+                  match svc::notify("You Gem Balance is loaded!", format!("You bought a subscription with {} gems as instant reward! Your Gem Balance is Updated to {}", subscription.one_time_gem, new_gem_balance).as_str(), &user.msg_token).await {
                     Ok(_) => "1",
                     Err(error) => panic!("Error: {}.", error),
                   };

@@ -17,7 +17,7 @@ pub struct User {
   pub last_login: SystemTime,
   pub role_id: i32,
   pub status: i32,
-  pub gem_balance: i64,
+  pub gem_balance: i32,
   pub social_link_fb: String,
   pub social_link_google: String,
   pub avatar_url: String,
@@ -72,7 +72,7 @@ pub struct UserCount {
 
 pub struct UserBrief {
   pub id: i64,
-  pub gem_balance: i64,
+  pub gem_balance: i32,
   pub exp: i32,
   pub is_notify_allowed: bool,
   pub is_notify_new_reward: bool,
@@ -134,6 +134,18 @@ impl User {
       Ok(n)
     }
 
+    pub async fn reward_gem(id: i64, gem: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=$1 + (SELECT gem_balance FROM public.\"user\" WHERE id=$2) WHERE id=$2;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&gem, &id]).await?;
+    
+      Ok(n)
+    }
+
+    
+
     pub async fn reset_one_time_multiplier(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
@@ -164,7 +176,7 @@ impl User {
       Ok(n)
     }
 
-    pub async fn update_status_gem_balance(id: i64, status: i32, gem_balance: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update_status_gem_balance(id: i64, status: i32, gem_balance: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
 
@@ -176,7 +188,7 @@ impl User {
                   &[&id]).await?;
 
       let old_status: i32 = row.get(0);
-      let old_gem_balance: i64 = row.get(1);
+      let old_gem_balance: i32 = row.get(1);
 
       let stmt = conn.prepare("INSERT INTO public.\"user_admin_change_log\" (user_id, old_status, new_status, old_gem_balance, new_gem_balance, \
         created_on, changed_by) \
@@ -226,7 +238,7 @@ impl User {
     
       Ok(n)
     }
-    pub async fn new_subscription(id: i64, gem_balance: i64, subscription_id: i64, one_time_multiplier: f64, daily_gem: i64, daily_multiplier: f64, one_time_is_firstonly: bool, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn new_subscription(id: i64, gem_balance: i32, subscription_id: i64, one_time_multiplier: f64, daily_gem: i32, daily_multiplier: f64, one_time_is_firstonly: bool, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=$1, subscription_id=$2, one_time_multiplier=$3, daily_gem=$4, daily_multiplier=$5, one_time_is_firstonly=$6, sub_daily_timestamp=now() WHERE id=$7;").await?;
