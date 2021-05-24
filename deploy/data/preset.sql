@@ -2,8 +2,8 @@
 --
 -- public.config
 --
-COPY public.config (spinner, invites, games_per_ad, days_to_claim, id) FROM stdin;
-{1,2,3}	5	8	30	1
+COPY public.config (id, invites, games_per_ad, days_to_claim, game_loader_template, freespin_per_day, gems_per_spins_1, ads_per_spins_1, gems_per_spins_2, ads_per_spins_2) FROM stdin;
+1	10	3	30	0	3	1	0	2	0
 \.
 
 --
@@ -11,6 +11,17 @@ COPY public.config (spinner, invites, games_per_ad, days_to_claim, id) FROM stdi
 --
 COPY public.checker_log (id) FROM stdin;
 1
+\.
+
+--
+-- public.user_status_type
+--
+COPY public.user_status_type (id, title) FROM stdin;
+0	Not Selected
+1	Active
+2	Blocked
+3	Pending Delete
+4	Archived
 \.
 
 --
