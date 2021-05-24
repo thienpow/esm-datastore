@@ -139,9 +139,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let diff = stop - start;
         println!("Time Spent = {}ms", diff);
 
-        let _ = match checker::Checker::update_checked(diff as i64, &pool.clone()).await {
+        let _ = match checker::Checker::update_leaderboard_checked(diff as i64, &pool.clone()).await {
             Ok(_) => (),
-            Err(error) => panic!("== update_checked Error: {}.", error),
+            Err(error) => panic!("== update_leaderboard_checked Error: {}.", error),
         };
         let time_wait = time::Duration::from_secs(config.checker_time_wait);
         thread::sleep(time_wait);

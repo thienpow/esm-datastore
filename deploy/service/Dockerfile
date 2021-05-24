@@ -8,6 +8,12 @@ RUN chmod u+x /usr/local/bin/esmserver
 COPY ./service/checker_current_game /usr/local/bin/checker_current_game
 RUN chmod u+x /usr/local/bin/checker_current_game
 
+COPY ./service/checker_leaderboard /usr/local/bin/checker_leaderboard
+RUN chmod u+x /usr/local/bin/checker_leaderboard
+
+COPY ./service/checker_subscriber /usr/local/bin/checker_subscriber
+RUN chmod u+x /usr/local/bin/checker_subscriber
+
 COPY ./service/start.sh /usr/local/bin/start
 RUN chmod u+x /usr/local/bin/start
 

@@ -1537,7 +1537,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
               let new_gem_balance: i64 = user.gem_balance + quantity;
 
               //it's Subscription purchase, update user's subscription_id
-              match user::User::update_subscription(user_id, new_gem_balance, item_id, 
+              match user::User::new_subscription(user_id, new_gem_balance, item_id, 
                 subscription.one_time_multiplier, 
                 subscription.daily_gem, 
                 subscription.daily_multiplier, 

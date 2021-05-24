@@ -240,7 +240,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let diff = stop - start;
         println!("Time Spent = {}ms", diff);
 
-        let _ = match checker::Checker::update_checked(diff as i64, &pool_db.clone()).await {
+        let _ = match checker::Checker::update_current_game_checked(diff as i64, &pool_db.clone()).await {
             Ok(_) => (),
             Err(error) => panic!("== update_checked Error: {}.", error),
         };

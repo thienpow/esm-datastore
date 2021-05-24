@@ -70,6 +70,23 @@ pub struct UserCount {
 }
 
 
+pub struct UserBrief {
+  pub id: i64,
+  pub gem_balance: i64,
+  pub exp: i32,
+  pub is_notify_allowed: bool,
+  pub is_notify_new_reward: bool,
+  pub is_notify_new_tournament: bool,
+  pub is_notify_tour_ending: bool,
+  pub nick_name: String,
+  pub msg_token: String,
+  pub subscription_id: i64,
+  pub one_time_multiplier: f64, 
+  pub daily_gem: i32, 
+  pub daily_multiplier: f64, 
+  pub one_time_is_firstonly: bool, 
+  pub sub_daily_timestamp: SystemTime,
+}
 impl User {
     
     pub async fn add(user: User, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
@@ -209,10 +226,10 @@ impl User {
     
       Ok(n)
     }
-    pub async fn update_subscription(id: i64, gem_balance: i64, subscription_id: i64, one_time_multiplier: f64, daily_gem: i64, daily_multiplier: f64, one_time_is_firstonly: bool, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn new_subscription(id: i64, gem_balance: i64, subscription_id: i64, one_time_multiplier: f64, daily_gem: i64, daily_multiplier: f64, one_time_is_firstonly: bool, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=$1, subscription_id=$2, one_time_multiplier=$3, daily_gem=$4, daily_multiplier=$5, one_time_is_firstonly=$6 WHERE id=$7;").await?;
+      let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=$1, subscription_id=$2, one_time_multiplier=$3, daily_gem=$4, daily_multiplier=$5, one_time_is_firstonly=$6, sub_daily_timestamp=now() WHERE id=$7;").await?;
       let n = conn.execute(&stmt, 
                   &[&gem_balance, &subscription_id, &one_time_multiplier, &daily_gem, &daily_multiplier, &one_time_is_firstonly, &id]).await?;
     
@@ -449,6 +466,40 @@ impl User {
       Ok(vec)
     }
 
+    pub async fn list_unrewarded_subscriber(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<UserBrief>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let mut vec: Vec<UserBrief> = Vec::new();
+      
+      let sql_string = format!("SELECT id, gem_balance, exp, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token, subscription_id, one_time_multiplier, daily_gem, daily_multiplier, one_time_is_firstonly, sub_daily_timestamp FROM public.\"user\" WHERE status=1 AND role_id=200 AND subscription_id > 0 AND sub_daily_timestamp < CURRENT_DATE;");
+      let stmt = conn.prepare(&sql_string).await?;
+  
+      for row in conn.query(&stmt, &[]).await? {
+        let user = UserBrief {
+          id: row.get(0),
+          gem_balance: row.get(1),
+          exp: row.get(2),
+
+          //is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name
+          is_notify_allowed: row.get(3),
+          is_notify_new_reward: row.get(4),
+          is_notify_new_tournament: row.get(5),
+          is_notify_tour_ending: row.get(6),
+          nick_name: row.get(7),
+          msg_token:  row.get(8),
+          subscription_id: row.get(9),
+          one_time_multiplier: row.get(10), 
+          daily_gem: row.get(11), 
+          daily_multiplier: row.get(12), 
+          one_time_is_firstonly: row.get(13), 
+          sub_daily_timestamp: row.get(14)
+        };
+
+        vec.push(user);
+      }
+
+      Ok(vec)
+    }
 
     pub async fn list_player_active(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<User>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
