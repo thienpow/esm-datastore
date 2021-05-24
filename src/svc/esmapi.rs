@@ -870,6 +870,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         enter_timestamp: enter_timestamp as i64,
         leave_timestamp: leave_timestamp as i64,
         is_watched_ad: l.is_watched_ad,
+        is_used_gem: l.is_used_gem,
         game_score: l.game_score,
       };
       
@@ -918,6 +919,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         enter_timestamp: enter_timestamp as i64,
         leave_timestamp: leave_timestamp as i64,
         is_watched_ad: l.is_watched_ad,
+        is_used_gem: l.is_used_gem,
         game_score: l.game_score,
       };
       

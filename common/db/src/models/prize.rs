@@ -487,6 +487,31 @@ impl Prize {
       Ok(vec)
     }
 
+    pub async fn list_past_unclosed_current_games(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, tsg_id, game_id, start_timestamp, end_timestamp FROM public.\"current_game\" WHERE end_timestamp < NOW() AND is_closed=false;").await?;
+    
+      let mut vec: Vec<CurrentGame> = Vec::new();
+      for row in conn.query(&stmt, &[]).await? {
+        let rule = CurrentGame {
+          id: row.get(0),
+          prize_id: row.get(1),
+          tour_id: row.get(2),
+          set_id: row.get(3),
+          tsg_id: row.get(4),
+          game_id: row.get(5),
+          start_timestamp: row.get(6),
+          end_timestamp: row.get(7)
+        };
+
+        vec.push(rule);
+      }
+      
+      Ok(vec)
+    }
+    
+
     pub async fn list_previous_game(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

@@ -11734,7 +11734,8 @@ proto.api.esm.LogGDetail.toObject = function(includeInstance, msg) {
     enterTimestamp: jspb.Message.getFieldWithDefault(msg, 12, 0),
     leaveTimestamp: jspb.Message.getFieldWithDefault(msg, 13, 0),
     isWatchedAd: jspb.Message.getBooleanFieldWithDefault(msg, 14, false),
-    gameScore: jspb.Message.getFieldWithDefault(msg, 15, 0)
+    isUsedGem: jspb.Message.getBooleanFieldWithDefault(msg, 15, false),
+    gameScore: jspb.Message.getFieldWithDefault(msg, 16, 0)
   };
 
   if (includeInstance) {
@@ -11828,6 +11829,10 @@ proto.api.esm.LogGDetail.deserializeBinaryFromReader = function(msg, reader) {
       msg.setIsWatchedAd(value);
       break;
     case 15:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsUsedGem(value);
+      break;
+    case 16:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGameScore(value);
       break;
@@ -11958,10 +11963,17 @@ proto.api.esm.LogGDetail.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getIsUsedGem();
+  if (f) {
+    writer.writeBool(
+      15,
+      f
+    );
+  }
   f = message.getGameScore();
   if (f !== 0) {
     writer.writeInt32(
-      15,
+      16,
       f
     );
   }
@@ -12221,11 +12233,29 @@ proto.api.esm.LogGDetail.prototype.setIsWatchedAd = function(value) {
 
 
 /**
- * optional int32 game_score = 15;
+ * optional bool is_used_gem = 15;
+ * @return {boolean}
+ */
+proto.api.esm.LogGDetail.prototype.getIsUsedGem = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 15, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.api.esm.LogGDetail} returns this
+ */
+proto.api.esm.LogGDetail.prototype.setIsUsedGem = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 15, value);
+};
+
+
+/**
+ * optional int32 game_score = 16;
  * @return {number}
  */
 proto.api.esm.LogGDetail.prototype.getGameScore = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 15, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 16, 0));
 };
 
 
@@ -12234,7 +12264,7 @@ proto.api.esm.LogGDetail.prototype.getGameScore = function() {
  * @return {!proto.api.esm.LogGDetail} returns this
  */
 proto.api.esm.LogGDetail.prototype.setGameScore = function(value) {
-  return jspb.Message.setProto3IntField(this, 15, value);
+  return jspb.Message.setProto3IntField(this, 16, value);
 };
 
 

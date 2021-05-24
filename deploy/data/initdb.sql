@@ -5,7 +5,7 @@
 -- Dumped from database version 12.6 (Ubuntu 12.6-0ubuntu0.20.04.1)
 -- Dumped by pg_dump version 13.3
 
--- Started on 2021-05-23 19:09:41 +08
+-- Started on 2021-05-24 00:05:39 +08
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1820,7 +1820,7 @@ CREATE INDEX tournament_lower_idx ON public.tournament USING btree (lower((title
 CREATE INDEX tournament_set_lower_idx ON public.tournament_set USING btree (lower((title)::text));
 
 
--- Completed on 2021-05-23 19:09:48 +08
+-- Completed on 2021-05-24 00:05:46 +08
 
 --
 -- PostgreSQL database dump complete

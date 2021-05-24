@@ -2652,6 +2652,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
         enter_timestamp: enter_timestamp as i64,
         leave_timestamp: leave_timestamp as i64,
         is_watched_ad: l.is_watched_ad,
+        is_used_gem: l.is_used_gem,
         game_score: l.game_score,
       };
       

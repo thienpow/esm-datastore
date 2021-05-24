@@ -13,6 +13,10 @@ path = "src/main.rs"
 name = "checker_current_game"
 path = "src/client/checker_current_game.rs"
 
+[[bin]]
+name = "checker_leaderboard"
+path = "src/client/checker_leaderboard.rs"
+
 
 #[[bin]]
 #name = "msgpush"

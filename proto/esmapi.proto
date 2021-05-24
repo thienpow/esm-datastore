@@ -448,7 +448,8 @@ message LogGDetail {
   int64 enter_timestamp = 12;
   int64 leave_timestamp = 13;
   bool is_watched_ad = 14;
-  int32 game_score = 15;
+  bool is_used_gem = 15;
+  int32 game_score = 16;
 }
 
 message GetSpinAvailableRequest {

@@ -1484,5 +1484,6 @@ message LogGDetail {
   int64 enter_timestamp = 9;
   int64 leave_timestamp = 10;
   bool is_watched_ad = 11;
-  int32 game_score = 12;
+  bool is_used_gem = 12;
+  int32 game_score = 13;
 }

@@ -35,6 +35,53 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         //TODO: add a loop to current_game table and do closing, to find out the leaderboard and tickets award and set into prize_pool
         // check if end_timestamp < now, meaning already past, then do the closing.
+       
+        // SELECT * FROm current_game WHERE end_timestamp < now() AND is_closed=false;
+        match prize::Prize::list_past_unclosed_current_games(&pool_db.clone()).await {
+            Ok(games) => {
+
+                for game in games {
+                    let prize_id = game.prize_id;
+                    let game_id = game.game_id;
+                    //SELECT * FROM gplayer WHERE prize_id={game.prize_id} AND game_id={game.game_id} AND is_closed=false ORDER BY game_score DESC;
+                    //from highest score
+                    
+                    match gplayer::GPlayer::list_unclosed_gplays(prize_id, game_id, &pool_db.clone()).await {
+                        Ok(gplays) => {
+
+                            let mut i = 1;
+                            for gplay in gplays {
+
+                                /*
+                                match game::Game::list_leader_rule().await  {
+                                    Ok(rules) => {
+
+                                        for rule in rules {
+
+                                            if i>=rule.rank_from && i<=rank_to {
+                                                //within this rank, then update the user.exp with rule.exp by doing user.exp+rule.exp
+                                                //append to prize_pool with rule.tickets
+                                            }
+
+                                            
+
+                                        }
+                                    },
+                                    Err(error) => panic!("Error {}", error),
+                                };
+                                */
+                                
+                                
+                                i = i + 1;
+                            }
+                        },
+                        Err(error) => panic!("Error {}", error),
+                    };
+                    
+                }
+            },
+            Err(error) => panic!("Error {}", error),
+        };
 
 
         /* this maybe not here but need to expose an api for frontend to get this sum
