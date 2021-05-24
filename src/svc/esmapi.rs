@@ -1539,7 +1539,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
           };
 
           let new_gem_balance: i32 = user.gem_balance + quantity;
-          match user::User::update_status_gem_balance(user_id, user.status, new_gem_balance, &self.pool.clone()).await {
+          match user::User::reward_gem(user_id, quantity, &self.pool.clone()).await {
             Ok(_) => {
 
               match svc::notify("You Gem Balance is loaded!", format!("You bought a gem pack with {} gems! Your Gem Balance is Updated to {}", quantity, new_gem_balance).as_str(), &user.msg_token).await {
