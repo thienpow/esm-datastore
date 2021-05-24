@@ -31,7 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         
         let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
-        //TODO: make a daily checker for users' who subscribed and yet to be rewarded with daily_gem and add the gem amount to user's gem
+        //daily checker for users' who subscribed and yet to be rewarded with daily_gem and add the gem amount to user's gem
         match user::User::list_unrewarded_subscriber(&pool.clone()).await {
             Ok(users) => {
                 //retrieve users that's subscribed and not yet updated with daily_gem

@@ -125,15 +125,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         };
 
 
-        /* this maybe not here but need to expose an api for frontend to get this sum
-        TODO: make sure prize_pool tickets calculated for the user
-        SELECT (
-            SELECT COALESCE(SUM(tickets), 0)
-            FROM public.prize_pool WHERE prize_id=2 AND user_id=52 AND is_closed=false
-        )  AS tickets_collected;
-
-        */
-
         let stop = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
         let diff = stop - start;
