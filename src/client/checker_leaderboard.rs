@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
 
-        //TODO: add a loop to current_game table and do closing, to find out the leaderboard and tickets award and set into prize_pool
+        //loop to current_game table and do closing, to find out the leaderboard and tickets award and set into prize_pool
         // check if end_timestamp < now, meaning already past, then do the closing.
        
         // SELECT * FROm current_game WHERE end_timestamp < now() AND is_closed=false;

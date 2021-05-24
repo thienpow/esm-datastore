@@ -76,13 +76,13 @@ impl User {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"user\" (id, username, passhash, email, phone, firstname, lastname, \
-        created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp) \
-        VALUES ((SELECT MAX(id) FROM public.\"user\")+1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id;").await?;
+        created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, msg_token) \
+        VALUES ((SELECT MAX(id) FROM public.\"user\")+1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
                   &[&user.username, &user.passhash, &user.email, &user.phone, 
                   &user.firstname, &user.lastname, 
                   &user.created_on, &user.last_login, &user.role_id, &user.status, &user.gem_balance, 
-                  &user.social_link_fb, &user.social_link_google, &user.avatar_url, &user.exp]).await?;
+                  &user.social_link_fb, &user.social_link_google, &user.avatar_url, &user.exp, &user.msg_token]).await?;
     
       Ok(row.get::<usize, i64>(0))
     }
