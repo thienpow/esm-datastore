@@ -52,6 +52,7 @@ service EsmApi {
   rpc ListItemType(ListItemTypeRequest) returns (ListItemTypeResponse) {}
 
   // Prize
+  rpc GetPrizeTicketPool(GetPrizeTicketPoolRequest) returns (GetPrizeTicketPoolResponse) {}
   rpc ListPrize(ListPrizeRequest) returns (ListPrizeResponse) {}
   // Rank
   rpc ListRank(ListRankRequest) returns (ListRankResponse) {}
@@ -610,6 +611,14 @@ message ItemTypeDetail {
 /*
 **************************************** Prize ***************************************
 */
+message GetPrizeTicketPoolRequest {
+  int64 user_id = 1;
+  int64 prize_id = 2;
+}
+message GetPrizeTicketPoolResponse {
+  int64 tickets = 1;
+}
+
 //List prize from db
 message ListPrizeRequest {
 }
@@ -652,6 +661,7 @@ message PrizeDetail {
   int64 start_timestamp = 33;
   int64 end_timestamp  = 34;
 }
+
 
 
 

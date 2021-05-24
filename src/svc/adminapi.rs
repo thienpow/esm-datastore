@@ -337,6 +337,11 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
         if cryptic::verify(&user.passhash, &req.password).unwrap() {
           let jwt_token = jwt::issue_token(username.into(), user.role_id).unwrap();
 
+          match user::User::update_last_login(user.id, &self.pool.clone()).await {
+            Ok(_) => {},
+            Err(error) => panic!("Error: {}.", error),
+          }
+
           return Ok(Response::new(SignInResponse {
             result: Some(SignInDetail {
               jwt_token: jwt_token

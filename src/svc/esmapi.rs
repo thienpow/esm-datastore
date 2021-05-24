@@ -74,6 +74,7 @@ use esmapi_proto::{
   ItemTypeDetail,
 
   // Prize
+  GetPrizeTicketPoolRequest, GetPrizeTicketPoolResponse,
   ListPrizeRequest, ListPrizeResponse, 
   PrizeDetail, 
 
@@ -231,6 +232,12 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     match user::User::sign_in(req.username.into(), &self.pool.clone()).await {
       Ok(user) => {
       
+
+        match user::User::update_last_login(user.id, &self.pool.clone()).await {
+          Ok(_) => {},
+          Err(error) => panic!("Error: {}.", error),
+        }
+        
         let created_on = user.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
         let last_login = user.last_login.duration_since(UNIX_EPOCH).unwrap().as_secs();
 
@@ -1296,6 +1303,21 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   *
   *
   */
+
+  async fn get_prize_ticket_pool(&self, request: Request<GetPrizeTicketPoolRequest>, ) -> Result<Response<GetPrizeTicketPoolResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+    
+    let req = request.into_inner();
+
+    match prize::Prize::get_current_tickets_collected_by_user(req.user_id.into(), req.prize_id.into(), &self.pool.clone()).await {
+      Ok(tickets) => Ok(Response::new(GetPrizeTicketPoolResponse {
+        tickets: tickets,
+      })),
+      Err(error) => panic!("Error: {}.", error),
+    }
+  }
+
+
   async fn list_prize(&self, request: Request<ListPrizeRequest>, ) -> Result<Response<ListPrizeResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
     

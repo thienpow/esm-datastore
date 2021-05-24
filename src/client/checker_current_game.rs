@@ -52,16 +52,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (config.server_timezone * 3600) + (timezone_seconds as u64);
 
-
-            /* this maybe not here but need to expose an api for frontend to get this sum
-            TODO: make sure prize_pool tickets calculated for the user
-            SELECT (
-                SELECT COALESCE(SUM(tickets), 0)
-                FROM public.prize_pool WHERE prize_id=2 AND user_id=52 AND is_closed=false
-            )  AS tickets_collected;
-
-            */
-
             let tickets_collected = prize::Prize::get_current_tickets_collected(prize_id, &pool_db.clone()).await?;
             prize::Prize::set_prize_tickets_collected(prize_id, tickets_collected, &pool_db.clone()).await?;
 
@@ -84,7 +74,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     if prize.is_repeat { //close & reset
 
                         // after closing is called here only do reset/perm-end below
-                        //TODO: process closing here
+                        //TODO: process closing here, loop the prize_pool, set is_closed and find winner
                         
                         //make sure prize's tickets_collected is kept in a log, to identify previous round's data
                         let _ = match prize::Prize::log_closed(prize_id, tickets_collected, &pool_db.clone()).await {
@@ -115,7 +105,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     } else { //perm-close
 
                         if status_progress != 999 {
-                            //TODO: process closing here
+                            //TODO: process closing here, loop the prize_pool, set is_closed and find winner
                             
                             //make sure prize's tickets_collected is kept in a log, to identify previous round's data
                             let _ = match prize::Prize::log_closed(prize_id, tickets_collected, &pool_db.clone()).await {
@@ -163,7 +153,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         } else {
 
                             //scheduled_off is already smaller than now, meaning already ended
-                            //TODO: process closing here 
+                            //TODO: process closing here, loop the prize_pool, set is_closed and find winner
                             //make sure prize's tickets_collected is kept in a log, to identify previous round's data
                             let _ = match prize::Prize::log_closed(prize_id, tickets_collected, &pool_db.clone()).await {
                                 Ok(_) => (),
@@ -214,7 +204,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             //scheduled_off is already smaller than now, meaning already ended
                             
                             if status_progress != 999 {
-                                //TODO: process closing here 
+                                //TODO: process closing here, loop the prize_pool, set is_closed and find winner
                                 //make sure prize's tickets_collected is kept in a log, to identify previous round's data
                             
                                 let _ = match prize::Prize::log_closed(prize_id, tickets_collected, &pool_db.clone()).await {
