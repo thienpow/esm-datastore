@@ -264,6 +264,7 @@ message UserDetail {
   string nick_name = 27;
   string msg_token = 28;
   int64 subscription_id = 29;
+  string stripe_sub_id = 30;
 }
 
 

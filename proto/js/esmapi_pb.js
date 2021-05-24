@@ -6958,7 +6958,8 @@ proto.api.esm.UserDetail.toObject = function(includeInstance, msg) {
     isNotifyTourEnding: jspb.Message.getBooleanFieldWithDefault(msg, 26, false),
     nickName: jspb.Message.getFieldWithDefault(msg, 27, ""),
     msgToken: jspb.Message.getFieldWithDefault(msg, 28, ""),
-    subscriptionId: jspb.Message.getFieldWithDefault(msg, 29, 0)
+    subscriptionId: jspb.Message.getFieldWithDefault(msg, 29, 0),
+    stripeSubId: jspb.Message.getFieldWithDefault(msg, 30, "")
   };
 
   if (includeInstance) {
@@ -7110,6 +7111,10 @@ proto.api.esm.UserDetail.deserializeBinaryFromReader = function(msg, reader) {
     case 29:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setSubscriptionId(value);
+      break;
+    case 30:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setStripeSubId(value);
       break;
     default:
       reader.skipField();
@@ -7340,6 +7345,13 @@ proto.api.esm.UserDetail.serializeBinaryToWriter = function(message, writer) {
   if (f !== 0) {
     writer.writeInt64(
       29,
+      f
+    );
+  }
+  f = message.getStripeSubId();
+  if (f.length > 0) {
+    writer.writeString(
+      30,
       f
     );
   }
@@ -7865,6 +7877,24 @@ proto.api.esm.UserDetail.prototype.getSubscriptionId = function() {
  */
 proto.api.esm.UserDetail.prototype.setSubscriptionId = function(value) {
   return jspb.Message.setProto3IntField(this, 29, value);
+};
+
+
+/**
+ * optional string stripe_sub_id = 30;
+ * @return {string}
+ */
+proto.api.esm.UserDetail.prototype.getStripeSubId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 30, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.api.esm.UserDetail} returns this
+ */
+proto.api.esm.UserDetail.prototype.setStripeSubId = function(value) {
+  return jspb.Message.setProto3StringField(this, 30, value);
 };
 
 

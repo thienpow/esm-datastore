@@ -36,6 +36,7 @@ pub struct User {
   pub nick_name: String,
   pub msg_token: String,
   pub subscription_id: i64,
+  pub sub_id: String,
   pub one_time_multiplier: f64, 
   pub daily_gem: i32, 
   pub daily_multiplier: f64, 
@@ -248,12 +249,12 @@ impl User {
     
       Ok(n)
     }
-    pub async fn new_subscription(id: i64, gem_balance: i32, subscription_id: i64, one_time_multiplier: f64, daily_gem: i32, daily_multiplier: f64, one_time_is_firstonly: bool, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn new_subscription(id: i64, gem_balance: i32, subscription_id: i64, sub_id: String, one_time_multiplier: f64, daily_gem: i32, daily_multiplier: f64, one_time_is_firstonly: bool, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=$1, subscription_id=$2, one_time_multiplier=$3, daily_gem=$4, daily_multiplier=$5, one_time_is_firstonly=$6, sub_daily_timestamp=now() WHERE id=$7;").await?;
+      let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=$1, subscription_id=$2, sub_id=$3, one_time_multiplier=$4, daily_gem=$5, daily_multiplier=$6, one_time_is_firstonly=$7, sub_daily_timestamp=now() WHERE id=$8;").await?;
       let n = conn.execute(&stmt, 
-                  &[&gem_balance, &subscription_id, &one_time_multiplier, &daily_gem, &daily_multiplier, &one_time_is_firstonly, &id]).await?;
+                  &[&gem_balance, &subscription_id, &sub_id, &one_time_multiplier, &daily_gem, &daily_multiplier, &one_time_is_firstonly, &id]).await?;
     
       Ok(n)
     }
@@ -265,7 +266,8 @@ impl User {
       created_on, last_login, role_id, status, gem_balance, \
       social_link_fb, social_link_google, avatar_url, exp, \
       full_name, address, city, state, zip_code, country, country_code, \
-      is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token, subscription_id, \
+      is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token, \
+      subscription_id, sub_id, \
       one_time_multiplier, daily_gem, daily_multiplier, one_time_is_firstonly, sub_daily_timestamp \
       FROM public.\"user\" WHERE status=1 AND username=$1 LIMIT 1;").await?;
 
@@ -303,11 +305,13 @@ impl User {
         nick_name: row.get(27),
         msg_token: row.get(28),
         subscription_id: row.get(29),
-        one_time_multiplier: row.get(30), 
-        daily_gem: row.get(31), 
-        daily_multiplier: row.get(32), 
-        one_time_is_firstonly: row.get(33), 
-        sub_daily_timestamp: row.get(34),
+        sub_id: row.get(30),
+        one_time_multiplier: row.get(31), 
+        daily_gem: row.get(32), 
+        daily_multiplier: row.get(33), 
+        one_time_is_firstonly: row.get(34), 
+        sub_daily_timestamp: row.get(35),
+        
       };
 
       Ok(user)
@@ -321,7 +325,8 @@ impl User {
       created_on, last_login, role_id, status, gem_balance, \
       social_link_fb, social_link_google, avatar_url, exp, \
       full_name, address, city, state, zip_code, country, country_code, \
-      is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token, subscription_id, \
+      is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token, \
+      subscription_id, sub_id, \
       one_time_multiplier, daily_gem, daily_multiplier, one_time_is_firstonly, sub_daily_timestamp \
       FROM public.\"user\" WHERE status=1 AND id=$1;").await?;
 
@@ -359,11 +364,12 @@ impl User {
         nick_name: row.get(27),
         msg_token: row.get(28),
         subscription_id: row.get(29),
-        one_time_multiplier: row.get(30), 
-        daily_gem: row.get(31), 
-        daily_multiplier: row.get(32), 
-        one_time_is_firstonly: row.get(33), 
-        sub_daily_timestamp: row.get(34),
+        sub_id: row.get(30),
+        one_time_multiplier: row.get(31), 
+        daily_gem: row.get(32), 
+        daily_multiplier: row.get(33), 
+        one_time_is_firstonly: row.get(34), 
+        sub_daily_timestamp: row.get(35),
       };
 
       Ok(user)
@@ -380,7 +386,7 @@ impl User {
                                     social_link_fb, social_link_google, avatar_url, exp, \
                                     full_name, address, city, state, zip_code, country, country_code, \
                                     is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, \
-                                    msg_token, subscription_id, \
+                                    msg_token, subscription_id, sub_id, \
                                     one_time_multiplier, daily_gem, daily_multiplier, one_time_is_firstonly, sub_daily_timestamp \
                                 FROM public.\"user\" \
                                 WHERE username ILIKE '%{}%' OR email ILIKE '%{}%' OR phone ILIKE '%{}%' OR firstname ILIKE '%{}%' OR lastname ILIKE '%{}%' \
@@ -423,11 +429,12 @@ impl User {
             nick_name: row.get(26),
             msg_token: row.get(27),
             subscription_id: row.get(28),
-            one_time_multiplier: row.get(29), 
-            daily_gem: row.get(30), 
-            daily_multiplier: row.get(31), 
-            one_time_is_firstonly: row.get(32), 
-            sub_daily_timestamp: row.get(33)
+            sub_id: row.get(29),
+            one_time_multiplier: row.get(30), 
+            daily_gem: row.get(31), 
+            daily_multiplier: row.get(32), 
+            one_time_is_firstonly: row.get(33), 
+            sub_daily_timestamp: row.get(34)
           };
   
           vec.push(user);
@@ -435,7 +442,7 @@ impl User {
         
       } else {
 
-        let stmt = conn.prepare("SELECT id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, address, city, state, zip_code, country, country_code, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token, subscription_id, one_time_multiplier, daily_gem, daily_multiplier, one_time_is_firstonly, sub_daily_timestamp FROM public.\"user\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
+        let stmt = conn.prepare("SELECT id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, address, city, state, zip_code, country, country_code, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token, subscription_id, sub_id, one_time_multiplier, daily_gem, daily_multiplier, one_time_is_firstonly, sub_daily_timestamp FROM public.\"user\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
     
         for row in conn.query(&stmt, &[&limit, &offset]).await? {
           let user = User {
@@ -473,11 +480,12 @@ impl User {
             nick_name: row.get(26),
             msg_token:  row.get(27),
             subscription_id: row.get(28),
-            one_time_multiplier: row.get(29), 
-            daily_gem: row.get(30), 
-            daily_multiplier: row.get(31), 
-            one_time_is_firstonly: row.get(32), 
-            sub_daily_timestamp: row.get(33)
+            sub_id: row.get(29),
+            one_time_multiplier: row.get(30), 
+            daily_gem: row.get(31), 
+            daily_multiplier: row.get(32), 
+            one_time_is_firstonly: row.get(33), 
+            sub_daily_timestamp: row.get(34)
           };
   
           vec.push(user);
@@ -528,7 +536,7 @@ impl User {
   
       let mut vec: Vec<User> = Vec::new();
       
-      let sql_string = format!("SELECT id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, address, city, state, zip_code, country, country_code, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token, subscription_id, one_time_multiplier, daily_gem, daily_multiplier, one_time_is_firstonly, sub_daily_timestamp FROM public.\"user\" WHERE status=1 AND role_id=200");
+      let sql_string = format!("SELECT id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, address, city, state, zip_code, country, country_code, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token, subscription_id, sub_id, one_time_multiplier, daily_gem, daily_multiplier, one_time_is_firstonly, sub_daily_timestamp FROM public.\"user\" WHERE status=1 AND role_id=200");
       let stmt = conn.prepare(&sql_string).await?;
   
       for row in conn.query(&stmt, &[]).await? {
@@ -567,11 +575,12 @@ impl User {
             nick_name: row.get(26),
             msg_token:  row.get(27),
             subscription_id: row.get(28),
-            one_time_multiplier: row.get(29), 
-            daily_gem: row.get(30), 
-            daily_multiplier: row.get(31), 
-            one_time_is_firstonly: row.get(32), 
-            sub_daily_timestamp: row.get(33)
+            sub_id: row.get(29),
+            one_time_multiplier: row.get(30), 
+            daily_gem: row.get(31), 
+            daily_multiplier: row.get(32), 
+            one_time_is_firstonly: row.get(33), 
+            sub_daily_timestamp: row.get(34)
         };
 
         vec.push(user);
@@ -615,18 +624,6 @@ impl User {
       }
 
     }
-
-    /*
-    pub async fn get_user_status_gem_balance(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<(i32, i64), RunError<tokio_postgres::Error>> {
-      let conn = pool.get().await?;
-  
-      let stmt = conn.prepare("SELECT status, gem_balance FROM public.\"user\" WHERE id=$1;").await?;
-      let row = conn.query_one(&stmt, 
-                    &[&id]).await?;
-
-      Ok((row.get(0), row.get(1)))
-    }
-    */
 
 
     

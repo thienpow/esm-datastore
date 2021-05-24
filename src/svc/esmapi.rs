@@ -273,7 +273,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
             is_notify_tour_ending: user.is_notify_tour_ending,
             nick_name: user.nick_name,
             msg_token: user.msg_token,
-            subscription_id: user.subscription_id
+            subscription_id: user.subscription_id,
+            stripe_sub_id: user.sub_id,
           }),
         }))
       },
@@ -321,7 +322,9 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       is_notify_tour_ending:  true,
       nick_name: "".to_string(),
       msg_token: "".to_string(),
+      //subscription
       subscription_id: 0,
+      sub_id: "".to_string(),
       one_time_multiplier: 0.0, 
       daily_gem: 0, 
       daily_multiplier: 0.0, 
@@ -1502,6 +1505,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let now = SystemTime::now();
 
     let item_id = req.item_id.into();
+    let sub_id = String::from(&req.sub_id);
+
     if item_id == 0 {
       panic!("Error: item_id should not be 0.");
     }
@@ -1559,7 +1564,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
               let new_gem_balance: i32 = user.gem_balance + subscription.one_time_gem;
 
               //it's Subscription purchase, update user's subscription_id
-              match user::User::new_subscription(user_id, new_gem_balance, item_id, 
+              match user::User::new_subscription(user_id, new_gem_balance, 
+                item_id, sub_id,
                 subscription.one_time_multiplier, 
                 subscription.daily_gem, 
                 subscription.daily_multiplier, 
