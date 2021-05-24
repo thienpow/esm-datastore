@@ -67,4 +67,24 @@ impl Rank {
       Ok(vec)
     }
 
+    pub async fn list_reverse(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Rank>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, title, exp, gem, multiplier FROM public.\"rank\" ORDER BY exp DESC;").await?;
+    
+      let mut vec: Vec<Rank> = Vec::new();
+      for row in conn.query(&stmt, &[]).await? {
+        let rank = Rank {
+          id: row.get(0),
+          title: row.get(1),
+          exp: row.get(2),
+          gem: row.get(3),
+          multiplier: row.get(4)
+        };
+
+        vec.push(rank);
+      }
+      
+      Ok(vec)
+    }
 }

@@ -772,8 +772,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                   //check from watch_ad_get_tickets, watch_ad_get_exp, find out watch ad can get how many tickets/exp
                   if is_watched_ad {
                     
-                    reward_tickets = (reward_tickets as f32 + multiplier * game_rules.watch_ad_get_tickets as f32) as i32;
-                    reward_exp = (reward_exp as f32 + multiplier * game_rules.watch_ad_get_exp as f32) as i32;
+                    reward_tickets = (reward_tickets as f32 + multiplier * game_rules.watch_ad_get_tickets as f32).ceil() as i32;
+                    reward_exp = (reward_exp as f32 + multiplier * game_rules.watch_ad_get_exp as f32).ceil() as i32;
                   }
         
                   //check from use_gem_get_tickets, use_gem_get_exp, find out use gem can get how many tickets/exp
@@ -794,13 +794,13 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                     }
 
                     //after deducted gem, reward the tickets/exp
-                    reward_tickets = (reward_tickets as f32 + multiplier * game_rules.use_gem_get_tickets as f32) as i32;
-                    reward_exp = (reward_exp as f32 + multiplier * game_rules.use_gem_get_exp as f32) as i32;
+                    reward_tickets = (reward_tickets as f32 + multiplier * game_rules.use_gem_get_tickets as f32).ceil() as i32;
+                    reward_exp = (reward_exp as f32 + multiplier * game_rules.use_gem_get_exp as f32).ceil() as i32;
 
                   }
 
                   //update the user's exp
-                  match user::User::update_exp(user_id, reward_exp, &self.pool.clone()).await {
+                  match user::User::reward_exp(user_id, reward_exp, &self.pool.clone()).await {
                     Ok(_) => {
 
                       //log into prize_pool, win_from = 2

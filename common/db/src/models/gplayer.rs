@@ -70,6 +70,16 @@ impl GPlayer {
       Ok(n)
     }
     
+    pub async fn close(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"gplayer\" SET is_closed=true WHERE id=$1;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&id]).await?;
+    
+      Ok(n)
+    }
+    
     pub async fn get_log_g(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<GPlayer, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

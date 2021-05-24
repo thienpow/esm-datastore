@@ -37,23 +37,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
        
         // SELECT * FROm current_game WHERE end_timestamp < now() AND is_closed=false;
         match prize::Prize::list_past_unclosed_current_games(&pool.clone()).await {
-            Ok(games) => {
-
-                
-                let ranks = match rank::Rank::list(&pool.clone()).await  {
+            Ok(current_games) => {
+                //println!("games count=={}", games.len());
+                let ranks = match rank::Rank::list_reverse(&pool.clone()).await  {
                     Ok(ranks) => ranks,
                     Err(error) => panic!("Error {}", error),
                 };
 
-                for game in games {
-                    let prize_id = game.prize_id;
-                    let game_id = game.game_id;
+                for cg in current_games {
+                    let cg_id = cg.id;
+                    let prize_id = cg.prize_id;
+                    let game_id = cg.game_id;
+
+                    //println!("game_id=={}", game_id);
+                
                     //SELECT * FROM gplayer WHERE prize_id={game.prize_id} AND game_id={game.game_id} AND is_closed=false ORDER BY game_score DESC;
                     //from highest score
                     
                     match gplayer::GPlayer::list_unclosed_gplays(prize_id, game_id, &pool.clone()).await {
                         Ok(gplays) => {
 
+                            //println!("gplays count=={}", gplays.len());
                             let rules = match game::Game::list_leader_rule(game_id, &pool.clone()).await  {
                                 Ok(rules) => rules,
                                 Err(error) => panic!("Error {}", error),
@@ -63,7 +67,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             let mut i = 1;
                             for gplay in gplays {
 
+                                let gplay_id = gplay.id;
                                 let user_id = gplay.user_id;
+
 
                                 let user = match user::User::get(user_id, &pool.clone()).await {
                                     Ok(user) => user,
@@ -75,32 +81,32 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                                     if i>=rule.rank_from && i<=rule.rank_to {
                                         //within this rank, then update the user.exp with rule.exp by doing user.exp+rule.exp
-                                        //TODO: need to check if got subscription, if got then use the daily_multiplier or 
+                                        //check if got subscription, if got then use the daily_multiplier or 
                                         //use  one_time_multiplier if not 0, need to set to 0 after used on one_time_multiplier 
-                                        let mut reward_tickets: f64 = 0.0;
+                                        let mut reward_tickets: f64 = rule.tickets as f64;
                                         let mut multiplier: f64 = 0.0;
                                         if user.one_time_multiplier > 0.0 {
                                             //TDOD: make sure if one_time_multiplier is used as 1 time or 1 day and if used as accumulative to daily_multiplier
                                             multiplier = user.one_time_multiplier;
-                                            //reward_tickets = user.one_time_multiplier * rule.tickets as f64;
+                                            //reset one_time_multiplier to 0 because used
+                                            user::User::reset_one_time_multiplier(user_id, &pool.clone()).await?;
+
                                         } 
                                         
-                                        multiplier = multiplier + user.daily_multiplier;
-
-                                        for rank in &ranks {
-                                            if user.exp >= rank.exp {
-                                                multiplier = multiplier + rank.multiplier;
-                                            }
-                                        }
-
+                                        multiplier = multiplier + user.daily_multiplier + get_multiplier_from_rank(user.exp, &ranks);
+                                        
                                         reward_tickets = reward_tickets + (multiplier * rule.tickets as f64);
-                                        user::User::update_exp(user_id, rule.exp, &pool.clone()).await?;
+                                        println!("reward_tickets=={}", reward_tickets);
+
+                                        user::User::reward_exp(user_id, rule.exp, &pool.clone()).await?;
                                         //append to prize_pool with rule.tickets, win_from=3,
                                         
-                                        prize::Prize::log_prize_pool(prize_id, user_id, game_id, 3, reward_tickets as i32, &pool.clone()).await?;
+                                        prize::Prize::log_prize_pool(prize_id, user_id, game_id, 3, reward_tickets.ceil() as i32, &pool.clone()).await?;
                                     }
 
                                 }
+
+                                gplayer::GPlayer::close(gplay_id, &pool.clone()).await?;
                                 
                                 
                                 
@@ -110,7 +116,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         Err(error) => panic!("Error {}", error),
                     };
                     
+                    prize::Prize::close_current_game(cg_id, &pool.clone()).await?;
+                
                 }
+
             },
             Err(error) => panic!("Error {}", error),
         };
@@ -138,4 +147,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         thread::sleep(time_wait);
     }
 
+}
+
+
+fn get_multiplier_from_rank(exp: i32, ranks: &Vec<rank::Rank>) -> f64 {
+
+    for rank in ranks {
+        if exp >= rank.exp {
+            return rank.multiplier;
+        }
+    }
+
+    return 0.0;
 }

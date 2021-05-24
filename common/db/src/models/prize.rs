@@ -511,6 +511,16 @@ impl Prize {
       Ok(vec)
     }
     
+    pub async fn close_current_game(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"current_game\" SET is_closed=true WHERE id=$1;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&id]).await?;
+    
+      Ok(n)
+    }
+    
 
     pub async fn list_previous_game(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;

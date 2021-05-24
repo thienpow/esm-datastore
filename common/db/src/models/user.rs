@@ -107,12 +107,22 @@ impl User {
       Ok(n)
     }
 
-    pub async fn update_exp(id: i64, exp: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn reward_exp(id: i64, exp: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET exp=$1 + (SELECT exp FROM public.\"user\" WHERE id=$2) WHERE id=$2;").await?;
       let n = conn.execute(&stmt, 
                   &[&exp, &id]).await?;
+    
+      Ok(n)
+    }
+
+    pub async fn reset_one_time_multiplier(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"user\" SET one_time_multiplier=0 WHERE id=$2;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&id]).await?;
     
       Ok(n)
     }
