@@ -87,9 +87,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         let mut multiplier: f64 = 0.0;
                                         if user.one_time_multiplier > 0.0 {
                                             //TDOD: make sure if one_time_multiplier is used as 1 time or 1 day and if used as accumulative to daily_multiplier
-                                            multiplier = user.one_time_multiplier;
+                                            //multiplier = user.one_time_multiplier;
                                             //reset one_time_multiplier to 0 because used
-                                            user::User::reset_one_time_multiplier(user_id, &pool.clone()).await?;
+                                            //user::User::reset_one_time_multiplier(user_id, &pool.clone()).await?;
 
                                         } 
                                         

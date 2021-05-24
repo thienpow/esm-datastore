@@ -120,7 +120,7 @@ impl User {
     pub async fn reset_one_time_multiplier(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"user\" SET one_time_multiplier=0 WHERE id=$2;").await?;
+      let stmt = conn.prepare("UPDATE public.\"user\" SET one_time_multiplier=0 WHERE id=$1;").await?;
       let n = conn.execute(&stmt, 
                   &[&id]).await?;
     
