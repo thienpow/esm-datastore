@@ -1,5 +1,5 @@
 //use std::thread;
-use std::time::Duration;
+
 use std::{thread, time};
 use std::time::{
     SystemTime, 
@@ -11,7 +11,6 @@ use tokio_postgres;
 use bb8::{Pool};
 use bb8_postgres::PostgresConnectionManager;
 use esm_db::models::*;
-use esm_db::models::prize::*;
 
 mod config;
 

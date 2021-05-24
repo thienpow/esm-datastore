@@ -306,10 +306,11 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
     }
 
     while start_timestamp < final_end_timestamp {
-        //println!("==== start_timestamp {} == final_end_timestamp {}", start_timestamp, final_end_timestamp);
-        for game in &active_games {
         
+        for game in &active_games {
+            
             if previous_tour_id > 0 {
+                
                 if is_after_previous {
                     let end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
                     
@@ -378,6 +379,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
             }
         }
     
+        start_timestamp = start_timestamp + 1;
         //println!("==== bottom start_timestamp {} == final_end_timestamp {}", start_timestamp, final_end_timestamp);
     }
     
