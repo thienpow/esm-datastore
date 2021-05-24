@@ -679,8 +679,8 @@ message ListRankResponse {
 message RankDetail {
   int64 id = 1;
   string title = 2;
-  int64 exp = 3;
-  int64 gem = 4;
+  int32 exp = 3;
+  int32 gem = 4;
   double multiplier = 5;
 }
 

@@ -17531,11 +17531,11 @@ proto.api.esm.RankDetail.deserializeBinaryFromReader = function(msg, reader) {
       msg.setTitle(value);
       break;
     case 3:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setExp(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setGem(value);
       break;
     case 5:
@@ -17587,14 +17587,14 @@ proto.api.esm.RankDetail.serializeBinaryToWriter = function(message, writer) {
   }
   f = message.getExp();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       3,
       f
     );
   }
   f = message.getGem();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       4,
       f
     );
@@ -17646,7 +17646,7 @@ proto.api.esm.RankDetail.prototype.setTitle = function(value) {
 
 
 /**
- * optional int64 exp = 3;
+ * optional int32 exp = 3;
  * @return {number}
  */
 proto.api.esm.RankDetail.prototype.getExp = function() {
@@ -17664,7 +17664,7 @@ proto.api.esm.RankDetail.prototype.setExp = function(value) {
 
 
 /**
- * optional int64 gem = 4;
+ * optional int32 gem = 4;
  * @return {number}
  */
 proto.api.esm.RankDetail.prototype.getGem = function() {

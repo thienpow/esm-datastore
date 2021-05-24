@@ -28091,11 +28091,11 @@ proto.adminapi.esm.AddRankRequest.deserializeBinaryFromReader = function(msg, re
       msg.setTitle(value);
       break;
     case 3:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setExp(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setGem(value);
       break;
     case 5:
@@ -28147,14 +28147,14 @@ proto.adminapi.esm.AddRankRequest.serializeBinaryToWriter = function(message, wr
   }
   f = message.getExp();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       3,
       f
     );
   }
   f = message.getGem();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       4,
       f
     );
@@ -28206,7 +28206,7 @@ proto.adminapi.esm.AddRankRequest.prototype.setTitle = function(value) {
 
 
 /**
- * optional int64 exp = 3;
+ * optional int32 exp = 3;
  * @return {number}
  */
 proto.adminapi.esm.AddRankRequest.prototype.getExp = function() {
@@ -28224,7 +28224,7 @@ proto.adminapi.esm.AddRankRequest.prototype.setExp = function(value) {
 
 
 /**
- * optional int64 gem = 4;
+ * optional int32 gem = 4;
  * @return {number}
  */
 proto.adminapi.esm.AddRankRequest.prototype.getGem = function() {
@@ -28471,11 +28471,11 @@ proto.adminapi.esm.UpdateRankRequest.deserializeBinaryFromReader = function(msg,
       msg.setTitle(value);
       break;
     case 3:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setExp(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setGem(value);
       break;
     case 5:
@@ -28527,14 +28527,14 @@ proto.adminapi.esm.UpdateRankRequest.serializeBinaryToWriter = function(message,
   }
   f = message.getExp();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       3,
       f
     );
   }
   f = message.getGem();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       4,
       f
     );
@@ -28586,7 +28586,7 @@ proto.adminapi.esm.UpdateRankRequest.prototype.setTitle = function(value) {
 
 
 /**
- * optional int64 exp = 3;
+ * optional int32 exp = 3;
  * @return {number}
  */
 proto.adminapi.esm.UpdateRankRequest.prototype.getExp = function() {
@@ -28604,7 +28604,7 @@ proto.adminapi.esm.UpdateRankRequest.prototype.setExp = function(value) {
 
 
 /**
- * optional int64 gem = 4;
+ * optional int32 gem = 4;
  * @return {number}
  */
 proto.adminapi.esm.UpdateRankRequest.prototype.getGem = function() {
@@ -29372,11 +29372,11 @@ proto.adminapi.esm.RankDetail.deserializeBinaryFromReader = function(msg, reader
       msg.setTitle(value);
       break;
     case 3:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setExp(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setGem(value);
       break;
     case 5:
@@ -29428,14 +29428,14 @@ proto.adminapi.esm.RankDetail.serializeBinaryToWriter = function(message, writer
   }
   f = message.getExp();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       3,
       f
     );
   }
   f = message.getGem();
   if (f !== 0) {
-    writer.writeInt64(
+    writer.writeInt32(
       4,
       f
     );
@@ -29487,7 +29487,7 @@ proto.adminapi.esm.RankDetail.prototype.setTitle = function(value) {
 
 
 /**
- * optional int64 exp = 3;
+ * optional int32 exp = 3;
  * @return {number}
  */
 proto.adminapi.esm.RankDetail.prototype.getExp = function() {
@@ -29505,7 +29505,7 @@ proto.adminapi.esm.RankDetail.prototype.setExp = function(value) {
 
 
 /**
- * optional int64 gem = 4;
+ * optional int32 gem = 4;
  * @return {number}
  */
 proto.adminapi.esm.RankDetail.prototype.getGem = function() {

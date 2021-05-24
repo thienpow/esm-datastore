@@ -6,8 +6,8 @@ use bb8_postgres::PostgresConnectionManager;
 pub struct Rank {
   pub id: i64,
   pub title: String,
-  pub exp: i64,
-  pub gem: i64,
+  pub exp: i32,
+  pub gem: i32,
   pub multiplier: f64,
 }
 

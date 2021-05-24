@@ -315,6 +315,11 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       nick_name: "".to_string(),
       msg_token: "".to_string(),
       subscription_id: 0,
+      one_time_multiplier: 0.0, 
+      daily_gem: 0, 
+      daily_multiplier: 0.0, 
+      one_time_is_firstonly: false, 
+      sub_daily_timestamp: now,
     };
     
     let result = match user::User::add(user, &self.pool.clone()).await {

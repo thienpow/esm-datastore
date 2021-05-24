@@ -21,7 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = config::get_configuration();
     
     let pg_mgr = PostgresConnectionManager::new_from_stringlike(config.db_conn_string, tokio_postgres::NoTls).unwrap();
-    let pool_db: Pool<PostgresConnectionManager<tokio_postgres::NoTls>> = match Pool::builder().build(pg_mgr).await {
+    let pool: Pool<PostgresConnectionManager<tokio_postgres::NoTls>> = match Pool::builder().build(pg_mgr).await {
         Ok(pool) => pool,
         Err(e) => panic!("builder error: {:?}", e),
     };
@@ -36,8 +36,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // check if end_timestamp < now, meaning already past, then do the closing.
        
         // SELECT * FROm current_game WHERE end_timestamp < now() AND is_closed=false;
-        match prize::Prize::list_past_unclosed_current_games(&pool_db.clone()).await {
+        match prize::Prize::list_past_unclosed_current_games(&pool.clone()).await {
             Ok(games) => {
+
+                
+                let ranks = match rank::Rank::list(&pool.clone()).await  {
+                    Ok(ranks) => ranks,
+                    Err(error) => panic!("Error {}", error),
+                };
 
                 for game in games {
                     let prize_id = game.prize_id;
@@ -45,30 +51,54 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     //SELECT * FROM gplayer WHERE prize_id={game.prize_id} AND game_id={game.game_id} AND is_closed=false ORDER BY game_score DESC;
                     //from highest score
                     
-                    match gplayer::GPlayer::list_unclosed_gplays(prize_id, game_id, &pool_db.clone()).await {
+                    match gplayer::GPlayer::list_unclosed_gplays(prize_id, game_id, &pool.clone()).await {
                         Ok(gplays) => {
 
-
-                            let rules = match game::Game::list_leader_rule(game_id, &pool_db.clone()).await  {
+                            let rules = match game::Game::list_leader_rule(game_id, &pool.clone()).await  {
                                 Ok(rules) => rules,
                                 Err(error) => panic!("Error {}", error),
-                            };
+                            };            
+                            
                             
                             let mut i = 1;
                             for gplay in gplays {
 
                                 let user_id = gplay.user_id;
 
+                                let user = match user::User::get(user_id, &pool.clone()).await {
+                                    Ok(user) => user,
+                                    Err(error) => panic!("Error: {}.", error),
+                                };
+  
+
                                 for rule in &rules {
 
                                     if i>=rule.rank_from && i<=rule.rank_to {
                                         //within this rank, then update the user.exp with rule.exp by doing user.exp+rule.exp
-                                        //user::User::update_exp(user_id, rule.exp, &pool_db.clone()).await?;
+                                        //TODO: need to check if got subscription, if got then use the daily_multiplier or 
+                                        //use  one_time_multiplier if not 0, need to set to 0 after used on one_time_multiplier 
+                                        let mut reward_tickets: f64 = 0.0;
+                                        let mut multiplier: f64 = 0.0;
+                                        if user.one_time_multiplier > 0.0 {
+                                            //TDOD: make sure if one_time_multiplier is used as 1 time or 1 day and if used as accumulative to daily_multiplier
+                                            multiplier = user.one_time_multiplier;
+                                            //reward_tickets = user.one_time_multiplier * rule.tickets as f64;
+                                        } 
+                                        
+                                        multiplier = multiplier + user.daily_multiplier;
 
-                                        //append to prize_pool with rule.tickets
+                                        for rank in &ranks {
+                                            if user.exp >= rank.exp {
+                                                multiplier = multiplier + rank.multiplier;
+                                            }
+                                        }
+
+                                        reward_tickets = reward_tickets + (multiplier * rule.tickets as f64);
+                                        user::User::update_exp(user_id, rule.exp, &pool.clone()).await?;
+                                        //append to prize_pool with rule.tickets, win_from=3,
+                                        
+                                        prize::Prize::log_prize_pool(prize_id, user_id, game_id, 3, reward_tickets as i32, &pool.clone()).await?;
                                     }
-
-                                    
 
                                 }
                                 
@@ -100,7 +130,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let diff = stop - start;
         println!("Time Spent = {}ms", diff);
 
-        let _ = match checker::Checker::update_checked(diff as i64, &pool_db.clone()).await {
+        let _ = match checker::Checker::update_checked(diff as i64, &pool.clone()).await {
             Ok(_) => (),
             Err(error) => panic!("== update_checked Error: {}.", error),
         };
