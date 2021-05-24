@@ -1,5 +1,5 @@
 //use std::thread;
-use std::time::Duration;
+
 use std::{thread, time};
 use std::time::{
     SystemTime, 
@@ -11,7 +11,6 @@ use tokio_postgres;
 use bb8::{Pool};
 use bb8_postgres::PostgresConnectionManager;
 use esm_db::models::*;
-use esm_db::models::prize::*;
 
 mod config;
 
@@ -49,27 +48,30 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     match gplayer::GPlayer::list_unclosed_gplays(prize_id, game_id, &pool_db.clone()).await {
                         Ok(gplays) => {
 
+
+                            let rules = match game::Game::list_leader_rule(game_id, &pool_db.clone()).await  {
+                                Ok(rules) => rules,
+                                Err(error) => panic!("Error {}", error),
+                            };
+                            
                             let mut i = 1;
                             for gplay in gplays {
 
-                                /*
-                                match game::Game::list_leader_rule().await  {
-                                    Ok(rules) => {
+                                let user_id = gplay.user_id;
 
-                                        for rule in rules {
+                                for rule in &rules {
 
-                                            if i>=rule.rank_from && i<=rank_to {
-                                                //within this rank, then update the user.exp with rule.exp by doing user.exp+rule.exp
-                                                //append to prize_pool with rule.tickets
-                                            }
+                                    if i>=rule.rank_from && i<=rule.rank_to {
+                                        //within this rank, then update the user.exp with rule.exp by doing user.exp+rule.exp
+                                        //user::User::update_exp(user_id, rule.exp, &pool_db.clone()).await?;
 
-                                            
+                                        //append to prize_pool with rule.tickets
+                                    }
 
-                                        }
-                                    },
-                                    Err(error) => panic!("Error {}", error),
-                                };
-                                */
+                                    
+
+                                }
+                                
                                 
                                 
                                 i = i + 1;

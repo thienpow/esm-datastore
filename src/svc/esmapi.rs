@@ -762,7 +762,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                 Ok(game_rules) => {
                   let multiplier: f32 = game_score as f32 / game_rules.score_rule as f32;
                   let mut reward_tickets: i32 = 0;
-                  let mut reward_exp: i32 = user.exp;
+                  let mut reward_exp: i32 = 0;
                   
                   //check from watch_ad_get_tickets, watch_ad_get_exp, find out watch ad can get how many tickets/exp
                   if is_watched_ad {
