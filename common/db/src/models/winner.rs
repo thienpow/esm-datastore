@@ -67,12 +67,8 @@ impl Winner {
       Ok(n)
     }
     
-    pub async fn claim(id: i64, user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn claim(id: i64, user_id: i64, days_to_claim: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
-  
-      let stmt = conn.prepare("SELECT days_to_claim FROM public.\"config\" WHERE id=1;").await?;
-      let row = conn.query_one(&stmt, &[]).await?;
-      let days_to_claim = row.get::<usize, i32>(0);
   
       let stmt = conn.prepare("UPDATE public.\"winner\" SET status=2, claimed_on=NOW() WHERE id=$1 AND user_id=$2 AND status=1 AND CURRENT_DATE <= DATE(created_on) + INTERVAL '$3 days';").await?;
       let n = conn.execute(&stmt, &[&id, &user_id, &days_to_claim]).await?;
@@ -170,13 +166,13 @@ impl Winner {
       Ok(vec)
     }
 
-    pub async fn list_unclaimed(user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
+    pub async fn list_unclaimed(user_id: i64, days_to_claim: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
-
-      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.user_id=$1 AND w.status=1 ORDER BY w.created_on DESC;").await?;
+  
+      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.user_id=$1 AND w.status=1 AND CURRENT_DATE <= DATE(created_on) + INTERVAL '$2 days' ORDER BY w.created_on DESC;").await?;
     
       let mut vec: Vec<Winner> = Vec::new();
-      for row in conn.query(&stmt, &[&user_id]).await? {
+      for row in conn.query(&stmt, &[&user_id, &days_to_claim]).await? {
         let winner = Winner {
           id: row.get(0),
           prize_id: row.get(1),
@@ -243,3 +239,4 @@ impl Winner {
     }
 
 }
+

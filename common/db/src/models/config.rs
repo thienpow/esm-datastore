@@ -137,4 +137,15 @@ impl Config {
       Ok(vec)
     }
 
+
+    pub async fn get_days_to_claim(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i32, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+
+      let stmt = conn.prepare("SELECT days_to_claim FROM public.\"config\" WHERE id=1;").await?;
+      let row = conn.query_one(&stmt, &[]).await?;
+
+      Ok(row.get::<usize, i32>(0))
+    }
+
+
 }
