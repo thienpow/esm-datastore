@@ -1308,11 +1308,13 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   */
 
   async fn get_prize_ticket_pool(&self, request: Request<GetPrizeTicketPoolRequest>, ) -> Result<Response<GetPrizeTicketPoolResponse>, Status> {
-    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
-    
-    let req = request.into_inner();
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
 
-    match prize::Prize::get_current_tickets_collected_by_user(req.user_id.into(), req.prize_id.into(), &self.pool.clone()).await {
+    let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
+
+    match prize::Prize::get_current_tickets_collected_by_user(user_id, req.prize_id.into(), &self.pool.clone()).await {
       Ok(tickets) => Ok(Response::new(GetPrizeTicketPoolResponse {
         tickets: tickets,
       })),
@@ -1499,7 +1501,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let req = request.into_inner();
     let user_id: i64 = req.user_id.into();
     let item_type_id: i32 = req.item_type_id.into();
-    
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
     
     let now = SystemTime::now();
