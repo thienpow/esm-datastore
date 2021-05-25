@@ -656,4 +656,31 @@ impl Prize {
     
       Ok(n)
     }
+
+    pub async fn list_prize_pool_users_tickets(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<(i64, i64)>, RunError<tokio_postgres::Error>> {
+
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT DISTINCT user_id, SUM(tickets) FROM public.\"prize_pool\" WHERE is_closed=false AND prize_id=$1 GROUP BY user_id;").await?;
+    
+      let mut vec: Vec<(i64, i64)> = Vec::new();
+      for row in conn.query(&stmt, &[&prize_id]).await? {
+
+        vec.push(
+          (row.get(0), row.get(1))
+        );
+      }
+      
+      Ok(vec)
+    }
+
+    pub async fn close_prize_pool(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"prize_pool\" SET is_closed=true, closed_on=NOW() WHERE prize_id=$1;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&prize_id]).await?;
+    
+      Ok(n)
+    }
 }

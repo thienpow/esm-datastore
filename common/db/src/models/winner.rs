@@ -28,12 +28,12 @@ pub struct WinnerCount {
 
 impl Winner {
     
-    pub async fn add(winner: Winner, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn add(prize_id: i64,  user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"winner\" (prize_id, user_id, created_on, status, ship_tracking) VALUES ($1, $2, $3, $4, $5) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"winner\" (prize_id, user_id) VALUES ($1, $2) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
-                  &[&winner.prize_id, &winner.user_id, &winner.created_on, &winner.status, &winner.ship_tracking]).await?;
+                  &[&prize_id, &user_id]).await?;
     
       Ok(row.get::<usize, i64>(0))
     }
@@ -67,14 +67,15 @@ impl Winner {
       Ok(n)
     }
     
-
     pub async fn claim(id: i64, user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let now = SystemTime::now();
-
-      let stmt = conn.prepare("UPDATE public.\"winner\" SET status=2, claimed_on=$1 WHERE id=$2 AND status=1 AND user_id=$3;").await?;
-      let n = conn.execute(&stmt, &[&now, &id, &user_id]).await?;
+      let stmt = conn.prepare("SELECT days_to_claim FROM public.\"config\" WHERE id=1;").await?;
+      let row = conn.query_one(&stmt, &[]).await?;
+      let days_to_claim = row.get::<usize, i32>(0);
+  
+      let stmt = conn.prepare("UPDATE public.\"winner\" SET status=2, claimed_on=NOW() WHERE id=$1 AND user_id=$2 AND status=1 AND CURRENT_DATE <= DATE(created_on) + INTERVAL '$3 days';").await?;
+      let n = conn.execute(&stmt, &[&id, &user_id, &days_to_claim]).await?;
     
       Ok(n)
     }
