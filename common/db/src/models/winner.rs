@@ -70,8 +70,9 @@ impl Winner {
     pub async fn claim(id: i64, user_id: i64, days_to_claim: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"winner\" SET status=2, claimed_on=NOW() WHERE id=$1 AND user_id=$2 AND status=1 AND CURRENT_DATE <= DATE(created_on) + INTERVAL '$3 days';").await?;
-      let n = conn.execute(&stmt, &[&id, &user_id, &days_to_claim]).await?;
+      let sql_string = format!("UPDATE public.\"winner\" SET status=2, claimed_on=NOW() WHERE id={} AND user_id={} AND status=1 AND CURRENT_DATE <= DATE(created_on) + INTERVAL '{} days';",id, user_id, days_to_claim);
+      let stmt = conn.prepare(&sql_string).await?;
+      let n = conn.execute(&stmt, &[]).await?;
     
       Ok(n)
     }
