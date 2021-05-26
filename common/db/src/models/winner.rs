@@ -169,10 +169,11 @@ impl Winner {
     pub async fn list_unclaimed(user_id: i64, days_to_claim: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.user_id=$1 AND w.status=1 AND CURRENT_DATE <= DATE(w.created_on) + INTERVAL '$2 days' ORDER BY w.created_on DESC;").await?;
+      let sql_string = format!("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.user_id={} AND w.status=1 AND CURRENT_DATE <= DATE(w.created_on) + INTERVAL '{} days' ORDER BY w.created_on DESC;", user_id, days_to_claim);
+      let stmt = conn.prepare(&sql_string).await?;
     
       let mut vec: Vec<Winner> = Vec::new();
-      for row in conn.query(&stmt, &[&user_id, &days_to_claim]).await? {
+      for row in conn.query(&stmt, &[]).await? {
         let winner = Winner {
           id: row.get(0),
           prize_id: row.get(1),
