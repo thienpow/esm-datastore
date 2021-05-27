@@ -350,26 +350,41 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     let user_id: i64 = req.id.into();
+    let token: String = req.token.into();
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
 
-    let _ = match svc::notify("System Notification", "Your Message Token is Updated", &req.token).await {
-      Ok(_) => {
-        match svc::subscribe_all(&req.token).await {
-          Ok(_) => {},
-          Err(error) => panic!("Error: {}.", error),
+
+    match user::User::get(user_id, &self.pool.clone()).await {
+      Ok(user) => {
+
+        //do nothing if it's just the same token.
+        if user.msg_token != token {
+
+          match svc::reset_push_notification(&user, &token).await {
+            Ok(_) => {},
+            Err(error) => panic!("Error: update_msg_token. svc::reset_push_notification {}.", error),
+          };
+
+          match user::User::update_msg_token(user_id, &token, &self.pool.clone()).await {
+            Ok(_) => {},
+            Err(error) => panic!("Error: update_msg_token. user::update_msg_token {}.", error),
+          };
+  
+          match svc::notify("System Notification", "Your Message Token is Updated", &token).await {
+            Ok(_) => {},
+            Err(error) => panic!("Error: update_msg_token. svc::notify {}.", error),
+          };
+  
         }
+
+        Ok(Response::new(UpdateMsgTokenResponse {
+          result: "Done.".to_string(),
+        }))
+        
       },
-      Err(error) => panic!("Error: {}.", error),
-    };
-    
-    let result = match user::User::update_msg_token(user_id, req.token.into(), &self.pool.clone()).await {
-      Ok(result) => result.to_string(),
-      Err(error) => error.to_string(),
-    };
-    
-    Ok(Response::new(UpdateMsgTokenResponse {
-      result: result,
-    }))
+      Err(error) => panic!("Error: update_msg_token. user::get {}.", error),
+    }
+
 
   }
 
@@ -464,6 +479,17 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       Err(error) => error.to_string(),
     };
     
+    match user::User::get(user_id, &self.pool.clone()).await {
+      Ok(user) => {
+        let token = &user.msg_token;
+        match svc::reset_push_notification(&user, token).await {
+          Ok(_) => {},
+          Err(error) => panic!("Error: update_msg_token. svc::reset_push_notification {}.", error),
+        };
+      },
+      Err(error) => panic!("Error: update_msg_token. user::get {}.", error),
+    };
+
     Ok(Response::new(UpdateUserSettingsResponse {
       result: result,
     }))

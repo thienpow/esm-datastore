@@ -115,12 +115,12 @@ impl User {
       Ok(n)
     }
     
-    pub async fn update_msg_token(id: i64, msg_token: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update_msg_token(id: i64, msg_token: &str, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET msg_token=$1, msg_token_timestamp=NOW() WHERE id=$2;").await?;
       let n = conn.execute(&stmt, 
-                  &[&msg_token, &id]).await?;
+                  &[&msg_token.to_string(), &id]).await?;
     
       Ok(n)
     }

@@ -452,7 +452,7 @@ async fn process_closing(prize_id: i64, pool: &Pool<PostgresConnectionManager<to
                     Err(error) => panic!("==== winner.add Error: {}.", error),
                 };
     
-                notify_all("Prize Closing", format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), winner_user_id.to_string().as_str()).await?;
+                notify_closing("Prize Closing", format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), winner_user_id.to_string().as_str()).await?;
             }
             
             Ok(true)
@@ -463,7 +463,7 @@ async fn process_closing(prize_id: i64, pool: &Pool<PostgresConnectionManager<to
     
 }
 
-async fn notify_all(title: &str, body: &str, prize_id: &str, winner_user_id: &str) -> Result<bool, reqwest::Error> {
+async fn notify_closing(title: &str, body: &str, prize_id: &str, winner_user_id: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
     
     let echo_json: serde_json::Value = reqwest::Client::new()

@@ -10,8 +10,8 @@ async fn main() -> Result<(), reqwest::Error> {
     .header("authorization", format!("key={}", config.fcm_key))
     .json(&serde_json::json!({
         "notification": {
-            "body": "body text",
-            "title": "title test"
+            "body": "This is topic subscription test",
+            "title": "TOPIC Subscription test 2"
         },
         "data": {
             "a":1, 
