@@ -119,6 +119,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     };
                     
                     prize::Prize::close_current_game(cg_id, &pool.clone()).await?;
+                    notify_all("Tournament Closing", format!("cg_id: {}, prize_id: {}, game_id: {}", cg_id, prize_id, game_id).as_str()).await?;
                 
                 }
 
@@ -152,4 +153,33 @@ fn get_reward_from_rank(exp: i32, ranks: &Vec<rank::Rank>) -> (f64, i32) {
     }
 
     return (0.0, 0);
+}
+
+async fn notify_all(title: &str, body: &str) -> Result<bool, reqwest::Error> {
+    let config = config::get_configuration();
+    
+    let echo_json: serde_json::Value = reqwest::Client::new()
+    .post("https://fcm.googleapis.com/fcm/send")
+    .header("authorization", format!("key={}", config.fcm_key))
+    .json(&serde_json::json!({
+        "data" : {
+          "title": title,
+          "body" : body,
+          //"key_1" : "Value for key_1",
+          //"key_2" : "Value for key_2",
+          //"messaround": "abcxyz",
+        },
+      "to": "/topics/all"
+     
+    }))
+    .send()
+    .await?
+    .json()
+    .await?;
+  
+  
+    println!("{:#?}", echo_json);
+    
+    Ok(true)
+  
 }
