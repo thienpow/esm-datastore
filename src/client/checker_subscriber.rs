@@ -67,18 +67,16 @@ pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwes
     let config = config::get_configuration();
       
     let echo_json: serde_json::Value = reqwest::Client::new()
-    .post("https://fcm.googleapis.com/fcm/send")
-    .header("authorization", format!("key={}", config.fcm_key))
+    .post("https://fcm.googleapis.com/v1/projects/esports-mini/messages:send")
+    .header("Authorization", format!("Bearer {}", config.fcm_key))
     .json(&serde_json::json!({
-        "data" : {
-          "title": title,
-          "body" : body,
-          //"key_1" : "Value for key_1",
-          //"key_2" : "Value for key_2",
-          //"messaround": "abcxyz",
-        },
-      "to": token
-     
+        "message": {
+            "topic": "New Rewards",
+            "notification" : {
+                "body" : body,
+                "title": title,
+            },
+        }
     }))
     .send()
     .await?
