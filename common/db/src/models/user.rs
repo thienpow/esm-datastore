@@ -88,6 +88,14 @@ pub struct UserBrief {
   pub one_time_is_firstonly: bool, 
   pub sub_daily_timestamp: SystemTime,
 }
+
+pub struct Player {
+  pub id: i64,
+  pub avatar_url: String,
+  pub exp: i32,
+  pub nick_name: String,
+}
+
 impl User {
     
     pub async fn add(user: User, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
@@ -370,6 +378,23 @@ impl User {
         daily_multiplier: row.get(33), 
         one_time_is_firstonly: row.get(34), 
         sub_daily_timestamp: row.get(35),
+      };
+
+      Ok(user)
+    }
+
+    pub async fn get_player(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Player, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+
+      let stmt = conn.prepare("SELECT id, avatar_url, exp, nick_name FROM public.\"user\" WHERE status=1 AND id=$1;").await?;
+
+      let row = conn.query_one(&stmt, &[&id]).await?;
+
+      let user = Player {
+        id: row.get(0),
+        avatar_url: row.get(1), 
+        exp: row.get(2),
+        nick_name: row.get(3),
       };
 
       Ok(user)

@@ -23,6 +23,7 @@ service EsmApi {
   rpc UpdateAddress(UpdateAddressRequest) returns (UpdateAddressResponse) {}
   rpc UpdateUserSettings(UpdateUserSettingsRequest) returns (UpdateUserSettingsResponse) {}
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
+  rpc GetPlayer(GetPlayerRequest) returns (GetPlayerResponse) {}
 
   // Config
   rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {}
@@ -41,6 +42,7 @@ service EsmApi {
   rpc LogGLeave(LogGLeaveRequest) returns (LogGLeaveResponse) {}
   rpc ListLogG(ListLogGRequest) returns (ListLogGResponse) {}
   rpc ListLogGByGame(ListLogGByGameRequest) returns (ListLogGByGameResponse) {}
+  rpc ListPlayerHighscore(ListPlayerHighscoreRequest) returns (ListPlayerHighscoreResponse) {}
 
   // Invite
   rpc AddInvite(AddInviteRequest) returns (AddInviteResponse) {}
@@ -268,6 +270,19 @@ message UserDetail {
 }
 
 
+message PlayerDetail {
+  int64 id = 1;
+  string nick_name = 2;
+  string avatar_url = 3;
+  int32 exp = 4;
+}
+//Get a player's data
+message GetPlayerRequest {
+  int64 id = 1;
+}
+message GetPlayerResponse {
+  PlayerDetail result = 1;
+}
 
 
 
@@ -433,6 +448,13 @@ message ListLogGByGameRequest {
   int64 prize_id = 2;
 }
 message ListLogGByGameResponse {
+  repeated LogGDetail result = 1;
+}
+
+message ListPlayerHighscoreRequest {
+  int64 player_id = 1;
+}
+message ListPlayerHighscoreResponse {
   repeated LogGDetail result = 1;
 }
 message LogGDetail {

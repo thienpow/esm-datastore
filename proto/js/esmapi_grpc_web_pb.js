@@ -954,6 +954,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.changePassword =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.GetPlayerRequest,
+ *   !proto.api.esm.GetPlayerResponse>}
+ */
+const methodDescriptor_EsmApi_GetPlayer = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/GetPlayer',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.GetPlayerRequest,
+  proto.api.esm.GetPlayerResponse,
+  /**
+   * @param {!proto.api.esm.GetPlayerRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetPlayerResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.GetPlayerRequest,
+ *   !proto.api.esm.GetPlayerResponse>}
+ */
+const methodInfo_EsmApi_GetPlayer = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.GetPlayerResponse,
+  /**
+   * @param {!proto.api.esm.GetPlayerRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetPlayerResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.GetPlayerRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.GetPlayerResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.GetPlayerResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.getPlayer =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/GetPlayer',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetPlayer,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.GetPlayerRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.GetPlayerResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.getPlayer =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/GetPlayer',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetPlayer);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.GetConfigRequest,
  *   !proto.api.esm.GetConfigResponse>}
  */
@@ -1908,6 +1988,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listLogGByGame =
       request,
       metadata || {},
       methodDescriptor_EsmApi_ListLogGByGame);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.ListPlayerHighscoreRequest,
+ *   !proto.api.esm.ListPlayerHighscoreResponse>}
+ */
+const methodDescriptor_EsmApi_ListPlayerHighscore = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListPlayerHighscore',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.ListPlayerHighscoreRequest,
+  proto.api.esm.ListPlayerHighscoreResponse,
+  /**
+   * @param {!proto.api.esm.ListPlayerHighscoreRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListPlayerHighscoreResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.ListPlayerHighscoreRequest,
+ *   !proto.api.esm.ListPlayerHighscoreResponse>}
+ */
+const methodInfo_EsmApi_ListPlayerHighscore = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListPlayerHighscoreResponse,
+  /**
+   * @param {!proto.api.esm.ListPlayerHighscoreRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListPlayerHighscoreResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.ListPlayerHighscoreRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListPlayerHighscoreResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListPlayerHighscoreResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.listPlayerHighscore =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/ListPlayerHighscore',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListPlayerHighscore,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.ListPlayerHighscoreRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.ListPlayerHighscoreResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.listPlayerHighscore =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/ListPlayerHighscore',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListPlayerHighscore);
 };
 
 

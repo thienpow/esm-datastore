@@ -37,7 +37,8 @@ use esmapi_proto::{
   UpdateAddressRequest, UpdateAddressResponse,
   UpdateUserSettingsRequest, UpdateUserSettingsResponse,
   ChangePasswordRequest, ChangePasswordResponse,
-  UserDetail, 
+  GetPlayerRequest, GetPlayerResponse,
+  UserDetail, PlayerDetail,
 
   //Config
   GetConfigRequest, GetConfigResponse,
@@ -59,6 +60,7 @@ use esmapi_proto::{
   LogGLeaveRequest, LogGLeaveResponse,
   ListLogGRequest, ListLogGResponse,
   ListLogGByGameRequest, ListLogGByGameResponse,
+  ListPlayerHighscoreRequest, ListPlayerHighscoreResponse,
   LogGDetail,
 
   //  Invites
@@ -222,6 +224,26 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   *
   *
   */
+
+  async fn get_player(&self, request: Request<GetPlayerRequest>, ) -> Result<Response<GetPlayerResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    
+    match user::User::get_player(req.id.into(), &self.pool.clone()).await {
+      Ok(result) => Ok(Response::new(GetPlayerResponse {
+        result: Some(PlayerDetail{
+          id: result.id,
+          nick_name: result.nick_name,
+          avatar_url: result.avatar_url,
+          exp: result.exp,
+        }),
+      })),
+      Err(e) => Err(Status::internal(format!("Error: get_player! {}", e.to_string())))
+    }
+    
+    
+  }
 
   async fn sign_in(&self, request: Request<SignInRequest>, ) -> Result<Response<SignInResponse>, Status> {
     
@@ -973,6 +995,55 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     };
     
     Ok(Response::new(ListLogGByGameResponse {
+      result: result,
+    }))
+
+  }
+
+  async fn list_player_highscore(&self, request: Request<ListPlayerHighscoreRequest>, ) -> Result<Response<ListPlayerHighscoreResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    
+    let log_g = match gplayer::GPlayer::list_log_g_by_player(req.player_id, &self.pool.clone()).await {
+      Ok(log_g) => log_g,
+      Err(e) => {
+        println!("list_log_g_by_player not ok {:?}", e);
+        return Err(Status::internal(format!("{:?}", e)))
+      }
+    };
+    
+
+    let mut result: Vec<LogGDetail> = Vec::new();
+    
+    for l in log_g {
+      
+      let enter_timestamp = l.enter_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let leave_timestamp = l.leave_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
+      let li = LogGDetail {
+        id: l.id,
+        user_id: l.user_id,
+        nick_name: l.nick_name,
+        avatar_url: l.avatar_url,
+        prize_id: l.prize_id,
+        prize_title: l.prize_title,
+        prize_img_url: l.prize_img_url,
+        type_id: l.type_id,
+        game_id: l.game_id,
+        game_title: l.game_title,
+        game_img_url: l.game_img_url,
+        enter_timestamp: enter_timestamp as i64,
+        leave_timestamp: leave_timestamp as i64,
+        is_watched_ad: l.is_watched_ad,
+        is_used_gem: l.is_used_gem,
+        game_score: l.game_score,
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListPlayerHighscoreResponse {
       result: result,
     }))
 
