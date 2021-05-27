@@ -131,7 +131,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let stop = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
         let diff = stop - start;
-        println!("Time Spent = {}ms", diff);
+        println!("checker_leaderboard Time Spent = {}ms", diff);
 
         let _ = match checker::Checker::update_leaderboard_checked(diff as i64, &pool.clone()).await {
             Ok(_) => (),
