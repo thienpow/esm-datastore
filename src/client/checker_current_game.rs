@@ -452,7 +452,7 @@ async fn process_closing(prize_id: i64, pool: &Pool<PostgresConnectionManager<to
                     Err(error) => panic!("==== winner.add Error: {}.", error),
                 };
     
-                notify_all("Prize Closing", format!("prize_id: {}, winner_user_id: {}", prize_id, winner_user_id).as_str()).await?;
+                //notify_all("Prize Closing", format!("prize_id: {}, winner_user_id: {}", prize_id, winner_user_id).as_str()).await?;
             }
             
             Ok(true)
@@ -467,8 +467,8 @@ async fn notify_all(title: &str, body: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
     
     let echo_json: serde_json::Value = reqwest::Client::new()
-    .post("https://fcm.googleapis.com/v1/projects/esports-mini/messages:send")
-    .header("Authorization", format!("Bearer {}", config.fcm_key))
+    .post("https://fcm.googleapis.com/fcm/send")
+    .header("authorization", format!("key={}", config.fcm_key))
     .json(&serde_json::json!({
         "message": {
             "topic": "Prize Closing",

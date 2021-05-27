@@ -22,9 +22,9 @@ name = "checker_subscriber"
 path = "src/client/checker_subscriber.rs"
 
 
-#[[bin]]
-#name = "msgpush"
-#path = "src/client/msgpush.rs"
+[[bin]]
+name = "msgpush"
+path = "src/client/msgpush.rs"
 
 #[[bin]]
 #name = "config"

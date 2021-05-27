@@ -38,7 +38,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 for user in users {
 
                     user::User::reward_gem(user.id, user.daily_gem, &pool.clone()).await?;
-                    notify("Daily Gem Reward", format!("daily_gem: {}", user.daily_gem).as_str(), user.msg_token.as_str()).await?;
+                    //notify("Daily Gem Reward", format!("daily_gem: {}", user.daily_gem).as_str(), user.msg_token.as_str()).await?;
                 }
 
             },
@@ -67,8 +67,8 @@ pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwes
     let config = config::get_configuration();
       
     let echo_json: serde_json::Value = reqwest::Client::new()
-    .post("https://fcm.googleapis.com/v1/projects/esports-mini/messages:send")
-    .header("Authorization", format!("Bearer {}", config.fcm_key))
+    .post("https://fcm.googleapis.com/fcm/send")
+    .header("authorization", format!("key={}", config.fcm_key))
     .json(&serde_json::json!({
         "message": {
             "topic": "New Rewards",

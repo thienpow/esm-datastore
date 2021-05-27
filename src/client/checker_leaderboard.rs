@@ -119,7 +119,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     };
                     
                     prize::Prize::close_current_game(cg_id, &pool.clone()).await?;
-                    notify_all("Tournament Ending", format!("cg_id: {}, prize_id: {}, game_id: {}", cg_id, prize_id, game_id).as_str()).await?;
+                    //notify_all("Tournament Ending", format!("cg_id: {}, prize_id: {}, game_id: {}", cg_id, prize_id, game_id).as_str()).await?;
                 
                 }
 
@@ -159,8 +159,8 @@ async fn notify_all(title: &str, body: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
     
     let echo_json: serde_json::Value = reqwest::Client::new()
-    .post("https://fcm.googleapis.com/v1/projects/esports-mini/messages:send")
-    .header("Authorization", format!("Bearer {}", config.fcm_key))
+    .post("https://fcm.googleapis.com/fcm/send")
+    .header("authorization", format!("key={}", config.fcm_key))
     .json(&serde_json::json!({
         "message": {
             "topic": "Tournament Ending",
