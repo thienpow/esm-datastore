@@ -38,7 +38,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 for user in users {
 
                     user::User::reward_gem(user.id, user.daily_gem, &pool.clone()).await?;
-                    //notify("Daily Gem Reward", format!("daily_gem: {}", user.daily_gem).as_str(), user.msg_token.as_str()).await?;
+                    notify("Daily Gem Reward", format!("Your Subscription Reward has just reloaded: {} GEMS!", user.daily_gem).as_str(), user.daily_gem.to_string().as_str(), user.msg_token.as_str()).await?;
                 }
 
             },
@@ -63,7 +63,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 
-pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwest::Error> {
+pub async fn notify(title: &str, body: &str, daily_gem: &str, token: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
       
     let echo_json: serde_json::Value = reqwest::Client::new()
@@ -74,7 +74,10 @@ pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwes
             "body" : body,
             "title": title
         },
-        "topic": "new_rewards"
+        "data": {
+            "daily_gem": daily_gem
+        },
+        "to": token
     }))
     .send()
     .await?

@@ -9,9 +9,13 @@ async fn main() -> Result<(), reqwest::Error> {
     .post("https://fcm.googleapis.com/fcm/send")
     .header("authorization", format!("key={}", config.fcm_key))
     .json(&serde_json::json!({
-        "notification" : {
-            "body" : "body text",
+        "notification": {
+            "body": "body text",
             "title": "title test"
+        },
+        "data": {
+            "a":1, 
+            "b":2
         },
         "to": "/topics/tournament_ending",
         //"condition": "!('anytopicyoudontwanttouse' in topics)"
