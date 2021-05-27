@@ -70,13 +70,11 @@ pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwes
     .post("https://fcm.googleapis.com/fcm/send")
     .header("authorization", format!("key={}", config.fcm_key))
     .json(&serde_json::json!({
-        "message": {
-            "topic": "New Rewards",
-            "notification" : {
-                "body" : body,
-                "title": title,
-            },
-        }
+        "notification" : {
+            "body" : body,
+            "title": title
+        },
+        "topic": "New Rewards"
     }))
     .send()
     .await?

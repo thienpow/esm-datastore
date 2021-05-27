@@ -470,13 +470,11 @@ async fn notify_all(title: &str, body: &str) -> Result<bool, reqwest::Error> {
     .post("https://fcm.googleapis.com/fcm/send")
     .header("authorization", format!("key={}", config.fcm_key))
     .json(&serde_json::json!({
-        "message": {
-            "topic": "Prize Closing",
-            "notification" : {
-                "body" : body,
-                "title": title,
-            },
-        }
+        "notification" : {
+            "body" : body,
+            "title": title
+        },
+        "topic": "Prize Closing"
     }))
     .send()
     .await?

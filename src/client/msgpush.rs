@@ -9,15 +9,15 @@ async fn main() -> Result<(), reqwest::Error> {
     .post("https://fcm.googleapis.com/fcm/send")
     .header("authorization", format!("key={}", config.fcm_key))
     .json(&serde_json::json!({
-        "message": {
-            "topic": "Prize Closing",
-            "notification" : {
-                "body" : "body text",
-                "title": "title test"
-            }
+    
+        //"topic": "Prize Closing",
+        "notification" : {
+            "body" : "body text",
+            "title": "title test"
         },
-        "condition": "!('anytopicyoudontwanttouse' in topics)"
-        //"to": "/topics/all"
+    
+        //"condition": "!('anytopicyoudontwanttouse' in topics)"
+        "to": "dSoILFz6RNxmlUn1i0Clf9:APA91bETcTH7AQerhnfaDosDpjA58NbGQ9qiHX6RIzZ1OKMsNlaaf49ZEBvS67FaIpcBLG9MAjk8-gXUDyBnPyI23ZWG4pYB85C0DhJFYi7JzJfjRae5Cn3jLwsNVyy_aWKC4uUQ5G5X"
     }))
     .send()
     .await?
