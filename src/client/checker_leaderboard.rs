@@ -166,7 +166,7 @@ async fn notify_all(title: &str, body: &str) -> Result<bool, reqwest::Error> {
             "body" : body,
             "title": title
         },
-        "topic": "Tournament Ending"
+        "topic": "tournament_ending"
     }))
     .send()
     .await?

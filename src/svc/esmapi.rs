@@ -353,7 +353,12 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
 
     let _ = match svc::notify("System Notification", "Your Message Token is Updated", &req.token).await {
-      Ok(_) => {},
+      Ok(_) => {
+        match svc::subscribe_all(&req.token).await {
+          Ok(_) => {},
+          Err(error) => panic!("Error: {}.", error),
+        }
+      },
       Err(error) => panic!("Error: {}.", error),
     };
     

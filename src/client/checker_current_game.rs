@@ -452,7 +452,7 @@ async fn process_closing(prize_id: i64, pool: &Pool<PostgresConnectionManager<to
                     Err(error) => panic!("==== winner.add Error: {}.", error),
                 };
     
-                //notify_all("Prize Closing", format!("prize_id: {}, winner_user_id: {}", prize_id, winner_user_id).as_str()).await?;
+                notify_all("Prize Closing", format!("prize_id: {}, winner_user_id: {}", prize_id, winner_user_id).as_str()).await?;
             }
             
             Ok(true)
@@ -474,7 +474,7 @@ async fn notify_all(title: &str, body: &str) -> Result<bool, reqwest::Error> {
             "body" : body,
             "title": title
         },
-        "topic": "Prize Closing"
+        "topic": "prize_closing"
     }))
     .send()
     .await?

@@ -47,6 +47,37 @@ pub async fn notify_all(title: &str, body: &str) -> Result<bool, reqwest::Error>
 
 }
 */
+pub async fn subscribe_all(token: &str) -> Result<bool, reqwest::Error> {
+  
+  subscribe("new_rewards", token).await?;
+  subscribe("tournament_ending", token).await?;
+  subscribe("prize_closing", token).await?;
+
+  Ok(true)
+
+}
+
+pub async fn subscribe(topic: &str, token: &str) -> Result<bool, reqwest::Error> {
+  let config = config::get_configuration();
+    
+  let echo_json: serde_json::Value = reqwest::Client::new()
+  .post("https://iid.googleapis.com/iid/v1:batchAdd")
+  .header("authorization", format!("key={}", config.fcm_key))
+  .json(&serde_json::json!({
+    "to": format!("/topics/{}", topic),
+    "registration_tokens": [format!("{}", token)]
+  }))
+  .send()
+  .await?
+  .json()
+  .await?;
+
+
+  println!("{:#?}", echo_json);
+
+  Ok(true)
+
+}
 
 pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwest::Error> {
   let config = config::get_configuration();

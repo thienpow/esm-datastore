@@ -74,7 +74,7 @@ pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwes
             "body" : body,
             "title": title
         },
-        "topic": "New Rewards"
+        "topic": "new_rewards"
     }))
     .send()
     .await?
