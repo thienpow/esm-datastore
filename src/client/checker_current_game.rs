@@ -350,7 +350,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: Prize, prev
                 if is_after_previous {
                     let mut end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
                     if prize.type_id == 4 {
-                        end_timestamp = start_timestamp + diff_timestamp;
+                        end_timestamp = end_timestamp + diff_timestamp;
                     }
 
                     //append to db.current_game
