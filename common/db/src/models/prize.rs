@@ -336,7 +336,7 @@ impl Prize {
       COALESCE(g.subtitle, '') AS game_sub_title, 
       COALESCE(g.img_url, '') AS game_img_url, 
       COALESCE(g.content, '') AS game_content, 
-      COALESCE(g.score_rule, 0 AS score_rule, 
+      COALESCE(g.score_rule, 0) AS score_rule, 
       COALESCE(g.watch_ad_get_tickets, 0) AS watch_ad_get_tickets, 
       COALESCE(g.watch_ad_get_exp, 0) AS watch_ad_get_exp, 
       COALESCE(g.use_gem_get_tickets, 0) AS use_gem_get_tickets, 
