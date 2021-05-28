@@ -341,10 +341,17 @@ async fn generate_current_games(is_previous_game_found: bool, prize: Prize, prev
 
     let diff_timestamp = scheduled_off - scheduled_on;
 
+    let mut i = 0;
     while start_timestamp < final_end_timestamp {
+        
         
         for game in &active_games {
         
+            if i > 0  {
+                i = 0;
+                start_timestamp = start_timestamp -  1;
+            }
+            
             if is_previous_game_found { 
                 
                 if is_after_previous {
@@ -373,7 +380,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: Prize, prev
                         Err(error) => panic!("==== generate_current_games.add_current_game Error: {}.", error),
                     }
 
-                    start_timestamp = end_timestamp - 1;
+                    start_timestamp = end_timestamp;
     
                     
                 } else {
@@ -414,11 +421,11 @@ async fn generate_current_games(is_previous_game_found: bool, prize: Prize, prev
     
                 }
                 
-                start_timestamp = end_timestamp - 1;
+                start_timestamp = end_timestamp;
 
             }
         }
-        
+        i = i+1;
         start_timestamp = start_timestamp + 1;
         //println!("==== bottom start_timestamp {} == final_end_timestamp {}", start_timestamp, final_end_timestamp);
     }
