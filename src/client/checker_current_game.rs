@@ -302,10 +302,10 @@ async fn process_current_games(prize: Prize, pool: &Pool<PostgresConnectionManag
                     //println!("== prize_id={}, previous_games={}", prize.id.to_string(), previous_games.len().to_string());
                     let end_timestamp = previous_games[0].end_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
                     println!("== previous_games found, generating current_games from time after {}... and game_id after {}, until next end...", end_timestamp.to_string(), previous_games[0].game_id.to_string());
-                    generate_current_games(prize, previous_games[0].tour_id, previous_games[0].set_id, previous_games[0].game_id, end_timestamp, &pool.clone()).await?;
+                    generate_current_games(true, prize, previous_games[0].tour_id, previous_games[0].set_id, previous_games[0].game_id, end_timestamp, &pool.clone()).await?;
                 } else {
                     println!("== No previous_games found, generating current_games from start until next end...");
-                    generate_current_games(prize, 0, 0, 0, 0, &pool.clone()).await?;
+                    generate_current_games(false, prize, 0, 0, 0, 0, &pool.clone()).await?;
                 }
             },
             Err(error) => panic!("== list_current_games Error: {}.", error),
@@ -316,7 +316,7 @@ async fn process_current_games(prize: Prize, pool: &Pool<PostgresConnectionManag
     Ok(current_games)
 }
 
-async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_set_id: i64, previous_game_id: i64, previous_end_timestamp: u64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<(), Box<dyn std::error::Error>> {
+async fn generate_current_games(is_previous_game_found: bool, prize: Prize, previous_tour_id: i64, previous_set_id: i64, previous_game_id: i64, previous_end_timestamp: u64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<(), Box<dyn std::error::Error>> {
     
     let config = config::get_configuration();
     let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
@@ -345,10 +345,13 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
         
         for game in &active_games {
         
-            if previous_tour_id > 0 { //type 4 or AutoEntry will never have previous_tour_id
+            if is_previous_game_found { 
                 
                 if is_after_previous {
-                    let end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
+                    let mut end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
+                    if prize.type_id == 4 {
+                        end_timestamp = start_timestamp + diff_timestamp;
+                    }
 
                     //append to db.current_game
                     let cg = CurrentGame {
@@ -389,8 +392,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
                 }
                 
                 //append to db.current_game only if the end_timestamp still not yet end for now.
-                if end_timestamp >= adjusted_now && scheduled_off < end_timestamp {
-                    
+                if end_timestamp >= adjusted_now {
                     let cg = CurrentGame {
                         id: 0,
                         prize_id: prize.id,
