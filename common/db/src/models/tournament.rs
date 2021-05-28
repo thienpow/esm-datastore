@@ -178,7 +178,7 @@ impl Tournament {
         } else {
           let mut sql_string = "SELECT id, title, status FROM public.\"tournament\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
           if status > 0 {
-            sql_string = format!("SELECT id, title, status FROM public.\"tournament\" WHERE status={} LIMIT $1 OFFSET $2;", status);
+            sql_string = format!("SELECT id, title, status FROM public.\"tournament\" WHERE status={} ORDER BY id DESC LIMIT $1 OFFSET $2;", status);
           }
           
           let stmt = conn.prepare(&sql_string).await?;

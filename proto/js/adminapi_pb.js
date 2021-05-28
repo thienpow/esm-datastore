@@ -8498,7 +8498,8 @@ proto.adminapi.esm.ListUserRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     limit: jspb.Message.getFieldWithDefault(msg, 1, 0),
     offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    searchUsername: jspb.Message.getFieldWithDefault(msg, 3, "")
+    searchUsername: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    status: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -8547,6 +8548,10 @@ proto.adminapi.esm.ListUserRequest.deserializeBinaryFromReader = function(msg, r
       var value = /** @type {string} */ (reader.readString());
       msg.setSearchUsername(value);
       break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setStatus(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -8594,6 +8599,13 @@ proto.adminapi.esm.ListUserRequest.serializeBinaryToWriter = function(message, w
   if (f.length > 0) {
     writer.writeString(
       3,
+      f
+    );
+  }
+  f = message.getStatus();
+  if (f !== 0) {
+    writer.writeInt32(
+      4,
       f
     );
   }
@@ -8651,6 +8663,24 @@ proto.adminapi.esm.ListUserRequest.prototype.getSearchUsername = function() {
  */
 proto.adminapi.esm.ListUserRequest.prototype.setSearchUsername = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional int32 status = 4;
+ * @return {number}
+ */
+proto.adminapi.esm.ListUserRequest.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.ListUserRequest} returns this
+ */
+proto.adminapi.esm.ListUserRequest.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
