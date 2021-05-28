@@ -116,7 +116,7 @@ impl Shop {
                                     item_title ILIKE '%{}%' OR 
                                     u.nick_name ILIKE '%{}%' OR u.email ILIKE '%{}%' 
                                     OR b.payment_id ILIKE '%{}%' OR b.sub_id ILIKE '%{}%' 
-                                    AND status={} 
+                                    AND b.item_type_id={} 
                                   LIMIT $1 OFFSET $2;", search_title, search_title, search_title, search_title, search_title, status);
           }
 
@@ -148,7 +148,7 @@ impl Shop {
                                   FROM public.\"shop_buy\" AS b 
                                   LEFT JOIN public.\"user\" AS u ON u.id = b.user_id 
                                   WHERE 
-                                    status={} 
+                                  b.item_type_id={} 
                                   LIMIT $1 OFFSET $2;", status);
           }
 
