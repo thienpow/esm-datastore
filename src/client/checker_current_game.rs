@@ -491,7 +491,7 @@ async fn notify_closing(title: &str, body: &str, prize_id: &str, winner_user_id:
             "prize_id": prize_id, 
             "winner_user_id": winner_user_id
         },
-        "topic": "prize_closing"
+        "to": "/topics/prize_closing"
     }))
     .send()
     .await?

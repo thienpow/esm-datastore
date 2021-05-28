@@ -171,7 +171,7 @@ async fn notify_tour_ending(title: &str, body: &str, cg_id: &str, prize_id: &str
             "prize_id": prize_id,
             "game_id": game_id
         },
-        "topic": "tournament_ending"
+        "to": "/topics/tournament_ending"
     }))
     .send()
     .await?
