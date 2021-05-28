@@ -373,7 +373,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: Prize, prev
                         Err(error) => panic!("==== generate_current_games.add_current_game Error: {}.", error),
                     }
 
-                    start_timestamp = end_timestamp;
+                    start_timestamp = end_timestamp - 1;
     
                     
                 } else {
@@ -414,12 +414,10 @@ async fn generate_current_games(is_previous_game_found: bool, prize: Prize, prev
     
                 }
                 
-                start_timestamp = end_timestamp;
+                start_timestamp = end_timestamp - 1;
 
             }
         }
-        
-        
         
         start_timestamp = start_timestamp + 1;
         //println!("==== bottom start_timestamp {} == final_end_timestamp {}", start_timestamp, final_end_timestamp);
