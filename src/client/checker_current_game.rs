@@ -335,8 +335,8 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
     
     let mut final_end_timestamp = scheduled_off;
     //println!("==== adjusted_now {} > scheduled_off {}", adjusted_now, scheduled_off);
-    if adjusted_now + 3600 * 24 > scheduled_off {
-        final_end_timestamp = adjusted_now + 3600 * 24;
+    if adjusted_now + 3600 * 1 > scheduled_off {
+        final_end_timestamp = adjusted_now + 3600 * 1;
     }
 
     let diff_timestamp = scheduled_off - scheduled_on;
