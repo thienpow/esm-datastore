@@ -327,25 +327,33 @@ impl Prize {
       p.type_id, p.tickets_required, p.timezone, 
       p.scheduled_on, p.scheduled_off, 
       p.is_repeat, p.repeated_on, p.status, p.status_progress, p.tickets_collected, 
-      cg.tour_id, 
-      t.title AS tour_title, 
-      cg.set_id, 
-      s.title AS set_title, 
-      cg.game_id, 
-      g.title AS game_title, 
-      g.subtitle AS game_sub_title, 
-      g.img_url AS game_img_url, 
-      g.content AS game_content, 
-      g.score_rule, g.watch_ad_get_tickets, g.watch_ad_get_exp, g.use_gem_get_tickets, g.use_gem_get_exp, g.use_how_many_gems,
-      cg.tsg_id AS tsg_id,
-      tsg.duration_days AS game_duration_days, tsg.duration_hours AS game_duration_hours, tsg.duration_minutes AS game_duration_minutes, tsg.group_id,  
+      COALESCE(cg.tour_id, 0) AS tour_id, 
+      COALESCE(t.title, '') AS tour_title, 
+      COALESCE(cg.set_id, 0) AS set_id, 
+      COALESCE(s.title, '') AS set_title, 
+      COALESCE(cg.game_id, 0) AS game_id, 
+      COALESCE(g.title, '') AS game_title, 
+      COALESCE(g.subtitle, '') AS game_sub_title, 
+      COALESCE(g.img_url, '') AS game_img_url, 
+      COALESCE(g.content, '') AS game_content, 
+      COALESCE(g.score_rule, 0 AS score_rule, 
+      COALESCE(g.watch_ad_get_tickets, 0) AS watch_ad_get_tickets, 
+      COALESCE(g.watch_ad_get_exp, 0) AS watch_ad_get_exp, 
+      COALESCE(g.use_gem_get_tickets, 0) AS use_gem_get_tickets, 
+      COALESCE(g.use_gem_get_exp, 0) AS use_gem_get_exp, 
+      COALESCE(g.use_how_many_gems, 0) AS use_how_many_gems, 
+      COALESCE(cg.id, 0) AS tsg_id, 
+      COALESCE(tsg.duration_days, 0) AS game_duration_days, 
+      COALESCE(tsg.duration_hours, 0) AS game_duration_hours, 
+      COALESCE(tsg.duration_minutes, 0) AS game_duration_minutes, 
+      COALESCE(tsg.group_id, 0) AS group_id,
       cg.start_timestamp, cg.end_timestamp 
     FROM public.\"current_game\" AS cg 
-      INNER JOIN public.\"prize\" AS p on p.id = cg.prize_id 
-      INNER JOIN public.\"tournament\" AS t ON t.id = cg.tour_id 
-      INNER JOIN public.\"tournament_set\" AS s ON s.id = cg.set_id 
-      INNER JOIN public.\"game\" AS g ON g.id = cg.game_id 
-      INNER JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.id = cg.tsg_id 
+      LEFT JOIN public.\"prize\" AS p on p.id = cg.prize_id 
+      LEFT JOIN public.\"tournament\" AS t ON t.id = cg.tour_id 
+      LEFT JOIN public.\"tournament_set\" AS s ON s.id = cg.set_id 
+      LEFT JOIN public.\"game\" AS g ON g.id = cg.game_id 
+      LEFT JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.id = cg.tsg_id 
     WHERE cg.start_timestamp <= NOW() + INTERVAL '3 minutes' AND cg.end_timestamp > NOW() ORDER BY p.type_id, cg.start_timestamp;".to_string();
       let stmt = conn.prepare(&sql_string).await?;
   
@@ -579,24 +587,29 @@ impl Prize {
                           p.type_id, p.tickets_required, p.timezone, 
                           p.scheduled_on, p.scheduled_off, 
                           p.is_repeat, p.repeated_on, p.status, p.status_progress, p.tickets_collected, 
-                          pt.tour_id, t.title AS tour_title, 
-                          ts.set_id, s.title AS set_title, 
-                          tsg.game_id, g.title AS game_title, 
-                          g.subtitle AS game_sub_title, 
-                          g.img_url AS game_img_url, 
-                          g.content AS game_content, 
-                          tsg.id AS tsg_id,
-                          tsg.duration_days AS game_duration_days, tsg.duration_hours AS game_duration_hours, tsg.duration_minutes AS game_duration_minutes, tsg.group_id 
+                          COALESCE(pt.tour_id, 0) AS tour_id, 
+                          COALESCE(t.title, '') AS tour_title, 
+                          COALESCE(ts.set_id, 0) AS set_id, 
+						              COALESCE(s.title, '') AS set_title, 
+                          COALESCE(tsg.game_id, 0) AS game_id, 
+						              COALESCE(g.title, '') AS game_title, 
+                          COALESCE(g.subtitle, '') AS game_sub_title, 
+                          COALESCE(g.img_url, '') AS game_img_url, 
+                          COALESCE(g.content, '') AS game_content, 
+                          COALESCE(tsg.id, 0) AS tsg_id, 
+                          COALESCE(tsg.duration_days, 0) AS game_duration_days, 
+                          COALESCE(tsg.duration_hours, 0) AS game_duration_hours, 
+                          COALESCE(tsg.duration_minutes, 0) AS game_duration_minutes, 
+                          COALESCE(tsg.group_id, 0) AS group_id
                         FROM public.\"prize\" AS p 
-                          INNER JOIN public.\"prize_tour\" AS pt ON pt.prize_id = p.id 
-                          INNER JOIN public.\"tournament\" AS t ON t.id = pt.tour_id 
-                          INNER JOIN public.\"tour_set\"  AS ts ON ts.tour_id = pt.tour_id 
-                          INNER JOIN public.\"tournament_set\" AS s ON s.id = ts.set_id 
-                          INNER JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.set_id = ts.set_id 
-                          INNER JOIN public.\"game\" AS g ON g.id = tsg.game_id 
+                          LEFT JOIN public.\"prize_tour\" AS pt ON pt.prize_id = p.id 
+                          LEFT JOIN public.\"tournament\" AS t ON t.id = pt.tour_id 
+                          LEFT JOIN public.\"tour_set\"  AS ts ON ts.tour_id = pt.tour_id 
+                          LEFT JOIN public.\"tournament_set\" AS s ON s.id = ts.set_id 
+                          LEFT JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.set_id = ts.set_id 
+                          LEFT JOIN public.\"game\" AS g ON g.id = tsg.game_id 
                         WHERE p.status = 2 AND p.id = $1
-                        ORDER BY p.id, ts.tour_id 
-                        ;".to_string();
+                        ORDER BY p.id;".to_string();
       let stmt = conn.prepare(&sql_string).await?;
   
       let mut vec: Vec<PrizeActive> = Vec::new();

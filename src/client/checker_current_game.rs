@@ -339,15 +339,17 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
         final_end_timestamp = adjusted_now + 3600 * 24;
     }
 
+    let diff_timestamp = scheduled_off - scheduled_on;
+
     while start_timestamp < final_end_timestamp {
         
         for game in &active_games {
-            
-            if previous_tour_id > 0 {
+        
+            if previous_tour_id > 0 { //type 4 or AutoEntry will never have previous_tour_id
                 
                 if is_after_previous {
                     let end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
-                    
+
                     //append to db.current_game
                     let cg = CurrentGame {
                         id: 0,
@@ -358,7 +360,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
                         game_id: game.game_id,
                         start_timestamp: UNIX_EPOCH + Duration::new(start_timestamp as u64, 0),
                         end_timestamp: UNIX_EPOCH + Duration::new(end_timestamp as u64, 0)
-                      };
+                        };
     
                     //println!("== add_current_game");
                     match prize::Prize::add_current_game(cg, &pool.clone()).await {
@@ -381,8 +383,10 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
 
             } else { // if 0 then means genearate from scheduled_on of prize
                 
-                let end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
-                
+                let mut end_timestamp = start_timestamp + game.game_duration_days as u64 * 86400 + game.game_duration_hours as u64 * 3600 + game.game_duration_minutes as u64 *  60;
+                if prize.type_id == 4 {
+                    end_timestamp = start_timestamp + diff_timestamp;
+                }
                 
                 //append to db.current_game only if the end_timestamp still not yet end for now.
                 if end_timestamp >= adjusted_now {
@@ -396,7 +400,7 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
                         game_id: game.game_id,
                         start_timestamp: UNIX_EPOCH + Duration::new(start_timestamp as u64, 0),
                         end_timestamp: UNIX_EPOCH + Duration::new(end_timestamp as u64, 0)
-                      };
+                        };
     
                     //println!("== add_current_game");
                     match prize::Prize::add_current_game(cg, &pool.clone()).await {
@@ -412,7 +416,9 @@ async fn generate_current_games(prize: Prize, previous_tour_id: i64, previous_se
 
             }
         }
-    
+        
+        
+        
         start_timestamp = start_timestamp + 1;
         //println!("==== bottom start_timestamp {} == final_end_timestamp {}", start_timestamp, final_end_timestamp);
     }
