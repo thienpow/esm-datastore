@@ -1420,9 +1420,9 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
       let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
       let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
-      let timezone_seconds = prize.timezone * (3600 as f64);
+      //et timezone_seconds = prize.timezone * (3600 as f64);
 
-      let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (self.server_timezone * 3600) + (timezone_seconds as u64);
+      //let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (self.server_timezone * 3600) + (timezone_seconds as u64);
 
       let li = PrizeDetail {
         current_game_id: prize.current_game_id,
@@ -1469,33 +1469,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         end_timestamp: end_timestamp as i64,
       };
       
-      //type_id 1=Featured, 2=Premium
-      if prize.type_id == 1 || prize.type_id == 2 {
-        
-        //For Featured and Premium prize, need to check if the tickets_collected is smaller than tickets_required, then only allow to list
-        if prize.tickets_collected <= prize.tickets_required {
-          result.push(li);
-        }
-
-      //type_id 3=Time Sensitive, 4=Automated Entry
-      } else if prize.type_id == 3 || prize.type_id == 4 {
-
-        //if it's Prize 3 or 4, we need to check if now is greater than or equal to scheduled_on, meaning it's started.
-        if scheduled_on <= adjusted_now {
-
-          // if is_repeat, meaning need to always show, because it never end.
-          if prize.is_repeat {
-            result.push(li);
-          } else {
-
-            // if not repeat, then we need to check if it's still within the duration.
-            if scheduled_off >= adjusted_now {
-              result.push(li);
-            }
-          }
-          
-        }
-      }
+      result.push(li);
       
       
     };
