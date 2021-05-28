@@ -80,8 +80,8 @@ impl Shop {
       } else {
         //begin search
 
-
         let mut sql_string: String = "".to_string();
+        println!("{}", sql_string);
 
         if search_title.len() > 2 {
           sql_string = format!("SELECT b.id, b.item_type_id, b.item_id, CASE 
