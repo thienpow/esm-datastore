@@ -55,6 +55,14 @@ pub struct PrizeActive {
   pub game_subtitle: String,
   pub game_img_url: String,
   pub game_content: String,
+
+  pub score_rule: i32,
+  pub watch_ad_get_tickets: i32,
+  pub watch_ad_get_exp: i32,
+  pub use_gem_get_tickets: i32,
+  pub use_gem_get_exp: i32,
+  pub use_how_many_gems: i32,
+
   pub tsg_id: i64,
   pub game_duration_days: i32,
   pub game_duration_hours: i32,
@@ -328,6 +336,7 @@ impl Prize {
       g.subtitle AS game_sub_title, 
       g.img_url AS game_img_url, 
       g.content AS game_content, 
+      g.score_rule, g.watch_ad_get_tickets, g.watch_ad_get_exp, g.use_gem_get_tickets, g.use_gem_get_exp, g.use_how_many_gems,
       cg.tsg_id AS tsg_id,
       tsg.duration_days AS game_duration_days, tsg.duration_hours AS game_duration_hours, tsg.duration_minutes AS game_duration_minutes, tsg.group_id,  
       cg.start_timestamp, cg.end_timestamp 
@@ -370,13 +379,21 @@ impl Prize {
           game_subtitle: row.get(24),
           game_img_url: row.get(25),
           game_content: row.get(26),
-          tsg_id: row.get(27),
-          game_duration_days: row.get(28),
-          game_duration_hours: row.get(29),
-          game_duration_minutes: row.get(30),
-          group_id: row.get(31),
-          start_timestamp: row.get(32),
-          end_timestamp: row.get(33)
+
+          score_rule: row.get(27), 
+          watch_ad_get_tickets: row.get(28), 
+          watch_ad_get_exp: row.get(29), 
+          use_gem_get_tickets: row.get(30), 
+          use_gem_get_exp: row.get(31), 
+          use_how_many_gems: row.get(32),
+
+          tsg_id: row.get(33),
+          game_duration_days: row.get(34),
+          game_duration_hours: row.get(35),
+          game_duration_minutes: row.get(36),
+          group_id: row.get(37),
+          start_timestamp: row.get(38),
+          end_timestamp: row.get(39)
         };
 
         vec.push(prize);
@@ -612,6 +629,12 @@ impl Prize {
           game_subtitle: row.get(23),
           game_img_url: row.get(24),
           game_content: row.get(25),
+          score_rule: 0,
+          watch_ad_get_tickets: 0,
+          watch_ad_get_exp: 0,
+          use_gem_get_tickets: 0,
+          use_gem_get_exp: 0,
+          use_how_many_gems: 0,
           tsg_id: row.get(26),
           game_duration_days: row.get(27),
           game_duration_hours: row.get(28),

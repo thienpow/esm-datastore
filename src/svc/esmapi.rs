@@ -1476,6 +1476,14 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         game_subtitle: prize.game_subtitle,
         game_img_url: prize.game_img_url,
         game_content: prize.game_content,
+
+        score_rule: prize.score_rule,
+        watch_ad_get_tickets: prize.watch_ad_get_tickets,
+        watch_ad_get_exp: prize.watch_ad_get_exp,
+        use_gem_get_tickets: prize.use_gem_get_tickets,
+        use_gem_get_exp: prize.use_gem_get_exp,
+        use_how_many_gems: prize.use_how_many_gems,
+
         tsg_id: prize.tsg_id,
         game_duration_days: prize.game_duration_days,
         game_duration_hours: prize.game_duration_hours,
