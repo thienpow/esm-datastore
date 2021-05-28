@@ -96,10 +96,9 @@ impl Shop {
                                 FROM public.\"shop_buy\" AS b 
                                 LEFT JOIN public.\"user\" AS u ON u.id = b.user_id 
                                 WHERE 
-                                  item_title ILIKE '%{}%' OR 
                                   u.nick_name ILIKE '%{}%' OR u.email ILIKE '%{}%' 
                                   OR b.payment_id ILIKE '%{}%' OR b.sub_id ILIKE '%{}%' 
-                                LIMIT $1 OFFSET $2;", search_title, search_title, search_title, search_title, search_title);
+                                LIMIT $1 OFFSET $2;", search_title, search_title, search_title, search_title);
           if status > -1 {
             sql_string = format!("SELECT b.id, b.item_type_id, b.item_id, CASE 
                                       WHEN b.item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=b.item_id) 
@@ -113,11 +112,10 @@ impl Shop {
                                   FROM public.\"shop_buy\" AS b 
                                   LEFT JOIN public.\"user\" AS u ON u.id = b.user_id 
                                   WHERE 
-                                    item_title ILIKE '%{}%' OR 
                                     u.nick_name ILIKE '%{}%' OR u.email ILIKE '%{}%' 
                                     OR b.payment_id ILIKE '%{}%' OR b.sub_id ILIKE '%{}%' 
                                     AND b.item_type_id={} 
-                                  LIMIT $1 OFFSET $2;", search_title, search_title, search_title, search_title, search_title, status);
+                                  LIMIT $1 OFFSET $2;", search_title, search_title, search_title, search_title, status);
           }
 
         } else {
