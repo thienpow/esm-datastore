@@ -417,7 +417,7 @@ impl User {
                                 WHERE username ILIKE '%{}%' OR email ILIKE '%{}%' OR phone ILIKE '%{}%' OR firstname ILIKE '%{}%' OR lastname ILIKE '%{}%' \
                                 ORDER BY id DESC LIMIT {} OFFSET {};", search_username, search_username, search_username, search_username, search_username, limit, offset);
         
-        if status > 0 {
+        if status > -1 {
           sql_string = format!("SELECT \
                                     id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, \
                                     social_link_fb, social_link_google, avatar_url, exp, \
@@ -483,7 +483,7 @@ impl User {
 
         
         let mut stmt = conn.prepare("SELECT id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, address, city, state, zip_code, country, country_code, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token, subscription_id, sub_id, one_time_multiplier, daily_gem, daily_multiplier, one_time_is_firstonly, sub_daily_timestamp FROM public.\"user\" ORDER BY id DESC LIMIT $1 OFFSET $2;").await?;
-        if status > 0 {
+        if status > -1 {
           stmt = conn.prepare("SELECT id, username, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, address, city, state, zip_code, country, country_code, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, msg_token, subscription_id, sub_id, one_time_multiplier, daily_gem, daily_multiplier, one_time_is_firstonly, sub_daily_timestamp FROM public.\"user\" WHERE status=$1 ORDER BY id DESC LIMIT $2 OFFSET $3;").await?;
         }
 

@@ -144,7 +144,7 @@ impl Tournament {
       let mut vec: Vec<Tournament> = Vec::new();
       if search_title.len() > 2 {
         let mut sql_string = format!("SELECT id, title, status FROM public.\"tournament\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
-        if status > 0 {
+        if status > -1 {
           sql_string = format!("SELECT id, title, status FROM public.\"tournament\" WHERE title ILIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
         }
         let stmt = conn.prepare(&sql_string).await?;
@@ -177,7 +177,7 @@ impl Tournament {
           
         } else {
           let mut sql_string = "SELECT id, title, status FROM public.\"tournament\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
-          if status > 0 {
+          if status > -1 {
             sql_string = format!("SELECT id, title, status FROM public.\"tournament\" WHERE status={} ORDER BY id DESC LIMIT $1 OFFSET $2;", status);
           }
           
