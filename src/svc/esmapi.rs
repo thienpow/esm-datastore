@@ -1698,7 +1698,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
 
 
-    let buys = match shop::Shop::list(user_id, req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+    let buys = match shop::Shop::list(user_id, req.limit.into(), req.offset.into(), "".to_string(), -1, &self.pool.clone()).await {
       Ok(buys) => buys,
       Err(error) => panic!("Error: {}.", error),
     };

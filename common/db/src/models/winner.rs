@@ -83,7 +83,7 @@ impl Winner {
       let mut vec: Vec<Winner> = Vec::new();
       if search_title.len() > 2 {
         let mut sql_string = format!("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE p.title ILIKE '%{}%' OR u.nick_name ILIKE '%{}%' ORDER BY w.id DESC LIMIT {} OFFSET {};", search_title, search_title, limit, offset);
-        if status > 0 {
+        if status > -1 {
           sql_string = format!("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE p.title ILIKE '%{}%' OR u.nick_name ILIKE '%{}%' AND status={} ORDER BY w.id DESC LIMIT {} OFFSET {};", search_title, search_title, status, limit, offset);
         }
         let stmt = conn.prepare(&sql_string).await?;
@@ -110,7 +110,7 @@ impl Winner {
       } else {
 
         let mut sql_string = "SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id ORDER BY w.id DESC LIMIT $1 OFFSET $2;".to_string();
-        if status > 0 {
+        if status > -1 {
           sql_string = format!("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.status={} ORDER BY w.id DESC LIMIT $1 OFFSET $2;", status);
         }
         let stmt = conn.prepare(&sql_string).await?;

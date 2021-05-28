@@ -102,7 +102,7 @@ impl Subscription {
       let mut vec: Vec<Subscription> = Vec::new();
       if search_title.len() > 2 {
         let mut sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, price, quantity, one_time_gem, one_time_multiplier, one_time_is_firstonly, daily_gem, daily_multiplier, status FROM public.\"subscription\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
-        if status > 0 {
+        if status > -1 {
           sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, price, quantity, one_time_gem, one_time_multiplier, one_time_is_firstonly, daily_gem, daily_multiplier, status FROM public.\"subscription\" WHERE title ILIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
         }
         let stmt = conn.prepare(&sql_string).await?;
@@ -130,7 +130,7 @@ impl Subscription {
         
       } else {
         let mut sql_string = "SELECT id, title, subtitle, img_url, content, type_id, price, quantity, one_time_gem, one_time_multiplier, one_time_is_firstonly, daily_gem, daily_multiplier, status FROM public.\"subscription\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
-        if status > 0 {
+        if status > -1 {
           sql_string = format!("SELECT id, title, subtitle, img_url, content, type_id, price, quantity, one_time_gem, one_time_multiplier, one_time_is_firstonly, daily_gem, daily_multiplier, status FROM public.\"subscription\" WHERE status={} LIMIT $1 OFFSET $2;", status);
         }
         let stmt = conn.prepare(&sql_string).await?;

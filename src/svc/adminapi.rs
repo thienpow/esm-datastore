@@ -1853,7 +1853,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
     let req = request.into_inner();
-    let buys = match shop::Shop::list(0, req.limit.into(), req.offset.into(), &self.pool.clone()).await {
+    let buys = match shop::Shop::list(0, req.limit.into(), req.offset.into(), req.search_title.into(), req.status.into(), &self.pool.clone()).await {
       Ok(buys) => buys,
       Err(error) => panic!("Error: {}.", error),
     };

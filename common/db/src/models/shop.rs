@@ -43,8 +43,8 @@ impl Shop {
       Ok(row.get::<usize, i64>(0))
     }
     
-    
-    pub async fn list(user_id: i64, limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<NewBuy>, RunError<tokio_postgres::Error>> {
+     
+    pub async fn list(user_id: i64, limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<NewBuy>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<NewBuy> = Vec::new();
@@ -78,19 +78,83 @@ impl Shop {
         }
 
       } else {
+        //begin search
 
-        let stmt = conn.prepare("SELECT b.id, b.item_type_id, b.item_id, CASE 
-              WHEN b.item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=b.item_id) 
-              WHEN b.item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=b.item_id) 
-              ELSE 'Unknown Item' 
-          END AS item_title, 
-          b.user_id, 
-          u.nick_name, 
-          u.email, 
-          b.payment_id, b.sub_id, b.price, b.created_on 
-          FROM public.\"shop_buy\" AS b 
-          LEFT JOIN public.\"user\" AS u ON u.id = b.user_id 
-          LIMIT $1 OFFSET $2;").await?;
+
+        let mut sql_string: String = "".to_string();
+
+        if search_title.len() > 2 {
+          sql_string = format!("SELECT b.id, b.item_type_id, b.item_id, CASE 
+                                    WHEN b.item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=b.item_id) 
+                                    WHEN b.item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=b.item_id) 
+                                    ELSE 'Unknown Item' 
+                                END AS item_title, 
+                                b.user_id, 
+                                u.nick_name, 
+                                u.email, 
+                                b.payment_id, b.sub_id, b.price, b.created_on 
+                                FROM public.\"shop_buy\" AS b 
+                                LEFT JOIN public.\"user\" AS u ON u.id = b.user_id 
+                                WHERE 
+                                  item_title ILIKE '%{}%' OR 
+                                  u.nick_name ILIKE '%{}%' OR u.email ILIKE '%{}%' 
+                                  OR b.payment_id ILIKE '%{}%' OR b.sub_id ILIKE '%{}%' 
+                                LIMIT $1 OFFSET $2;", search_title, search_title, search_title, search_title, search_title);
+          if status > -1 {
+            sql_string = format!("SELECT b.id, b.item_type_id, b.item_id, CASE 
+                                      WHEN b.item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=b.item_id) 
+                                      WHEN b.item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=b.item_id) 
+                                      ELSE 'Unknown Item' 
+                                  END AS item_title, 
+                                  b.user_id, 
+                                  u.nick_name, 
+                                  u.email, 
+                                  b.payment_id, b.sub_id, b.price, b.created_on 
+                                  FROM public.\"shop_buy\" AS b 
+                                  LEFT JOIN public.\"user\" AS u ON u.id = b.user_id 
+                                  WHERE 
+                                    item_title ILIKE '%{}%' OR 
+                                    u.nick_name ILIKE '%{}%' OR u.email ILIKE '%{}%' 
+                                    OR b.payment_id ILIKE '%{}%' OR b.sub_id ILIKE '%{}%' 
+                                    AND status={} 
+                                  LIMIT $1 OFFSET $2;", search_title, search_title, search_title, search_title, search_title, status);
+          }
+
+        } else {
+
+          sql_string = "SELECT b.id, b.item_type_id, b.item_id, CASE 
+                                    WHEN b.item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=b.item_id) 
+                                    WHEN b.item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=b.item_id) 
+                                    ELSE 'Unknown Item' 
+                                END AS item_title, 
+                                b.user_id, 
+                                u.nick_name, 
+                                u.email, 
+                                b.payment_id, b.sub_id, b.price, b.created_on 
+                                FROM public.\"shop_buy\" AS b 
+                                LEFT JOIN public.\"user\" AS u ON u.id = b.user_id 
+                                LIMIT $1 OFFSET $2;".to_string();
+
+          if status > -1 {
+            sql_string = format!("SELECT b.id, b.item_type_id, b.item_id, CASE 
+                                      WHEN b.item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=b.item_id) 
+                                      WHEN b.item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=b.item_id) 
+                                      ELSE 'Unknown Item' 
+                                  END AS item_title, 
+                                  b.user_id, 
+                                  u.nick_name, 
+                                  u.email, 
+                                  b.payment_id, b.sub_id, b.price, b.created_on 
+                                  FROM public.\"shop_buy\" AS b 
+                                  LEFT JOIN public.\"user\" AS u ON u.id = b.user_id 
+                                  WHERE 
+                                    status={} 
+                                  LIMIT $1 OFFSET $2;", status);
+          }
+
+        }
+        
+        let stmt = conn.prepare(&sql_string).await?;
 
         for row in conn.query(&stmt, &[&limit, &offset]).await? {
           let new_buy = NewBuy {
@@ -109,6 +173,9 @@ impl Shop {
 
           vec.push(new_buy);
         }
+
+
+        //end search
       }
       
       
