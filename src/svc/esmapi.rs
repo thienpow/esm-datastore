@@ -46,8 +46,6 @@ use esmapi_proto::{
   ListSpinnerRuleRequest, ListSpinnerRuleResponse,
   SpinnerRuleDetail,
   // Game
-  GetGameRulesRequest, GetGameRulesResponse,
-  GameRulesDetail,
   ListGameLeaderRuleRequest, ListGameLeaderRuleResponse,
   GameLeaderRuleDetail,
   GetGameCodeRequest, GetGameCodeResponse,
@@ -689,28 +687,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     Ok(Response::new(GetGameCodeResponse {
       result: result,
     }))
-  }
-
-  async fn get_game_rules(&self, request: Request<GetGameRulesRequest>, ) -> Result<Response<GetGameRulesResponse>, Status> {
-    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
-
-    let req = request.into_inner();
-    
-    match game::Game::get_game_rules(req.game_id.into(), &self.pool.clone()).await {
-      Ok(result) => Ok(Response::new(GetGameRulesResponse {
-        result: Some(GameRulesDetail{
-          score_rule: result.score_rule,
-          watch_ad_get_tickets: result.watch_ad_get_tickets,
-          watch_ad_get_exp: result.watch_ad_get_exp,
-          use_gem_get_tickets: result.use_gem_get_tickets,
-          use_gem_get_exp: result.use_gem_get_exp,
-          use_how_many_gems: result.use_how_many_gems
-        }),
-      })),
-      Err(e) => Err(Status::internal(format!("Error: get_game_rules! {}", e.to_string())))
-    }
-    
-    
   }
 
   
