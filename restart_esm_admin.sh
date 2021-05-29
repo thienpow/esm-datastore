@@ -1,6 +1,6 @@
 git pull
 
-cd deploy/
+cd esm-datastore/deploy/
 docker-compose up -d --build esm-admin
 
 # clean  up unused docker images
