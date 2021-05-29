@@ -83,15 +83,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
   //let builder = "postgresql://doadmin:tf45h3hpz6xstby6@db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/esmstore?sslmode=require".parse::<tokio_postgres::Config>().unwrap();
   //builder.connect_raw()
-  /*
+  
   let (client, connection) = tokio_postgres::connect("postgresql://doadmin:tf45h3hpz6xstby6@private-db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/defaultdb?sslmode=require", tls).await?;
   tokio::spawn(async move {
     if let Err(e) = connection.await {
       eprintln!("connection error: {}", e);
     }
   });
-  */
-
+  
+/*
   let pg_mgr = PostgresConnectionManager::new_from_stringlike("postgresql://doadmin:tf45h3hpz6xstby6@private-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/esmstore?sslmode=require", tls).unwrap();
   let pool = match Pool::builder().build(pg_mgr).await {
       Ok(pool) => pool,
@@ -104,7 +104,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     },
     Err(e) => panic!("get error: {:?}", e),
   };
-  
+  */
 
   
   
