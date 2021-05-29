@@ -1,10 +1,11 @@
 # pull latest repo
 cd ~/esm-datastore/
 git pull
+./deploy.sh
 
 # rebuild and restart the esm-admin
 cd ~/esm-datastore/deploy/
-docker-compose up -d --build esm-admin
+docker-compose up -d --build esmservice
 
 # clean  up unused docker images
 docker images -q | xargs docker rmi
