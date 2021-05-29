@@ -1,6 +1,7 @@
-use tokio_postgres;
+
 use bb8::{Pool};
 use bb8_postgres::PostgresConnectionManager;
+use postgres_native_tls::MakeTlsConnector;
 
 use esm_db::{models::*};
 
@@ -198,7 +199,7 @@ pub async fn check_is_exact_user(meta: &MetadataMap, jwk: &JwkAuth) ->  Result<S
   }
 }
 
-pub async fn verify_exact_match(uid: String, user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<bool, Status> {
+pub async fn verify_exact_match(uid: String, user_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<bool, Status> {
 
   match user::User::verify_exact_match(uid, user_id, pool).await {
     Ok(result) => {

@@ -2,7 +2,7 @@
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
-
+use postgres_native_tls::MakeTlsConnector;
 
 use std::time::{SystemTime};
 
@@ -16,7 +16,7 @@ pub struct Invites {
 
 impl Invites {
     
-    pub async fn add(invites: Invites, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn add(invites: Invites, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"user_invites\" (user_id, invited_by, invited_date) VALUES ($1, $2, $3) RETURNING id;").await?;
@@ -26,7 +26,7 @@ impl Invites {
       Ok(row.get::<usize, i64>(0))
     }
     
-    pub async fn list_invited_by(invited_by: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Invites>, RunError<tokio_postgres::Error>> {
+    pub async fn list_invited_by(invited_by: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Invites>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, user_id, invited_by, invited_date FROM public.\"user_invites\" WHERE invited_by=$1;").await?;
@@ -47,7 +47,7 @@ impl Invites {
     }
 
 
-    pub async fn get_invited_by_count(invited_by: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn get_invited_by_count(invited_by: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let sql = "SELECT COUNT(id) FROM public.\"user_invites\" WHERE invited_by=$1;";
@@ -57,7 +57,7 @@ impl Invites {
       Ok(row.get::<usize, i64>(0))
     }
 
-    pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("DELETE FROM public.\"user_invites\" WHERE id=$1;").await?;

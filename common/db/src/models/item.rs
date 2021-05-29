@@ -1,7 +1,7 @@
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
-
+use postgres_native_tls::MakeTlsConnector;
 
 pub struct Item {
   pub id: i64,
@@ -28,7 +28,7 @@ pub struct ItemCount {
 
 impl Item {
     
-    pub async fn add(item: Item, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn add(item: Item, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"item\" (title, subtitle, img_url, content, type_id, price, quantity, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;").await?;
@@ -39,7 +39,7 @@ impl Item {
       Ok(row.get::<usize, i64>(0))
     }
     
-    pub async fn update(item: Item, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update(item: Item, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"item\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, price=$6, quantity=$7, status=$8 WHERE id=$9;").await?;
@@ -51,7 +51,7 @@ impl Item {
       Ok(n)
     }
     
-    pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("DELETE FROM public.\"item\" WHERE id=$1;").await?;
@@ -60,7 +60,7 @@ impl Item {
       Ok(n)
     }
      
-    pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Item>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Item>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<Item> = Vec::new();
@@ -115,7 +115,7 @@ impl Item {
     }
 
 
-    pub async fn count(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<ItemCount, RunError<tokio_postgres::Error>> {
+    pub async fn count(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<ItemCount, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let sql = "SELECT (SELECT COUNT(id) FROM public.\"item\" WHERE status=1) AS draft, (SELECT COUNT(id) FROM public.\"item\" WHERE status=2) AS published, (SELECT COUNT(id) FROM public.\"item\" WHERE status=3) AS archived;";
@@ -130,7 +130,7 @@ impl Item {
       })
     }
 
-    pub async fn list_item_type(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<ItemType>, RunError<tokio_postgres::Error>> {
+    pub async fn list_item_type(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<ItemType>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, title FROM public.\"item_type\" ORDER BY id ASC;").await?;
@@ -150,7 +150,7 @@ impl Item {
 
 
 
-    pub async fn get_quantity(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i32, RunError<tokio_postgres::Error>> {
+    pub async fn get_quantity(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i32, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT quantity FROM public.\"item\" WHERE id=$1").await?;

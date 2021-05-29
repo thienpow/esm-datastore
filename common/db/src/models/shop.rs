@@ -2,7 +2,7 @@
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
-
+use postgres_native_tls::MakeTlsConnector;
 use std::time::{SystemTime};
 
 
@@ -33,7 +33,7 @@ pub struct BuyCount {
 
 impl Shop {
     
-    pub async fn buy(new_buy: NewBuy, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn buy(new_buy: NewBuy, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"shop_buy\" (item_type_id, item_id, user_id, payment_id, sub_id, price) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;").await?;
@@ -44,7 +44,7 @@ impl Shop {
     }
     
      
-    pub async fn get_active_subscription(user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<NewBuy, RunError<tokio_postgres::Error>> {
+    pub async fn get_active_subscription(user_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<NewBuy, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, item_type_id, item_id, CASE 
@@ -72,7 +72,7 @@ impl Shop {
       })
     }
 
-    pub async fn list(user_id: i64, limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<NewBuy>, RunError<tokio_postgres::Error>> {
+    pub async fn list(user_id: i64, limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<NewBuy>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<NewBuy> = Vec::new();
@@ -210,7 +210,7 @@ impl Shop {
     
 
 
-    pub async fn count(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<BuyCount, RunError<tokio_postgres::Error>> {
+    pub async fn count(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<BuyCount, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let sql = "SELECT (SELECT COUNT(id) FROM public.\"shop_buy\" WHERE item_type_id=101) AS subscription, (SELECT COUNT(id) FROM public.\"shop_buy\" WHERE item_type_id=201) AS item;";

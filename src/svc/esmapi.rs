@@ -6,10 +6,9 @@ pub mod esmapi_proto {
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use tonic::{Request, Response, Status};
-use tokio_postgres;
 use bb8::{Pool};
 use bb8_postgres::PostgresConnectionManager;
-
+use postgres_native_tls::MakeTlsConnector;
 
 use crate::jwk::{
   JwkAuth,
@@ -110,7 +109,7 @@ use esmapi_proto::{
 
 pub struct EsmApiServer {
   pub jwk: JwkAuth,
-  pub pool: Pool<PostgresConnectionManager<tokio_postgres::NoTls>>,
+  pub pool: Pool<PostgresConnectionManager<MakeTlsConnector>>,
   pub server_timezone: u64,
 }
 

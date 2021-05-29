@@ -2,6 +2,7 @@
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
+use postgres_native_tls::MakeTlsConnector;
 
 pub struct Rank {
   pub id: i64,
@@ -15,7 +16,7 @@ pub struct Rank {
 impl Rank {
     
 
-    pub async fn add(rank: Rank, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn add(rank: Rank, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"rank\" (id, title, exp, gem, multiplier) VALUES ($1, $2, $3, $4, $5) RETURNING id;").await?;
@@ -26,7 +27,7 @@ impl Rank {
     }
     
 
-    pub async fn update(rank: Rank, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update(rank: Rank, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"rank\" SET title=$1, exp=$2, gem=$3, multiplier=$4 WHERE id=$5;").await?;
@@ -36,7 +37,7 @@ impl Rank {
       Ok(n)
     }
     
-    pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("DELETE FROM public.\"rank\" WHERE id=$1;").await?;
@@ -46,7 +47,7 @@ impl Rank {
     }
     
     
-    pub async fn list(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Rank>, RunError<tokio_postgres::Error>> {
+    pub async fn list(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Rank>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, title, exp, gem, multiplier FROM public.\"rank\" ORDER BY id;").await?;
@@ -67,7 +68,7 @@ impl Rank {
       Ok(vec)
     }
 
-    pub async fn list_reverse(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Rank>, RunError<tokio_postgres::Error>> {
+    pub async fn list_reverse(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Rank>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, title, exp, gem, multiplier FROM public.\"rank\" ORDER BY exp DESC;").await?;

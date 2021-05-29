@@ -1,9 +1,11 @@
 use tonic::transport::Server;
 use std::net::SocketAddr;
-use tokio_postgres;
 use bb8::Pool;
 use bb8_postgres::PostgresConnectionManager;
 
+use std::fs;
+use native_tls::{Certificate, TlsConnector};
+use postgres_native_tls::MakeTlsConnector;
 
 use crate::jwk::JwkAuth;
 mod jwk;
@@ -20,9 +22,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let config = config::get_configuration();
     
+
+    let cert = fs::read(config.db_cert_path)?;
+    let cert = Certificate::from_pem(&cert)?;
+    let connector = TlsConnector::builder().add_root_certificate(cert).build()?;
+    let tls = MakeTlsConnector::new(connector);
+
+    
     //check deploy/service/start.sh for the db_conn_string
-    let pg_mgr = PostgresConnectionManager::new_from_stringlike(config.db_conn_string, tokio_postgres::NoTls).unwrap();
-    let pool_db: Pool<PostgresConnectionManager<tokio_postgres::NoTls>> = match Pool::builder().build(pg_mgr).await {
+    let pg_mgr = PostgresConnectionManager::new_from_stringlike(config.db_conn_string, tls).unwrap();
+    let pool_db = match Pool::builder().build(pg_mgr).await {
         Ok(pool) => pool,
         Err(e) => panic!("builder error: {:?}", e),
     };

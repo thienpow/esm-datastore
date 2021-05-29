@@ -2,6 +2,7 @@
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
+use postgres_native_tls::MakeTlsConnector;
 use std::time::{SystemTime};
 
 pub struct Winner {
@@ -28,7 +29,7 @@ pub struct WinnerCount {
 
 impl Winner {
     
-    pub async fn add(prize_id: i64,  user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn add(prize_id: i64,  user_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"winner\" (prize_id, user_id) VALUES ($1, $2) RETURNING id;").await?;
@@ -38,7 +39,7 @@ impl Winner {
       Ok(row.get::<usize, i64>(0))
     }
     
-    pub async fn update(id: i64, status: i32, ship_tracking: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update(id: i64, status: i32, ship_tracking: String, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
 
@@ -67,7 +68,7 @@ impl Winner {
       Ok(n)
     }
     
-    pub async fn claim(id: i64, user_id: i64, days_to_claim: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn claim(id: i64, user_id: i64, days_to_claim: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let sql_string = format!("UPDATE public.\"winner\" SET status=2, claimed_on=NOW() WHERE id={} AND user_id={} AND status=1 AND CURRENT_DATE <= DATE(created_on) + INTERVAL '{} days';",id, user_id, days_to_claim);
@@ -77,7 +78,7 @@ impl Winner {
       Ok(n)
     }
 
-    pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<Winner> = Vec::new();
@@ -139,7 +140,7 @@ impl Winner {
       Ok(vec)
     }
 
-    pub async fn list_recent(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
+    pub async fn list_recent(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id ORDER BY w.created_on DESC LIMIT 20 OFFSET 0;").await?;
@@ -167,7 +168,7 @@ impl Winner {
       Ok(vec)
     }
 
-    pub async fn list_unclaimed(user_id: i64, days_to_claim: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
+    pub async fn list_unclaimed(user_id: i64, days_to_claim: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let sql_string = format!("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.user_id={} AND w.status=1 AND CURRENT_DATE <= DATE(w.created_on) + INTERVAL '{} days' ORDER BY w.created_on DESC;", user_id, days_to_claim);
@@ -196,7 +197,7 @@ impl Winner {
       Ok(vec)
     }
 
-    pub async fn list_claimed(user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
+    pub async fn list_claimed(user_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
 
       let stmt = conn.prepare("SELECT w.id, w.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id AS prize_type_id, w.user_id, u.nick_name AS user_nick_name, u.avatar_url, w.created_on, w.claimed_on, w.status, w.ship_tracking FROM public.\"winner\" AS w LEFT JOIN public.\"prize\" AS p ON w.prize_id = p.id LEFT JOIN public.\"user\" AS u ON w.user_id = u.id WHERE w.user_id=$1 AND w.status>1 ORDER BY w.created_on DESC;").await?;
@@ -224,7 +225,7 @@ impl Winner {
       Ok(vec)
     }
 
-    pub async fn count(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<WinnerCount, RunError<tokio_postgres::Error>> {
+    pub async fn count(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<WinnerCount, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let sql = "SELECT (SELECT COUNT(id) FROM public.\"winner\" WHERE status=1) AS unclaimed, (SELECT COUNT(id) FROM public.\"winner\" WHERE status=2) AS claimed, (SELECT COUNT(id) FROM public.\"winner\" WHERE status=3) AS delivered, (SELECT COUNT(id) FROM public.\"winner\" WHERE status=4) AS expired;";

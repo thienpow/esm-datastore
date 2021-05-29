@@ -1,113 +1,39 @@
 use std::time::{SystemTime};
 
 
-use bb8_postgres::tokio_postgres;
 use bb8::{Pool};
 use bb8_postgres::PostgresConnectionManager;
 use postgres_native_tls::MakeTlsConnector;
-use bb8_postgres::tokio_postgres::config::{Config, SslMode};
-
-use tokio_postgres::tls::{MakeTlsConnect, TlsConnect};
-
-use tokio::net::TcpStream;
-
-use esm_db::models::*;
+//use esm_db::models::*;
 
 //use bb8_postgres::tokio_postgres::config::Config;
 use native_tls::{Certificate, TlsConnector};
 
 use std::{
   fs,
-  fs::File,
-  io::BufReader,
 };
-use std::path::Path;
+
+mod config;
 
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
-  let ca_cert_text = "-----BEGIN CERTIFICATE-----
-  MIIEQTCCAqmgAwIBAgIUG2plaxKq9CIWFK+fLV7nknVIs8swDQYJKoZIhvcNAQEM
-  BQAwOjE4MDYGA1UEAwwvYjMxYmZiNDUtNmVmOS00ZTU0LTkzYTctMWM2M2VkMGFh
-  MDllIFByb2plY3QgQ0EwHhcNMjEwMTAyMTYxNDA1WhcNMzAxMjMxMTYxNDA1WjA6
-  MTgwNgYDVQQDDC9iMzFiZmI0NS02ZWY5LTRlNTQtOTNhNy0xYzYzZWQwYWEwOWUg
-  UHJvamVjdCBDQTCCAaIwDQYJKoZIhvcNAQEBBQADggGPADCCAYoCggGBAPn4NVj9
-  h5pw6npLwaqOaqGttrSE/e1D2UT26pdgxE2H+3kTFzwmPj++QttK6k7HmN4ViEB5
-  /z0RCr8IqKlGYAO6Yg0PzE0uz/vMK+/v6s0cUxamfV1dgZtaPQx7DxFwoO/OFGIf
-  et9J10j+ku4q1PvowJJcBolYbP39ZKDE71gIf/sYIgjFnP2u7dedOz14MjA9CQHa
-  s1F5s4uZvsb02RYpzsDdoUIsHOAfL6Csvym9PcbJMracoYorcej8dREvEmZ+FzIV
-  iXPPphgGewb53k2PCVzjrBhw7oksJnMdheXNIFYGmOkyJI1hyr60rZue5V6UYAOC
-  IZ6zJLIRn9xkLz0cG2uX+pSkfPWIQf9jIi7qVJPRW9iVZ2daK4Kxo/nXpxKxaVhS
-  cCvoZnnXgwjahpmDBOf0pAETs5yzQibkPBygKtAqqkCbzicIqTKZonBbZlv4dP5s
-  EOuOvcB2MWf+lWBfL6YbNSRYHqyVZwF7aNArxDxJITpZJ3jesZ7yw41L5wIDAQAB
-  oz8wPTAdBgNVHQ4EFgQU2q00JxL1NHypNgeKuauDStYvPzgwDwYDVR0TBAgwBgEB
-  /wIBADALBgNVHQ8EBAMCAQYwDQYJKoZIhvcNAQEMBQADggGBABrPci7Izn03N9gw
-  gP/QI3f2DidGXpY4I/O2D6vVmW/K16DNPBW068lNk/fuXDpeWuYe0vttWIT5HqoB
-  9YDMEUAIFTJC6VTA8f4F4oj4qnDZa1eZW0KiP5t+kTftC5SNkt9v9GsPPjgjLOKC
-  gL/GiSr07k2QKL143266swIVfSPerMgG2/8hzx0Gc/Ndn5HJgpuHJZ45lZTKk5aw
-  04ssJ2xKfolLVOa3ANYSiMaLTraPPQLVfiHm/PRqvFxZQbESd47jJYTIEvKfR4bv
-  LPX3L1w2olvQjXFDEgMRzLmUQZJH0tMxXsLXgKovAhS2mdVgY1MnbrIvPcoQVatD
-  I9kEMwPrGoO36oDWTw6UfOXSAZH5Ct6GdoeGcEolsk+2pZE+/MOzksuVgfWk6Kf+
-  /nr8JNnr8M2SP3oduFPodWgDa4E4Xhj44J6CXtmDJz5r3H9/OPT0kjUnxZ9RyIur
-  fYvwUI0z9ULGQFtB8dxKFtlAreraBwr27sCWEaNGCH4IJvxDHg==
-  -----END CERTIFICATE-----".to_string();
+  let config = config::get_configuration();
 
-
-  // postgresql://doadmin:tf45h3hpz6xstby6@db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/defaultdb?sslmode=require
-  /*
-  let mut tls_config = Config::new();//  
-  
-  tls_config.dbname("esmstore");
-  tls_config.user("doadmin");
-  tls_config.password("tf45h3hpz6xstby6");
-  tls_config.host("db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com");
-  tls_config.port(25060);
-  tls_config.ssl_mode(SslMode::Require);
-*/
-
-
-  let cert = fs::read("cert.cer")?;
+  let cert = fs::read(config.db_cert_path)?;
   let cert = Certificate::from_pem(&cert)?;
   let connector = TlsConnector::builder().add_root_certificate(cert).build()?;
   let tls = MakeTlsConnector::new(connector);
 
-/*
-  username = doadmin
-  password = tf45h3hpz6xstby6
-  host = private-db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com
-  port = 25060
-  database = defaultdb
-  sslmode = require
-*/
 
-  //let builder = "postgresql://doadmin:tf45h3hpz6xstby6@db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/esmstore?sslmode=require".parse::<tokio_postgres::Config>().unwrap();
-  //builder.connect_raw()
-  /*
-  let (client, connection) = tokio_postgres::connect("postgresql://doadmin:tf45h3hpz6xstby6@private-db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/defaultdb?sslmode=require", &tls).await?;
-  tokio::spawn(async move {
-    if let Err(e) = connection.await {
-      eprintln!("connection error: {}", e);
-    }
-  });
-  
-  let rows = client
-         .query("SELECT $1::TEXT", &[&"hello world"])
-         .await?;
-
-     // And then check that we got back the same string we sent over.
-     let value: &str = rows[0].get(0);
-     println!("{}", value);
-     assert_eq!(value, "hello world");
-*/
-
-  let pg_mgr = PostgresConnectionManager::new_from_stringlike("postgresql://doadmin:tf45h3hpz6xstby6@private-db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/defaultdb?sslmode=require", tls).unwrap();
+  let pg_mgr = PostgresConnectionManager::new_from_stringlike(config.db_conn_string, tls).unwrap();
   let pool = match Pool::builder().build(pg_mgr).await {
       Ok(pool) => pool,
       Err(e) => panic!("builder error: {:?}", e),
   };
 
-  let n = match foo(&pool.clone()).await {
+  match foo(&pool.clone()).await {
     Ok(n) => {
       println!("user {}", n);
     },

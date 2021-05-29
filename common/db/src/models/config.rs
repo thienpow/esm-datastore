@@ -1,6 +1,7 @@
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
+use postgres_native_tls::MakeTlsConnector;
 
 pub struct Config {
   pub invites: i32,
@@ -27,7 +28,7 @@ pub struct Timezones {
 
 impl Config {
     
-    pub async fn update(config: Config, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update(config: Config, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"config\" SET invites=$1, games_per_ad=$2, days_to_claim=$3, freespin_per_day=$4, gems_per_spins_1=$5, ads_per_spins_1=$6, gems_per_spins_2=$7, ads_per_spins_2=$8;").await?;
@@ -44,7 +45,7 @@ impl Config {
       Ok(n)
     }
     
-    pub async fn get(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Config, RunError<tokio_postgres::Error>> {
+    pub async fn get(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Config, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT invites, games_per_ad, days_to_claim, freespin_per_day, gems_per_spins_1, ads_per_spins_1, gems_per_spins_2, ads_per_spins_2 FROM public.\"config\";").await?;
@@ -63,7 +64,7 @@ impl Config {
     }
 
 
-    pub async fn list_status_type(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<StatusType>, RunError<tokio_postgres::Error>> {
+    pub async fn list_status_type(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<StatusType>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, title FROM public.\"status_type\" ORDER BY id ASC;").await?;
@@ -81,7 +82,7 @@ impl Config {
       Ok(vec)
     }
 
-    pub async fn list_user_status_type(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<StatusType>, RunError<tokio_postgres::Error>> {
+    pub async fn list_user_status_type(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<StatusType>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, title FROM public.\"user_status_type\" ORDER BY id ASC;").await?;
@@ -99,7 +100,7 @@ impl Config {
       Ok(vec)
     }
 
-    pub async fn list_winner_status_type(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<StatusType>, RunError<tokio_postgres::Error>> {
+    pub async fn list_winner_status_type(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<StatusType>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, title FROM public.\"winner_status_type\" ORDER BY id ASC;").await?;
@@ -117,7 +118,7 @@ impl Config {
       Ok(vec)
     }
 
-    pub async fn list_timezones(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Timezones>, RunError<tokio_postgres::Error>> {
+    pub async fn list_timezones(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Timezones>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, \"offset\", stext, ltext FROM public.\"timezones\" ORDER BY id ASC;").await?;
@@ -138,7 +139,7 @@ impl Config {
     }
 
 
-    pub async fn get_days_to_claim(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i32, RunError<tokio_postgres::Error>> {
+    pub async fn get_days_to_claim(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i32, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
 
       let stmt = conn.prepare("SELECT days_to_claim FROM public.\"config\" WHERE id=1;").await?;

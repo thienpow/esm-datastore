@@ -2,8 +2,8 @@
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
+use postgres_native_tls::MakeTlsConnector;
 use std::time::{SystemTime};
-
 
 pub struct User {
   pub id: i64,
@@ -98,7 +98,7 @@ pub struct Player {
 
 impl User {
     
-    pub async fn add(user: User, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn add(user: User, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"user\" (id, username, passhash, email, phone, firstname, lastname, \
@@ -113,7 +113,7 @@ impl User {
       Ok(row.get::<usize, i64>(0))
     }
     
-    pub async fn update_email_confirmed(id: i64, status: bool, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update_email_confirmed(id: i64, status: bool, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET is_email_confirmed=$1 WHERE id=$2;").await?;
@@ -123,7 +123,7 @@ impl User {
       Ok(n)
     }
     
-    pub async fn update_msg_token(id: i64, msg_token: &str, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update_msg_token(id: i64, msg_token: &str, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET msg_token=$1, msg_token_timestamp=NOW() WHERE id=$2;").await?;
@@ -133,7 +133,7 @@ impl User {
       Ok(n)
     }
 
-    pub async fn update_last_login(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update_last_login(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET last_login=NOW() WHERE id=$1;").await?;
@@ -143,7 +143,7 @@ impl User {
       Ok(n)
     }
 
-    pub async fn reward_exp(id: i64, exp: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn reward_exp(id: i64, exp: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET exp=$1 + (SELECT exp FROM public.\"user\" WHERE id=$2), exp_timestamp=NOW() WHERE id=$2;").await?;
@@ -153,7 +153,7 @@ impl User {
       Ok(n)
     }
 
-    pub async fn reward_gem(id: i64, gem: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn reward_gem(id: i64, gem: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=$1 + (SELECT gem_balance FROM public.\"user\" WHERE id=$2), sub_daily_timestamp=NOW() WHERE id=$2;").await?;
@@ -165,7 +165,7 @@ impl User {
 
     
 
-    pub async fn reset_one_time_multiplier(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn reset_one_time_multiplier(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET one_time_multiplier=0 WHERE id=$1;").await?;
@@ -175,7 +175,7 @@ impl User {
       Ok(n)
     }
 
-    pub async fn update_social_link_fb(id: i64, fb_id: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update_social_link_fb(id: i64, fb_id: String, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET social_link_fb=$1 WHERE id=$2;").await?;
@@ -185,7 +185,7 @@ impl User {
       Ok(n)
     }
 
-    pub async fn update_social_link_google(id: i64, google_id: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update_social_link_google(id: i64, google_id: String, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET social_link_google=$1 WHERE id=$2;").await?;
@@ -195,7 +195,7 @@ impl User {
       Ok(n)
     }
 
-    pub async fn update_status_gem_balance(id: i64, status: i32, gem_balance: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update_status_gem_balance(id: i64, status: i32, gem_balance: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
 
@@ -224,7 +224,7 @@ impl User {
       Ok(n)
     }
     
-    pub async fn update_address(addr: Address, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update_address(addr: Address, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       //println!("update address!!! {}", addr.id);
@@ -236,7 +236,7 @@ impl User {
       Ok(n)
     }
     
-    pub async fn update_settings(sett: Settings, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update_settings(sett: Settings, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET is_notify_allowed=$1, is_notify_new_reward=$2, is_notify_new_tournament=$3, is_notify_tour_ending=$4, nick_name=$5, avatar_url=$6 WHERE id=$7;").await?;
@@ -248,7 +248,7 @@ impl User {
       Ok(n)
     }
     
-    pub async fn change_password(username: String, passhash: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn change_password(username: String, passhash: String, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET passhash=$1 WHERE username=$2;").await?;
@@ -257,7 +257,7 @@ impl User {
     
       Ok(n)
     }
-    pub async fn new_subscription(id: i64, gem_balance: i32, subscription_id: i64, sub_id: String, one_time_multiplier: f64, daily_gem: i32, daily_multiplier: f64, one_time_is_firstonly: bool, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn new_subscription(id: i64, gem_balance: i32, subscription_id: i64, sub_id: String, one_time_multiplier: f64, daily_gem: i32, daily_multiplier: f64, one_time_is_firstonly: bool, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=$1, subscription_id=$2, sub_id=$3, one_time_multiplier=$4, daily_gem=$5, daily_multiplier=$6, one_time_is_firstonly=$7, sub_daily_timestamp=now() WHERE id=$8;").await?;
@@ -267,7 +267,7 @@ impl User {
       Ok(n)
     }
 
-    pub async fn sign_in(username: String, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<User, RunError<tokio_postgres::Error>> {
+    pub async fn sign_in(username: String, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<User, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
 
       let stmt = conn.prepare("SELECT id, username, passhash, email, phone, firstname, lastname, \
@@ -326,7 +326,7 @@ impl User {
     }
 
 
-    pub async fn get(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<User, RunError<tokio_postgres::Error>> {
+    pub async fn get(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<User, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
 
       let stmt = conn.prepare("SELECT id, username, passhash, email, phone, firstname, lastname, \
@@ -383,7 +383,7 @@ impl User {
       Ok(user)
     }
 
-    pub async fn get_player(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Player, RunError<tokio_postgres::Error>> {
+    pub async fn get_player(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Player, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
 
       let stmt = conn.prepare("SELECT id, avatar_url, exp, nick_name FROM public.\"user\" WHERE status=1 AND id=$1;").await?;
@@ -400,7 +400,7 @@ impl User {
       Ok(user)
     }
 
-    pub async fn list(limit: i64, offset: i64, search_username: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<User>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_username: String, status: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<User>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<User> = Vec::new();
@@ -539,7 +539,7 @@ impl User {
       Ok(vec)
     }
 
-    pub async fn list_unrewarded_subscriber(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<UserBrief>, RunError<tokio_postgres::Error>> {
+    pub async fn list_unrewarded_subscriber(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<UserBrief>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<UserBrief> = Vec::new();
@@ -574,7 +574,7 @@ impl User {
       Ok(vec)
     }
 
-    pub async fn list_player_active(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<User>, RunError<tokio_postgres::Error>> {
+    pub async fn list_player_active(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<User>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<User> = Vec::new();
@@ -633,7 +633,7 @@ impl User {
     }
 
     
-    pub async fn count(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<UserCount, RunError<tokio_postgres::Error>> {
+    pub async fn count(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<UserCount, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let sql = "SELECT (SELECT COUNT(id) FROM public.\"user\" WHERE status=1) AS active, (SELECT COUNT(id) FROM public.\"user\" WHERE status=2) AS blocked, (SELECT COUNT(id) FROM public.\"user\" WHERE status=3) AS pending_delete, (SELECT COUNT(id) FROM public.\"user\" WHERE status=4) AS archived;";
@@ -650,7 +650,7 @@ impl User {
 
     }
 
-    pub async fn verify_exact_match(uid: String, id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<bool, RunError<tokio_postgres::Error>> {
+    pub async fn verify_exact_match(uid: String, id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<bool, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let sql = "SELECT COUNT(id) FROM public.\"user\" WHERE status=1 AND username=$1 AND id=$2;";

@@ -1,6 +1,7 @@
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
+use postgres_native_tls::MakeTlsConnector;
 
 pub struct Subscription {
   pub id: i64,
@@ -32,7 +33,7 @@ pub struct SubscriptionCount {
 
 impl Subscription {
     
-    pub async fn add(sub: Subscription, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn add(sub: Subscription, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"subscription\" (title, subtitle, img_url, content, type_id, price, quantity, one_time_gem, one_time_multiplier, one_time_is_firstonly, daily_gem, daily_multiplier, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id;").await?;
@@ -46,7 +47,7 @@ impl Subscription {
       Ok(row.get::<usize, i64>(0))
     }
     
-    pub async fn update(sub: Subscription, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update(sub: Subscription, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"subscription\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, price=$6, quantity=$7, one_time_gem=$8, one_time_multiplier=$9, one_time_is_firstonly=$10, daily_gem=$11, daily_multiplier=$12, status=$13 WHERE id=$14;").await?;
@@ -61,7 +62,7 @@ impl Subscription {
       Ok(n)
     }
     
-    pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("DELETE FROM public.\"subscription\" WHERE id=$1;").await?;
@@ -71,7 +72,7 @@ impl Subscription {
     }
     
 
-    pub async fn get(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Subscription, RunError<tokio_postgres::Error>> {
+    pub async fn get(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Subscription, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, title, subtitle, img_url, content, type_id, price, quantity, one_time_gem, one_time_multiplier, one_time_is_firstonly, daily_gem, daily_multiplier, status FROM public.\"subscription\" WHERE id=$1;").await?;
@@ -96,7 +97,7 @@ impl Subscription {
       })
     }
 
-    pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Subscription>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Subscription>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<Subscription> = Vec::new();
@@ -162,7 +163,7 @@ impl Subscription {
     }
 
 
-    pub async fn count(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<SubscriptionCount, RunError<tokio_postgres::Error>> {
+    pub async fn count(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<SubscriptionCount, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let sql = "SELECT (SELECT COUNT(id) FROM public.\"subscription\" WHERE status=1) AS draft, (SELECT COUNT(id) FROM public.\"subscription\" WHERE status=2) AS published, (SELECT COUNT(id) FROM public.\"subscription\" WHERE status=3) AS archived;";
@@ -177,7 +178,7 @@ impl Subscription {
       })
     }
 
-    pub async fn list_subscription_type(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<SubscriptionType>, RunError<tokio_postgres::Error>> {
+    pub async fn list_subscription_type(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<SubscriptionType>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, title FROM public.\"subscription_type\" ORDER BY id ASC;").await?;

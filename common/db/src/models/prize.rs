@@ -3,6 +3,7 @@ use std::time::{SystemTime};
 use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
+use postgres_native_tls::MakeTlsConnector;
 
 pub struct Prize {
   pub id: i64,
@@ -116,7 +117,7 @@ pub struct PrizePool {
 
 impl Prize {
     
-    pub async fn add(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn add(prize: Prize, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"prize\" (title, subtitle, img_url, content, type_id, tickets_required, duration_days, duration_hours, timezone, scheduled_on, scheduled_off, is_repeat, repeated_on, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING id;").await?;
@@ -132,7 +133,7 @@ impl Prize {
       Ok(row.get::<usize, i64>(0))
     }
     
-    pub async fn add_current_game(current_game: CurrentGame, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn add_current_game(current_game: CurrentGame, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"current_game\" (prize_id, tour_id, set_id, tsg_id, game_id, start_timestamp, end_timestamp) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;").await?;
@@ -142,7 +143,7 @@ impl Prize {
       Ok(row.get::<usize, i64>(0))
     }
     
-    pub async fn update(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn update(prize: Prize, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"prize\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, tickets_required=$6, duration_days=$7, duration_hours=$8, timezone=$9, scheduled_on=$10, scheduled_off=$11, is_repeat=$12, repeated_on=$13, status=$14 WHERE id=$15;").await?;
@@ -159,7 +160,7 @@ impl Prize {
       Ok(n)
     }
     
-    pub async fn reset_schedule(prize_id: i64, scheduled_on: SystemTime, scheduled_off: SystemTime, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn reset_schedule(prize_id: i64, scheduled_on: SystemTime, scheduled_off: SystemTime, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"prize\" SET scheduled_on=$1, scheduled_off=$2, tickets_collected=0, status_progress=1 WHERE id=$3;").await?;
@@ -169,7 +170,7 @@ impl Prize {
       Ok(n)
     }
 
-    pub async fn set_permanent_closed(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn set_permanent_closed(prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"prize\" SET status_progress=999 WHERE id=$1;").await?;
@@ -179,7 +180,7 @@ impl Prize {
       Ok(n)
     }
 
-    pub async fn log_closed(prize_id: i64, tickets_collected: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn log_closed(prize_id: i64, tickets_collected: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"prize_closed\" (prize_id, tickets_collected, batch) VALUES ($1, $2, (SELECT COUNT(id) FROM public.\"prize_closed\" WHERE prize_id=$1)) RETURNING id;").await?;
@@ -189,7 +190,7 @@ impl Prize {
       Ok(n)
     }
     
-    pub async fn log_prize_pool(prize_id: i64, user_id: i64, game_id: i64, win_from: i32, tickets: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn log_prize_pool(prize_id: i64, user_id: i64, game_id: i64, win_from: i32, tickets: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"prize_pool\" (prize_id, user_id, game_id, win_from, tickets) VALUES ($1, $2, $3, $4, $5) RETURNING id;").await?;
@@ -199,7 +200,7 @@ impl Prize {
       Ok(n)
     }
     
-    pub async fn list_prize_pool(user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<PrizePool>, RunError<tokio_postgres::Error>> {
+    pub async fn list_prize_pool(user_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<PrizePool>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, prize_id, game_id, win_from, tickets, created_on, is_closed FROM public.\"prize_pool\" WHERE user_id=$1 ORDER BY id DESC;").await?;
@@ -223,7 +224,7 @@ impl Prize {
     }
 
 
-    pub async fn set_running(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn set_running(prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"prize\" SET status_progress=1 WHERE id=$1;").await?;
@@ -233,7 +234,7 @@ impl Prize {
       Ok(n)
     }
 
-    pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn delete(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("DELETE FROM public.\"prize\" WHERE id=$1;").await?;
@@ -242,7 +243,7 @@ impl Prize {
       Ok(n)
     }
     
-    pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<Prize>, RunError<tokio_postgres::Error>> {
+    pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Prize>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<Prize> = Vec::new();
@@ -313,7 +314,7 @@ impl Prize {
       Ok(vec)
     }
 
-    pub async fn list_active(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<PrizeActive>, RunError<tokio_postgres::Error>> {
+    pub async fn list_active(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<PrizeActive>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let sql_string = "SELECT DISTINCT cg.prize_id,
@@ -412,7 +413,7 @@ impl Prize {
     }
 
 
-    pub async fn count(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<PrizeCount, RunError<tokio_postgres::Error>> {
+    pub async fn count(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<PrizeCount, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let sql = "SELECT (SELECT COUNT(id) FROM public.\"prize\" WHERE status=1) AS draft, (SELECT COUNT(id) FROM public.\"prize\" WHERE status=2) AS published, (SELECT COUNT(id) FROM public.\"prize\" WHERE status=3) AS archived;";
@@ -429,7 +430,7 @@ impl Prize {
     }
 
 
-    pub async fn list_prize_type(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<PrizeType>, RunError<tokio_postgres::Error>> {
+    pub async fn list_prize_type(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<PrizeType>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, title FROM public.\"prize_type\" ORDER BY id ASC;").await?;
@@ -447,7 +448,7 @@ impl Prize {
       Ok(vec)
     }
 
-    pub async fn add_prize_tour(p: PrizeTour, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn add_prize_tour(p: PrizeTour, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("INSERT INTO public.\"prize_tour\" (prize_id, tour_id, status) VALUES ($1, $2, $3) RETURNING id;").await?;
@@ -457,7 +458,7 @@ impl Prize {
       Ok(row.get::<usize, i64>(0))
     }
     
-    pub async fn delete_prize_tour(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn delete_prize_tour(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("DELETE FROM public.\"prize_tour\" WHERE id=$1;").await?;
@@ -466,7 +467,7 @@ impl Prize {
       Ok(n)
     }
 
-    pub async fn list_prize_tour(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<PrizeTour>, RunError<tokio_postgres::Error>> {
+    pub async fn list_prize_tour(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<PrizeTour>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT pt.id, pt.prize_id, pt.tour_id, t.title as tour_title, pt.status FROM public.\"prize_tour\" as pt LEFT JOIN public.\"tournament\" as t ON pt.tour_id = t.id WHERE pt.prize_id=$1 ORDER BY pt.id ASC;").await?;
@@ -488,7 +489,7 @@ impl Prize {
     }
 
 
-    pub async fn list_current_game_by_system(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
+    pub async fn list_current_game_by_system(prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, tsg_id, game_id, start_timestamp, end_timestamp FROM public.\"current_game\" WHERE prize_id=$1 AND start_timestamp <= NOW() + INTERVAL '1 day' AND end_timestamp > NOW() + INTERVAL '1 day';").await?;
@@ -512,7 +513,7 @@ impl Prize {
       Ok(vec)
     }
 
-    pub async fn list_past_unclosed_current_games(pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
+    pub async fn list_past_unclosed_current_games(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, tsg_id, game_id, start_timestamp, end_timestamp FROM public.\"current_game\" WHERE end_timestamp < NOW() AND is_closed=false;").await?;
@@ -536,7 +537,7 @@ impl Prize {
       Ok(vec)
     }
     
-    pub async fn close_current_game(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn close_current_game(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"current_game\" SET is_closed=true WHERE id=$1;").await?;
@@ -547,7 +548,7 @@ impl Prize {
     }
     
 
-    pub async fn list_previous_game(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
+    pub async fn list_previous_game(prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, tsg_id, game_id, start_timestamp, end_timestamp FROM public.\"current_game\" WHERE prize_id=$1 ORDER BY id DESC LIMIT 1;").await?;
@@ -572,7 +573,7 @@ impl Prize {
     }
 
 
-    pub async fn list_active_by_prize_id(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<PrizeActive>, RunError<tokio_postgres::Error>> {
+    pub async fn list_active_by_prize_id(prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<PrizeActive>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let now = SystemTime::now();
@@ -665,7 +666,7 @@ impl Prize {
     }
 
 
-    pub async fn get_current_tickets_collected_by_user(user_id: i64, prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn get_current_tickets_collected_by_user(user_id: i64, prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT (SELECT COALESCE(SUM(tickets), 0) FROM public.prize_pool WHERE user_id=$1 AND prize_id=$2 AND is_closed=false) AS tickets_collected;").await?;
@@ -674,7 +675,7 @@ impl Prize {
       Ok(row.get::<usize, i64>(0))
     }
 
-    pub async fn get_current_tickets_collected(id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn get_current_tickets_collected(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT (SELECT COALESCE(SUM(tickets), 0) FROM public.prize_pool WHERE prize_id=$1 AND is_closed=false) AS tickets_collected;").await?;
@@ -683,7 +684,7 @@ impl Prize {
       Ok(row.get::<usize, i64>(0))
     }
 
-    pub async fn set_prize_tickets_collected(prize_id: i64, tickets_collected: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn set_prize_tickets_collected(prize_id: i64, tickets_collected: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"prize\" SET tickets_collected=$1, tickets_collected_on=NOW() WHERE id=$2;").await?;
@@ -693,7 +694,7 @@ impl Prize {
       Ok(n)
     }
 
-    pub async fn list_prize_pool_users_tickets(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<(i64, i64)>, RunError<tokio_postgres::Error>> {
+    pub async fn list_prize_pool_users_tickets(prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<(i64, i64)>, RunError<tokio_postgres::Error>> {
 
       let conn = pool.get().await?;
   
@@ -710,7 +711,7 @@ impl Prize {
       Ok(vec)
     }
 
-    pub async fn close_prize_pool(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn close_prize_pool(prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("UPDATE public.\"prize_pool\" SET is_closed=true, closed_on=NOW() WHERE prize_id=$1;").await?;

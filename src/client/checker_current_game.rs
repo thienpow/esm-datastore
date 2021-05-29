@@ -1,6 +1,6 @@
-//use std::thread;
+
 use std::time::Duration;
-use std::{thread, time};
+use std::{fs, thread, time};
 use std::time::{
     SystemTime, 
     UNIX_EPOCH
@@ -9,11 +9,12 @@ use std::time::{
 use rand::prelude::*;
 use rand::distributions::WeightedIndex;
 
-use tokio_postgres;
 use bb8::{Pool};
 use bb8_postgres::PostgresConnectionManager;
 use esm_db::models::*;
 use esm_db::models::prize::*;
+use postgres_native_tls::MakeTlsConnector;
+use native_tls::{Certificate, TlsConnector};
 
 mod config;
 
@@ -23,8 +24,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let config = config::get_configuration();
     
-    let pg_mgr = PostgresConnectionManager::new_from_stringlike(config.db_conn_string, tokio_postgres::NoTls).unwrap();
-    let pool: Pool<PostgresConnectionManager<tokio_postgres::NoTls>> = match Pool::builder().build(pg_mgr).await {
+
+    let cert = fs::read(config.db_cert_path)?;
+    let cert = Certificate::from_pem(&cert)?;
+    let connector = TlsConnector::builder().add_root_certificate(cert).build()?;
+    let tls = MakeTlsConnector::new(connector);
+
+    
+    let pg_mgr = PostgresConnectionManager::new_from_stringlike(config.db_conn_string, tls).unwrap();
+    let pool: Pool<PostgresConnectionManager<MakeTlsConnector>> = match Pool::builder().build(pg_mgr).await {
         Ok(pool) => pool,
         Err(e) => panic!("builder error: {:?}", e),
     };
@@ -284,7 +292,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 }
 
-async fn process_current_games(prize: Prize, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<CurrentGame>, Box<dyn std::error::Error>> {
+async fn process_current_games(prize: Prize, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<CurrentGame>, Box<dyn std::error::Error>> {
 
     let current_games: Vec<CurrentGame> = match prize::Prize::list_current_game_by_system(prize.id, &pool.clone()).await {
         Ok(current_games) => current_games,
@@ -316,7 +324,7 @@ async fn process_current_games(prize: Prize, pool: &Pool<PostgresConnectionManag
     Ok(current_games)
 }
 
-async fn generate_current_games(is_previous_game_found: bool, prize: Prize, previous_tour_id: i64, previous_set_id: i64, previous_game_id: i64, previous_end_timestamp: u64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<(), Box<dyn std::error::Error>> {
+async fn generate_current_games(is_previous_game_found: bool, prize: Prize, previous_tour_id: i64, previous_set_id: i64, previous_game_id: i64, previous_end_timestamp: u64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<(), Box<dyn std::error::Error>> {
     
     let config = config::get_configuration();
     let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
@@ -435,7 +443,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: Prize, prev
 }
 
 
-async fn process_closing(prize_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<bool, Box<dyn std::error::Error>> {
+async fn process_closing(prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<bool, Box<dyn std::error::Error>> {
     //For closing use WeightedIndex
     //https://docs.rs/rand/0.8.3/rand/distributions/weighted/struct.WeightedIndex.html
     

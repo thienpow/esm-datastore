@@ -1,16 +1,17 @@
 //use std::thread;
 
-use std::{thread, time};
+use std::{fs, thread, time};
 use std::time::{
     SystemTime, 
     UNIX_EPOCH
 };
 //use chrono::{NaiveDate, NaiveDateTime};
 
-use tokio_postgres;
 use bb8::{Pool};
 use bb8_postgres::PostgresConnectionManager;
 use esm_db::models::*;
+use postgres_native_tls::MakeTlsConnector;
+use native_tls::{Certificate, TlsConnector};
 
 mod config;
 
@@ -20,8 +21,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let config = config::get_configuration();
     
-    let pg_mgr = PostgresConnectionManager::new_from_stringlike(config.db_conn_string, tokio_postgres::NoTls).unwrap();
-    let pool: Pool<PostgresConnectionManager<tokio_postgres::NoTls>> = match Pool::builder().build(pg_mgr).await {
+    let cert = fs::read(config.db_cert_path)?;
+    let cert = Certificate::from_pem(&cert)?;
+    let connector = TlsConnector::builder().add_root_certificate(cert).build()?;
+    let tls = MakeTlsConnector::new(connector);
+
+    let pg_mgr = PostgresConnectionManager::new_from_stringlike(config.db_conn_string, tls).unwrap();
+    let pool: Pool<PostgresConnectionManager<MakeTlsConnector>> = match Pool::builder().build(pg_mgr).await {
         Ok(pool) => pool,
         Err(e) => panic!("builder error: {:?}", e),
     };
