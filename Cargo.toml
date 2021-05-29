@@ -26,6 +26,9 @@ path = "src/client/checker_subscriber.rs"
 name = "msgpush"
 path = "src/client/msgpush.rs"
 
+[[bin]]
+name = "test"
+path = "src/client/test.rs"
 #[[bin]]
 #name = "config"
 #path = "src/client/config.rs"
@@ -133,7 +136,11 @@ tower = { version = "0.4.3" }
 lazy_static = "1.4.0"
 log = "0.4.8"
 reqwest = { version = "0.11.0", features = ["blocking", "json"] }
-
+postgres-native-tls = "0.5.0"
+native-tls = "0.2"
+rustls = "0.19"
+anyhow = "1.0.40"
+config = "0.11.0"
 
 [build-dependencies]
 tonic-build = "0.4.0"
