@@ -67,7 +67,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 */
 
 
-  let cert = fs::read("./../cert/cert.cer")?;
+  let cert = fs::read("cert.cer")?;
   let cert = Certificate::from_pem(&cert)?;
   let connector = TlsConnector::builder().add_root_certificate(cert).build()?;
   let tls = MakeTlsConnector::new(connector);
