@@ -2,17 +2,19 @@ cd ~/esm-datastore/
 
 git pull
 
+#!/bin/sh
+CARGO_PATH="/root/.cargo/bin"
 echo "building esmserver"
-cargo build --bin esmserver --release
+$CARGO_PATH/cargo build --bin esmserver --release
 
 echo "building checker_current_game"
-cargo build --bin checker_current_game --release
+$CARGO_PATH/cargo build --bin checker_current_game --release
 
 echo "building checker_leaderboard"
-cargo build --bin checker_leaderboard --release
+$CARGO_PATH/cargo build --bin checker_leaderboard --release
 
 echo "building checker_subscriber"
-cargo build --bin checker_subscriber --release
+$CARGO_PATH/cargo build --bin checker_subscriber --release
 
 cd deploy/
 rm service/esmserver
