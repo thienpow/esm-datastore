@@ -97,6 +97,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
      // And then check that we got back the same string we sent over.
      let value: &str = rows[0].get(0);
+     println!("{}", value);
      assert_eq!(value, "hello world");
 /*
   let pg_mgr = PostgresConnectionManager::new_from_stringlike("postgresql://doadmin:tf45h3hpz6xstby6@private-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/esmstore?sslmode=require", tls).unwrap();
