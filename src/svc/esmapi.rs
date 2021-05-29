@@ -85,6 +85,7 @@ use esmapi_proto::{
   // Shop
   BuyRequest, BuyResponse,
   ListBuyRequest, ListBuyResponse,
+  GetActiveSubscriptionRequest, GetActiveSubscriptionResponse,
   BuyDetail,
 
   // Subscription
@@ -1704,6 +1705,37 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
   
+  async fn get_active_subscription(&self, request: Request<GetActiveSubscriptionRequest>, ) -> Result<Response<GetActiveSubscriptionResponse>, Status> {
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
+
+
+    let buy = match shop::Shop::get_active_subscription(user_id, &self.pool.clone()).await {
+      Ok(buy) => buy,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let created_on = buy.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+
+    Ok(Response::new(GetActiveSubscriptionResponse {
+      result: Some(BuyDetail {
+        id: buy.id,
+        item_type_id: buy.item_type_id,
+        item_id: buy.item_id,
+        item_title: buy.item_title,
+        payment_id: buy.payment_id,
+        sub_id: buy.sub_id,
+        price: buy.price,
+        created_on: created_on as i64
+      }),
+    }))
+
+  }
+
 
 
 

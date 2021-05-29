@@ -44,6 +44,34 @@ impl Shop {
     }
     
      
+    pub async fn get_active_subscription(user_id: i64, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<NewBuy, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, item_type_id, item_id, CASE 
+                                  WHEN item_type_id = 101 THEN (SELECT title FROM public.\"subscription\" WHERE id=item_id) 
+                                  WHEN item_type_id = 201 THEN (SELECT title FROM public.\"item\" WHERE id=item_id) 
+                                  ELSE 'Unknown Item' 
+                              END AS item_title, 
+                              user_id, payment_id, sub_id, price, created_on 
+                              FROM public.\"shop_buy\" 
+                              WHERE user_id=$1 AND item_type_id=101 ORDER BY id DESC LIMIT 1;").await?;
+      let row = conn.query_one(&stmt, &[&user_id]).await?;
+
+      Ok(NewBuy {
+        id: row.get(0),
+        item_type_id: row.get(1),
+        item_id: row.get(2),
+        item_title: row.get(3),
+        user_id: row.get(4),
+        user_nick_name: "".to_string(),
+        user_email: "".to_string(),
+        payment_id: row.get(5),
+        sub_id: row.get(6),
+        price: row.get(7),
+        created_on: row.get(8)
+      })
+    }
+
     pub async fn list(user_id: i64, limit: i64, offset: i64, search_title: String, status: i32, pool: &Pool<PostgresConnectionManager<tokio_postgres::NoTls>>) -> Result<Vec<NewBuy>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

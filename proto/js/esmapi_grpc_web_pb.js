@@ -2794,6 +2794,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listBuy =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.GetActiveSubscriptionRequest,
+ *   !proto.api.esm.GetActiveSubscriptionResponse>}
+ */
+const methodDescriptor_EsmApi_GetActiveSubscription = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/GetActiveSubscription',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.GetActiveSubscriptionRequest,
+  proto.api.esm.GetActiveSubscriptionResponse,
+  /**
+   * @param {!proto.api.esm.GetActiveSubscriptionRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetActiveSubscriptionResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.GetActiveSubscriptionRequest,
+ *   !proto.api.esm.GetActiveSubscriptionResponse>}
+ */
+const methodInfo_EsmApi_GetActiveSubscription = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.GetActiveSubscriptionResponse,
+  /**
+   * @param {!proto.api.esm.GetActiveSubscriptionRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetActiveSubscriptionResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.GetActiveSubscriptionRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.GetActiveSubscriptionResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.GetActiveSubscriptionResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.getActiveSubscription =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/GetActiveSubscription',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetActiveSubscription,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.GetActiveSubscriptionRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.GetActiveSubscriptionResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.getActiveSubscription =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/GetActiveSubscription',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetActiveSubscription);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.ListSubscriptionRequest,
  *   !proto.api.esm.ListSubscriptionResponse>}
  */

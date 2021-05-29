@@ -24,7 +24,7 @@ service EsmApi {
   rpc UpdateUserSettings(UpdateUserSettingsRequest) returns (UpdateUserSettingsResponse) {}
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
   rpc GetPlayer(GetPlayerRequest) returns (GetPlayerResponse) {}
-
+  
   // Config
   rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {}
   // Spinner 
@@ -61,6 +61,7 @@ service EsmApi {
   // Shop
   rpc Buy(BuyRequest) returns (BuyResponse) {}
   rpc ListBuy(ListBuyRequest) returns (ListBuyResponse) {}
+  rpc GetActiveSubscription(GetActiveSubscriptionRequest) returns (GetActiveSubscriptionResponse) {}
 
   // Subscription
   rpc ListSubscription(ListSubscriptionRequest) returns (ListSubscriptionResponse) {}
@@ -761,6 +762,12 @@ message BuyDetail {
   int64 created_on = 8;
 }
 
+message GetActiveSubscriptionRequest {
+  int64 user_id = 1;
+}
+message GetActiveSubscriptionResponse {
+  BuyDetail result = 1;
+}
 
 
 
