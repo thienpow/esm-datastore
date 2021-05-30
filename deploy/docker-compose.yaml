@@ -5,8 +5,12 @@ services:
     image: envoyproxy/envoy:v1.16.2
     volumes:
       - ./front/envoy.yaml:/etc/envoy/envoy.yaml
-      - /etc/letsencrypt/live/aadi.my/fullchain.pem:/etc/envoy/fullchain.pem
-      - /etc/letsencrypt/live/aadi.my/privkey.pem:/etc/envoy/privkey.pem
+      # - /etc/letsencrypt/live/aadi.my/fullchain.pem:/etc/envoy/fullchain.pem
+      # - /etc/letsencrypt/live/aadi.my/privkey.pem:/etc/envoy/privkey.pem
+      - /etc/letsencrypt/live/esm-admin.aadi.my/fullchain.pem:/etc/envoy/esm-admin/fullchain.pem
+      - /etc/letsencrypt/live/esm-admin.aadi.my/privkey.pem:/etc/envoy/esm-admin/privkey.pem
+      - /etc/letsencrypt/live/esm-api.aadi.my/fullchain.pem:/etc/envoy/esm-api/fullchain.pem
+      - /etc/letsencrypt/live/esm-api.aadi.my/privkey.pem:/etc/envoy/esm-api/privkey.pem
     restart: always
     environment: 
       - ENVOY_UID=0

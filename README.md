@@ -29,8 +29,11 @@ check the /deploy/service.start.sh for the env variables
 
 
 ### RENEW CERT
+#### once and for all method
 sudo certbot certonly --server https://acme-v02.api.letsencrypt.org/directory --manual --preferred-challenges dns -d *.aadi.my
-
+#### one by one
+sudo certbot certonly --standalone -d esm-admin.aadi.my
+sudo certbot certonly --standalone -d esm-api.aadi.my
 
 Postgresql Server
 
