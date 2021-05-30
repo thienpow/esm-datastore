@@ -1,8 +1,4 @@
-
-/deploy/service/esmserver
-/deploy/service/jwk_checker
 /target/
 **/*.rs.bk
 **/*.swp
 Cargo.lock
-/libs/bb8/postgres/target/
