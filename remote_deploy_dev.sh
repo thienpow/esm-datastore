@@ -25,7 +25,6 @@ rm service/esmserver
 rm service/checker_current_game
 rm service/checker_leaderboard
 rm service/checker_subscriber
-rm service/checker_subscriber
 rm gloader/gloader
 
 cd ..
