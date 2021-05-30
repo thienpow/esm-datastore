@@ -40,9 +40,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //GET /
     let cors = warp::cors()
         .allow_any_origin()
-        .allow_headers(vec![ "Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "Authorization" ]) //
+        .allow_headers(vec![ "Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "authorization", "uid" ]) //
         .allow_methods(vec![ "POST", "GET", "HEAD", "OPTIONS" ]);
-        
     let game_loader_route = warp::path("loader")
         .and(warp::get())
         .and(warp::query())
