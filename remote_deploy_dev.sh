@@ -4,24 +4,63 @@ cd ~/esm-datastore/
 
 git pull
 
-CARGO_PATH="/root/.cargo/bin"
-echo "building esmserver"
-$CARGO_PATH/cargo build --bin esmserver --release
+read -p "Rebuild: All(0), esmserver(1), admin(2), checker_current_game(3), checker_leaderboard(4), checker_subscriber(5), gloader(6), wwwloader(7)" choice
 
-echo "building checker_current_game"
-$CARGO_PATH/cargo build --bin checker_current_game --release
 
-echo "building checker_leaderboard"
-$CARGO_PATH/cargo build --bin checker_leaderboard --release
+case $1 in
+0)
+  echo "Rebuilding All..."
 
-echo "building checker_subscriber"
-$CARGO_PATH/cargo build --bin checker_subscriber --release
+  CARGO_PATH="/root/.cargo/bin"
+  echo "building esmserver"
+  $CARGO_PATH/cargo build --bin esmserver --release
 
-echo "building gloader"
-$CARGO_PATH/cargo build --bin gloader --release
+  echo "building checker_current_game"
+  $CARGO_PATH/cargo build --bin checker_current_game --release
 
-echo "building wwwloader"
-$CARGO_PATH/cargo build --bin wwwloader --release
+  echo "building checker_leaderboard"
+  $CARGO_PATH/cargo build --bin checker_leaderboard --release
+
+  echo "building checker_subscriber"
+  $CARGO_PATH/cargo build --bin checker_subscriber --release
+
+  echo "building gloader"
+  $CARGO_PATH/cargo build --bin gloader --release
+
+  echo "building wwwloader"
+  $CARGO_PATH/cargo build --bin wwwloader --release
+
+  ;;
+1)
+  CARGO_PATH="/root/.cargo/bin"
+  echo "building esmserver"
+  $CARGO_PATH/cargo build --bin esmserver --release
+  ;;
+2)
+  ;;
+3)
+  echo "building checker_current_game"
+  $CARGO_PATH/cargo build --bin checker_current_game --release
+  ;;
+4)
+  echo "building checker_leaderboard"
+  $CARGO_PATH/cargo build --bin checker_leaderboard --release
+  ;;
+5)
+  echo "building checker_subscriber"
+  $CARGO_PATH/cargo build --bin checker_subscriber --release
+  ;;
+6)
+  echo "building gloader"
+  $CARGO_PATH/cargo build --bin gloader --release
+  ;;
+7)
+  echo "building wwwloader"
+  $CARGO_PATH/cargo build --bin wwwloader --release
+  ;;
+esac
+
+  
 
 
 cd deploy/
@@ -42,7 +81,33 @@ cp target/release/wwwloader deploy/admin/wwwloader
 
 
 cd deploy/
-docker-compose up -d --build esmservice
+
+case $1 in
+0)
+  docker-compose up -d --build
+  ;;
+1)
+  docker-compose up -d --build esmservice
+  ;;
+2)
+  docker-compose up -d --build esm-admin
+  ;;
+3)
+  docker-compose up -d --build esmservice
+  ;;
+4)
+  docker-compose up -d --build esmservice
+  ;;
+5)
+  docker-compose up -d --build esmservice
+  ;;
+6)
+  docker-compose up -d --build esm-game-loader
+  ;;
+7)
+  docker-compose up -d --build esm-admin
+  ;;
+esac
 
 # clean  up unused docker images
 docker images -q | xargs docker rmi

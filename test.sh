@@ -1,9 +1,4 @@
-#!/bin/sh
 
-# push the latest
-git add .
-git commit -m "deploy"
-git push
 
 
 
@@ -27,6 +22,6 @@ while :; do
 
 done
 
-echo "calling remote script with choice=$choice"
+echo "$choice"
 
-ssh root@esm-api.aadi.my 'bash -s' < remote_deploy_dev.sh $choice
+# ssh root@esm-api.aadi.my 'bash -s' < test_remote.sh $choice
