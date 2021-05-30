@@ -25,6 +25,10 @@ path = "src/micro_services/checkers/checker_subscriber.rs"
 name =  "gloader"
 path = "src/micro_services/gloader/gloader.rs"
 
+[[bin]]
+name =  "wwwloader"
+path = "src/micro_services/wwwloader/wwwloader.rs"
+
 #[[bin]]
 #name = "msgpush"
 #path = "src/client/msgpush.rs"
@@ -103,7 +107,7 @@ prost = "0.7"
 
 
 reqwest = { version = "0.11.0", features = ["blocking", "json"] }
-warp =  "0.3.0"
+warp =  "0.3.1"
 futures = { version = "0.3.5", default-features = false, features = ["alloc"]}
 http = "0.2"
 

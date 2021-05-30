@@ -20,12 +20,17 @@ $CARGO_PATH/cargo build --bin checker_subscriber --release
 echo "building gloader"
 $CARGO_PATH/cargo build --bin gloader --release
 
+echo "building wwwloader"
+$CARGO_PATH/cargo build --bin wwwloader --release
+
+
 cd deploy/
 rm service/esmserver
 rm service/checker_current_game
 rm service/checker_leaderboard
 rm service/checker_subscriber
 rm gloader/gloader
+rm admin/wwwloader
 
 cd ..
 cp target/release/esmserver deploy/service/esmserver
@@ -33,6 +38,7 @@ cp target/release/checker_current_game deploy/service/checker_current_game
 cp target/release/checker_leaderboard deploy/service/checker_leaderboard
 cp target/release/checker_subscriber deploy/service/checker_subscriber
 cp target/release/gloader deploy/gloader/gloader
+cp target/release/wwwloader deploy/admin/wwwloader
 
 
 cd deploy/
