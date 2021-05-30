@@ -1420,9 +1420,9 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
       let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
       let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
-      let timezone_seconds = prize.timezone * (3600 as f64);
+      //let timezone_seconds = prize.timezone * (3600 as f64);
 
-      let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (self.server_timezone * 3600) + (timezone_seconds as u64);
+      //let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (self.server_timezone * 3600) + (timezone_seconds as u64);
 
       let li = PrizeDetail {
         current_game_id: prize.current_game_id,
@@ -1468,7 +1468,8 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         start_timestamp: start_timestamp as i64,
         end_timestamp: end_timestamp as i64,
       };
-      
+      result.push(li);
+      /*
       //type_id 1=Featured, 2=Premium
       if prize.type_id == 1 || prize.type_id == 2 {
         
@@ -1496,7 +1497,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
           
         }
       }
-      
+      */
       
       
     };
