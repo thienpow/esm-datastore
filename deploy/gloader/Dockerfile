@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 RUN apt-get update && apt-get install -y ca-certificates libssl-dev && rm -rf /var/lib/apt/lists/*
 
 
-COPY ./certs/db_cert.cer /usr/local/bin/db_cert.cer
+COPY ./certs/out/CA.crt /usr/local/bin/CA.crt
 
 COPY ./gloader/gloader /usr/local/bin/gloader
 RUN chmod u+x /usr/local/bin/gloader
