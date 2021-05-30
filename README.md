@@ -41,6 +41,8 @@ sudo certbot certonly --cert-name esm-api.aadi.my-0001 --standalone --expand -d 
 #### check certbot status
 sudo systemctl status certbot.timer
 
+# CUSTOM CERT
+self-signed-ssl --no-interaction -c 'MY' -s 'Kuala Lumpur' -l 'Kuala Lumpur' -o 'Esportsmini Pty Ltd' -u 'Black Myth Department' -n 'esportsmini.com' -a 'www.esportsmini.com'
 
 Postgresql Server
 
