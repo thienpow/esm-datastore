@@ -18,12 +18,15 @@ run the following on your local dev machine
 # Production Deployment
 
 ### make sure the following binary are in place: 
-1. esm-admin-warp is in deploy/admin folder.
-2. esm-game-loader is in deploy/gloader folder.
-3. esmserver, checker_current_game, checker_subscriber
+1. wwwloader is in deploy/admin folder.
+2. gloader is in deploy/gloader folder.
+3. esmserver, checker_current_game, checker_subscriber, checker_leaderboard is in deploy/service
 
 ### make sure the DB Cert and env variables are correct.
-check the /deploy/service.start.sh for the env variables
+1. db_cert.cer in /deploy/certs/
+2. check the /deploy/service/start.sh for the env variables
+3. check the /deploy/gloader/start.sh for the env variables
+4. check the /deploy/stripe/start.sh for the env variables
 
 ### IMPORTANT: all these binary must be build on Ubuntu 20 if deploy target is Ubuntu 20
 
