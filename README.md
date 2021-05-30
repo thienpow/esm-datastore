@@ -34,6 +34,10 @@ sudo certbot certonly --server https://acme-v02.api.letsencrypt.org/directory --
 #### all in one (specify each method)
 sudo certbot certonly --cert-name esm-api.aadi.my-0001 --standalone --expand -d esm-gloader.aadi.my -d esm-api.aadi.my -d esm-admin.aadi.my
 
+#### check certbot status
+sudo systemctl status certbot.timer
+
+
 Postgresql Server
 
 public
