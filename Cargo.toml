@@ -33,58 +33,6 @@ path = "src/micro_services/wwwloader/wwwloader.rs"
 name = "test_db_conn"
 path = "src/micro_services/test_db_conn.rs"
 
-#[[bin]]
-#name = "config"
-#path = "src/client/config.rs"
-
-#[[bin]]
-#name = "game"
-#path = "src/client/game.rs"
-
-#[[bin]]
-#name = "gplayer"
-#path = "src/client/gplayer.rs"
-
-#[[bin]]
-#name = "item"
-#path = "src/client/item.rs"
-
-#[[bin]]
-#name = "subscription"
-#path = "src/client/subscription.rs"
-
-#[[bin]]
-#name = "prize"
-#path = "src/client/prize.rs"
-
-#[[bin]]
-#name = "raffle"
-#path = "src/client/raffle.rs"
-
-#[[bin]]
-#name = "shop"
-#path = "src/client/shop.rs"
-
-#[[bin]]
-#name = "winner"
-#path = "src/client/winner.rs"
-
-#[[bin]]
-#name = "user"
-#path = "src/client/user.rs"
-
-#[[bin]]
-#name = "login"
-#path = "src/client/login.rs"
-
-#[[bin]]
-#name = "tournament"
-#path = "src/client/tournament.rs"
-
-#[[bin]]
-#name ="test"
-#path  = "src/client/test.rs"
-
 [dependencies]
 esm-db = { path = "common/db" }
 esm-jwk = { path = "common/jwk" }
