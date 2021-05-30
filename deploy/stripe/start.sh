@@ -1,7 +1,8 @@
 #!/bin/bash
 
 export STRIPE_SECRET="sk_test_51IOa7gBGCaV2oEVpEDw9fOn1fUn8IaPOemu7Yjkg6N75C3ahsd7sEQr3ait4JYU55wfCBbXCRPIhcUxGMVtQYA6A003YKMqkYF"
-export DB_CONN_STRING="postgresql://postgres:notezpass99~-~@10.104.0.2:5432/esmstore"
+export DB_CERT_PATH="/usr/local/bin/db_cert.cer"
+export DB_CONN_STRING="postgresql://doadmin:tf45h3hpz6xstby6@private-db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/defaultdb?sslmode=require"
 export SERVER_TIMEZONE="8"
 export PORT="4242"
 

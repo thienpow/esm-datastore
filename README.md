@@ -1,5 +1,3 @@
-
-
 # Setup DB
 copy the content of deploy/initdb.sql to pgAdmin and run the sql at schema root.
 
@@ -10,15 +8,31 @@ Run the convert.sh in proto folder to convert all proto file at once.
 
 
 # Test & Deploy
-Copy the source to linux & Build the esmserver in linux environment
-run the following
+First git clone the source to linux & Build the esmserver in linux environment
+run the following on your local dev machine
 ```
-./deploy.sh
+./deploy_dev.sh
 
 ```
+
+# Production Deployment
+
+### make sure the following binary are in place: 
+1. esm-admin-warp is in deploy/admin folder.
+2. esm-game-loader is in deploy/gloader folder.
+3. esmserver, checker_current_game, checker_subscriber
+
+### make sure the DB Cert and env variables are correct.
+check the /deploy/service.start.sh for the env variables
+
+### IMPORTANT: all these binary must be build on Ubuntu 20 if deploy target is Ubuntu 20
+
 
 ### RENEW CERT
 sudo certbot certonly --server https://acme-v02.api.letsencrypt.org/directory --manual --preferred-challenges dns -d *.aadi.my
+
+
+Postgresql Server
 
 public
 postgresql://doadmin:tf45h3hpz6xstby6@db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/defaultdb?sslmode=require

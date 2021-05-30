@@ -21,6 +21,9 @@ path = "src/client/checker_leaderboard.rs"
 name = "checker_subscriber"
 path = "src/client/checker_subscriber.rs"
 
+[[bin]]
+name =  "gloader"
+path = "src/client/gloader.rs"
 
 #[[bin]]
 #name = "msgpush"
@@ -99,6 +102,7 @@ prost = "0.7"
 
 
 
+warp =  "0.3.0"
 futures = { version = "0.3.5", default-features = false, features = ["alloc"]}
 http = "0.2"
 

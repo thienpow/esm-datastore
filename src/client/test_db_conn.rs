@@ -9,9 +9,7 @@ use postgres_native_tls::MakeTlsConnector;
 //use bb8_postgres::tokio_postgres::config::Config;
 use native_tls::{Certificate, TlsConnector};
 
-use std::{
-  fs,
-};
+use std::{fs};
 
 mod config;
 
