@@ -26,7 +26,6 @@ rm service/checker_current_game
 rm service/checker_leaderboard
 rm service/checker_subscriber
 rm service/checker_subscriber
-
 rm gloader/gloader
 
 cd ..
@@ -34,7 +33,6 @@ cp target/release/esmserver deploy/service/esmserver
 cp target/release/checker_current_game deploy/service/checker_current_game
 cp target/release/checker_leaderboard deploy/service/checker_leaderboard
 cp target/release/checker_subscriber deploy/service/checker_subscriber
-
 cp target/release/gloader deploy/gloader/gloader
 
 
