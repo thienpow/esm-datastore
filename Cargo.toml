@@ -11,19 +11,19 @@ path = "src/main.rs"
 
 [[bin]]
 name = "checker_current_game"
-path = "src/client/checker_current_game.rs"
+path = "src/micro_services/checkers/checker_current_game.rs"
 
 [[bin]]
 name = "checker_leaderboard"
-path = "src/client/checker_leaderboard.rs"
+path = "src/micro_services/checkers/checker_leaderboard.rs"
 
 [[bin]]
 name = "checker_subscriber"
-path = "src/client/checker_subscriber.rs"
+path = "src/micro_services/checkers/checker_subscriber.rs"
 
 [[bin]]
 name =  "gloader"
-path = "src/client/gloader.rs"
+path = "src/micro_services/gloader/gloader.rs"
 
 #[[bin]]
 #name = "msgpush"
