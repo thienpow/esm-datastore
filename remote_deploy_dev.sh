@@ -1,5 +1,8 @@
 #!/bin/sh
 
+
+CARGO_PATH="/root/.cargo/bin"
+
 cd ~/esm-datastore/
 
 git pull
@@ -10,8 +13,6 @@ read -p "Rebuild: All(0), esmserver(1), admin(2), checker_current_game(3), check
 case $1 in
 0)
   echo "Rebuilding All..."
-
-  CARGO_PATH="/root/.cargo/bin"
   echo "building esmserver"
   $CARGO_PATH/cargo build --bin esmserver --release
 
