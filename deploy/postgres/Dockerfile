@@ -18,7 +18,7 @@ RUN chmod 600 /var/lib/postgresql/CA.crt
 RUN chown 70:70 /var/lib/postgresql/CA.crl
 RUN chmod 600 /var/lib/postgresql/CA.crl
 
-RUN echo "hostssl all all all cert clientcert=verify-ca" >> /var/lib/postgresql/data/pg_hba.conf
+RUN echo "hostssl all all 0.0.0.0/0 cert clientcert=verify-ca" >> /var/lib/postgresql/data/pg_hba.conf
 RUN echo "listen_addresses='*'" >> /var/lib/postgresql/data/postgresql.conf
 
 ENTRYPOINT ["docker-entrypoint.sh"] 
