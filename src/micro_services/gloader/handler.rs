@@ -14,12 +14,15 @@ use warp::{
 
 use serde_derive::{Deserialize, Serialize};
 
+use esm_jwk::jwk::JwkAuth;
+
 #[derive(Serialize, Deserialize)]
 pub struct GameLoaderParams {
     user_id: i64,
     game_id: i64,
 }
 
+/*
 pub async fn get_game_code(
   //token: String, 
   params: GameLoaderParams, 
@@ -51,35 +54,47 @@ pub async fn get_game_code(
   
 
 }
+*/
+
 
 pub async fn secure_get_game_code(
   token: String, 
   params: GameLoaderParams, 
-  pool: DBPool
+  pool: DBPool,
+  jwk: JwkAuth,
 ) -> Result<impl Reply> {
 
-  println!("token = {}", token);
-  match game::Game::get_game_code(params.game_id, &pool.clone()).await {
-    Ok(game_code) => {
-  
-      Ok(warp::reply::html(format!("
-<!DOCTYPE html>
-<html>
-<head>
-  <title>ESportsMini</title>
-  <script>
-    let game_id = {}
-    let user_id = {}
-  </script>
-</head>
-<body>
-{}
-</body>
-</html>", params.game_id, params.user_id, game_code)))
-  
+  match jwk.verify(&token) {
+    Some(_) => {
+
+      println!("token = {}", token);
+
+      match game::Game::get_game_code(params.game_id, &pool.clone()).await {
+        Ok(game_code) => {
+      
+          Ok(warp::reply::html(format!("
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <title>ESportsMini</title>
+                  <script>
+                    let game_id = {}
+                    let user_id = {}
+                  </script>
+                </head>
+                <body>
+                {}
+                </body>
+                </html>", params.game_id, params.user_id, game_code)))
+
+        },
+        Err(e) => panic!(e)
+      }
+
     },
-    Err(e) => panic!(e)
+    _ =>  panic!("Permission Denied!")
   }
+
   
 
 }

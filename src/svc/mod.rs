@@ -14,7 +14,7 @@ use tonic::{
 };
 
 
-use crate::jwk::{
+use esm_jwk::jwk::{
   JwkAuth,
 };
 

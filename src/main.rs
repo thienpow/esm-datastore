@@ -7,8 +7,10 @@ use std::fs;
 use native_tls::{Certificate, TlsConnector};
 use postgres_native_tls::MakeTlsConnector;
 
-use crate::jwk::JwkAuth;
-mod jwk;
+//use esm_jwk::jwk;
+use esm_jwk::jwk::JwkAuth;
+//use crate::jwk::JwkAuth;
+//mod jwk;
 mod svc;
 mod cryptic;
 mod jwt;

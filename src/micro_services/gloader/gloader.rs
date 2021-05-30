@@ -15,9 +15,13 @@ mod handler;
 mod config;
 
 
+//use esm_jwk::jwk;
+use esm_jwk::jwk::JwkAuth;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+
+    let jwk_auth = JwkAuth::new().await;
 
     let config = config::get_configuration();
 
@@ -42,12 +46,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .allow_any_origin()
         .allow_headers(vec![ "Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "authorization", "uid" ]) //
         .allow_methods(vec![ "POST", "GET", "HEAD", "OPTIONS" ]);
+
+        /*
     let game_loader_route = warp::path("loader")
         .and(warp::get())
         .and(warp::query())
         .and(with_db(pool.clone()))
         .and_then(handler::get_game_code);
-
+*/
 
     /* 
         this is how client side should do before passing the response's contentData to iframe's srcdoc
@@ -66,9 +72,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .and(warp::header::<String>("authorization"))
         .and(warp::query())
         .and(with_db(pool.clone()))
+        .and(with_jwk(jwk_auth.clone()))
         .and_then(handler::secure_get_game_code);
 
-    let routes = game_loader_route.or(secure_game_loader_route).with(cors);//.recover(error::handle_rejection);
+    let routes = secure_game_loader_route.with(cors);
 
     println!("Service Started at Port: 3033");
     warp::serve(routes).run(([0, 0, 0, 0], 3033)).await;
@@ -76,6 +83,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn with_db(pool: Pool<PostgresConnectionManager<MakeTlsConnector>>) -> impl Filter<Extract = (Pool<PostgresConnectionManager<MakeTlsConnector>>,), Error = Infallible> + Clone {
+fn with_jwk(jwk: JwkAuth) -> impl Filter<Extract = (JwkAuth, ), Error = Infallible> + Clone {
+    warp::any().map(move || jwk.clone())
+}
+
+fn with_db(pool: Pool<PostgresConnectionManager<MakeTlsConnector>>) -> impl Filter<Extract = (Pool<PostgresConnectionManager<MakeTlsConnector>>, ), Error = Infallible> + Clone {
     warp::any().map(move || pool.clone())
 }

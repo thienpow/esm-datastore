@@ -86,6 +86,7 @@ path = "src/micro_services/gloader/gloader.rs"
 
 [dependencies]
 esm-db = { path = "common/db" }
+esm-jwk = { path = "common/jwk" }
 
 ring = "0.16.15"
 jsonwebtoken = "7.2.0"
@@ -101,7 +102,7 @@ prost-types = "0.7"
 prost = "0.7"
 
 
-
+reqwest = { version = "0.11.0", features = ["blocking", "json"] }
 warp =  "0.3.0"
 futures = { version = "0.3.5", default-features = false, features = ["alloc"]}
 http = "0.2"
@@ -139,7 +140,6 @@ tower = { version = "0.4.3" }
 
 lazy_static = "1.4.0"
 log = "0.4.8"
-reqwest = { version = "0.11.0", features = ["blocking", "json"] }
 postgres-native-tls = "0.5.0"
 native-tls = "0.2"
 rustls = "0.19"

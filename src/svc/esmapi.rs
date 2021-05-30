@@ -10,7 +10,7 @@ use bb8::{Pool};
 use bb8_postgres::PostgresConnectionManager;
 use postgres_native_tls::MakeTlsConnector;
 
-use crate::jwk::{
+use esm_jwk::jwk::{
   JwkAuth,
 };
 
