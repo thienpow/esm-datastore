@@ -128,6 +128,7 @@ case $1 in
   ;;
 88)
   docker-compose up -d --build db-pg-master
+  ;;
 99)
   docker-compose up --build
   ;;
