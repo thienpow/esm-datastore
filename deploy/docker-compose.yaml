@@ -108,9 +108,9 @@ services:
       -c max_wal_senders=10
       -c wal_compression=on
       -c archive_mode=on
-      -c archive_command=cp %p /archives/%f
-      -c restore_command=cp /archives/%f %p
     ######  to check if settings is ok try run the SELECT current_setting('hot_standby');
+    #-c archive_command=cp %p /archives/%f
+    #-c restore_command=cp /archives/%f %p
     volumes:
       - database-data:/var/lib/postgresql/data/
     environment:
@@ -145,8 +145,6 @@ services:
         -c max_wal_senders=10
         -c wal_compression=on
         -c archive_mode=on
-        -c archive_command=cp %p /archives/%f
-        -c restore_command=cp /archives/%f %p
       ######  to check if settings is ok try run the SELECT current_setting('hot_standby');
       #volumes:
       #  - database-data:/var/lib/postgresql/data/
