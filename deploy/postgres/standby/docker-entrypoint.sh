@@ -1,11 +1,8 @@
 #!/bin/bash
-echo "i am here"
 
 if [ ! -s "$PGDATA/PG_VERSION" ]; then
 echo "*:*:*:$PG_REP_USER:$PG_REP_PASSWORD" > ~/.pgpass
-echo "hello"
 chmod 0600 ~/.pgpass
-echo "hello1"
 
 until ping -c 1 -W 1 ${PG_MASTER_HOST:?missing environment variable. PG_MASTER_HOST must be set}
     do
@@ -17,11 +14,13 @@ until pg_basebackup -h ${PG_MASTER_HOST} -D ${PGDATA} -U ${PG_REP_USER} -vP -W
         echo "Waiting for master to connect..."
         sleep 1s
 done
+echo "hello1"
 
 echo "host replication all 0.0.0.0/0 md5" >> "$PGDATA/pg_hba.conf"
 echo "hostssl all all all cert clientcert=verify-ca" >> "$PGDATA/pg_hba.conf"
 
 set -e
+echo "hello2"
 
 cat > ${PGDATA}/recovery.conf <<EOF
 standby_mode = on
@@ -31,6 +30,7 @@ EOF
 chown postgres. ${PGDATA} -R
 chmod 700 ${PGDATA} -R
 fi
+echo "hello3"
 
 sed -i 's/wal_level = hot_standby/wal_level = replica/g' ${PGDATA}/postgresql.conf 
 
