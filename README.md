@@ -46,3 +46,6 @@ sudo systemctl status certbot.timer
 
 ## CUSTOM Self Signed CERT for Postgrest Server
 look into deploy/certs/regen.sh
+
+
+pg_basebackup -h dbpg-master -p 25432 -U replicator -D /var/lib/postgresql/data -Fp -R -Xs -P
