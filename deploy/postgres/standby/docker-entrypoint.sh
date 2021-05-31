@@ -1,8 +1,11 @@
 #!/bin/bash
+echo "i am here"
+
 if [ ! -s "$PGDATA/PG_VERSION" ]; then
 echo "*:*:*:$PG_REP_USER:$PG_REP_PASSWORD" > ~/.pgpass
-
+echo "hello"
 chmod 0600 ~/.pgpass
+echo "hello1"
 
 until ping -c 1 -W 1 ${PG_MASTER_HOST:?missing environment variable. PG_MASTER_HOST must be set}
     do
