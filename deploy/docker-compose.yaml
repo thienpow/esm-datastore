@@ -95,6 +95,13 @@ services:
       context: .
       dockerfile: ./postgres/master/Dockerfile
     restart: always
+    command: >
+      -c hot_standby=on
+      -c ssl=on
+      -c ssl_cert_file=/var/lib/postgresql/server.crt
+      -c ssl_key_file=/var/lib/postgresql/server.key
+      -c ssl_ca_file=/var/lib/postgresql/CA.crt
+      -c ssl_crl_file=/var/lib/postgresql/CA.crl
     volumes:
       - database-data:/var/lib/postgresql/data/
     environment:
