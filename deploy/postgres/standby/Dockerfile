@@ -32,4 +32,5 @@ RUN chmod +x /docker-entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-CMD ["gosu", "postgres", "postgres"]
+CMD ["postgres"]
+#CMD ["gosu", "postgres", "postgres"]
