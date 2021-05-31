@@ -17,18 +17,13 @@ done
 
 echo "host replication all 0.0.0.0/0 md5" >> "$PGDATA/pg_hba.conf"
 echo "hostssl all all all cert clientcert=verify-ca" >> "$PGDATA/pg_hba.conf"
+touch "$PGDATA/standby.signal"
+pg_ctl -D ${PGDATA} start
 
-set -e
-
-cat > ${PGDATA}/recovery.conf <<EOF
-standby_mode = on
-primary_conninfo = 'host=$PG_MASTER_HOST port=${PG_MASTER_PORT:-25432} user=$PG_REP_USER password=$PG_REP_PASSWORD'
-trigger_file = '/tmp/touch_me_to_promote_to_me_master'
-EOF
 chown postgres. ${PGDATA} -R
 chmod 700 ${PGDATA} -R
 fi
 
-sed -i 's/wal_level = hot_standby/wal_level = replica/g' ${PGDATA}/postgresql.conf 
+sed -i 's/wal_level = replica/g' ${PGDATA}/postgresql.conf 
 
 exec "$@"
