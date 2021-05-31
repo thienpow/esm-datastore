@@ -14,10 +14,8 @@ services:
     networks:
       - envoymesh
     expose:
-      #- "80"
       - "443"
     ports:
-      #- "80:80"
       - "443:443"
 
   grpc-web-proxy:
@@ -30,8 +28,6 @@ services:
       - ENVOY_GID=0
     networks:
       - envoymesh
-        #aliases:
-        #  - grpc-web-proxy
     depends_on:
       - "esmservice"
     links:
@@ -52,8 +48,6 @@ services:
       - "postgres-master"
     networks:
       - envoymesh
-        #aliases:
-        #  - esmservice
     expose:
       - "50051"
     ports:
@@ -66,8 +60,6 @@ services:
     restart: always
     networks:
       - envoymesh
-        #aliases:
-        #  - esm-game-loader
     expose:
       - "3033"
     ports:
@@ -80,8 +72,6 @@ services:
     restart: always
     networks:
       - envoymesh
-        #aliases:
-        #  - esm-admin
     expose:
       - "3030"
     ports:
@@ -94,8 +84,6 @@ services:
     restart: always
     networks:
       - envoymesh
-        #aliases:
-        #  - esm-stripe
     expose:
       - "4242"
     ports:
@@ -117,8 +105,6 @@ services:
       PG_REP_PASSWORD: ezreppass
     networks:
       - envoymesh
-        #aliases:
-        #  - postgres
     expose:
       - "5432"
     ports:
