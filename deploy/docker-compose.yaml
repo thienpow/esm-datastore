@@ -176,7 +176,7 @@ services:
       -c ssl_ca_file=/var/lib/postgresql/CA.crt
       -c ssl_crl_file=/var/lib/postgresql/CA.crl
     volumes: 
-      - dbpg-master-data:/var/lib/postgresql/data/
+      - dbpg-standby-01-data:/var/lib/postgresql/data/
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: doadmin
@@ -192,5 +192,6 @@ services:
 volumes:
   database-data:
   dbpg-master-data:
+  dbpg-standby-01-data:
 networks:
   envoymesh: {}

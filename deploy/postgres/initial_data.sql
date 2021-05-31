@@ -1,25 +1,9 @@
 --
--- PostgreSQL database dump
---
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
 -- public.config
 --
 COPY public.config (id, invites, games_per_ad, days_to_claim, game_loader_template, freespin_per_day, gems_per_spins_1, ads_per_spins_1, gems_per_spins_2, ads_per_spins_2) FROM stdin;
 1	10	3	30	0	3	1	0	2	0
 \.
-
 --
 -- public.checker_log
 --
@@ -37,7 +21,6 @@ COPY public.user_status_type (id, title) FROM stdin;
 3	Pending Delete
 4	Archived
 \.
-
 --
 -- public.spinner_win_type
 --
@@ -47,7 +30,6 @@ COPY public.spinner_win_type (id, title) FROM stdin;
 3	Cash
 4	Free Spin
 \.
-
 --
 -- public.item_type
 --
@@ -55,8 +37,6 @@ COPY public.item_type (id, title) FROM stdin;
 0	Not Selected
 1	Gem
 \.
-
-
 --
 -- public.prize_type
 --
@@ -67,8 +47,6 @@ COPY public.prize_type (id, title) FROM stdin;
 1	Featured
 2	Premium
 \.
-
-
 --
 -- public.status_type
 --
@@ -78,8 +56,6 @@ COPY public.status_type (id, title) FROM stdin;
 2	Published
 3	Archived/Disabled
 \.
-
-
 --
 -- public.subscription_type
 --
@@ -90,8 +66,6 @@ COPY public.subscription_type (id, title) FROM stdin;
 3	Month
 4	Year
 \.
-
-
 --
 -- public.winner_status_type
 --
@@ -101,15 +75,12 @@ COPY public.winner_status_type (id, title) FROM stdin;
 3	Delivered
 4	Expired
 \.
-
-
 --
 -- public.user
 --
 COPY public."user" (id, username, passhash, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, country_code, address, city, state, zip_code, country, is_email_confirmed, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, spins_left, rank, gems, tickets, current_game_id, current_game_score, today_tickets) FROM stdin;
 1	wukong	$argon2id$v=19$m=64,t=1,p=1$pb7+cdRKchBGWxfmx6nHinqmLY4ir5vc4+LSsPwbpDg$kwfH/p8iEmxcTjKqzyWs8sekvIns2Qt4vSvbS/Pxz9U	thienpow@gmail.com	0188888888	Black	Myth	2020-12-31 15:07:54.239332	2020-12-31 15:07:54.239332	1	1	0				0		0						f	f	f	f	f		0	0	0	0	0	0	0
 \.
-
 --
 -- public.timezones
 --
@@ -146,7 +117,6 @@ COPY public."timezones" (id, "offset", stext, ltext) FROM stdin;
 30	11	GMT +11:00	(GMT +11:00) Magadan, Solomon Islands, New Caledonia
 31	12	GMT +12:00	(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka
 \.
-
 --
 -- public.rank
 --
@@ -172,4 +142,3 @@ COPY public."rank" (id, title, "exp", gem, multiplier) FROM stdin;
 19	Level 19	17050	5	0.19
 20	Level 20	20000	10	0.2
 \.
-
