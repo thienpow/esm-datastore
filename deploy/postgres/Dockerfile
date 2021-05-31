@@ -7,7 +7,7 @@ COPY ./certs/out/CA.crt /var/lib/postgresql
 COPY ./certs/out/CA.crl /var/lib/postgresql
 
 COPY ./postgres/ssl-conf.sh /usr/local/bin
-COPY ./postgres/ssl-conf.sh /var/lib/postgresql/data/
+COPY ./postgres/pg_hba.sh /var/lib/postgresql/data/
 
 RUN chown 70:70 /var/lib/postgresql/server.key 
 RUN chmod 600 /var/lib/postgresql/server.key
