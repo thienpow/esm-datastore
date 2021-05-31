@@ -97,6 +97,7 @@ services:
     restart: always
     command: >
       -c listen_addresses=*
+      -c port=5432
       -c ssl=on
       -c ssl_cert_file=/var/lib/postgresql/server.crt
       -c ssl_key_file=/var/lib/postgresql/server.key
@@ -108,9 +109,6 @@ services:
       -c max_wal_senders=10
       -c wal_compression=on
       -c archive_mode=on
-    ######  to check if settings is ok try run the SELECT current_setting('hot_standby');
-    #-c archive_command=cp %p /archives/%f
-    #-c restore_command=cp /archives/%f %p
     volumes:
       - database-data:/var/lib/postgresql/data/
     environment:
@@ -126,40 +124,43 @@ services:
     ports:
       - "5432:5432"
 
-    dbpg-master:
-      build:
-        context: .
-        dockerfile: ./postgres/master/Dockerfile
-      restart: always
-      command: >
-        -c port=25432
-        -c ssl=on
-        -c ssl_cert_file=/var/lib/postgresql/server.crt
-        -c ssl_key_file=/var/lib/postgresql/server.key
-        -c ssl_ca_file=/var/lib/postgresql/CA.crt
-        -c ssl_crl_file=/var/lib/postgresql/CA.crl
-        -c hot_standby=on
-        -c wal_level=replica
-        -c wal_keep_size=1024
-        -c max_wal_senders=10
-        -c wal_compression=on
-        -c archive_mode=on
-      ######  to check if settings is ok try run the SELECT current_setting('hot_standby');
-      #-c listen_addresses=*
-      #volumes: 
-      #  - database-data:/var/lib/postgresql/data/
-      environment:
-        POSTGRES_DB: postgres
-        POSTGRES_USER: doadmin
-        POSTGRES_PASSWORD: tf45h3hpz6xstby6
-        PG_REP_USER: replicator
-        PG_REP_PASSWORD: tf45h3hpz6xstby6
-      networks:
-        - envoymesh
-      expose:
-        - "25432"
-      ports:
-        - "25432:25432"
+  dbpg-master:
+    build:
+      context: .
+      dockerfile: ./postgres/master/Dockerfile
+    restart: always
+    command: >
+      -c listen_addresses=*
+      -c port=25432
+      -c ssl=on
+      -c ssl_cert_file=/var/lib/postgresql/server.crt
+      -c ssl_key_file=/var/lib/postgresql/server.key
+      -c ssl_ca_file=/var/lib/postgresql/CA.crt
+      -c ssl_crl_file=/var/lib/postgresql/CA.crl
+      -c hot_standby=on
+      -c wal_level=replica
+      -c wal_keep_size=1024
+      -c max_wal_senders=10
+      -c wal_compression=on
+      -c archive_mode=on
+      -c archive_command=cp %p /archives/%f
+      -c restore_command=cp /archives/%f %p
+    ######  to check if settings is ok try run the SELECT current_setting('hot_standby');
+    #
+    #volumes: 
+    #  - database-data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: doadmin
+      POSTGRES_PASSWORD: tf45h3hpz6xstby6
+      PG_REP_USER: replicator
+      PG_REP_PASSWORD: tf45h3hpz6xstby6
+    networks:
+      - envoymesh
+    expose:
+      - "25432"
+    ports:
+      - "25432:25432"
 volumes:
   database-data:
 networks:
