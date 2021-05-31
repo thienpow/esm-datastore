@@ -104,7 +104,7 @@ services:
       -c ssl_crl_file=/var/lib/postgresql/CA.crl
     #to check if settings is ok try run the SELECT current_setting('hot_standby');
     volumes:
-      - ./postgres/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+      #- ./postgres/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
       - database-data:/var/lib/postgresql/data/
     environment:
       POSTGRES_DB: postgres
