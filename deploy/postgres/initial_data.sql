@@ -69,12 +69,6 @@ COPY public.winner_status_type (id, title) FROM stdin;
 4	Expired
 \.
 --
--- public.user
---
-COPY public."user" (id, username, passhash, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, country_code, address, city, state, zip_code, country, is_email_confirmed, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, spins_left, rank, gems, tickets, current_game_id, current_game_score, today_tickets) FROM stdin;
-1	wukong	$argon2id$v=19$m=64,t=1,p=1$pb7+cdRKchBGWxfmx6nHinqmLY4ir5vc4+LSsPwbpDg$kwfH/p8iEmxcTjKqzyWs8sekvIns2Qt4vSvbS/Pxz9U	thienpow@gmail.com	0188888888	Black	Myth	2020-12-31 15:07:54.239332	2020-12-31 15:07:54.239332	1	1	0				0		0						f	f	f	f	f		0	0	0	0	0	0	0
-\.
---
 -- public.timezones
 --
 COPY public."timezones" (id, "offset", stext, ltext) FROM stdin;
@@ -136,8 +130,21 @@ COPY public."rank" (id, title, "exp", gem, multiplier) FROM stdin;
 20	Level 20	20000	10	0.2
 \.
 --
+-- public.user
+--
+COPY public."user" (id, username, passhash, email, phone, firstname, lastname, created_on, last_login, role_id, status, gem_balance, social_link_fb, social_link_google, avatar_url, exp, full_name, country_code, address, city, state, zip_code, country, is_email_confirmed, is_notify_allowed, is_notify_new_reward, is_notify_new_tournament, is_notify_tour_ending, nick_name, rank, msg_token, subscription_id, one_time_multiplier, daily_gem, daily_multiplier, one_time_is_firstonly, sub_daily_timestamp, exp_timestamp, msg_token_timestamp, sub_id) FROM stdin;
+51	player1	$argon2id$v=19$m=64,t=1,p=1$pb7+cdRKchBGWxfmx6nHinqmLY4ir5vc4+LSsPwbpDg$kwfH/p8iEmxcTjKqzyWs8sekvIns2Qt4vSvbS/Pxz9U	player1@gmail.com	123	Player	One	2020-12-31 15:07:54.239332	2020-12-31 15:07:54.239332	200	2	180				0		0						f	f	f	f	f		0		0	0	0	0	f	1970-01-01 00:00:00	1970-01-01 00:00:00	1970-01-01 00:00:00	
+57	BsEvjBBwAXf7iYPr2JZGPw2Ox5z1	$argon2id$v=19$m=64,t=1,p=1$2jjZ9C51p6h9t99YxXfKQcZTlIvBrlDqboZhDqWc+3E$J+CBi0Ilwz8SKK3Wjod4lqc1LM8IFSYaGK4G4YKYc6A	rohail384test@gmail.com		Rohail	Tariq	2021-04-12 04:09:37.141931	2021-04-12 04:09:37.141931	200	1	0			https://lh5.googleusercontent.com/-CbPAo4UpzM4/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnj2pnnKiE4GKqGbGUDdaBhI0HvOQ/s96-c/photo.jpg	0		0						f	f	f	f	f		0		0	0	0	0	f	1970-01-01 00:00:00	1970-01-01 00:00:00	1970-01-01 00:00:00	
+55	sOytvIqW6zUvHmQbgnIzigtp6ax2	$argon2id$v=19$m=64,t=1,p=1$WERVV6Qm77XntsQ+7bS4MJEoEwWwSxD67naxRBx68mY$XXfKkkoHZPrnWtrT9ZGKsqkDTy/9RKojHk55oYCYsdk	atrallis384@gmail.com	12345678	At	Rallis	2021-03-25 02:37:35.503418	2021-03-25 02:37:35.503418	200	1	0			https://lh3.googleusercontent.com/a-/AOh14GhdyVq5INDX2ySe9bePv4UiDNNhlPA2HlrkrI1_Sg=s96-c	0		0						f	f	f	f	f		0		0	0	0	0	f	1970-01-01 00:00:00	1970-01-01 00:00:00	1970-01-01 00:00:00	
+56	x3u4O0MFYbcIqc7H6wZTpvK5sAK2	$argon2id$v=19$m=64,t=1,p=1$4JD/ix5ICfO2SEtlW8bhE66VC83hfMw2QNo4vCLhZHk$4kEZNb6FNRIFmaPzjh3yxDbgo/+UyzpGL15t4tL3tCs	rohail384@gmail.com	1234567800	Rohail	Tariq	2021-04-09 04:22:13.123075	2021-04-09 04:22:13.123075	200	1	0			https://lh3.googleusercontent.com/a-/AOh14GibA0bY_IRJW--Nn9Q8GISaLlZi3wPeyO8zHrBYlg=s96-c	0		0						f	f	f	f	f		0	fbL-uqlo40UTxZ4rhs4rbu:APA91bEbJKwSf2RY-cstQrzv2Io_a-ONLxfZoM_Pp-5EZ4mVWJpjC1265ABg5RPaBwLGS1QBQSJOZaUWT76gmXu1OR3z8kmra6s28ks49OIDbA4vOLOZY2zFcp1GDR1V6RaUNSBgeX08	0	0	0	0	f	1970-01-01 00:00:00	1970-01-01 00:00:00	1970-01-01 00:00:00	
+52	S77rrH8NhafvYaXTVsg0LWe8sPv1	$argon2id$v=19$m=64,t=1,p=1$bCQNkEPfC1D484qIvqiunwWYRXj2bqU3gx7QQy8pQhs$qeOt10oQzDJBE1DU8eZu4kkxhXL8FURIXte53U4FYsE	thienpow@gmail.com		Thien Pow Chong		2021-03-24 04:33:11.029931	2021-05-31 10:09:34.960868	200	1	15227			../images/avatars/avatar-01.svg	192	Ken	60	B-18-12	Tanjung Tokong	Pulau Pinang	10470	Malaysia	f	t	t	t	t	KEN	0	dnoc3SeyESGge6RcnPlo5C:APA91bHUx5HPQPyT9O3SJWl0RQxO09wkp44KDr5YuiwStO9dRvhU3hsutMt12f6hYnbj_iLDrJkG6JeXyvOvqhPNny-fGXkf2FQ_iZx-5JWTEFOy1FRcQTAX_6eYycgT3-BbXxRTvFi4	4	0	0	2	t	2021-05-31 08:25:56.427379	2021-05-31 08:25:56.428516	2021-05-30 11:40:26.808477	sub_JXnrRcSGB1MIVO
+53	UibTPpH2G9e06QGom6xMUBWLw8x1	$argon2id$v=19$m=64,t=1,p=1$D3Wm5wYGiQo1PhtA4JGYFolCYcU6yL0L4JOEtJvK9lE$Q6eXUARreHJX4avodLKfznmWeHzHmsExvMUJQp1DmGc	rohail@esportsmini.com	0142615352	Rohail T		2021-03-24 04:34:01.58158	2021-05-31 10:18:58.612129	200	1	10157			../images/avatars/avatar-01.svg	345	rohail	60	hartmas regency 1	kuala lumpur	Wilayah Persekutuan (Kuala Lumpur)	51200	Malaysia	f	t	t	t	t	Rohail Tariq	0	e_tUmsE54Xxx-Ujd6RdgXe:APA91bEyTNVT4SspRAKGCTrgU6f2eC5IJRaKaB9LUHzLb57ngc27TsQRleaWv5ogtdlJcDyL-r390cYChnYUK6dFzGJgO79XAqjeCFKeAK-q-sBDrvT-zrdRLoHERzi69n89jYe4CFFY	4	0	0	0.5	f	2021-05-31 09:30:12.435157	2021-05-31 09:30:12.43674	2021-05-27 10:49:55.015688	sub_JaEUpAENQShcmU
+58	tNQg2zRLfRWFpncwU8d7nPggNc93	$argon2id$v=19$m=64,t=1,p=1$SqPz+U3/RCP+MDYx9fKrEjB224pgaRscuv3BIOxK4s8$1Lj3zwnfkuCRunNF91gOS1Lyhui299WpC9/T0rtaofM	heman@esportsmini.com	333664873	Heman	Ling	2021-05-24 07:53:11.031254	2021-05-31 10:20:44.35625	200	1	17			https://lh3.googleusercontent.com/a/AATXAJyPU7np7w5SVUjTDFpR1ZvH-WdxiTojP_MBT3kS=s96-c	146		0						f	f	f	f	f		0		0	0	0	0	f	2021-05-31 08:44:19.930517	2021-05-31 08:44:19.931538	1970-01-01 00:00:00	
+1	wukong	$argon2id$v=19$m=64,t=1,p=1$pb7+cdRKchBGWxfmx6nHinqmLY4ir5vc4+LSsPwbpDg$kwfH/p8iEmxcTjKqzyWs8sekvIns2Qt4vSvbS/Pxz9U	esmadmin@aadi.my	0188888888	Black	Myth	2020-12-31 15:07:54.239332	2021-05-31 10:28:27.69873	1	1	0				2		0						f	f	f	f	f		0		1	0	0	0	f	2021-05-24 12:07:26.856779	1970-01-01 00:00:00	1970-01-01 00:00:00	
+\.
+--
 -- public.checker_log
 --
-COPY public.checker_log (id) FROM stdin;
-1
+COPY public.checker_log (id, current_game_checked_on, current_game_time_spent, leaderboard_checked_on, leaderboard_time_spent, subscriber_checked_on, subscriber_time_spent) FROM stdin;
+1	2021-05-31 11:00:34.223663	55	2021-05-31 10:59:18.546515	4495	2021-05-31 11:00:17.475124	1
 \.
