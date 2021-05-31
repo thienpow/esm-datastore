@@ -89,9 +89,6 @@ cp target/release/wwwloader deploy/admin/wwwloader
 
 cd deploy/
 
-# clean  up unused docker images
-docker images -q | xargs docker rmi
-
 case $1 in
 0)
   docker-compose up -d --build
@@ -126,6 +123,9 @@ case $1 in
   docker-compose up --build
   ;;
 esac
+
+# clean  up unused docker images
+docker images -q | xargs docker rmi
 
 # show the running containers and server uptime
 docker ps -a
