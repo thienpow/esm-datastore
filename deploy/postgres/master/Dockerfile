@@ -6,9 +6,6 @@ COPY ./certs/out/postgres-master.crt /var/lib/postgresql/server.crt
 COPY ./certs/out/CA.crt /var/lib/postgresql/CA.crt
 COPY ./certs/out/CA.crl /var/lib/postgresql/CA.crl
 
-# COPY ./postgres/master/postgresql.conf /var/lib/postgresql/data/postgresql.conf
-# COPY ./postgres/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf
-
 RUN chown 70:70 /var/lib/postgresql/server.key 
 RUN chmod 600 /var/lib/postgresql/server.key
 RUN chown 70:70 /var/lib/postgresql/server.crt 
@@ -19,7 +16,12 @@ RUN chmod 600 /var/lib/postgresql/CA.crt
 RUN chown 70:70 /var/lib/postgresql/CA.crl
 RUN chmod 600 /var/lib/postgresql/CA.crl
 
+# put the initdb.sql inside this folder
 COPY ./postgres/master/*.sql /docker-entrypoint-initdb.d/
 RUN chmod a+r /docker-entrypoint-initdb.d/*
 
 ENTRYPOINT ["docker-entrypoint.sh"] 
+
+
+# Override default postgres config file if not using docker-compose command: > -c ...
+CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf", "hba_file", "/etc/postgresql/pg_hba.conf"]
