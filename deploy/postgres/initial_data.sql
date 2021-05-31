@@ -148,3 +148,15 @@ COPY public."user" (id, username, passhash, email, phone, firstname, lastname, c
 COPY public.checker_log (id, current_game_checked_on, current_game_time_spent, leaderboard_checked_on, leaderboard_time_spent, subscriber_checked_on, subscriber_time_spent) FROM stdin;
 1	2021-05-31 11:00:34.223663	55	2021-05-31 10:59:18.546515	4495	2021-05-31 11:00:17.475124	1
 \.
+COPY public.spinner_rule (id, probability, win, type_id) FROM stdin;
+1	5	300	1
+2	5	150	1
+3	0.5	500	1
+4	1.5	400	1
+5	3	350	1
+6	7.5	200	1
+7	7.5	150	1
+8	30	50	1
+9	30	25	1
+10	10	10	1
+\.
