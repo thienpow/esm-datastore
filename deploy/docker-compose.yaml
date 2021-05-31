@@ -108,8 +108,7 @@ services:
       -c max_wal_senders=10
       -c wal_compression=on
       -c archive_mode=on
-      -c archive_command='cp %p /archives/%f'
-      -c restore_command='cp /archives/%f %p'
+      -c archive_command='cd .'
     volumes: 
       - dbpg-master-data:/var/lib/postgresql/data/
     environment:
@@ -138,7 +137,6 @@ services:
       -c ssl_key_file=/var/lib/postgresql/server.key
       -c ssl_ca_file=/var/lib/postgresql/CA.crt
       -c ssl_crl_file=/var/lib/postgresql/CA.crl
-      -c restore_command='cp /archives/%f %p'
     volumes: 
       - dbpg-standby-01-data:/var/lib/postgresql/data/
     environment:
