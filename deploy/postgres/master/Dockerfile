@@ -1,7 +1,7 @@
 FROM postgres:13-alpine
 
-COPY ./certs/out/server.key /var/lib/postgresql/server.key
-COPY ./certs/out/server.crt /var/lib/postgresql/server.crt
+COPY ./certs/out/dbpg-master.key /var/lib/postgresql/server.key
+COPY ./certs/out/dbpg-master.crt /var/lib/postgresql/server.crt
 
 COPY ./certs/out/CA.crt /var/lib/postgresql/CA.crt
 COPY ./certs/out/CA.crl /var/lib/postgresql/CA.crl
