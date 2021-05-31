@@ -101,8 +101,6 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: doadmin
       POSTGRES_PASSWORD: tf45h3hpz6xstby6
-      PG_REP_USER: repuser
-      PG_REP_PASSWORD: ezreppass
     networks:
       - envoymesh
     expose:
