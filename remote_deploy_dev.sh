@@ -118,6 +118,7 @@ case $1 in
   docker-compose up -d --build esm-admin
   ;;
 8)
+  docker-compose down postgres-master
   docker-compose up -d --build postgres-master
   ;;
 9)
