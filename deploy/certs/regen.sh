@@ -1,4 +1,4 @@
 
 # certstrap init --common-name CA
-certstrap request-cert --common-name postgres-master --domain postgres-master
-certstrap sign postgres-master --CA CA
+certstrap request-cert --common-name localhost --domain localhost
+certstrap sign localhost --CA CA
