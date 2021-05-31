@@ -59,6 +59,11 @@ case $1 in
   echo "building wwwloader"
   $CARGO_PATH/cargo build --bin wwwloader --release
   ;;
+9)
+  echo "RESTART ONLY: docker-compose up -d --build"
+  ;;
+99)
+  echo "DEBUG ONLY: docker-compose up --build"
 esac
 
   
@@ -108,6 +113,10 @@ case $1 in
 7)
   docker-compose up -d --build esm-admin
   ;;
+9)
+  docker-compose up -d --build
+99)
+  docker-compose up --build
 esac
 
 # clean  up unused docker images
