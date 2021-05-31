@@ -127,7 +127,7 @@ case $1 in
   docker-compose up -d --build
   ;;
 88)
-  docker-compose up -d --build dbpg-master
+  docker-compose up -d --build dbpg-standby-01
   ;;
 99)
   docker-compose up --build
