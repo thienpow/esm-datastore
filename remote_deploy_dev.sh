@@ -64,6 +64,7 @@ case $1 in
   ;;
 99)
   echo "DEBUG ONLY: docker-compose up --build"
+  ;;
 esac
 
   
@@ -115,8 +116,10 @@ case $1 in
   ;;
 9)
   docker-compose up -d --build
+  ;;
 99)
   docker-compose up --build
+  ;;
 esac
 
 # clean  up unused docker images
