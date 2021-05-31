@@ -29,9 +29,9 @@ services:
       - ENVOY_UID=0
       - ENVOY_GID=0
     networks:
-      envoymesh
-        #aliases:
-        #  - grpc-web-proxy
+      envoymesh:
+        aliases:
+          - grpc-web-proxy
     depends_on:
       - "esmservice"
     links:
@@ -51,9 +51,9 @@ services:
     links:
       - "postgres-master"
     networks:
-      envoymesh
-        #aliases:
-        #  - esmservice
+      envoymesh:
+        aliases:
+          - esmservice
     expose:
       - "50051"
     ports:
@@ -65,9 +65,9 @@ services:
       dockerfile: ./gloader/Dockerfile
     restart: always
     networks:
-      envoymesh
-        #aliases:
-        #  - esm-game-loader
+      envoymesh:
+        aliases:
+          - esm-game-loader
     expose:
       - "3033"
     ports:
@@ -79,9 +79,9 @@ services:
       dockerfile: ./admin/Dockerfile
     restart: always
     networks:
-      envoymesh
-        #aliases:
-        #  - esm-admin
+      envoymesh:
+        aliases:
+          - esm-admin
     expose:
       - "3030"
     ports:
@@ -93,9 +93,9 @@ services:
       dockerfile: ./stripe/Dockerfile
     restart: always
     networks:
-      envoymesh
-        #aliases:
-        #  - esm-stripe
+      envoymesh:
+        aliases:
+          - esm-stripe
     expose:
       - "4242"
     ports:
@@ -116,9 +116,9 @@ services:
       PG_REP_USER: repuser
       PG_REP_PASSWORD: ezreppass
     networks:
-      envoymesh
-        #aliases:
-        #  - postgres
+      envoymesh:
+        aliases:
+          - postgres
     expose:
       - "5432"
     ports:
