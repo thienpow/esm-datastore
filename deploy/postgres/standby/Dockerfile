@@ -26,7 +26,7 @@ RUN chmod +x /usr/bin/gosu
 RUN apk add --update iputils
 RUN apk add --update htop
 
-COPY ./docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./postgres/standby/docker-entrypoint.sh /docker-entrypoint.sh
 
 RUN chmod +x /docker-entrypoint.sh
 
