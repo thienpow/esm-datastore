@@ -96,15 +96,18 @@ services:
       dockerfile: ./postgres/master/Dockerfile
     restart: always
     command: >
-      -c hot_standby=on
       -c ssl=on
       -c ssl_cert_file=/var/lib/postgresql/server.crt
       -c ssl_key_file=/var/lib/postgresql/server.key
       -c ssl_ca_file=/var/lib/postgresql/CA.crt
       -c ssl_crl_file=/var/lib/postgresql/CA.crl
+      -c hot_standby=on
+      -c wal_level=replica
+      -c archive_mode=on
+      -c archive_command='cd .'
+      -c max_wal_senders=8
     ######  to check if settings is ok try run the SELECT current_setting('hot_standby');
     volumes:
-      #- ./postgres/master/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
       - ./postgres/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
       - database-data:/var/lib/postgresql/data/
     environment:

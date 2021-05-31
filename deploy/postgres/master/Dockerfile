@@ -19,4 +19,7 @@ RUN chmod 600 /var/lib/postgresql/CA.crt
 RUN chown 70:70 /var/lib/postgresql/CA.crl
 RUN chmod 600 /var/lib/postgresql/CA.crl
 
+COPY *.sql /docker-entrypoint-initdb.d/
+RUN chmod a+r /docker-entrypoint-initdb.d/*
+
 ENTRYPOINT ["docker-entrypoint.sh"] 
