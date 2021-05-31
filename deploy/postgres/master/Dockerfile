@@ -24,4 +24,4 @@ ENTRYPOINT ["docker-entrypoint.sh"]
 
 
 # Override default postgres config file if not using docker-compose command: > -c ...
-CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf", "hba_file", "/etc/postgresql/pg_hba.conf"]
+# CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf", "hba_file", "/etc/postgresql/pg_hba.conf"]
