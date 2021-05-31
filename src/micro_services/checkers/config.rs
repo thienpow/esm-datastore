@@ -24,8 +24,8 @@ fn expect_env_var(name: &str, _default: &str) -> String {
 
 pub fn get_configuration() -> Configuration {
     Configuration {
-        db_cert_path: expect_env_var("DB_CERT_PATH", "cert/do_cert.cer"),
-        db_conn_string: expect_env_var("DB_CONN_STRING", "postgresql://doadmin:tf45h3hpz6xstby6@db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/defaultdb?sslmode=require"),
+        db_cert_path: expect_env_var("DB_CERT_PATH", "deploy/certs/out/CA.crt"),
+        db_conn_string: expect_env_var("DB_CONN_STRING", "postgresql://doadmin:tf45h3hpz6xstby6@esm-api.aadi.my:25432/postgres?sslmode=require"),
         server_timezone: expect_env_var("SERVER_TIMEZONE", "8").parse::<u64>().unwrap(),
         checker_time_wait: expect_env_var("CHECKER_TIME_WAIT", "60").parse::<u64>().unwrap(),
         fcm_key: expect_env_var("FCM_KEY", "AAAAzT8d8lM:APA91bHtFSHVIBiiSDUWSaUkrYNrcBSyhMY_JBYSeaaoWpkrxSgBO-7xgHtySH3qfTvsgHHTIsrh_SwwirCvTTuOWBl0--JhddEV8MFnEgWuGRPOXPVyTBHym5k9gh8WrCxr-rY13Y54"),
