@@ -115,9 +115,11 @@ case $1 in
   docker-compose up -d --build esm-admin
   ;;
 9)
+  docker-compose down
   docker-compose up -d --build
   ;;
 99)
+  docker-compose down
   docker-compose up --build
   ;;
 esac
