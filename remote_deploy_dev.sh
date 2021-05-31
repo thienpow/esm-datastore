@@ -60,7 +60,7 @@ case $1 in
   $CARGO_PATH/cargo build --bin wwwloader --release
   ;;
 8)
-  echo "rebuild postgres-master"
+  echo "rebuild dbpg-master"
   ;;
 9)
   echo "RESTART ONLY: docker-compose up -d --build"
@@ -121,7 +121,7 @@ case $1 in
   docker-compose up -d --build esm-admin
   ;;
 8)
-  docker-compose up -d --build postgres-master
+  docker-compose up -d --build dbpg-master
   ;;
 9)
   docker-compose up -d --build
