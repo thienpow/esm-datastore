@@ -128,7 +128,7 @@ services:
   dbpg-standby-01:
     build:
       context: .
-      dockerfile: ./postgres/master/Dockerfile
+      dockerfile: ./postgres/standby/Dockerfile
     restart: always
     command: >
       -c listen_addresses=*
