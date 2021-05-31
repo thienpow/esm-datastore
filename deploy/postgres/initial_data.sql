@@ -5,13 +5,6 @@ COPY public.config (id, invites, games_per_ad, days_to_claim, game_loader_templa
 1	10	3	30	0	3	1	0	2	0
 \.
 --
--- public.checker_log
---
-COPY public.checker_log (id) FROM stdin;
-1
-\.
-
---
 -- public.user_status_type
 --
 COPY public.user_status_type (id, title) FROM stdin;
@@ -141,4 +134,10 @@ COPY public."rank" (id, title, "exp", gem, multiplier) FROM stdin;
 18	Level 18	14300	5	0.18
 19	Level 19	17050	5	0.19
 20	Level 20	20000	10	0.2
+\.
+--
+-- public.checker_log
+--
+COPY public.checker_log (id) FROM stdin;
+1
 \.
