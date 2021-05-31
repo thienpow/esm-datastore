@@ -126,12 +126,13 @@ services:
     ports:
       - "5432:5432"
 
-    db-pg-master:
+    dbpg-master:
       build:
         context: .
         dockerfile: ./postgres/master/Dockerfile
       restart: always
       command: >
+        -c port=25432
         -c listen_addresses=*
         -c ssl=on
         -c ssl_cert_file=/var/lib/postgresql/server.crt
