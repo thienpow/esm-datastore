@@ -43,9 +43,9 @@ services:
       dockerfile: ./service/Dockerfile
     restart: always
     depends_on:
-      - "postgres-master"
+      - "dbpg-master"
     links:
-      - "postgres-master"
+      - "dbpg-master"
     networks:
       - envoymesh
     expose:
