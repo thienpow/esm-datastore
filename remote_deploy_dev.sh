@@ -59,6 +59,9 @@ case $1 in
   echo "building wwwloader"
   $CARGO_PATH/cargo build --bin wwwloader --release
   ;;
+8)
+  echo "rebuild postgres-master"
+  ;;
 9)
   echo "RESTART ONLY: docker-compose up -d --build"
   ;;
@@ -114,12 +117,13 @@ case $1 in
 7)
   docker-compose up -d --build esm-admin
   ;;
+8)
+  docker-compose up -d --build postgres-master
+  ;;
 9)
-  docker-compose down
   docker-compose up -d --build
   ;;
 99)
-  docker-compose down
   docker-compose up --build
   ;;
 esac
