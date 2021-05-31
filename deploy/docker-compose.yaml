@@ -130,7 +130,7 @@ services:
       context: .
       dockerfile: ./postgres/standby/Dockerfile
     restart: always
-    command: postgres
+    command: gosu postgres
       -c listen_addresses=*
       -c port=25433
       -c ssl=on
