@@ -133,7 +133,6 @@ services:
       restart: always
       command: >
         -c port=25432
-        -c listen_addresses=*
         -c ssl=on
         -c ssl_cert_file=/var/lib/postgresql/server.crt
         -c ssl_key_file=/var/lib/postgresql/server.key
@@ -146,7 +145,8 @@ services:
         -c wal_compression=on
         -c archive_mode=on
       ######  to check if settings is ok try run the SELECT current_setting('hot_standby');
-      #volumes:
+      #-c listen_addresses=*
+      #volumes: 
       #  - database-data:/var/lib/postgresql/data/
       environment:
         POSTGRES_DB: postgres
