@@ -146,6 +146,7 @@ services:
       POSTGRES_PASSWORD: tf45h3hpz6xstby6
       PG_REP_USER: replicator
       PG_REP_PASSWORD: tf45h3hpz6xstby6
+      PG_MASTER_HOST: dbpg-master
     networks:
       - envoymesh
     expose:
