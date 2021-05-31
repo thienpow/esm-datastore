@@ -41,16 +41,8 @@ sudo certbot certonly --cert-name esm-api.aadi.my-0001 --standalone --expand -d 
 #### check certbot status
 sudo systemctl status certbot.timer
 
-# CUSTOM CERT
-self-signed-ssl --no-interaction -c 'MY' -s 'Kuala Lumpur' -l 'Kuala Lumpur' -o 'Esportsmini Pty Ltd' -u 'Black Myth Department' -n 'esportsmini.com' -a 'www.esportsmini.com'
 
-Postgresql Server
+# Postgresql Server
 
-public
-postgresql://doadmin:tf45h3hpz6xstby6@db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/defaultdb?sslmode=require
-
-private
-postgresql://doadmin:tf45h3hpz6xstby6@private-db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com:25060/defaultdb?sslmode=require
-
-migrate data
-PGPASSWORD=tf45h3hpz6xstby6 pg_restore -U doadmin -h db-postgresql-dev-sgp1-32064-do-user-7964287-0.b.db.ondigitalocean.com -p 25060 -d defaultdb 
+## CUSTOM Self Signed CERT for Postgrest Server
+look into deploy/certs/regen.sh

@@ -65,6 +65,9 @@ case $1 in
 9)
   echo "RESTART ONLY: docker-compose up -d --build"
   ;;
+88)
+  echo "TEST ONLY"
+  ;;
 99)
   echo "DEBUG ONLY: docker-compose up --build"
   ;;
@@ -123,6 +126,8 @@ case $1 in
 9)
   docker-compose up -d --build
   ;;
+88)
+  docker-compose up -d --build db-pg-master
 99)
   docker-compose up --build
   ;;

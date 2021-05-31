@@ -16,12 +16,11 @@ RUN chmod 600 /var/lib/postgresql/CA.crt
 RUN chown 70:70 /var/lib/postgresql/CA.crl
 RUN chmod 600 /var/lib/postgresql/CA.crl
 
+COPY ./postgres/master/setup.sh /docker-entrypoint-initdb.d/setup.sh
+RUN chmod 0666 /docker-entrypoint-initdb.d/setup.sh
+
 # put the initdb.sql inside this folder
 COPY ./postgres/master/*.sql /docker-entrypoint-initdb.d/
 RUN chmod a+r /docker-entrypoint-initdb.d/*
 
 ENTRYPOINT ["docker-entrypoint.sh"] 
-
-
-# Override default postgres config file if not using docker-compose command: > -c ...
-# CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf", "hba_file", "/etc/postgresql/pg_hba.conf"]
