@@ -17,6 +17,9 @@ RUN chmod u+x /usr/local/bin/checker_leaderboard
 COPY ./service/checker_subscriber /usr/local/bin/checker_subscriber
 RUN chmod u+x /usr/local/bin/checker_subscriber
 
+COPY ./common_env.sh /usr/local/bin/common_env
+RUN chmod u+x /usr/local/bin/common_env
+
 COPY ./service/start.sh /usr/local/bin/start
 RUN chmod u+x /usr/local/bin/start
 
