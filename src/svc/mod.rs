@@ -80,8 +80,8 @@ pub async fn reset_push_notification(user: &user::User, token: &str) -> Result<b
 pub async fn unsubscribe_topic(topic: &str, token: &str) -> Result<bool, reqwest::Error> {
   let config = config::get_configuration();
     
-  let echo_json: serde_json::Value = reqwest::Client::new()
   //for remove  https://iid.googleapis.com/iid/v1:batchRemove
+  let _: serde_json::Value = reqwest::Client::new()
   .post("https://iid.googleapis.com/iid/v1:batchRemove")
   .header("authorization", format!("key={}", config.fcm_key))
   .json(&serde_json::json!({
@@ -94,7 +94,7 @@ pub async fn unsubscribe_topic(topic: &str, token: &str) -> Result<bool, reqwest
   .await?;
 
 
-  println!("{:#?}", echo_json);
+  //println!("{:#?}", echo_json);
 
   Ok(true)
 
@@ -103,8 +103,7 @@ pub async fn unsubscribe_topic(topic: &str, token: &str) -> Result<bool, reqwest
 pub async fn subscribe_topic(topic: &str, token: &str) -> Result<bool, reqwest::Error> {
   let config = config::get_configuration();
     
-  let echo_json: serde_json::Value = reqwest::Client::new()
-  //for remove  https://iid.googleapis.com/iid/v1:batchRemove
+  let _: serde_json::Value = reqwest::Client::new()
   .post("https://iid.googleapis.com/iid/v1:batchAdd")
   .header("authorization", format!("key={}", config.fcm_key))
   .json(&serde_json::json!({
@@ -117,7 +116,7 @@ pub async fn subscribe_topic(topic: &str, token: &str) -> Result<bool, reqwest::
   .await?;
 
 
-  println!("{:#?}", echo_json);
+  //println!("{:#?}", echo_json);
 
   Ok(true)
 
@@ -126,7 +125,7 @@ pub async fn subscribe_topic(topic: &str, token: &str) -> Result<bool, reqwest::
 pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwest::Error> {
   let config = config::get_configuration();
     
-  let echo_json: serde_json::Value = reqwest::Client::new()
+  let _: serde_json::Value = reqwest::Client::new()
   .post("https://fcm.googleapis.com/fcm/send")
   .header("authorization", format!("key={}", config.fcm_key))
   .json(&serde_json::json!({
@@ -142,7 +141,7 @@ pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwes
   .await?;
 
 
-  println!("{:#?}", echo_json);
+  //println!("{:#?}", echo_json);
 
   Ok(true)
 
@@ -154,17 +153,17 @@ pub async fn check_is_admin(meta: &MetadataMap) -> Result<bool, Status> {
   let token = meta.get("authorization").unwrap().to_str().unwrap();
 
   if test_token == token {
-    println!("tester yeah!");
+    //println!("tester yeah!");
     return Ok(true);
   }
 
   match jwt::validate_token_admin(token) {
     Ok(true) => {
-      println!("admin yeah!");
+      //println!("admin yeah!");
       Ok(true)
     },
     _ => {
-      println!("You are not admin!");
+      //println!("You are not admin!");
       Err(Status::permission_denied("You are not admin!"))
     }
   }

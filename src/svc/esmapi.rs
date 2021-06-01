@@ -820,11 +820,12 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                   if is_used_gem {
                           
                     //deduct a gem first
-                    let new_gem_balance: i32 = user.gem_balance - 1 as i32;
-                    match user::User::update_status_gem_balance(user_id, user.status, new_gem_balance, &self.pool.clone()).await {
+                    let new_gem_balance: i32 = user.gem_balance - game_rules.use_how_many_gems;
+                    
+                    match user::User::deduct_gem(user_id, game_rules.use_how_many_gems, &self.pool.clone()).await {
                       Ok(_) => {
         
-                        match svc::notify("You spent a Gem!", format!("You spent a gem to play, Your Gem Balance is Updated to {}", new_gem_balance).as_str(), &user.msg_token).await {
+                        match svc::notify(format!("You spent {} Gem!", game_rules.use_how_many_gems).as_str(), format!("You spent {} gem to play, Your Gem Balance is Updated to {}", game_rules.use_how_many_gems, new_gem_balance).as_str(), &user.msg_token).await {
                           Ok(_) => "1",
                           Err(error) => panic!("Error: {}.", error),
                         };
@@ -832,7 +833,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                       },
                       Err(error) => panic!("Error: {}.", error),
                     }
-
                     //after deducted gem, reward the tickets/exp
                     reward_tickets = (reward_tickets as f32 + multiplier * game_rules.use_gem_get_tickets as f32).ceil() as i32;
                     reward_exp = (reward_exp as f32 + multiplier * game_rules.use_gem_get_exp as f32).ceil() as i32;
@@ -872,7 +872,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     };
     
     
-
+    println!("logGLeave {}", result);
     Ok(Response::new(LogGLeaveResponse {
       result: result,
     }))
