@@ -1434,6 +1434,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.getSpinAvailable =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.LogSExtraRequest,
+ *   !proto.api.esm.LogSExtraResponse>}
+ */
+const methodDescriptor_EsmApi_LogSExtra = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/LogSExtra',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.LogSExtraRequest,
+  proto.api.esm.LogSExtraResponse,
+  /**
+   * @param {!proto.api.esm.LogSExtraRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.LogSExtraResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.LogSExtraRequest,
+ *   !proto.api.esm.LogSExtraResponse>}
+ */
+const methodInfo_EsmApi_LogSExtra = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.LogSExtraResponse,
+  /**
+   * @param {!proto.api.esm.LogSExtraRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.LogSExtraResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.LogSExtraRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.LogSExtraResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.LogSExtraResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.logSExtra =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/LogSExtra',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_LogSExtra,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.LogSExtraRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.LogSExtraResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.logSExtra =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/LogSExtra',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_LogSExtra);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.LogSEnterRequest,
  *   !proto.api.esm.LogSEnterResponse>}
  */

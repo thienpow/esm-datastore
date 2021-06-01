@@ -27,6 +27,16 @@ impl SpinnerRule {
     
       Ok(row.get::<usize, i32>(0))
     }
+
+    pub async fn add_extra_free_spin(user_id: i64, free_spins: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i32, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("INSERT INTO public.\"spinner_extra_log\" (free_spin, user_id) VALUES ($1, $2) RETURNING id;").await?;
+      let row = conn.query_one(&stmt, 
+                  &[&free_spins, &user_id]).await?;
+    
+      Ok(row.get::<usize, i32>(0))
+    }
     
     pub async fn update(sr: SpinnerRule, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;

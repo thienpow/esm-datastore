@@ -227,7 +227,7 @@ impl GPlayer {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT 
-        (SELECT freespin_per_day FROM public.\"config\") - 
+        (SELECT free_spins FROM public.\"spinner_extra_log\" WHERE user_id=$1 AND DATE(created_on)=CURRENT_DATE) + (SELECT freespin_per_day FROM public.\"config\") - 
         (SELECT count(id) FROM public.\"spinner_log\" WHERE user_id=$1 AND is_logged_leave=true AND date(enter_timestamp) = CURRENT_DATE)").await?;
       let row = conn.query_one(&stmt, &[&user_id]).await?;
     
@@ -238,7 +238,7 @@ impl GPlayer {
     pub async fn spin_enter(spin_detail: LogSDetail, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"spinner_log\" (user_id, prize_id, enter_timestamp) VALUES ($1, $2, $3) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"spinner_log\" (user_id, prize_id, enter_timestamp) VALUES ($1, $2, $3, $4, $5) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
                   &[&spin_detail.user_id, &spin_detail.prize_id, &spin_detail.enter_timestamp]).await?;
     

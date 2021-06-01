@@ -51,6 +51,7 @@ use esmapi_proto::{
 
   // GPlayer
   GetSpinAvailableRequest, GetSpinAvailableResponse,
+  LogSExtraRequest, LogSExtraResponse,
   LogSEnterRequest, LogSEnterResponse,
   LogSLeaveRequest, LogSLeaveResponse,
   LogGEnterRequest, LogGEnterResponse,
@@ -1045,6 +1046,51 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     }
   }
 
+  async fn log_s_extra(&self, request: Request<LogSExtraRequest>, ) -> Result<Response<LogSExtraResponse>, Status> {
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    let is_gem_or_ad: bool = req.is_gem_or_ad.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
+
+
+    let config = match config::Config::get(&self.pool.clone()).await {
+      Ok(config) => config,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut extra_free_spin = 0;
+
+    if is_gem_or_ad {
+
+      let gems_to_deduct = config.gems_per_spins_1;
+      let _ = match user::User::deduct_gem(user_id, gems_to_deduct, &self.pool.clone()).await {
+        Ok(n) => {
+          if n > 0 {
+            extra_free_spin = config.gems_per_spins_2;
+          }
+        },
+        Err(error) => panic!("Error: {}.", error),
+      };
+
+    } else {
+      //gems_to_deduct = config.ads_per_spins_1;
+      extra_free_spin = config.ads_per_spins_2;
+    }
+    
+    match spinner::SpinnerRule::add_extra_free_spin(user_id, extra_free_spin, &self.pool.clone()).await {
+      Ok(_) => {
+
+        Ok(Response::new(LogSExtraResponse {
+          result: extra_free_spin
+        }))
+      },
+      Err(error) => panic!("Error: {}.", error),
+    }
+  }
+
   
   async fn log_s_enter(&self, request: Request<LogSEnterRequest>, ) -> Result<Response<LogSEnterResponse>, Status> {
     
@@ -1053,6 +1099,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let req = request.into_inner();
     let user_id: i64 = req.user_id.into();
     let prize_id: i64 = req.prize_id.into();
+
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
     
     let now = SystemTime::now();
