@@ -452,9 +452,9 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
     if prize.type_id == 4 {
         // Automated Entry, everyone who played
         let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        let adjusted_scheduled_on = UNIX_EPOCH + Duration::new(scheduled_on, 0);
+        let scheduled_on = UNIX_EPOCH + Duration::new(scheduled_on, 0);
 
-        match prize::Prize::list_all_prize_pool_users_tickets(adjusted_scheduled_on, &pool.clone()).await {
+        match prize::Prize::list_all_prize_pool_users_tickets(scheduled_on, &pool.clone()).await {
             Ok(items) => {
                 
                 if items.len() > 0 {
