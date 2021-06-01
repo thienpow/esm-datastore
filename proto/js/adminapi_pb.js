@@ -23137,8 +23137,7 @@ proto.adminapi.esm.DeletePrizeRequest.prototype.toObject = function(opt_includeI
  */
 proto.adminapi.esm.DeletePrizeRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    secret: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    id: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -23176,10 +23175,6 @@ proto.adminapi.esm.DeletePrizeRequest.deserializeBinaryFromReader = function(msg
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setSecret(value);
-      break;
-    case 2:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setId(value);
       break;
@@ -23212,47 +23207,22 @@ proto.adminapi.esm.DeletePrizeRequest.prototype.serializeBinary = function() {
  */
 proto.adminapi.esm.DeletePrizeRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getSecret();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getId();
+  if (f !== 0) {
+    writer.writeInt64(
       1,
       f
     );
   }
-  f = message.getId();
-  if (f !== 0) {
-    writer.writeInt64(
-      2,
-      f
-    );
-  }
 };
 
 
 /**
- * optional string secret = 1;
- * @return {string}
- */
-proto.adminapi.esm.DeletePrizeRequest.prototype.getSecret = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.adminapi.esm.DeletePrizeRequest} returns this
- */
-proto.adminapi.esm.DeletePrizeRequest.prototype.setSecret = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
-};
-
-
-/**
- * optional int64 id = 2;
+ * optional int64 id = 1;
  * @return {number}
  */
 proto.adminapi.esm.DeletePrizeRequest.prototype.getId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
@@ -23261,7 +23231,7 @@ proto.adminapi.esm.DeletePrizeRequest.prototype.getId = function() {
  * @return {!proto.adminapi.esm.DeletePrizeRequest} returns this
  */
 proto.adminapi.esm.DeletePrizeRequest.prototype.setId = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
