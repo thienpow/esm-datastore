@@ -247,7 +247,9 @@ impl Prize {
       let conn = pool.get().await?;
   
       //let stmt = conn.prepare("").await?;
-      let n = conn.execute("DELETE FROM public.\"current_game\" WHERE prize_id=$1 AND is_closed=false; DELETE FROM public.\"prize_pool\" WHERE prize_id=$1 AND is_closed=false; UPDATE public.\"prize\" SET status_progress=9999, status=4 WHERE id=$1;", &[&id]).await?;
+      let mut n = conn.execute("DELETE FROM public.\"current_game\" WHERE prize_id=$1 AND is_closed=false;", &[&id]).await?;
+      n = conn.execute("DELETE FROM public.\"prize_pool\" WHERE prize_id=$1 AND is_closed=false;", &[&id]).await? + n;
+      n = conn.execute("UPDATE public.\"prize\" SET status_progress=9999, status=4 WHERE id=$1;", &[&id]).await? + n;
   
       Ok(n)
     }
