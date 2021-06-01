@@ -711,6 +711,23 @@ impl Prize {
       Ok(vec)
     }
 
+    pub async fn list_all_prize_pool_users_tickets(adjusted_scheduled_on: SystemTime,  pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<(i64, i64)>, RunError<tokio_postgres::Error>> {
+
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT DISTINCT user_id, SUM(tickets) FROM public.\"prize_pool\" WHERE created_on >= $1 GROUP BY user_id;").await?;
+    
+      let mut vec: Vec<(i64, i64)> = Vec::new();
+      for row in conn.query(&stmt, &[&adjusted_scheduled_on]).await? {
+
+        vec.push(
+          (row.get(0), row.get(1))
+        );
+      }
+      
+      Ok(vec)
+    }
+
     pub async fn close_prize_pool(prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

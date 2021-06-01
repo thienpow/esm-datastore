@@ -52,6 +52,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         for prize in prizes {
             
             let prize_id = prize.id;
+            let type_id = prize.type_id;
             let status_progress = prize.status_progress;
 
             i = i + 1;
@@ -65,7 +66,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let tickets_collected = prize::Prize::get_current_tickets_collected(prize_id, &pool.clone()).await?;
             prize::Prize::set_prize_tickets_collected(prize_id, tickets_collected, &pool.clone()).await?;
 
-            if prize.type_id == 1 || prize.type_id == 2 {
+            if type_id == 1 || type_id == 2 {
         
                 if tickets_collected < prize.tickets_required {
 
@@ -85,7 +86,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                         // after closing is called here only do reset/perm-end below
                         //process closing here, loop the prize_pool, set is_closed and find winner
-                        match process_closing(prize_id, &pool.clone()).await {
+                        match process_closing(&prize, &pool.clone()).await {
                             Ok(success) => {
                                 if success {
 
@@ -95,7 +96,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         Err(error) => panic!("== Type 1/2 log_closed Error: {}.", error),
                                     };
                                     
-                                    println!("{} prize_id={} Type 1/2, tickets fulled and restart need to be set here",i , prize.id.to_string());
+                                    println!("{} prize_id={} Type 1/2, tickets fulled and restart need to be set here",i , prize_id.to_string());
 
                                     let u_new_scheduled_on: u64 = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
                                     let duration_days: u64 = (prize.duration_days as u64) * 86400;
@@ -109,7 +110,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     // if scheduled_off is not passed, meaning we need to reset_schedule with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
 
                                     //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
-                                    let _ = match prize::Prize::reset_schedule(prize.id, new_scheduled_on, new_scheduled_off, &pool.clone()).await {
+                                    let _ = match prize::Prize::reset_schedule(prize_id, new_scheduled_on, new_scheduled_off, &pool.clone()).await {
                                         Ok(_) => (),
                                         Err(error) => panic!("== Type 1/2, tickets fulled, reset_schedule Error: {}.", error),
                                     };
@@ -125,7 +126,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         if status_progress != 999 {
 
                             //process closing here, loop the prize_pool, set is_closed and find winner
-                            match process_closing(prize_id, &pool.clone()).await {
+                            match process_closing(&prize, &pool.clone()).await {
                                 Ok(success) => {
                                     if success {
 
@@ -155,7 +156,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             
                 
 
-            } else if prize.type_id == 3 || prize.type_id == 4 {
+            } else if type_id == 3 || type_id == 4 {
 
                 if scheduled_on <= (adjusted_now - 60) {
 
@@ -183,7 +184,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             //scheduled_off is already smaller than now, meaning already ended
                             //process closing here, loop the prize_pool, set is_closed and find winner
                             //make sure prize's tickets_collected is kept in a log, to identify previous round's data
-                            match process_closing(prize_id, &pool.clone()).await {
+                            match process_closing(&prize, &pool.clone()).await {
                                 Ok(success) => {
                                     if success {
                                         let _ = match prize::Prize::log_closed(prize_id, tickets_collected, &pool.clone()).await {
@@ -204,7 +205,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         // if scheduled_off is not passed, meaning we need to reset_schedule with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
             
                                         //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
-                                        let _ = match prize::Prize::reset_schedule(prize.id, new_scheduled_on, new_scheduled_off, &pool.clone()).await {
+                                        let _ = match prize::Prize::reset_schedule(prize_id, new_scheduled_on, new_scheduled_off, &pool.clone()).await {
                                             Ok(_) => (),
                                             Err(error) => panic!("== Type 3/4, is Repeat, reset_schedule Error: {}.", error),
                                         };
@@ -242,7 +243,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 //process closing here, loop the prize_pool, set is_closed and find winner
                                 //make sure prize's tickets_collected is kept in a log, to identify previous round's data
                             
-                                match process_closing(prize_id, &pool.clone()).await {
+                                match process_closing(&prize, &pool.clone()).await {
                                     Ok(success) => {
                                         if success {
 
@@ -251,10 +252,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                                 Err(error) => panic!("== Type 3/4, NOT REPEAT, log_closed Error: {}.", error),
                                             };
                 
-                                            println!("{} prize_id={} Type 3/4, NOT REPEAT and ENDED", i, prize.id.to_string());
+                                            println!("{} prize_id={} Type 3/4, NOT REPEAT and ENDED", i, prize_id.to_string());
             
                                             //update the status_progress=closed=999
-                                            let _ = match prize::Prize::set_permanent_closed(prize.id, &pool.clone()).await {
+                                            let _ = match prize::Prize::set_permanent_closed(prize_id, &pool.clone()).await {
                                                 Ok(_) => (),
                                                 Err(error) => panic!("== Type 3/4, NOT REPEAT, set_closed Error: {}.", error),
                                             };
@@ -339,11 +340,11 @@ async fn generate_current_games(is_previous_game_found: bool, prize: Prize, prev
         Err(error) => panic!("==== generate_current_games.list_active_by_prize_id Error: {}.", error),
     };
 
-    let mut start_timestamp = scheduled_on;
+    let mut start_timestamp = scheduled_on + (timezone_seconds as u64);
     
-    let mut final_end_timestamp = scheduled_off;
+    let mut final_end_timestamp = scheduled_off + (timezone_seconds as u64);
     //println!("==== adjusted_now {} > scheduled_off {}", adjusted_now, scheduled_off);
-    if adjusted_now + 3600 * 1 > scheduled_off {
+    if adjusted_now + 3600 * 1 > (scheduled_off + (timezone_seconds as u64)) {
         final_end_timestamp = adjusted_now + 3600 * 1;
     }
 
@@ -443,44 +444,90 @@ async fn generate_current_games(is_previous_game_found: bool, prize: Prize, prev
 }
 
 
-async fn process_closing(prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<bool, Box<dyn std::error::Error>> {
+async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<bool, Box<dyn std::error::Error>> {
     //For closing use WeightedIndex
     //https://docs.rs/rand/0.8.3/rand/distributions/weighted/struct.WeightedIndex.html
-    
-    match prize::Prize::list_prize_pool_users_tickets(prize_id, &pool.clone()).await{
-        Ok(items) => {
+    let prize_id = prize.id;
 
-            if items.len() > 0 {
+    if prize.type_id == 4 {
+        // Automated Entry, everyone who played
+        let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
+        let timezone_seconds = prize.timezone * 3600 as f64;
+        let adjusted_scheduled_on = scheduled_on + timezone_seconds as u64;
+        let adjusted_scheduled_on = UNIX_EPOCH + Duration::new(adjusted_scheduled_on, 0);
 
-                let mut rng = thread_rng();
-                let dist = WeightedIndex::new(items.iter().map(|item| item.1)).unwrap();
+        match prize::Prize::list_all_prize_pool_users_tickets(adjusted_scheduled_on, &pool.clone()).await {
+            Ok(items) => {
                 
-                let winner_user_id: i64 = items[dist.sample(&mut rng)].0;
-                println!("Winner {}", winner_user_id);
+                if items.len() > 0 {
     
-                //winner found, set is_closed for prize_pool
-                match prize::Prize::close_prize_pool(prize_id, &pool.clone()).await{
-                    Ok(n) => {
-                        println!("Rows Affected = {}", n);
-                    },
-                    Err(error) => panic!("==== process_closing.close_prize_pool Error: {}.", error),
-                };
+                    let mut rng = thread_rng();
+                    let dist = WeightedIndex::new(items.iter().map(|item| item.1)).unwrap();
+                    
+                    let winner_user_id: i64 = items[dist.sample(&mut rng)].0;
+                    println!("Winner {}", winner_user_id);
+        
+                    //winner found, set is_closed for prize_pool
+                    match prize::Prize::close_prize_pool(prize_id, &pool.clone()).await{
+                        Ok(n) => {
+                            println!("Rows Affected = {}", n);
+                        },
+                        Err(error) => panic!("==== process_closing.close_prize_pool Error: {}.", error),
+                    };
+                    
+                    match winner::Winner::add(prize_id, winner_user_id, &pool.clone()).await {
+                        Ok(n) => {
+                            println!("Add Winner, Success {}.", n);
+                        },
+                        Err(error) => panic!("==== winner.add Error: {}.", error),
+                    };
+        
+                    notify_closing("Prize Closing", format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), winner_user_id.to_string().as_str()).await?;
+                }
                 
-                match winner::Winner::add(prize_id, winner_user_id, &pool.clone()).await {
-                    Ok(n) => {
-                        println!("Add Winner, Success {}.", n);
-                    },
-                    Err(error) => panic!("==== winner.add Error: {}.", error),
-                };
-    
-                notify_closing("Prize Closing", format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), winner_user_id.to_string().as_str()).await?;
-            }
-            
-            Ok(true)
+                Ok(true)
+            },
+            Err(error) => panic!("==== process_closing.list_all_prize_pool_users_tickets Error: {}.", error),
+        }
 
-        },
-        Err(error) => panic!("==== process_closing.list_prize_pool_users_tickets Error: {}.", error),
+
+    } else {
+        match prize::Prize::list_prize_pool_users_tickets(prize_id, &pool.clone()).await{
+            Ok(items) => {
+    
+                if items.len() > 0 {
+    
+                    let mut rng = thread_rng();
+                    let dist = WeightedIndex::new(items.iter().map(|item| item.1)).unwrap();
+                    
+                    let winner_user_id: i64 = items[dist.sample(&mut rng)].0;
+                    println!("Winner {}", winner_user_id);
+        
+                    //winner found, set is_closed for prize_pool
+                    match prize::Prize::close_prize_pool(prize_id, &pool.clone()).await{
+                        Ok(n) => {
+                            println!("Rows Affected = {}", n);
+                        },
+                        Err(error) => panic!("==== process_closing.close_prize_pool Error: {}.", error),
+                    };
+                    
+                    match winner::Winner::add(prize_id, winner_user_id, &pool.clone()).await {
+                        Ok(n) => {
+                            println!("Add Winner, Success {}.", n);
+                        },
+                        Err(error) => panic!("==== winner.add Error: {}.", error),
+                    };
+        
+                    notify_closing("Prize Closing", format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), winner_user_id.to_string().as_str()).await?;
+                }
+                
+                Ok(true)
+    
+            },
+            Err(error) => panic!("==== process_closing.list_prize_pool_users_tickets Error: {}.", error),
+        }
     }
+    
     
 }
 
