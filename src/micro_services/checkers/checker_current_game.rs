@@ -340,11 +340,11 @@ async fn generate_current_games(is_previous_game_found: bool, prize: Prize, prev
         Err(error) => panic!("==== generate_current_games.list_active_by_prize_id Error: {}.", error),
     };
 
-    let mut start_timestamp = scheduled_on + (timezone_seconds as u64);
+    let mut start_timestamp = scheduled_on;
     
-    let mut final_end_timestamp = scheduled_off + (timezone_seconds as u64);
+    let mut final_end_timestamp = scheduled_off;
     //println!("==== adjusted_now {} > scheduled_off {}", adjusted_now, scheduled_off);
-    if adjusted_now + 3600 * 1 > (scheduled_off + (timezone_seconds as u64)) {
+    if adjusted_now + 3600 * 1 > scheduled_off {
         final_end_timestamp = adjusted_now + 3600 * 1;
     }
 
@@ -452,9 +452,9 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
     if prize.type_id == 4 {
         // Automated Entry, everyone who played
         let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        let timezone_seconds = prize.timezone * 3600 as f64;
-        let adjusted_scheduled_on = scheduled_on + timezone_seconds as u64;
-        let adjusted_scheduled_on = UNIX_EPOCH + Duration::new(adjusted_scheduled_on, 0);
+        //let timezone_seconds = prize.timezone * 3600 as f64;
+        //let adjusted_scheduled_on = scheduled_on + timezone_seconds as u64;
+        let adjusted_scheduled_on = UNIX_EPOCH + Duration::new(scheduled_on, 0);
 
         match prize::Prize::list_all_prize_pool_users_tickets(adjusted_scheduled_on, &pool.clone()).await {
             Ok(items) => {
