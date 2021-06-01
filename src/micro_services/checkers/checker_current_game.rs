@@ -123,7 +123,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                     } else { //perm-close
 
-                        if status_progress != 999 {
+                        if status_progress < 999 {
 
                             //process closing here, loop the prize_pool, set is_closed and find winner
                             match process_closing(&prize, &pool.clone()).await {
@@ -239,7 +239,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                             //scheduled_off is already smaller than now, meaning already ended
                             
-                            if status_progress != 999 {
+                            if status_progress < 999 {
                                 //process closing here, loop the prize_pool, set is_closed and find winner
                                 //make sure prize's tickets_collected is kept in a log, to identify previous round's data
                             
