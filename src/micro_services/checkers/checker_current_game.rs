@@ -158,7 +158,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             } else if type_id == 3 || type_id == 4 {
 
-                if scheduled_on <= (adjusted_now - 60) {
+                if scheduled_on <= (adjusted_now - 180) {
 
                     // if is_repeat, meaning need to always show, because it never end.
                     if prize.is_repeat {
@@ -452,8 +452,6 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
     if prize.type_id == 4 {
         // Automated Entry, everyone who played
         let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        //let timezone_seconds = prize.timezone * 3600 as f64;
-        //let adjusted_scheduled_on = scheduled_on + timezone_seconds as u64;
         let adjusted_scheduled_on = UNIX_EPOCH + Duration::new(scheduled_on, 0);
 
         match prize::Prize::list_all_prize_pool_users_tickets(adjusted_scheduled_on, &pool.clone()).await {
