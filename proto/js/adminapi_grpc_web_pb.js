@@ -234,6 +234,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listStatusType =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListStatusProgressTypeRequest,
+ *   !proto.adminapi.esm.ListStatusProgressTypeResponse>}
+ */
+const methodDescriptor_AdminApi_ListStatusProgressType = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListStatusProgressType',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListStatusProgressTypeRequest,
+  proto.adminapi.esm.ListStatusProgressTypeResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListStatusProgressTypeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListStatusProgressTypeResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListStatusProgressTypeRequest,
+ *   !proto.adminapi.esm.ListStatusProgressTypeResponse>}
+ */
+const methodInfo_AdminApi_ListStatusProgressType = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListStatusProgressTypeResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListStatusProgressTypeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListStatusProgressTypeResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListStatusProgressTypeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListStatusProgressTypeResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListStatusProgressTypeResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listStatusProgressType =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListStatusProgressType',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListStatusProgressType,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListStatusProgressTypeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListStatusProgressTypeResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listStatusProgressType =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListStatusProgressType',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListStatusProgressType);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.ListUserStatusTypeRequest,
  *   !proto.adminapi.esm.ListUserStatusTypeResponse>}
  */

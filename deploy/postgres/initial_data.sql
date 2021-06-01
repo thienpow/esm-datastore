@@ -160,3 +160,9 @@ COPY public.spinner_rule (id, probability, win, type_id) FROM stdin;
 9	30	25	1
 10	10	10	1
 \.
+COPY public.status_progress_type (id, title) FROM stdin;
+0	Inactive
+1	Running
+999	Ended
+9999	SOS Stopped
+\.

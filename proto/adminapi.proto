@@ -12,6 +12,7 @@ service AdminApi {
 
   // Common
   rpc ListStatusType(ListStatusTypeRequest) returns (ListStatusTypeResponse) {}
+  rpc ListStatusProgressType(ListStatusProgressTypeRequest) returns (ListStatusProgressTypeResponse) {}
   rpc ListUserStatusType(ListUserStatusTypeRequest) returns (ListUserStatusTypeResponse) {}
   rpc ListWinnerStatusType(ListWinnerStatusTypeRequest) returns (ListWinnerStatusTypeResponse) {}
   rpc ListWinType(ListWinTypeRequest) returns (ListWinTypeResponse) {}
@@ -149,6 +150,11 @@ message ListStatusTypeResponse {
 message StatusTypeDetail {
   int32 id = 1;
   string title = 2;
+}
+message ListStatusProgressTypeRequest {
+}
+message ListStatusProgressTypeResponse {
+  repeated StatusTypeDetail result = 1;
 }
 
 //Get UserStatusType from db
