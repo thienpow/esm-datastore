@@ -66,6 +66,7 @@ service AdminApi {
   rpc AddPrize(AddPrizeRequest) returns (AddPrizeResponse) {}
   rpc UpdatePrize(UpdatePrizeRequest) returns (UpdatePrizeResponse) {}
   rpc DeletePrize(DeletePrizeRequest) returns (DeletePrizeResponse) {}
+  rpc SosStopPrize(SosStopPrizeRequest) returns (SosStopPrizeResponse) {}
   rpc ListPrize(ListPrizeRequest) returns (ListPrizeResponse) {}
   rpc ListPrizeToday(ListPrizeTodayRequest) returns (ListPrizeTodayResponse) {}
   rpc GetPrizeCount(GetPrizeCountRequest) returns (GetPrizeCountResponse) {}
@@ -813,6 +814,14 @@ message DeletePrizeRequest {
   int64 id = 1;
 }
 message DeletePrizeResponse {
+  string result = 1;
+}
+
+//SosStop an existing prize from db
+message SosStopPrizeRequest {
+  int64 id = 1;
+}
+message SosStopPrizeResponse {
   string result = 1;
 }
 

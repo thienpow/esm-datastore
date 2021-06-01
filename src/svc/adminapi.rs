@@ -86,6 +86,7 @@ use adminapi_proto::{
   AddPrizeRequest, AddPrizeResponse,
   UpdatePrizeRequest, UpdatePrizeResponse,
   DeletePrizeRequest, DeletePrizeResponse,
+  SosStopPrizeRequest, SosStopPrizeResponse,
   ListPrizeRequest, ListPrizeResponse, 
   ListPrizeTodayRequest, ListPrizeTodayResponse, 
   GetPrizeCountRequest, GetPrizeCountResponse,
@@ -1416,6 +1417,21 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     };
     
     Ok(Response::new(DeletePrizeResponse {
+      result: result,
+    }))
+  }
+
+  async fn sos_stop_prize(&self, request: Request<SosStopPrizeRequest>, ) -> Result<Response<SosStopPrizeResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let result = match prize::Prize::sos_stop(req.id.into(), &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(SosStopPrizeResponse {
       result: result,
     }))
   }

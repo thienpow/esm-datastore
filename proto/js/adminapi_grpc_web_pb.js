@@ -3354,6 +3354,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.deletePrize =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.SosStopPrizeRequest,
+ *   !proto.adminapi.esm.SosStopPrizeResponse>}
+ */
+const methodDescriptor_AdminApi_SosStopPrize = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/SosStopPrize',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.SosStopPrizeRequest,
+  proto.adminapi.esm.SosStopPrizeResponse,
+  /**
+   * @param {!proto.adminapi.esm.SosStopPrizeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.SosStopPrizeResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.SosStopPrizeRequest,
+ *   !proto.adminapi.esm.SosStopPrizeResponse>}
+ */
+const methodInfo_AdminApi_SosStopPrize = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.SosStopPrizeResponse,
+  /**
+   * @param {!proto.adminapi.esm.SosStopPrizeRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.SosStopPrizeResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.SosStopPrizeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.SosStopPrizeResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.SosStopPrizeResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.sosStopPrize =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/SosStopPrize',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_SosStopPrize,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.SosStopPrizeRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.SosStopPrizeResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.sosStopPrize =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/SosStopPrize',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_SosStopPrize);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.ListPrizeRequest,
  *   !proto.adminapi.esm.ListPrizeResponse>}
  */
