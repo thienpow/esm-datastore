@@ -199,8 +199,6 @@ impl User {
       let conn = pool.get().await?;
   
 
-      let now = SystemTime::now();
-
       let stmt = conn.prepare("SELECT status, gem_balance FROM public.\"user\" WHERE id=$1;").await?;
 
       let row = conn.query_one(&stmt, 
@@ -211,9 +209,9 @@ impl User {
 
       let stmt = conn.prepare("INSERT INTO public.\"user_admin_change_log\" (user_id, old_status, new_status, old_gem_balance, new_gem_balance, \
         created_on, changed_by) \
-        VALUES ($1, $2, $3, $4, $5, $6, 1) RETURNING id;").await?;
+        VALUES ($1, $2, $3, $4, $5, NOW(), 1) RETURNING id;").await?;
       let _row = conn.query_one(&stmt, 
-                  &[&id, &old_status, &status, &old_gem_balance, &gem_balance, &now]).await?;
+                  &[&id, &old_status, &status, &old_gem_balance, &gem_balance]).await?;
     
       
       let stmt = conn.prepare("UPDATE public.\"user\" SET status=$1, gem_balance=$2 WHERE id=$3;").await?;
