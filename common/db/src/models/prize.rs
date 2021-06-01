@@ -146,7 +146,7 @@ impl Prize {
     pub async fn update(prize: Prize, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"prize\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, tickets_required=$6, duration_days=$7, duration_hours=$8, timezone=$9, scheduled_on=$10, scheduled_off=$11, is_repeat=$12, repeated_on=$13, status=$14 WHERE id=$15;").await?;
+      let stmt = conn.prepare("UPDATE public.\"prize\" SET title=$1, subtitle=$2, img_url=$3, content=$4, type_id=$5, tickets_required=$6, duration_days=$7, duration_hours=$8, timezone=$9, scheduled_on=$10, scheduled_off=$11, is_repeat=$12, repeated_on=$13, status=$14, status_progress=$15 WHERE id=$16;").await?;
       let n = conn.execute(&stmt, 
                   &[&prize.title, &prize.subtitle, &prize.img_url, &prize.content, 
                   &prize.type_id, &prize.tickets_required, 
@@ -154,7 +154,7 @@ impl Prize {
                   &prize.timezone, 
                   &prize.scheduled_on, &prize.scheduled_off,
                   &prize.is_repeat, &prize.repeated_on, 
-                  &prize.status,
+                  &prize.status, &prize.status_progress,
                   &prize.id]).await?;
     
       Ok(n)

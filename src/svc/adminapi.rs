@@ -1388,8 +1388,8 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       scheduled_off: scheduled_off,
       is_repeat: req.is_repeat.into(),
       repeated_on: req.repeated_on.into(),
-      status: req.status.into(),
-      status_progress: 0,
+      status: req.status,
+      status_progress: req.status_progress,
       tickets_collected: 0,
     };
     
