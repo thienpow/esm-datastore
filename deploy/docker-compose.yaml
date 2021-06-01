@@ -155,6 +155,7 @@ services:
       - "25433"
     ports:
       - "25433:25433"
+      
 volumes:
   dbpg-master-data:
   dbpg-standby-01-data:
