@@ -227,8 +227,8 @@ impl GPlayer {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare("SELECT 
-        (SELECT free_spins FROM public.\"spinner_extra_log\" WHERE user_id=$1 AND DATE(created_on)=CURRENT_DATE) + (SELECT freespin_per_day FROM public.\"config\") - 
-        (SELECT count(id) FROM public.\"spinner_log\" WHERE user_id=$1 AND is_logged_leave=true AND date(enter_timestamp) = CURRENT_DATE)").await?;
+        (SELECT COALESCE(SUM(free_spins), 0) FROM public.\"spinner_extra_log\" WHERE user_id=$1 AND DATE(created_on)=CURRENT_DATE) + (SELECT freespin_per_day FROM public.\"config\") - 
+        (SELECT count(id) FROM public.\"spinner_log\" WHERE user_id=$1 AND is_logged_leave=true AND date(enter_timestamp) = CURRENT_DATE);").await?;
       let row = conn.query_one(&stmt, &[&user_id]).await?;
     
       Ok(row.get::<usize, i64>(0))
