@@ -246,8 +246,8 @@ impl Prize {
     pub async fn sos_stop(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"prize\" SET status_progress=9999, status=4 WHERE id=$1; DELETE FROM public.\"current_game\" WHERE prize_id=$1 AND is_closed=false; DELETE FROM public.\"prize_pool\" WHERE prize_id=$1 AND is_closed=false;").await?;
-      let n = conn.execute(&stmt, &[&id]).await?;
+      //let stmt = conn.prepare("").await?;
+      let n = conn.execute("DELETE FROM public.\"current_game\" WHERE prize_id=$1 AND is_closed=false; DELETE FROM public.\"prize_pool\" WHERE prize_id=$1 AND is_closed=false; UPDATE public.\"prize\" SET status_progress=9999, status=4 WHERE id=$1;", &[&id]).await?;
   
       Ok(n)
     }
