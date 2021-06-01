@@ -810,8 +810,7 @@ message UpdatePrizeResponse {
 
 //Delete an existing prize from db
 message DeletePrizeRequest {
-  string secret = 1;
-  int64 id = 2;
+  int64 id = 1;
 }
 message DeletePrizeResponse {
   string result = 1;
