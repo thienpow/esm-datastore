@@ -766,7 +766,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
 
     let now = SystemTime::now();
-
+    //println!("logGLeave now{}", now);
     //TODO: check if the req.secret is generated during log_enter
     // if yes, then allow recording the game score
     // generated secret key timestamp must not allowed more than 30 minutes
@@ -785,11 +785,11 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     let result = match gplayer::GPlayer::leave(gplayer, &self.pool.clone()).await {
       Ok(result) => { 
-
+        //println!("logGLeave gplayer::GPlayer::leave{}", now);
         //check if used gem or watched ad
         match gplayer::GPlayer::get_log_g(id, &self.pool.clone()).await {
           Ok(log) => {
-
+            //println!("gplayer::GPlayer::get_log_g{}", now);
             let prize_id = log.prize_id;
             let game_id = log.game_id;
             let is_watched_ad = log.is_watched_ad;
@@ -865,14 +865,14 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
           },
           Err(error) => panic!("Error: {}.", error),
         }
-        
+        //println!("gplayer::GPlayer::get_log_g{}", result);
         result.to_string()
       },
       Err(error) => error.to_string(),
     };
     
     
-    println!("logGLeave {}", result);
+    //println!("logGLeave {}", result);
     Ok(Response::new(LogGLeaveResponse {
       result: result,
     }))

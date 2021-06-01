@@ -89,14 +89,14 @@ impl GPlayer {
 
       Ok(GPlayer {
         id: row.get(0),
-        user_id: row.get(0),
-        prize_id: row.get(0),
-        game_id: row.get(0),
-        enter_timestamp: row.get(0),
-        leave_timestamp: row.get(0),
-        game_score: row.get(0),
-        is_watched_ad: row.get(0),
-        is_used_gem: row.get(0),
+        user_id: row.get(1),
+        prize_id: row.get(2),
+        game_id: row.get(3),
+        enter_timestamp: row.get(4),
+        leave_timestamp: row.get(5),
+        game_score: row.get(6),
+        is_watched_ad: row.get(7),
+        is_used_gem: row.get(8),
       })
     }
 
