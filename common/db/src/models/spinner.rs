@@ -2,6 +2,12 @@ use tokio_postgres;
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
 use postgres_native_tls::MakeTlsConnector;
+use std::time::{SystemTime};
+
+
+pub struct Spinner {
+
+}
 
 pub struct SpinnerRule {
   pub id: i32,
@@ -15,8 +21,18 @@ pub struct WinType {
   pub title: String,
 }
 
+pub struct LogSDetail {
+  pub id: i64,
+  pub user_id: i64,
+  pub prize_id: i64,
+  pub win_type: i32,
+  pub win_amount: i32,
+  pub enter_timestamp: SystemTime,
+  pub leave_timestamp: SystemTime,
+}
 
-impl SpinnerRule {
+
+impl Spinner {
     
     pub async fn add(sr: SpinnerRule, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i32, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
@@ -97,4 +113,46 @@ impl SpinnerRule {
       Ok(vec)
     }
 
+
+    pub async fn check_spin_available(user_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT 
+        (SELECT COALESCE(SUM(free_spins), 0) FROM public.\"spinner_extra_log\" WHERE user_id=$1 AND DATE(created_on)=CURRENT_DATE) + (SELECT freespin_per_day FROM public.\"config\") - 
+        (SELECT count(id) FROM public.\"spinner_log\" WHERE user_id=$1 AND is_logged_leave=true AND date(enter_timestamp) = CURRENT_DATE);").await?;
+      let row = conn.query_one(&stmt, &[&user_id]).await?;
+    
+      Ok(row.get::<usize, i64>(0))
+    }
+    
+
+    pub async fn spin_enter(spin_detail: LogSDetail, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("INSERT INTO public.\"spinner_log\" (user_id, prize_id, enter_timestamp) VALUES ($1, $2, $3) RETURNING id;").await?;
+      let row = conn.query_one(&stmt, 
+                  &[&spin_detail.user_id, &spin_detail.prize_id, &spin_detail.enter_timestamp]).await?;
+    
+      Ok(row.get::<usize, i64>(0))
+    }
+    
+    pub async fn spin_leave(spin_detail: LogSDetail, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"spinner_log\" SET leave_timestamp=$1, win_type=$2, win_amount=$3, is_logged_leave=true WHERE id=$4 AND user_id=$5 AND is_logged_leave=false;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&spin_detail.leave_timestamp, &spin_detail.win_type, &spin_detail.win_amount, &spin_detail.id, &spin_detail.user_id]).await?;
+    
+      Ok(n)
+    }
+
+
+    pub async fn get_spin_prize_id(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT prize_id FROM public.\"spinner_log\" WHERE id=$1").await?;
+      let row = conn.query_one(&stmt, &[&id]).await?;
+    
+      Ok(row.get::<usize, i64>(0))
+    }
 }

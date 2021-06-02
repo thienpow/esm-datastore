@@ -296,7 +296,7 @@ impl adminapi_proto::admin_api_server::AdminApi for AdminApiServer {
   async fn list_win_type(&self, request: Request<ListWinTypeRequest>, ) -> Result<Response<ListWinTypeResponse>, Status> {
     let _ = svc::check_is_admin(&request.metadata()).await?;
 
-    let win_types = match spinner::SpinnerRule::list_win_type(&self.pool.clone()).await {
+    let win_types = match spinner::Spinner::list_win_type(&self.pool.clone()).await {
       Ok(win_types) => win_types,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -685,7 +685,7 @@ async fn add_spinner_rule(&self, request: Request<AddSpinnerRuleRequest>, ) -> R
     type_id: req.type_id.into()
   };
   
-  let result = match spinner::SpinnerRule::add(sr, &self.pool.clone()).await {
+  let result = match spinner::Spinner::add(sr, &self.pool.clone()).await {
     Ok(result) => result.to_string(),
     Err(error) => error.to_string(),
   };
@@ -707,7 +707,7 @@ async fn update_spinner_rule(&self, request: Request<UpdateSpinnerRuleRequest>, 
     type_id: req.type_id.into()
   };
   
-  let result = match spinner::SpinnerRule::update(sr, &self.pool.clone()).await {
+  let result = match spinner::Spinner::update(sr, &self.pool.clone()).await {
     Ok(result) => result.to_string(),
     Err(error) => error.to_string(),
   };
@@ -723,7 +723,7 @@ async fn delete_spinner_rule(&self, request: Request<DeleteSpinnerRuleRequest>, 
   
   let req = request.into_inner();
   
-  let result = match spinner::SpinnerRule::delete(req.id.into(), &self.pool.clone()).await {
+  let result = match spinner::Spinner::delete(req.id.into(), &self.pool.clone()).await {
     Ok(result) => result.to_string(),
     Err(error) => error.to_string(),
   };
@@ -738,7 +738,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
   //let req = request.into_inner();
   
-  let rules = match spinner::SpinnerRule::list(&self.pool.clone()).await {
+  let rules = match spinner::Spinner::list(&self.pool.clone()).await {
     Ok(rules) => rules,
     Err(error) => panic!("Error: {}.", error),
   };

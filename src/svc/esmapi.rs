@@ -167,7 +167,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   async fn list_win_type(&self, request: Request<ListWinTypeRequest>, ) -> Result<Response<ListWinTypeResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
-    let win_types = match spinner::SpinnerRule::list_win_type(&self.pool.clone()).await {
+    let win_types = match spinner::Spinner::list_win_type(&self.pool.clone()).await {
       Ok(win_types) => win_types,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -603,7 +603,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   
     //let req = request.into_inner();
     
-    let rules = match spinner::SpinnerRule::list(&self.pool.clone()).await {
+    let rules = match spinner::Spinner::list(&self.pool.clone()).await {
       Ok(rules) => rules,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -746,7 +746,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     // the generated secret key will then be used during log_leave
     let result = match gplayer::GPlayer::enter(gplayer, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
-      Err(error) => panic!("Error: {}.", error),
+      Err(e) => return Err(Status::internal(format!("Error: log_g_enter ==> gplayer::GPlayer::enter failed! {}", e.to_string())))
     };
     
     Ok(Response::new(LogGEnterResponse {
@@ -800,7 +800,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
               let user = match user::User::get(user_id, &self.pool.clone()).await {
                 Ok(user) => user,
-                Err(error) => panic!("Error: {}.", error),
+                Err(e) => return Err(Status::internal(format!("Error: log_g_leave ==> user::User::get failed! {}", e.to_string())))
               };
 
               match game::Game::get_game_rules(game_id, &self.pool.clone()).await {
@@ -827,11 +827,11 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         
                         match svc::notify(format!("You spent {} Gem!", game_rules.use_how_many_gems).as_str(), format!("You spent {} gem to play, Your Gem Balance is Updated to {}", game_rules.use_how_many_gems, new_gem_balance).as_str(), &user.msg_token).await {
                           Ok(_) => "1",
-                          Err(error) => panic!("Error: {}.", error),
+                          Err(e) => return Err(Status::internal(format!("Error: log_g_leave ==> deduct_gem.notify failed! {}", e.to_string())))
                         };
                         
                       },
-                      Err(error) => panic!("Error: {}.", error),
+                      Err(e) => return Err(Status::internal(format!("Error: log_g_leave ==> deduct_gem failed! {}", e.to_string())))
                     }
                     //after deducted gem, reward the tickets/exp
                     reward_tickets = (reward_tickets as f32 + multiplier * game_rules.use_gem_get_tickets as f32).ceil() as i32;
@@ -850,25 +850,25 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                           
                           ()
                         },
-                        Err(error) => panic!("Error: {}.", error),
+                        Err(e) => return Err(Status::internal(format!("Error: log_g_leave ==> log_prize_pool failed! {}", e.to_string())))
                       }
                       ()
                     },
-                    Err(error) => panic!("Error: {}.", error),
+                    Err(e) => return Err(Status::internal(format!("Error: log_g_leave ==> reward_exp failed! {}", e.to_string())))
                   }
 
                   ()
                 },
-                Err(error) => panic!("Error: {}.", error),
+                Err(e) => return Err(Status::internal(format!("Error: log_g_leave ==> game::Game::get_game_rules failed! {}", e.to_string())))
               };
             }
           },
-          Err(error) => panic!("Error: {}.", error),
+          Err(e) => return Err(Status::internal(format!("Error: log_g_leave ==> gplayer::GPlayer::get_log_g failed! {}", e.to_string())))
         }
         //println!("gplayer::GPlayer::get_log_g{}", result);
         result.to_string()
       },
-      Err(error) => error.to_string(),
+      Err(e) => return Err(Status::internal(format!("Error: log_g_leave ==> gplayer::GPlayer::leave failed! {}", e.to_string())))
     };
     
     
@@ -1035,7 +1035,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
 
     
-    match gplayer::GPlayer::check_spin_available(user_id, &self.pool.clone()).await {
+    match spinner::Spinner::check_spin_available(user_id, &self.pool.clone()).await {
       Ok(spin_available) => {
 
         Ok(Response::new(GetSpinAvailableResponse {
@@ -1058,7 +1058,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let config = match config::Config::get(&self.pool.clone()).await {
       Ok(config) => config,
-      Err(error) => panic!("Error: {}.", error),
+      Err(e) => return Err(Status::internal(format!("Error: log_s_extra ==> config::Config::get failed! {}", e.to_string())))
     };
     
     let mut extra_free_spin = 0;
@@ -1072,7 +1072,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
             extra_free_spin = config.gems_per_spins_2;
           }
         },
-        Err(error) => panic!("Error: {}.", error),
+        Err(e) => return Err(Status::internal(format!("Error: log_s_extra ==> deduct_gem failed! {}", e.to_string())))
       };
 
     } else {
@@ -1080,14 +1080,14 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       extra_free_spin = config.ads_per_spins_2;
     }
     
-    match spinner::SpinnerRule::add_extra_free_spin(user_id, extra_free_spin, &self.pool.clone()).await {
+    match spinner::Spinner::add_extra_free_spin(user_id, extra_free_spin, &self.pool.clone()).await {
       Ok(_) => {
 
         Ok(Response::new(LogSExtraResponse {
           result: extra_free_spin
         }))
       },
-      Err(error) => panic!("Error: {}.", error),
+      Err(e) => return Err(Status::internal(format!("Error: log_s_extra ==> add_extra_free_spin failed! {}", e.to_string())))
     }
   }
 
@@ -1105,12 +1105,12 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let now = SystemTime::now();
     
 
-    match gplayer::GPlayer::check_spin_available(user_id, &self.pool.clone()).await {
+    match spinner::Spinner::check_spin_available(user_id, &self.pool.clone()).await {
       Ok(spin_available) => {
 
         if spin_available > 0 {
 
-          let spin_detail = gplayer::LogSDetail {
+          let spin_detail = spinner::LogSDetail {
             id: 0,
             user_id: user_id,
             prize_id: prize_id,
@@ -1120,7 +1120,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
             leave_timestamp: now,
           };
           
-          return match gplayer::GPlayer::spin_enter(spin_detail, &self.pool.clone()).await {
+          return match spinner::Spinner::spin_enter(spin_detail, &self.pool.clone()).await {
             Ok(id) => {
               Ok(Response::new(LogSEnterResponse {
                 result: id
@@ -1153,7 +1153,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let now = SystemTime::now();
     
 
-    let spin_detail = gplayer::LogSDetail {
+    let spin_detail = spinner::LogSDetail {
       id: id,
       user_id: user_id,
       prize_id: 0,
@@ -1163,15 +1163,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       leave_timestamp: now,
     };
     
-    match gplayer::GPlayer::spin_leave(spin_detail, &self.pool.clone()).await {
+    match spinner::Spinner::spin_leave(spin_detail, &self.pool.clone()).await {
       Ok(result) => {
 
         //if win_type=ticket=1 then log into prize_pool here, game_id=0, win_from=1
         if win_type == 1 {
 
-          let prize_id: i64 = match gplayer::GPlayer::get_spin_prize_id(id, &self.pool.clone()).await {
+          let prize_id: i64 = match spinner::Spinner::get_spin_prize_id(id, &self.pool.clone()).await {
             Ok(prize_id) => prize_id,
-            Err(error) => panic!("Error: {}.", error),
+            Err(e) => return Err(Status::internal(format!("Error: log_s_leave ==> get_spin_prize_id failed! {}", e.to_string()))),
           };
   
           match prize::Prize::log_prize_pool(prize_id, user_id, 0, 1, win_amount, &self.pool.clone()).await {
@@ -1180,7 +1180,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
               
               ()
             },
-            Err(error) => panic!("Error: {}.", error),
+            Err(e) => return Err(Status::internal(format!("Error: log_s_leave ==> log_prize_pool failed! {}", e.to_string()))),
           }
         }
         
@@ -1249,24 +1249,24 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
                     match svc::notify("You got a Gem reward!", format!("Your invited friend has just joined! As a reward, Your Gem Balance is Updated to {}", new_gem_balance).as_str(), &user.msg_token).await {
                       Ok(_) => {},
-                      Err(error) => panic!("Error: {}.", error),
+                      Err(e) => return Err(Status::internal(format!("Error: add_invite ==> update_status_gem_balance.notify failed! {}", e.to_string())))
                     };
                     
                     
                   },
-                  Err(error) => panic!("Error: {}.", error),
+                  Err(e) => return Err(Status::internal(format!("Error: add_invite ==> update_status_gem_balance failed! {}", e.to_string())))
                 }
 
               },
-              Err(error) => panic!("Error: {}.", error),
+              Err(e) => return Err(Status::internal(format!("Error: add_invite ==> user::User::get failed! {}", e.to_string())))
             }
 
           },
-          Err(error) => panic!("Error: {}.", error),
+          Err(e) => return Err(Status::internal(format!("Error: add_invite ==> config::Config::get failed! {}", e.to_string())))
         };
         result.to_string()
       },
-      Err(error) => panic!("Error: {}.", error),
+      Err(e) => return Err(Status::internal(format!("Error: add_invite ==> invites::Invites::add failed! {}", e.to_string())))
     };
     
     Ok(Response::new(AddInviteResponse {
@@ -1283,7 +1283,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     let invites = match invites::Invites::list_invited_by(req.invited_by.into(), &self.pool.clone()).await {
       Ok(invites) => invites,
-      Err(error) => panic!("Error: {}.", error),
+      Err(e) => return Err(Status::internal(format!("Error: list_invited_by ==> invites::Invites::list_invited_by failed! {}", e.to_string())))
     };
     
     let mut result: Vec<InvitedByDetail> = Vec::new();
@@ -1336,7 +1336,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     let items = match item::Item::list(req.limit.into(), req.offset.into(), "".to_string(), 2, &self.pool.clone()).await {
       Ok(items) => items,
-      Err(error) => panic!("Error: {}.", error),
+      Err(e) => return Err(Status::internal(format!("Error: list_item ==> item::Item::list failed! {}", e.to_string())))
     };
     
     let mut result: Vec<ItemDetail> = Vec::new();
@@ -1443,7 +1443,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       Ok(tickets) => Ok(Response::new(GetPrizeTicketPoolResponse {
         tickets: tickets,
       })),
-      Err(error) => panic!("Error: {}.", error),
+      Err(e) => return Err(Status::internal(format!("Error: get_prize_ticket_pool ==> prize::Prize::get_current_tickets_collected_by_user failed! {}", e.to_string())))
     }
   }
 
@@ -1455,7 +1455,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     
     let prizes = match prize::Prize::list_active(&self.pool.clone()).await {
       Ok(prizes) => prizes,
-      Err(error) => panic!("Error: {}.", error),
+      Err(e) => return Err(Status::internal(format!("Error: list_prize ==> prize::Prize::list_active failed! {}", e.to_string())))
     };
     
     let mut result: Vec<PrizeDetail> = Vec::new();
@@ -1644,7 +1644,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let sub_id = String::from(&req.sub_id);
 
     if item_id == 0 {
-      panic!("Error: item_id should not be 0.");
+      return Err(Status::internal(format!("Error: buy ==> item_id should not be 0")))
     }
 
     let new_buy = shop::NewBuy {
@@ -1667,7 +1667,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
         let user = match user::User::get(user_id, &self.pool.clone()).await {
           Ok(user) => user,
-          Err(error) => panic!("Error: {}.", error),
+          Err(e) => return Err(Status::internal(format!("Error: buy ==> user::User::get failed! {}", e.to_string())))
         };
 
         if item_type_id == 201 { 
@@ -1676,7 +1676,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
           //check the quantity of gem for this Gem pack
           let quantity: i32 = match item::Item::get_quantity(item_id, &self.pool.clone()).await {
             Ok(quantity) => quantity,
-            Err(error) => panic!("Error: {}.", error),
+            Err(e) => return Err(Status::internal(format!("Error: buy ==> item::Item::get_quantity failed! {}", e.to_string())))
           };
 
           let new_gem_balance: i32 = user.gem_balance + quantity;
@@ -1685,11 +1685,11 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
               match svc::notify("You Gem Balance is loaded!", format!("You bought a gem pack with {} gems! Your Gem Balance is Updated to {}", quantity, new_gem_balance).as_str(), &user.msg_token).await {
                 Ok(_) => "1",
-                Err(error) => panic!("Error: {}.", error),
+                Err(e) => return Err(Status::internal(format!("Error: buy ==> reward_gem.notify failed! {}", e.to_string())))
               };
               
             },
-            Err(error) => panic!("Error: {}.", error),
+            Err(e) => return Err(Status::internal(format!("Error: buy ==> reward_gem failed! {}", e.to_string())))
           };
 
         } else if item_type_id == 101 {
@@ -1711,15 +1711,15 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
                   match svc::notify("You Gem Balance is loaded!", format!("You bought a subscription with {} gems as instant reward! Your Gem Balance is Updated to {}", subscription.one_time_gem, new_gem_balance).as_str(), &user.msg_token).await {
                     Ok(_) => "1",
-                    Err(error) => panic!("Error: {}.", error),
+                    Err(e) => return Err(Status::internal(format!("Error: buy ==> new_subscription.notify failed! {}", e.to_string())))
                   };
                   
                 },
-                Err(error) => panic!("Error: {}.", error),
+                Err(e) => return Err(Status::internal(format!("Error: buy ==> new_subscription failed! {}", e.to_string())))
               };
                 
             },
-            Err(error) => panic!("Error: {}.", error),
+            Err(e) => return Err(Status::internal(format!("Error: buy ==> subscription::Subscription::get failed! {}", e.to_string())))
           };
           
           
@@ -1790,7 +1790,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let buy = match shop::Shop::get_active_subscription(user_id, &self.pool.clone()).await {
       Ok(buy) => buy,
-      Err(error) => panic!("Error: {}.", error),
+      Err(e) => return Err(Status::internal(format!("Error: get_active_subscription ==> shop::Shop::get_active_subscription failed! {}", e.to_string())))
     };
     
     let created_on = buy.created_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
