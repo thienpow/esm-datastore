@@ -39431,10 +39431,11 @@ proto.adminapi.esm.TournamentSetGameRuleDetail.toObject = function(includeInstan
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     setId: jspb.Message.getFieldWithDefault(msg, 2, 0),
     gameId: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    durationDays: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    durationHours: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    durationMinutes: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    groupId: jspb.Message.getFieldWithDefault(msg, 7, 0)
+    gameTitle: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    durationDays: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    durationHours: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    durationMinutes: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    groupId: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -39484,18 +39485,22 @@ proto.adminapi.esm.TournamentSetGameRuleDetail.deserializeBinaryFromReader = fun
       msg.setGameId(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setDurationDays(value);
+      var value = /** @type {string} */ (reader.readString());
+      msg.setGameTitle(value);
       break;
     case 5:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setDurationHours(value);
+      msg.setDurationDays(value);
       break;
     case 6:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setDurationMinutes(value);
+      msg.setDurationHours(value);
       break;
     case 7:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setDurationMinutes(value);
+      break;
+    case 8:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGroupId(value);
       break;
@@ -39549,31 +39554,38 @@ proto.adminapi.esm.TournamentSetGameRuleDetail.serializeBinaryToWriter = functio
       f
     );
   }
-  f = message.getDurationDays();
-  if (f !== 0) {
-    writer.writeInt32(
+  f = message.getGameTitle();
+  if (f.length > 0) {
+    writer.writeString(
       4,
       f
     );
   }
-  f = message.getDurationHours();
+  f = message.getDurationDays();
   if (f !== 0) {
     writer.writeInt32(
       5,
       f
     );
   }
-  f = message.getDurationMinutes();
+  f = message.getDurationHours();
   if (f !== 0) {
     writer.writeInt32(
       6,
       f
     );
   }
-  f = message.getGroupId();
+  f = message.getDurationMinutes();
   if (f !== 0) {
     writer.writeInt32(
       7,
+      f
+    );
+  }
+  f = message.getGroupId();
+  if (f !== 0) {
+    writer.writeInt32(
+      8,
       f
     );
   }
@@ -39635,28 +39647,28 @@ proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.setGameId = function(va
 
 
 /**
- * optional int32 duration_days = 4;
+ * optional string game_title = 4;
+ * @return {string}
+ */
+proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.getGameTitle = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.adminapi.esm.TournamentSetGameRuleDetail} returns this
+ */
+proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.setGameTitle = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional int32 duration_days = 5;
  * @return {number}
  */
 proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.getDurationDays = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.adminapi.esm.TournamentSetGameRuleDetail} returns this
- */
-proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.setDurationDays = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
-};
-
-
-/**
- * optional int32 duration_hours = 5;
- * @return {number}
- */
-proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.getDurationHours = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
@@ -39665,16 +39677,16 @@ proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.getDurationHours = func
  * @param {number} value
  * @return {!proto.adminapi.esm.TournamentSetGameRuleDetail} returns this
  */
-proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.setDurationHours = function(value) {
+proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.setDurationDays = function(value) {
   return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 
 /**
- * optional int32 duration_minutes = 6;
+ * optional int32 duration_hours = 6;
  * @return {number}
  */
-proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.getDurationMinutes = function() {
+proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.getDurationHours = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
@@ -39683,16 +39695,16 @@ proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.getDurationMinutes = fu
  * @param {number} value
  * @return {!proto.adminapi.esm.TournamentSetGameRuleDetail} returns this
  */
-proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.setDurationMinutes = function(value) {
+proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.setDurationHours = function(value) {
   return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
 /**
- * optional int32 group_id = 7;
+ * optional int32 duration_minutes = 7;
  * @return {number}
  */
-proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.getGroupId = function() {
+proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.getDurationMinutes = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -39701,8 +39713,26 @@ proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.getGroupId = function()
  * @param {number} value
  * @return {!proto.adminapi.esm.TournamentSetGameRuleDetail} returns this
  */
-proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.setGroupId = function(value) {
+proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.setDurationMinutes = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
+};
+
+
+/**
+ * optional int32 group_id = 8;
+ * @return {number}
+ */
+proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.getGroupId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.TournamentSetGameRuleDetail} returns this
+ */
+proto.adminapi.esm.TournamentSetGameRuleDetail.prototype.setGroupId = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 

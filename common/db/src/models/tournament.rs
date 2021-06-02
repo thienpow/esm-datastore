@@ -30,6 +30,7 @@ pub struct TournamentSetGameRule {
   pub id: i64,
   pub set_id: i64,
   pub game_id: i64,
+  pub game_title: String,
   pub duration_days: i32,
   pub duration_hours: i32,
   pub duration_minutes: i32,
@@ -264,7 +265,7 @@ impl Tournament {
     pub async fn list_set_game_rule(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<TournamentSetGameRule>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, set_id, game_id, duration_days, duration_hours, duration_minutes, group_id FROM public.\"tournament_set_game_rule\" WHERE set_id=$1 ORDER BY id ASC;").await?;
+      let stmt = conn.prepare("SELECT tsg.id, tsg.set_id, tsg.game_id, COALESCE(g.title, '') AS game_title, tsg.duration_days, tsg.duration_hours, tsg.duration_minutes, tsg.group_id FROM public.\"tournament_set_game_rule\" AS tsg LEFT JOIN public.\"game\" AS g ON g.id = tsg.game_id  WHERE set_id=$1 ORDER BY id ASC;").await?;
     
       let mut vec: Vec<TournamentSetGameRule> = Vec::new();
       for row in conn.query(&stmt, &[&id]).await? {
@@ -272,10 +273,11 @@ impl Tournament {
           id: row.get(0),
           set_id: row.get(1),
           game_id: row.get(2),
-          duration_days: row.get(3),
-          duration_hours: row.get(4),
-          duration_minutes: row.get(5),
-          group_id: row.get(6),
+          game_title: row.get(3),
+          duration_days: row.get(4),
+          duration_hours: row.get(5),
+          duration_minutes: row.get(6),
+          group_id: row.get(7),
         };
 
         vec.push(rule);
