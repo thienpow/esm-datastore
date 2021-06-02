@@ -1,6 +1,6 @@
 use std::time::{SystemTime};
 
-
+use chrono::{Datelike, Utc};
 use bb8::{Pool};
 use bb8_postgres::PostgresConnectionManager;
 use postgres_native_tls::MakeTlsConnector;
@@ -40,7 +40,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
   
 
   
-  
+  let now = Utc::now();
+  let today = now.weekday().number_from_monday();
+  println!("today={}", today);
+
+  let repeated_on = vec![1, 5, 7];
+  let index: i32 = match repeated_on.iter().position(|&x| x == today) {
+    Some(index) => index as i32,
+    _ => -1,
+  };
+
+  println!("index={}", index);
   Ok(())
 }
 

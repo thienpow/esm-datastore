@@ -5,6 +5,7 @@ use std::time::{
     SystemTime, 
     UNIX_EPOCH
 };
+use chrono::{Datelike, Utc};
 //use chrono::{NaiveDate, NaiveDateTime};
 use rand::prelude::*;
 use rand::distributions::WeightedIndex;
@@ -21,6 +22,9 @@ mod config;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+
+    let now = Utc::now();
+    let today = now.weekday().number_from_monday();
 
     let config = config::get_configuration();
     
@@ -54,7 +58,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let prize_id = prize.id;
             let type_id = prize.type_id;
             let status_progress = prize.status_progress;
+            let repeated_on = prize.repeated_on;
 
+
+            let today_index: i32 = match repeated_on.iter().position(|&x| x == today) {
+                Some(index) => index as i32,
+                _ => -1,
+            };
+
+            let is_today_repeat = false;
+            if today_index > -1 {
+                is_today_repeat = true;
+            }
+              
             i = i + 1;
         
             let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
@@ -105,17 +121,30 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     let new_scheduled_off: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on + duration_days + duration_hours, 0);
                                     
 
-                                    //TODO: before reset the schedule, check if the duration_days < 7, if smaller than 7 days, we need to make sure it's within repeated_on.
+                                    // before reset the schedule, check if the duration_days < 7, if smaller than 7 days, we need to make sure it's within repeated_on.
                                     // let say, if duration_days is 2, we need to check if scheduled_off is already pass, and if the repeated_on is within today.
                                     // if scheduled_off is not passed, meaning we need to reset_schedule with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
 
-                                    //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
-                                    let _ = match prize::Prize::reset_schedule(prize_id, new_scheduled_on, new_scheduled_off, &pool.clone()).await {
-                                        Ok(_) => (),
-                                        Err(error) => panic!("== Type 1/2, tickets fulled, reset_schedule Error: {}.", error),
-                                    };
+                                    let is_reset = false;
+                                    if prize.duration_days < 7 {
+                                        if is_today_repeat {
+                                            is_reset = true;
+                                        }
+                                    } else {
+                                        is_reset = true;
+                                    }
+
+                                    if is_reset {
+                                        //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
+                                        let _ = match prize::Prize::reset_schedule(prize_id, new_scheduled_on, new_scheduled_off, &pool.clone()).await {
+                                            Ok(_) => (),
+                                            Err(error) => panic!("== Type 1/2, tickets fulled, reset_schedule Error: {}.", error),
+                                        };
+
+                                        process_current_games(prize, &pool.clone()).await?;
+                                    }
                                     
-                                    process_current_games(prize, &pool.clone()).await?;
+                                    
                                 }
                             },
                             Err(error) => panic!("== Type 1/2, tickets fulled, process_closing Error: {}.", error),
@@ -200,17 +229,30 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         let new_scheduled_on: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on, 0);
                                         let new_scheduled_off: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on + duration_days + duration_hours, 0);
                                         
-                                        //TODO: before reset the schedule, check if the duration_days < 7, if smaller than 7 days, we need to make sure it's within repeated_on.
+                                        // before reset the schedule, check if the duration_days < 7, if smaller than 7 days, we need to make sure it's within repeated_on.
                                         // let say, if duration_days is 2, we need to check if scheduled_off is already pass, and if the repeated_on is within today.
                                         // if scheduled_off is not passed, meaning we need to reset_schedule with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
             
-                                        //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
-                                        let _ = match prize::Prize::reset_schedule(prize_id, new_scheduled_on, new_scheduled_off, &pool.clone()).await {
-                                            Ok(_) => (),
-                                            Err(error) => panic!("== Type 3/4, is Repeat, reset_schedule Error: {}.", error),
-                                        };
-            
-                                        process_current_games(prize, &pool.clone()).await?;
+
+                                        let is_reset = false;
+                                        if prize.duration_days < 7 {
+                                            if is_today_repeat {
+                                                is_reset = true;
+                                            }
+                                        } else {
+                                            is_reset = true;
+                                        }
+
+                                        if is_reset {
+                                            //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
+                                            let _ = match prize::Prize::reset_schedule(prize_id, new_scheduled_on, new_scheduled_off, &pool.clone()).await {
+                                                Ok(_) => (),
+                                                Err(error) => panic!("== Type 3/4, is Repeat, reset_schedule Error: {}.", error),
+                                            };
+                
+                                            process_current_games(prize, &pool.clone()).await?;
+                                        }
+                                        
                                     }
                                 },
                                 Err(error) => panic!("== Type 3/4, is Repeat, process_closing Error: {}.", error)
@@ -345,7 +387,14 @@ async fn generate_current_games(is_previous_game_found: bool, prize: Prize, prev
     let mut final_end_timestamp = scheduled_off;
     //println!("==== adjusted_now {} > scheduled_off {}", adjusted_now, scheduled_off);
     if adjusted_now + 3600 * 1 > scheduled_off {
-        final_end_timestamp = adjusted_now + 3600 * 1;
+
+        if prize.type_id == 1 || prize.type_id == 2 {
+            //type 1 and 2 follow tickets collected rule, so end_timestamp is extendable.
+            final_end_timestamp = adjusted_now + 3600 * 1;
+        } else if prize.type_id == 3 || prize.type_id == 4 {
+            //Time Sensitive rule must obey the schedule. so just use back scheduled_off.
+        }
+        
     }
 
     let diff_timestamp = scheduled_off - scheduled_on;
