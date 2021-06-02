@@ -353,13 +353,35 @@ async fn generate_current_games(is_previous_game_found: bool, prize: Prize, prev
     let mut i = 0;
     while start_timestamp < final_end_timestamp {
         
-        
+        if start_timestamp > (adjusted_now + 3600 * 1) {
+            break;
+        }
+
         for game in &active_games {
         
             if i > 0  {
                 i = 0;
                 start_timestamp = start_timestamp -  1;
             }
+
+            if prize.type_id < 4 {
+                if game.tour_id == 0 {
+                    break;
+                }
+
+                if game.set_id == 0 {
+                    break;
+                }
+
+                if game.tsg_id == 0 {
+                    break;
+                }
+                
+                if game.game_id == 0 {
+                    break;
+                }
+            }
+            
             
             if is_previous_game_found { 
                 
