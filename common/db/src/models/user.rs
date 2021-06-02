@@ -146,7 +146,7 @@ impl User {
     pub async fn reward_exp(id: i64, exp: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"user\" SET exp=$1 + (SELECT exp FROM public.\"user\" WHERE id=$2), exp_timestamp=NOW() WHERE id=$2;").await?;
+      let stmt = conn.prepare("UPDATE public.\"user\" SET exp=exp+$1, exp_timestamp=NOW() WHERE id=$2;").await?;
       let n = conn.execute(&stmt, 
                   &[&exp, &id]).await?;
     
