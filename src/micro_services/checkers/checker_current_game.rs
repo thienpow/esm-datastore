@@ -158,7 +158,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             } else if type_id == 3 || type_id == 4 {
 
-                if scheduled_on <= (adjusted_now - 180) {
+                if scheduled_on <= (adjusted_now - 60) {
 
                     // if is_repeat, meaning need to always show, because it never end.
                     if prize.is_repeat {

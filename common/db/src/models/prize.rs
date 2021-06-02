@@ -689,7 +689,7 @@ impl Prize {
     pub async fn get_current_tickets_collected(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT (SELECT COALESCE(SUM(tickets), 0) FROM public.prize_pool WHERE prize_id=$1 AND is_closed=false) AS tickets_collected;").await?;
+      let stmt = conn.prepare("SELECT (SELECT COALESCE(SUM(tickets), 0) FROM public.\"prize_pool\" WHERE prize_id=$1 AND is_closed=false) AS tickets_collected;").await?;
       let row = conn.query_one(&stmt, &[&id]).await?;
     
       Ok(row.get::<usize, i64>(0))
