@@ -142,7 +142,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         Err(error) => panic!("Error {}", error),
                     };
                     
-                    prize::Prize::close_current_game(cg_id, &pool.clone()).await?;
+                    prize::Prize::close_current_game(cg_id, total_tickets_collected, &pool.clone()).await?;
                     match notify_tour_ending("Tournament Ending", format!("Tournament for game_id: {} has just Ended!", 
                         game_id).as_str(), cg_id.to_string().as_str(), 
                         prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), 
