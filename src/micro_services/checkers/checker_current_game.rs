@@ -609,6 +609,8 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
 async fn notify_closing(title: &str, body: &str, prize_id: &str, prize_type_id: &str, winner_user_id: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
     
+    let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
+    
     let echo_json: serde_json::Value = reqwest::Client::new()
     .post("https://fcm.googleapis.com/fcm/send")
     .header("authorization", format!("key={}", config.fcm_key))
@@ -620,7 +622,8 @@ async fn notify_closing(title: &str, body: &str, prize_id: &str, prize_type_id: 
         "data": {
             "prize_id": prize_id, 
             "prize_type_id": prize_type_id,
-            "winner_user_id": winner_user_id
+            "winner_user_id": winner_user_id,
+            "timestamp": format!("{}", timestamp).as_str()
         },
         "to": "/topics/prize_closing"
     }))

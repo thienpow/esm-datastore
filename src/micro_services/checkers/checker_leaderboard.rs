@@ -169,6 +169,8 @@ fn get_reward_from_rank(exp: i32, ranks: &Vec<rank::Rank>) -> (f64, i32) {
 
 async fn notify_tour_ending(title: &str, body: &str, cg_id: &str, prize_id: &str, prize_type_id: &str, game_id: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
+
+    let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
     
     let echo_json: serde_json::Value = reqwest::Client::new()
     .post("https://fcm.googleapis.com/fcm/send")
@@ -182,7 +184,8 @@ async fn notify_tour_ending(title: &str, body: &str, cg_id: &str, prize_id: &str
             "cg_id": cg_id, 
             "prize_id": prize_id,
             "prize_type_id": prize_type_id,
-            "game_id": game_id
+            "game_id": game_id,
+            "timestamp": format!("{}", timestamp).as_str()
         },
         "to": "/topics/tournament_ending"
     }))
@@ -206,6 +209,8 @@ async fn notify_player(title: &str, body: &str,
     token: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
     
+    let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
+    
     let echo_json: serde_json::Value = reqwest::Client::new()
     .post("https://fcm.googleapis.com/fcm/send")
     .header("authorization", format!("key={}", config.fcm_key))
@@ -222,6 +227,7 @@ async fn notify_player(title: &str, body: &str,
             "reward_gem": reward_gem,
             "reward_exp": reward_exp,
             "tickets": tickets,
+            "timestamp": format!("{}", timestamp).as_str()
         },
         "to": token
     }))

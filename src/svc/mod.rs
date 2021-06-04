@@ -1,3 +1,7 @@
+use std::time::{
+  SystemTime, 
+  UNIX_EPOCH
+};
 
 use bb8::{Pool};
 use bb8_postgres::PostgresConnectionManager;
@@ -125,6 +129,8 @@ pub async fn subscribe_topic(topic: &str, token: &str) -> Result<bool, reqwest::
 pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwest::Error> {
   let config = config::get_configuration();
     
+  let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
+    
   let _: serde_json::Value = reqwest::Client::new()
   .post("https://fcm.googleapis.com/fcm/send")
   .header("authorization", format!("key={}", config.fcm_key))
@@ -132,6 +138,9 @@ pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwes
     "notification" : {
       "body" : body,
       "title": title
+    },
+    "data": {
+      "timestamp": format!("{}", timestamp).as_str()
     },
     "to": token
   }))
