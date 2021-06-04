@@ -24,7 +24,7 @@ mod config;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let now = Utc::now();
-    let today = now.weekday().number_from_monday();
+    let today = now.weekday().number_from_monday() as i32;
 
     let config = config::get_configuration();
     
@@ -58,7 +58,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let prize_id = prize.id;
             let type_id = prize.type_id;
             let status_progress = prize.status_progress;
-            let repeated_on = prize.repeated_on;
+            let repeated_on = prize.repeated_on.clone();
 
 
             let today_index: i32 = match repeated_on.iter().position(|&x| x == today) {
@@ -66,7 +66,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 _ => -1,
             };
 
-            let is_today_repeat = false;
+            let mut is_today_repeat = false;
             if today_index > -1 {
                 is_today_repeat = true;
             }
@@ -87,7 +87,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 if tickets_collected < prize.tickets_required {
 
                     println!("{} prize_id={} Type 1/2, running, ", i, prize.id.to_string());
-                    process_current_games(prize, &pool.clone()).await?;
+                    process_current_games(&prize, &pool.clone()).await?;
 
                     if status_progress != 1 {
                         let _ = match prize::Prize::set_running(prize_id, &pool.clone()).await {
@@ -125,7 +125,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     // let say, if duration_days is 2, we need to check if scheduled_off is already pass, and if the repeated_on is within today.
                                     // if scheduled_off is not passed, meaning we need to reset_schedule with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
 
-                                    let is_reset = false;
+                                    let mut is_reset = false;
                                     if prize.duration_days < 7 {
                                         if is_today_repeat {
                                             is_reset = true;
@@ -141,7 +141,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                             Err(error) => panic!("== Type 1/2, tickets fulled, reset_schedule Error: {}.", error),
                                         };
 
-                                        process_current_games(prize, &pool.clone()).await?;
+                                        process_current_games(&prize, &pool.clone()).await?;
                                     }
                                     
                                     
@@ -199,7 +199,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             //scheduled_off is bigger than now, meaning it's not ended
                             
                             println!("{} prize_id={} Type 3/4, is Repeat and running, ", i, prize.id.to_string());
-                            process_current_games(prize, &pool.clone()).await?;
+                            process_current_games(&prize, &pool.clone()).await?;
 
                             if status_progress != 1 {
                                 let _ = match prize::Prize::set_running(prize_id, &pool.clone()).await {
@@ -234,7 +234,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         // if scheduled_off is not passed, meaning we need to reset_schedule with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
             
 
-                                        let is_reset = false;
+                                        let mut is_reset = false;
                                         if prize.duration_days < 7 {
                                             if is_today_repeat {
                                                 is_reset = true;
@@ -250,7 +250,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                                 Err(error) => panic!("== Type 3/4, is Repeat, reset_schedule Error: {}.", error),
                                             };
                 
-                                            process_current_games(prize, &pool.clone()).await?;
+                                            process_current_games(&prize, &pool.clone()).await?;
                                         }
                                         
                                     }
@@ -267,7 +267,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                             //scheduled_off is bigger than now, meaning it's not ended
                             println!("{} prize_id={} Type 3/4, not repeat and running", i, prize.id.to_string());
-                            process_current_games(prize, &pool.clone()).await?;
+                            process_current_games(&prize, &pool.clone()).await?;
 
                             if status_progress != 1 {
                                 let _ = match prize::Prize::set_running(prize_id, &pool.clone()).await {
@@ -335,7 +335,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 }
 
-async fn process_current_games(prize: Prize, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<CurrentGame>, Box<dyn std::error::Error>> {
+async fn process_current_games(prize: &Prize, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<CurrentGame>, Box<dyn std::error::Error>> {
 
     let current_games: Vec<CurrentGame> = match prize::Prize::list_current_game_by_system(prize.id, &pool.clone()).await {
         Ok(current_games) => current_games,
@@ -353,10 +353,10 @@ async fn process_current_games(prize: Prize, pool: &Pool<PostgresConnectionManag
                     //println!("== prize_id={}, previous_games={}", prize.id.to_string(), previous_games.len().to_string());
                     let end_timestamp = previous_games[0].end_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
                     println!("== previous_games found, generating current_games from time after {}... and game_id after {}, until next end...", end_timestamp.to_string(), previous_games[0].game_id.to_string());
-                    generate_current_games(true, prize, previous_games[0].tour_id, previous_games[0].set_id, previous_games[0].game_id, end_timestamp, &pool.clone()).await?;
+                    generate_current_games(true, &prize, previous_games[0].tour_id, previous_games[0].set_id, previous_games[0].game_id, end_timestamp, &pool.clone()).await?;
                 } else {
                     println!("== No previous_games found, generating current_games from start until next end...");
-                    generate_current_games(false, prize, 0, 0, 0, 0, &pool.clone()).await?;
+                    generate_current_games(false, &prize, 0, 0, 0, 0, &pool.clone()).await?;
                 }
             },
             Err(error) => panic!("== list_current_games Error: {}.", error),
@@ -367,7 +367,7 @@ async fn process_current_games(prize: Prize, pool: &Pool<PostgresConnectionManag
     Ok(current_games)
 }
 
-async fn generate_current_games(is_previous_game_found: bool, prize: Prize, previous_tour_id: i64, previous_set_id: i64, previous_game_id: i64, previous_end_timestamp: u64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<(), Box<dyn std::error::Error>> {
+async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, previous_tour_id: i64, previous_set_id: i64, previous_game_id: i64, previous_end_timestamp: u64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<(), Box<dyn std::error::Error>> {
     
     let config = config::get_configuration();
     let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();

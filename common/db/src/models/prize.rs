@@ -105,6 +105,18 @@ pub struct CurrentGame {
   pub end_timestamp: SystemTime,
 }
 
+pub struct PastCurrentGame {
+  pub id: i64,
+  pub prize_id: i64,
+  pub prize_type_id: i32,
+  pub tour_id: i64,
+  pub set_id: i64,
+  pub tsg_id: i64,
+  pub game_id: i64,
+  pub start_timestamp: SystemTime,
+  pub end_timestamp: SystemTime,
+}
+
 pub struct PrizePool {
   pub id: i64,
   pub prize_id: i64,
@@ -524,22 +536,23 @@ impl Prize {
       Ok(vec)
     }
 
-    pub async fn list_past_unclosed_current_games(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
+    pub async fn list_past_unclosed_current_games(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<PastCurrentGame>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, tsg_id, game_id, start_timestamp, end_timestamp FROM public.\"current_game\" WHERE end_timestamp < NOW() AND is_closed=false;").await?;
+      let stmt = conn.prepare("SELECT cg.id, cg.prize_id, p.type_id AS prize_type_id, cg.tour_id, cg.set_id, cg.tsg_id, cg.game_id, cg.start_timestamp, cg.end_timestamp FROM public.\"current_game\" AS cg LEFT JOIN public.\"prize\" AS p ON p.id=cg.prize_id WHERE cg.end_timestamp < NOW() AND cg.is_closed=false;").await?;
     
-      let mut vec: Vec<CurrentGame> = Vec::new();
+      let mut vec: Vec<PastCurrentGame> = Vec::new();
       for row in conn.query(&stmt, &[]).await? {
-        let rule = CurrentGame {
+        let rule = PastCurrentGame {
           id: row.get(0),
           prize_id: row.get(1),
-          tour_id: row.get(2),
-          set_id: row.get(3),
-          tsg_id: row.get(4),
-          game_id: row.get(5),
-          start_timestamp: row.get(6),
-          end_timestamp: row.get(7)
+          prize_type_id: row.get(2),
+          tour_id: row.get(3),
+          set_id: row.get(4),
+          tsg_id: row.get(5),
+          game_id: row.get(6),
+          start_timestamp: row.get(7),
+          end_timestamp: row.get(8)
         };
 
         vec.push(rule);
