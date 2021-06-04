@@ -108,7 +108,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                                         user::User::reward_gem(user_id, rank_gem, &pool.clone()).await?;
                                         user::User::reward_exp(user_id, rule.exp, &pool.clone()).await?;
+                                        //TODO: notify user
                                         //append to prize_pool with rule.tickets, win_from=3,
+                                        notify_player("Your Tournament Result!", format!("Tournament for game_id: {} has just Ended!", game_id).as_str(), 
+                                        cg_id.to_string().as_str(), prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), game_id.to_string().as_str(), 
+                                        rank_gem.to_string().as_str(), rule.exp.to_string().as_str(), reward_tickets.to_string().as_str(), user.msg_token.as_str()).await?;
+
                                         
                                         prize::Prize::log_prize_pool(prize_id, user_id, game_id, 3, reward_tickets.ceil() as i32, &pool.clone()).await?;
                                     }
@@ -180,6 +185,45 @@ async fn notify_tour_ending(title: &str, body: &str, cg_id: &str, prize_id: &str
             "game_id": game_id
         },
         "to": "/topics/tournament_ending"
+    }))
+    .send()
+    .await?
+    .json()
+    .await?;
+  
+  
+    println!("{:#?}", echo_json);
+    
+    Ok(true)
+  
+}
+
+async fn notify_player(title: &str, body: &str, 
+    cg_id: &str, 
+    prize_id: &str, prize_type_id: &str, 
+    game_id: &str, 
+    reward_gem: &str, reward_exp: &str, tickets: &str, 
+    token: &str) -> Result<bool, reqwest::Error> {
+    let config = config::get_configuration();
+    
+    let echo_json: serde_json::Value = reqwest::Client::new()
+    .post("https://fcm.googleapis.com/fcm/send")
+    .header("authorization", format!("key={}", config.fcm_key))
+    .json(&serde_json::json!({
+        "notification" : {
+            "body" : body,
+            "title": title
+        },
+        "data": {
+            "cg_id": cg_id, 
+            "prize_id": prize_id,
+            "prize_type_id": prize_type_id,
+            "game_id": game_id,
+            "reward_gem": reward_gem,
+            "reward_exp": reward_exp,
+            "tickets": tickets,
+        },
+        "to": token
     }))
     .send()
     .await?
