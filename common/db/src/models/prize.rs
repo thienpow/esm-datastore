@@ -154,7 +154,7 @@ impl Prize {
     pub async fn get(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<PrizeBasicDetail, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
 
-      let stmt = conn.prepare("SELECT id, title, img_url FROM public.\"prize\" WHERE status=1 AND id=$1;").await?;
+      let stmt = conn.prepare("SELECT id, title, img_url FROM public.\"prize\" WHERE status=2 AND id=$1;").await?;
 
       let row = conn.query_one(&stmt, &[&id]).await?;
 
