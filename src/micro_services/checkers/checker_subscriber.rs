@@ -43,7 +43,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 for user in users {
 
                     user::User::reward_gem(user.id, user.daily_gem, &pool.clone()).await?;
-                    notify("Daily Gem Reward", format!("Your Subscription Reward has just reloaded: {} GEMS!", user.daily_gem).as_str(), user.daily_gem.to_string().as_str(), user.msg_token.as_str()).await?;
+                    match notify("Daily Gem Reward", format!("Your Subscription Reward has just reloaded: {} GEMS!", user.daily_gem).as_str(), user.daily_gem.to_string().as_str(), user.msg_token.as_str()).await {
+                        Ok(_) => {},
+                        Err(e) => {
+                            println!("Error notify subscriber {}", e);
+                        }
+                    }
                 }
 
             },

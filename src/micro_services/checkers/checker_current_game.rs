@@ -552,7 +552,12 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
                         Err(error) => panic!("==== winner.add Error: {}.", error),
                     };
         
-                    notify_closing("Prize Closing", format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), winner_user_id.to_string().as_str()).await?;
+                    match notify_closing("Prize Closing", format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), winner_user_id.to_string().as_str()).await {
+                        Ok(_) => {},
+                        Err(e) => {
+                            println!("Error notify_closing {}", e);
+                        }
+                    }
                 }
                 
                 Ok(true)
@@ -588,12 +593,17 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
                         Err(error) => panic!("==== winner.add Error: {}.", error),
                     };
         
-                    notify_closing("Prize Closing", 
+                    match notify_closing("Prize Closing", 
                         format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), 
                         prize_id.to_string().as_str(), 
                         prize_type_id.to_string().as_str(), 
                         winner_user_id.to_string().as_str()
-                    ).await?;
+                    ).await {
+                        Ok(_) => {},
+                        Err(e) => {
+                            println!("Error notify_closing {}", e);
+                        }
+                    }
                 }
                 
                 Ok(true)
