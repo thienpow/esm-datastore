@@ -60,7 +60,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 
                     //SELECT * FROM gplayer WHERE prize_id={game.prize_id} AND game_id={game.game_id} AND is_closed=false ORDER BY game_score DESC;
                     //from highest score
-                    
+                    let mut total_tickets_collected: i64 = 0;
+
                     match gplayer::GPlayer::list_unclosed_gplays(prize_id, game_id, &pool.clone()).await {
                         Ok(gplays) => {
 
@@ -113,7 +114,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         match notify_player("Your Tournament Result!", format!("Tournament for game_id: {} has just Ended!", game_id).as_str(), 
                                         cg_id.to_string().as_str(), prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), game_id.to_string().as_str(), 
                                         rank_gem.to_string().as_str(), rule.exp.to_string().as_str(), reward_tickets.to_string().as_str(), user.msg_token.as_str()).await {
-                                            Ok(_) => {},
+                                            Ok(_) => {
+                                                total_tickets_collected = total_tickets_collected + reward_tickets as i64;
+                                            },
                                             Err(e) => {
                                                 checker::Checker::add_error(checker::ErrorLog {
                                                     module_id: 201,
@@ -140,7 +143,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     };
                     
                     prize::Prize::close_current_game(cg_id, &pool.clone()).await?;
-                    match notify_tour_ending("Tournament Ending", format!("Tournament for game_id: {} has just Ended!", game_id).as_str(), cg_id.to_string().as_str(), prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), game_id.to_string().as_str()).await {
+                    match notify_tour_ending("Tournament Ending", format!("Tournament for game_id: {} has just Ended!", 
+                        game_id).as_str(), cg_id.to_string().as_str(), 
+                        prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), 
+                        game_id.to_string().as_str(), total_tickets_collected.to_string().as_str()).await {
                         Ok(_) => {},
                         Err(e) => {
                             checker::Checker::add_error(checker::ErrorLog {
@@ -185,7 +191,7 @@ fn get_reward_from_rank(exp: i32, ranks: &Vec<rank::Rank>) -> (f64, i32) {
     return (0.0, 0);
 }
 
-async fn notify_tour_ending(title: &str, body: &str, cg_id: &str, prize_id: &str, prize_type_id: &str, game_id: &str) -> Result<bool, reqwest::Error> {
+async fn notify_tour_ending(title: &str, body: &str, cg_id: &str, prize_id: &str, prize_type_id: &str, game_id: &str, tickets: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
 
     let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
@@ -203,6 +209,7 @@ async fn notify_tour_ending(title: &str, body: &str, cg_id: &str, prize_id: &str
             "prize_id": prize_id,
             "prize_type_id": prize_type_id,
             "game_id": game_id,
+            "tickets_collected": tickets,
             "timestamp": format!("{}", timestamp).as_str()
         },
         "to": "/topics/tournament_ending"
