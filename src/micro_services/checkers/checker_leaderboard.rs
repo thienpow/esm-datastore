@@ -115,6 +115,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         rank_gem.to_string().as_str(), rule.exp.to_string().as_str(), reward_tickets.to_string().as_str(), user.msg_token.as_str()).await {
                                             Ok(_) => {},
                                             Err(e) => {
+                                                checker::Checker::add_error(checker::ErrorLog {
+                                                    module_id: 201,
+                                                    detail: format!("{}", e),
+                                                }, &pool).await?;
                                                 println!("Error notify_player {}", e);
                                             }
                                         }
@@ -139,6 +143,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     match notify_tour_ending("Tournament Ending", format!("Tournament for game_id: {} has just Ended!", game_id).as_str(), cg_id.to_string().as_str(), prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), game_id.to_string().as_str()).await {
                         Ok(_) => {},
                         Err(e) => {
+                            checker::Checker::add_error(checker::ErrorLog {
+                                module_id: 202,
+                                detail: format!("{}", e),
+                            }, &pool).await?;
                             println!("Error notify_tour_ending {}", e);
                         }
                     }

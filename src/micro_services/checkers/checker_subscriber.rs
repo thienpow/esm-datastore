@@ -46,6 +46,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     match notify("Daily Gem Reward", format!("Your Subscription Reward has just reloaded: {} GEMS!", user.daily_gem).as_str(), user.daily_gem.to_string().as_str(), user.msg_token.as_str()).await {
                         Ok(_) => {},
                         Err(e) => {
+                            checker::Checker::add_error(checker::ErrorLog {
+                                module_id: 201,
+                                detail: format!("{}", e),
+                            }, &pool).await?;
                             println!("Error notify subscriber {}", e);
                         }
                     }

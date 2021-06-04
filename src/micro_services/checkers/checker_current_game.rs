@@ -555,6 +555,10 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
                     match notify_closing("Prize Closing", format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), winner_user_id.to_string().as_str()).await {
                         Ok(_) => {},
                         Err(e) => {
+                            checker::Checker::add_error(checker::ErrorLog {
+                                module_id: 201,
+                                detail: format!("{}", e),
+                            }, &pool).await?;
                             println!("Error notify_closing {}", e);
                         }
                     }
@@ -601,6 +605,10 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
                     ).await {
                         Ok(_) => {},
                         Err(e) => {
+                            checker::Checker::add_error(checker::ErrorLog {
+                                module_id: 201,
+                                detail: format!("{}", e),
+                            }, &pool).await?;
                             println!("Error notify_closing {}", e);
                         }
                     }
