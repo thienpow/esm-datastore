@@ -32,6 +32,7 @@ service EsmApi {
   // Game
   rpc ListGameLeaderRule(ListGameLeaderRuleRequest) returns (ListGameLeaderRuleResponse) {}
   rpc GetGameCode(GetGameCodeRequest) returns (GetGameCodeResponse) {}
+  rpc GetGameDetail(GetGameDetailRequest) returns (GetGameDetailResponse) {}
 
   // GPlayer
   rpc GetSpinAvailable(GetSpinAvailableRequest) returns (GetSpinAvailableResponse) {}
@@ -56,6 +57,8 @@ service EsmApi {
   // Prize
   rpc GetPrizeTicketPool(GetPrizeTicketPoolRequest) returns (GetPrizeTicketPoolResponse) {}
   rpc ListPrize(ListPrizeRequest) returns (ListPrizeResponse) {}
+  rpc GetPrizeDetail(GetPrizeDetailRequest) returns (GetPrizeDetailResponse) {}
+
   // Rank
   rpc ListRank(ListRankRequest) returns (ListRankResponse) {}
 
@@ -285,6 +288,31 @@ message GetPlayerResponse {
   PlayerDetail result = 1;
 }
 
+
+
+message PrizeBasicDetail {
+  int64 id = 1;
+  string title = 2;
+  string img_url = 3;
+}
+message GetPrizeDetailRequest {
+  int64 id = 1;
+}
+message GetPrizeDetailResponse {
+  PrizeBasicDetail result = 1;
+}
+
+message GameBasicDetail {
+  int64 id = 1;
+  string title = 2;
+  string img_url = 3;
+}
+message GetGameDetailRequest {
+  int64 id = 1;
+}
+message GetGameDetailResponse {
+  GameBasicDetail result = 1;
+}
 
 
 

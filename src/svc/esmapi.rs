@@ -48,6 +48,8 @@ use esmapi_proto::{
   ListGameLeaderRuleRequest, ListGameLeaderRuleResponse,
   GameLeaderRuleDetail,
   GetGameCodeRequest, GetGameCodeResponse,
+  GetGameDetailRequest, GetGameDetailResponse,
+  GameBasicDetail,
 
   // GPlayer
   GetSpinAvailableRequest, GetSpinAvailableResponse,
@@ -77,6 +79,9 @@ use esmapi_proto::{
   GetPrizeTicketPoolRequest, GetPrizeTicketPoolResponse,
   ListPrizeRequest, ListPrizeResponse, 
   PrizeDetail, 
+  GetPrizeDetailRequest, GetPrizeDetailResponse,
+  PrizeBasicDetail,
+
 
   // Rank
   ListRankRequest, ListRankResponse,
@@ -240,9 +245,9 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       })),
       Err(e) => Err(Status::internal(format!("Error: get_player! {}", e.to_string())))
     }
-    
-    
   }
+
+
 
   async fn sign_in(&self, request: Request<SignInRequest>, ) -> Result<Response<SignInResponse>, Status> {
     
@@ -690,7 +695,23 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     }))
   }
 
-  
+  async fn get_game_detail(&self, request: Request<GetGameDetailRequest>, ) -> Result<Response<GetGameDetailResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    
+    match game::Game::get(req.id.into(), &self.pool.clone()).await {
+      Ok(result) => Ok(Response::new(GetGameDetailResponse {
+        result: Some(GameBasicDetail{
+          id: result.id,
+          title: result.title,
+          img_url: result.img_url,
+        }),
+      })),
+      Err(e) => Err(Status::internal(format!("Error: get_game_detail! {}", e.to_string())))
+    }
+  }
+
 
 
 
@@ -1553,6 +1574,23 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
       result: result,
     }))
     
+  }
+
+  async fn get_prize_detail(&self, request: Request<GetPrizeDetailRequest>, ) -> Result<Response<GetPrizeDetailResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    
+    match prize::Prize::get(req.id.into(), &self.pool.clone()).await {
+      Ok(result) => Ok(Response::new(GetPrizeDetailResponse {
+        result: Some(PrizeBasicDetail{
+          id: result.id,
+          title: result.title,
+          img_url: result.img_url,
+        }),
+      })),
+      Err(e) => Err(Status::internal(format!("Error: get_prize_detail! {}", e.to_string())))
+    }
   }
 
 

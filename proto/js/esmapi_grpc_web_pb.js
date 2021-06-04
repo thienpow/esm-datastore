@@ -1354,6 +1354,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.getGameCode =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.GetGameDetailRequest,
+ *   !proto.api.esm.GetGameDetailResponse>}
+ */
+const methodDescriptor_EsmApi_GetGameDetail = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/GetGameDetail',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.GetGameDetailRequest,
+  proto.api.esm.GetGameDetailResponse,
+  /**
+   * @param {!proto.api.esm.GetGameDetailRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetGameDetailResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.GetGameDetailRequest,
+ *   !proto.api.esm.GetGameDetailResponse>}
+ */
+const methodInfo_EsmApi_GetGameDetail = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.GetGameDetailResponse,
+  /**
+   * @param {!proto.api.esm.GetGameDetailRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetGameDetailResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.GetGameDetailRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.GetGameDetailResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.GetGameDetailResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.getGameDetail =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/GetGameDetail',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetGameDetail,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.GetGameDetailRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.GetGameDetailResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.getGameDetail =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/GetGameDetail',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetGameDetail);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.GetSpinAvailableRequest,
  *   !proto.api.esm.GetSpinAvailableResponse>}
  */
@@ -2628,6 +2708,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listPrize =
       request,
       metadata || {},
       methodDescriptor_EsmApi_ListPrize);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.GetPrizeDetailRequest,
+ *   !proto.api.esm.GetPrizeDetailResponse>}
+ */
+const methodDescriptor_EsmApi_GetPrizeDetail = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/GetPrizeDetail',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.GetPrizeDetailRequest,
+  proto.api.esm.GetPrizeDetailResponse,
+  /**
+   * @param {!proto.api.esm.GetPrizeDetailRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetPrizeDetailResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.GetPrizeDetailRequest,
+ *   !proto.api.esm.GetPrizeDetailResponse>}
+ */
+const methodInfo_EsmApi_GetPrizeDetail = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.GetPrizeDetailResponse,
+  /**
+   * @param {!proto.api.esm.GetPrizeDetailRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetPrizeDetailResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.GetPrizeDetailRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.GetPrizeDetailResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.GetPrizeDetailResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.getPrizeDetail =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/GetPrizeDetail',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetPrizeDetail,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.GetPrizeDetailRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.GetPrizeDetailResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.getPrizeDetail =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/GetPrizeDetail',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetPrizeDetail);
 };
 
 

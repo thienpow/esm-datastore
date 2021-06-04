@@ -519,6 +519,7 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
     //For closing use WeightedIndex
     //https://docs.rs/rand/0.8.3/rand/distributions/weighted/struct.WeightedIndex.html
     let prize_id = prize.id;
+    let prize_type_id = prize.type_id;
 
     if prize.type_id == 4 {
         // Automated Entry, everyone who played
@@ -551,7 +552,7 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
                         Err(error) => panic!("==== winner.add Error: {}.", error),
                     };
         
-                    notify_closing("Prize Closing", format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), winner_user_id.to_string().as_str()).await?;
+                    notify_closing("Prize Closing", format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), winner_user_id.to_string().as_str()).await?;
                 }
                 
                 Ok(true)
@@ -587,7 +588,12 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
                         Err(error) => panic!("==== winner.add Error: {}.", error),
                     };
         
-                    notify_closing("Prize Closing", format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), winner_user_id.to_string().as_str()).await?;
+                    notify_closing("Prize Closing", 
+                        format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), 
+                        prize_id.to_string().as_str(), 
+                        prize_type_id.to_string().as_str(), 
+                        winner_user_id.to_string().as_str()
+                    ).await?;
                 }
                 
                 Ok(true)
@@ -600,7 +606,7 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
     
 }
 
-async fn notify_closing(title: &str, body: &str, prize_id: &str, winner_user_id: &str) -> Result<bool, reqwest::Error> {
+async fn notify_closing(title: &str, body: &str, prize_id: &str, prize_type_id: &str, winner_user_id: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
     
     let echo_json: serde_json::Value = reqwest::Client::new()
@@ -613,6 +619,7 @@ async fn notify_closing(title: &str, body: &str, prize_id: &str, winner_user_id:
         },
         "data": {
             "prize_id": prize_id, 
+            "prize_type_id": prize_type_id,
             "winner_user_id": winner_user_id
         },
         "to": "/topics/prize_closing"

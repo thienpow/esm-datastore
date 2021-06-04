@@ -45,6 +45,12 @@ pub struct GameCount {
   pub archived: i64 
 }
 
+pub struct GameBasicDetail {
+  pub id: i64,
+  pub title: String,
+  pub img_url: String
+}
+
 impl Game {
     
     pub async fn add(game: Game, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
@@ -59,6 +65,22 @@ impl Game {
       Ok(row.get::<usize, i64>(0))
     }
     
+    pub async fn get(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<GameBasicDetail, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+
+      let stmt = conn.prepare("SELECT id, title, img_url FROM public.\"game\" WHERE status=1 AND id=$1;").await?;
+
+      let row = conn.query_one(&stmt, &[&id]).await?;
+
+      let user = GameBasicDetail {
+        id: row.get(0),
+        title: row.get(1), 
+        img_url: row.get(2)
+      };
+
+      Ok(user)
+    }
+
     pub async fn update(game: Game, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

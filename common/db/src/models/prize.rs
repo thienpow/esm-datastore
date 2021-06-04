@@ -127,6 +127,12 @@ pub struct PrizePool {
   pub is_closed: bool,
 }
 
+pub struct PrizeBasicDetail {
+  pub id: i64,
+  pub title: String,
+  pub img_url: String
+}
+
 impl Prize {
     
     pub async fn add(prize: Prize, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
@@ -145,6 +151,22 @@ impl Prize {
       Ok(row.get::<usize, i64>(0))
     }
     
+    pub async fn get(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<PrizeBasicDetail, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+
+      let stmt = conn.prepare("SELECT id, title, img_url FROM public.\"prize\" WHERE status=1 AND id=$1;").await?;
+
+      let row = conn.query_one(&stmt, &[&id]).await?;
+
+      let user = PrizeBasicDetail {
+        id: row.get(0),
+        title: row.get(1), 
+        img_url: row.get(2)
+      };
+
+      Ok(user)
+    }
+
     pub async fn add_current_game(current_game: CurrentGame, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
