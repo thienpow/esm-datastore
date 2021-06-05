@@ -595,7 +595,11 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
                         Err(error) => panic!("==== winner.add Error: {}.", error),
                     };
         
-                    match notify_closing("Prize Closing", format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), winner_user_id.to_string().as_str()).await {
+                    let prize_tickets_collected = prize::Prize::get_current_tickets_collected(prize_id, &pool.clone()).await?;
+                    match notify_closing("Prize Closing", 
+                        format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), prize_id.to_string().as_str(), 
+                        prize_type_id.to_string().as_str(), 
+                        winner_user_id.to_string().as_str(), prize_tickets_collected.to_string().as_str()).await {
                         Ok(_) => {},
                         Err(e) => {
                             checker::Checker::add_error(checker::ErrorLog {
@@ -640,11 +644,13 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
                         Err(error) => panic!("==== winner.add Error: {}.", error),
                     };
         
+                    let prize_tickets_collected = prize::Prize::get_current_tickets_collected(prize_id, &pool.clone()).await?;
                     match notify_closing("Prize Closing", 
                         format!("The Winner of Prize: {}, is winner_user_id: {}", prize_id, winner_user_id).as_str(), 
                         prize_id.to_string().as_str(), 
                         prize_type_id.to_string().as_str(), 
-                        winner_user_id.to_string().as_str()
+                        winner_user_id.to_string().as_str(),
+                        prize_tickets_collected.to_string().as_str()
                     ).await {
                         Ok(_) => {},
                         Err(e) => {
@@ -667,7 +673,7 @@ async fn process_closing(prize: &prize::Prize, pool: &Pool<PostgresConnectionMan
     
 }
 
-async fn notify_closing(title: &str, body: &str, prize_id: &str, prize_type_id: &str, winner_user_id: &str) -> Result<bool, reqwest::Error> {
+async fn notify_closing(title: &str, body: &str, prize_id: &str, prize_type_id: &str, winner_user_id: &str, prize_tickets_collected: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
     
     let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
@@ -681,9 +687,11 @@ async fn notify_closing(title: &str, body: &str, prize_id: &str, prize_type_id: 
             "title": title
         },
         "data": {
+            "msg_type": "300", // to everyone, notify during the Prize ending/closing
             "prize_id": prize_id, 
             "prize_type_id": prize_type_id,
             "winner_user_id": winner_user_id,
+            "prize_tickets_collected": prize_tickets_collected,
             "timestamp": format!("{}", timestamp).as_str()
         },
         "to": "/topics/prize_closing"

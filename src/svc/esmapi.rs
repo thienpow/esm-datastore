@@ -396,7 +396,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
             Err(error) => panic!("Error: update_msg_token. user::update_msg_token {}.", error),
           };
   
-          match svc::notify("System Notification", "Your Message Token is Updated", &token).await {
+          match svc::notify_system("System Notification", "Your Message Token is Updated", &token).await {
             Ok(_) => {},
             Err(error) => panic!("Error: update_msg_token. svc::notify {}.", error),
           };
@@ -819,10 +819,12 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
             if is_watched_ad || is_used_gem {
 
+              /*
               let user = match user::User::get(user_id, &self.pool.clone()).await {
                 Ok(user) => user,
                 Err(e) => return Err(Status::internal(format!("Error: log_g_leave ==> user::User::get failed! {}", e.to_string())))
               };
+              */
 
               match game::Game::get_game_rules(game_id, &self.pool.clone()).await {
                 Ok(game_rules) => {
@@ -841,17 +843,10 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                   if is_used_gem {
                           
                     //deduct a gem first
-                    let new_gem_balance: i32 = user.gem_balance - game_rules.use_how_many_gems;
+                    //let new_gem_balance: i32 = user.gem_balance - game_rules.use_how_many_gems;
                     
                     match user::User::deduct_gem(user_id, game_rules.use_how_many_gems, &self.pool.clone()).await {
-                      Ok(_) => {
-        
-                        match svc::notify(format!("You spent {} Gem!", game_rules.use_how_many_gems).as_str(), format!("You spent {} gem to play, Your Gem Balance is Updated to {}", game_rules.use_how_many_gems, new_gem_balance).as_str(), &user.msg_token).await {
-                          Ok(_) => "1",
-                          Err(e) => return Err(Status::internal(format!("Error: log_g_leave ==> deduct_gem.notify failed! {}", e.to_string())))
-                        };
-                        
-                      },
+                      Ok(_) => (),
                       Err(e) => return Err(Status::internal(format!("Error: log_g_leave ==> deduct_gem failed! {}", e.to_string())))
                     }
                     //after deducted gem, reward the tickets/exp
@@ -1268,7 +1263,11 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                 match user::User::update_status_gem_balance(invited_by, user.status, new_gem_balance, &self.pool.clone()).await {
                   Ok(_) => {
 
-                    match svc::notify("You got a Gem reward!", format!("Your invited friend has just joined! As a reward, Your Gem Balance is Updated to {}", new_gem_balance).as_str(), &user.msg_token).await {
+                    match svc::notify_gem_reward("You got a Gem reward!", 
+                                                  format!("Your invited friend has just joined! As a reward of {} gems, Your Gem Balance is Updated to {}", gems_per_invite, new_gem_balance).as_str(), 
+                                                  gems_per_invite.to_string().as_str(),
+                                                  new_gem_balance.to_string().as_str(),
+                                                  &user.msg_token).await {
                       Ok(_) => {},
                       Err(e) => return Err(Status::internal(format!("Error: add_invite ==> update_status_gem_balance.notify failed! {}", e.to_string())))
                     };
@@ -1721,7 +1720,11 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
           match user::User::reward_gem(user_id, quantity, &self.pool.clone()).await {
             Ok(_) => {
 
-              match svc::notify("You Gem Balance is loaded!", format!("You bought a gem pack with {} gems! Your Gem Balance is Updated to {}", quantity, new_gem_balance).as_str(), &user.msg_token).await {
+              match svc::notify_gem_reward("You Gem Balance is loaded!", 
+                format!("You bought a gem pack with {} gems! Your Gem Balance is Updated to {}", quantity, new_gem_balance).as_str(), 
+                quantity.to_string().as_str(),
+                new_gem_balance.to_string().as_str(),
+                &user.msg_token).await {
                 Ok(_) => "1",
                 Err(e) => return Err(Status::internal(format!("Error: buy ==> reward_gem.notify failed! {}", e.to_string())))
               };
@@ -1747,7 +1750,11 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                 &self.pool.clone()).await {
                 Ok(_) => {
 
-                  match svc::notify("You Gem Balance is loaded!", format!("You bought a subscription with {} gems as instant reward! Your Gem Balance is Updated to {}", subscription.one_time_gem, new_gem_balance).as_str(), &user.msg_token).await {
+                  match svc::notify_gem_reward("You Gem Balance is loaded!", 
+                  format!("You bought a subscription with {} gems as instant reward! Your Gem Balance is Updated to {}", subscription.one_time_gem, new_gem_balance).as_str(), 
+                  subscription.one_time_gem.to_string().as_str(),
+                  new_gem_balance.to_string().as_str(),
+                  &user.msg_token).await {
                     Ok(_) => "1",
                     Err(e) => return Err(Status::internal(format!("Error: buy ==> new_subscription.notify failed! {}", e.to_string())))
                   };

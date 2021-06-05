@@ -126,7 +126,7 @@ pub async fn subscribe_topic(topic: &str, token: &str) -> Result<bool, reqwest::
 
 }
 
-pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwest::Error> {
+pub async fn notify_system(title: &str, body: &str, token: &str) -> Result<bool, reqwest::Error> {
   let config = config::get_configuration();
     
   let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
@@ -140,6 +140,7 @@ pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwes
       "title": title
     },
     "data": {
+      "msg_type": "1", //System notification.
       "timestamp": format!("{}", timestamp).as_str()
     },
     "to": token
@@ -155,6 +156,40 @@ pub async fn notify(title: &str, body: &str, token: &str) -> Result<bool, reqwes
   Ok(true)
 
 }
+
+pub async fn notify_gem_reward(title: &str, body: &str, gem_reward: &str, gem_balance: &str, token: &str) -> Result<bool, reqwest::Error> {
+  let config = config::get_configuration();
+    
+  let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
+    
+  let _: serde_json::Value = reqwest::Client::new()
+  .post("https://fcm.googleapis.com/fcm/send")
+  .header("authorization", format!("key={}", config.fcm_key))
+  .json(&serde_json::json!({
+    "notification" : {
+      "body" : body,
+      "title": title
+    },
+    "data": {
+      "msg_type": "100", // A gem reward to the user
+      "gem_reward": gem_reward,
+      "gem_balance": gem_balance,
+      "timestamp": format!("{}", timestamp).as_str()
+    },
+    "to": token
+  }))
+  .send()
+  .await?
+  .json()
+  .await?;
+
+
+  //println!("{:#?}", echo_json);
+
+  Ok(true)
+
+}
+
 
 pub async fn check_is_admin(meta: &MetadataMap) -> Result<bool, Status> {
   let test_token = "test-only-token";

@@ -91,6 +91,7 @@ pub async fn notify(title: &str, body: &str, daily_gem: &str, token: &str) -> Re
             "title": title
         },
         "data": {
+            "msg_type": "101", // to a subscriber, notify during the "bot/checker" do the daily reward of gem to the one who subscribe
             "daily_gem": daily_gem,
             "timestamp": format!("{}", timestamp).as_str()
         },

@@ -55,6 +55,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     let prize_id = cg.prize_id;
                     let game_id = cg.game_id;
                     let prize_type_id = cg.prize_type_id;
+                    let mut game_tickets_collected = 0;
 
                     //println!("game_id=={}", game_id);
                 
@@ -110,6 +111,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         user::User::reward_exp(user_id, rule.exp, &pool.clone()).await?;
                                         //TODO: notify user
                                         //append to prize_pool with rule.tickets, win_from=3,
+                                        game_tickets_collected = game_tickets_collected + reward_tickets as i64;
                                         match notify_player("Your Tournament Result!", format!("Tournament for game_id: {} has just Ended!", game_id).as_str(), 
                                         cg_id.to_string().as_str(), prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), game_id.to_string().as_str(), 
                                         rank_gem.to_string().as_str(), rule.exp.to_string().as_str(), reward_tickets.to_string().as_str(), user.msg_token.as_str()).await {
@@ -141,12 +143,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         Err(error) => panic!("Error {}", error),
                     };
                     
-                    let tickets_collected = prize::Prize::get_current_tickets_collected(prize_id, &pool.clone()).await?;
-                    prize::Prize::close_current_game(cg_id, tickets_collected, &pool.clone()).await?;
+                    let prize_tickets_collected = prize::Prize::get_current_tickets_collected(prize_id, &pool.clone()).await?;
+                    prize::Prize::close_current_game(cg_id, game_tickets_collected, &pool.clone()).await?;
                     match notify_tour_ending("Tournament Ending", format!("Tournament for game_id: {} has just Ended!", 
                         game_id).as_str(), cg_id.to_string().as_str(), 
                         prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), 
-                        game_id.to_string().as_str(), tickets_collected.to_string().as_str()).await {
+                        game_id.to_string().as_str(), game_tickets_collected.to_string().as_str(), prize_tickets_collected.to_string().as_str()).await {
                         Ok(_) => {},
                         Err(e) => {
                             checker::Checker::add_error(checker::ErrorLog {
@@ -191,7 +193,7 @@ fn get_reward_from_rank(exp: i32, ranks: &Vec<rank::Rank>) -> (f64, i32) {
     return (0.0, 0);
 }
 
-async fn notify_tour_ending(title: &str, body: &str, cg_id: &str, prize_id: &str, prize_type_id: &str, game_id: &str, tickets: &str) -> Result<bool, reqwest::Error> {
+async fn notify_tour_ending(title: &str, body: &str, cg_id: &str, prize_id: &str, prize_type_id: &str, game_id: &str, game_tickets_collected: &str, prize_tickets_collected: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
 
     let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
@@ -205,11 +207,13 @@ async fn notify_tour_ending(title: &str, body: &str, cg_id: &str, prize_id: &str
             "title": title
         },
         "data": {
+            "msg_type": "200", // to everyone, notify during the game ending
             "cg_id": cg_id, 
             "prize_id": prize_id,
             "prize_type_id": prize_type_id,
             "game_id": game_id,
-            "tickets_collected": tickets,
+            "game_tickets_collected": game_tickets_collected,
+            "prize_tickets_collected": prize_tickets_collected,
             "timestamp": format!("{}", timestamp).as_str()
         },
         "to": "/topics/tournament_ending"
@@ -245,6 +249,7 @@ async fn notify_player(title: &str, body: &str,
             "title": title
         },
         "data": {
+            "msg_type": "201", // to the player who played the game, notify during the game ending
             "cg_id": cg_id, 
             "prize_id": prize_id,
             "prize_type_id": prize_type_id,

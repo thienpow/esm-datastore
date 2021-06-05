@@ -62,34 +62,3 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 }
 
-
-pub async fn notify(title: &str, body: &str, daily_gem: &str, token: &str) -> Result<bool, reqwest::Error> {
-    let config = config::get_configuration();
-    
-    let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
-    
-    let echo_json: serde_json::Value = reqwest::Client::new()
-    .post("https://fcm.googleapis.com/fcm/send")
-    .header("authorization", format!("key={}", config.fcm_key))
-    .json(&serde_json::json!({
-        "notification" : {
-            "body" : body,
-            "title": title
-        },
-        "data": {
-            "daily_gem": daily_gem,
-            "timestamp": format!("{}", timestamp).as_str()
-        },
-        "to": token
-    }))
-    .send()
-    .await?
-    .json()
-    .await?;
-  
-  
-    println!("{:#?}", echo_json);
-  
-    Ok(true)
-  
-}
