@@ -397,6 +397,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
         start_timestamp = previous_end_timestamp;
     }
     
+    println!("===== generate_current_games =====");
     let mut final_end_timestamp = scheduled_off;
     //println!("==== adjusted_now {} > scheduled_off {}", adjusted_now, scheduled_off);
     if adjusted_now + 3600 * 1 > scheduled_off {
@@ -495,7 +496,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                     } else {
                         
                         if game.group_id > 0 {
-                            if game.tour_id == previous_tour_id && game.set_id == previous_set_id {
+                            if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.group_id == previous_group_id {
                                 println!("== not after previous, but conditions in.");
                                 is_after_previous = true;
                                 previous_start_timestamp = start_timestamp;
