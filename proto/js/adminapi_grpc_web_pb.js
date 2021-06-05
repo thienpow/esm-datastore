@@ -5834,6 +5834,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.deleteTournamentSetGameRule =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.DeleteAllTournamentSetGameRuleRequest,
+ *   !proto.adminapi.esm.DeleteAllTournamentSetGameRuleResponse>}
+ */
+const methodDescriptor_AdminApi_DeleteAllTournamentSetGameRule = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/DeleteAllTournamentSetGameRule',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.DeleteAllTournamentSetGameRuleRequest,
+  proto.adminapi.esm.DeleteAllTournamentSetGameRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.DeleteAllTournamentSetGameRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.DeleteAllTournamentSetGameRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.DeleteAllTournamentSetGameRuleRequest,
+ *   !proto.adminapi.esm.DeleteAllTournamentSetGameRuleResponse>}
+ */
+const methodInfo_AdminApi_DeleteAllTournamentSetGameRule = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.DeleteAllTournamentSetGameRuleResponse,
+  /**
+   * @param {!proto.adminapi.esm.DeleteAllTournamentSetGameRuleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.DeleteAllTournamentSetGameRuleResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.DeleteAllTournamentSetGameRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.DeleteAllTournamentSetGameRuleResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.DeleteAllTournamentSetGameRuleResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.deleteAllTournamentSetGameRule =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/DeleteAllTournamentSetGameRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_DeleteAllTournamentSetGameRule,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.DeleteAllTournamentSetGameRuleRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.DeleteAllTournamentSetGameRuleResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.deleteAllTournamentSetGameRule =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/DeleteAllTournamentSetGameRule',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_DeleteAllTournamentSetGameRule);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.ListTournamentRequest,
  *   !proto.adminapi.esm.ListTournamentResponse>}
  */
