@@ -16,13 +16,13 @@ fi
 while :; do
 
   if test -z "$choice"; then
-    read -p "Rebuild: All(0), esmserver(1), admin(2), checker_current_game(3), checker_leaderboard(4), checker_subscriber(5), gloader(6), wwwloader(7)" choice
+    read -p "Rebuild: All(0), esmserver(1), admin(2), checker_current_game(3), checker_leaderboard(4), checker_subscriber(5), checker_unclaim(6), gloader(7), wwwloader(8)" choice
   fi
   
   if [ "$choice" -ge 0 ] && [ "$choice" -le 99 ]; then
     break
   else
-    read -p "Rebuild: All(0), esmserver(1), admin(2), checker_current_game(3), checker_leaderboard(4), checker_subscriber(5), gloader(6), wwwloader(7)" choice
+    read -p "Rebuild: All(0), esmserver(1), admin(2), checker_current_game(3), checker_leaderboard(4), checker_subscriber(5), checker_unclaim(6), gloader(7), wwwloader(8)" choice
   fi
 
 done

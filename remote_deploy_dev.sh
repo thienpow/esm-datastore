@@ -7,7 +7,7 @@ cd ~/esm-datastore/
 
 git pull
 
-read -p "Rebuild: All(0), esmserver(1), admin(2), checker_current_game(3), checker_leaderboard(4), checker_subscriber(5), gloader(6), wwwloader(7)" choice
+read -p "Rebuild: All(0), esmserver(1), admin(2), checker_current_game(3), checker_leaderboard(4), checker_subscriber(5), checker_unclaim(6), gloader(7), wwwloader(8)" choice
 
 
 case $1 in
