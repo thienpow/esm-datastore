@@ -197,6 +197,17 @@ impl Winner {
       Ok(vec)
     }
 
+    pub async fn set_all_expired_unclaimed(days_to_claim: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let sql_string = format!("UPDATE public.\"winner\" SET status=4  WHERE status=1 AND CURRENT_DATE > DATE(created_on) + INTERVAL '{} days';", days_to_claim);
+      
+      let stmt = conn.prepare(&sql_string).await?;
+      let n = conn.execute(&stmt, &[]).await?;
+    
+      Ok(n)
+    }
+
     pub async fn list_claimed(user_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Winner>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
 

@@ -53,4 +53,14 @@ impl Checker {
     }
 
 
+    pub async fn update_unclaim_checked(time_spent: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"checker_log\" SET unclaim_checked_on=NOW(), unclaim_time_spent=$1 WHERE id=1;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&time_spent]).await?;
+    
+      Ok(n)
+    }
+
 }

@@ -11,4 +11,5 @@ export FCM_KEY="AAAAzT8d8lM:APA91bHtFSHVIBiiSDUWSaUkrYNrcBSyhMY_JBYSeaaoWpkrxSgB
 /usr/local/bin/checker_current_game & 
 /usr/local/bin/checker_leaderboard & 
 /usr/local/bin/checker_subscriber & 
+/usr/local/bin/checker_unclaim &
 /usr/local/bin/esmserver

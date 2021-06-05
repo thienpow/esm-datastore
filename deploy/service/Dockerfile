@@ -17,6 +17,9 @@ RUN chmod u+x /usr/local/bin/checker_leaderboard
 COPY ./service/checker_subscriber /usr/local/bin/checker_subscriber
 RUN chmod u+x /usr/local/bin/checker_subscriber
 
+COPY ./service/checker_unclaim /usr/local/bin/checker_unclaim
+RUN chmod u+x /usr/local/bin/checker_unclaim
+
 COPY ./common_env.sh /usr/local/bin/common_env
 RUN chmod u+x /usr/local/bin/common_env
 

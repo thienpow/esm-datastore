@@ -22,6 +22,10 @@ name = "checker_subscriber"
 path = "src/micro_services/checkers/checker_subscriber.rs"
 
 [[bin]]
+name = "checker_unclaim"
+path = "src/micro_services/checkers/checker_unclaim.rs"
+
+[[bin]]
 name =  "gloader"
 path = "src/micro_services/gloader/gloader.rs"
 

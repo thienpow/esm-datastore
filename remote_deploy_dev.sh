@@ -25,6 +25,9 @@ case $1 in
   echo "building checker_subscriber"
   $CARGO_PATH/cargo build --bin checker_subscriber --release
 
+  echo "building checker_unclaim"
+  $CARGO_PATH/cargo build --bin checker_unclaim --release
+
   echo "building gloader"
   $CARGO_PATH/cargo build --bin gloader --release
 
@@ -52,17 +55,21 @@ case $1 in
   $CARGO_PATH/cargo build --bin checker_subscriber --release
   ;;
 6)
+  echo "building checker_unclaim"
+  $CARGO_PATH/cargo build --bin checker_unclaim --release
+  ;;
+7)
   echo "building gloader"
   $CARGO_PATH/cargo build --bin gloader --release
   ;;
-7)
+8)
   echo "building wwwloader"
   $CARGO_PATH/cargo build --bin wwwloader --release
   ;;
-8)
+9)
   echo "rebuild dbpg-master"
   ;;
-9)
+11)
   echo "RESTART ONLY: docker-compose up -d --build"
   ;;
 88)
@@ -81,6 +88,7 @@ rm service/esmserver
 rm service/checker_current_game
 rm service/checker_leaderboard
 rm service/checker_subscriber
+rm service/checker_unclaim
 rm gloader/gloader
 rm admin/wwwloader
 
@@ -89,6 +97,7 @@ cp target/release/esmserver deploy/service/esmserver
 cp target/release/checker_current_game deploy/service/checker_current_game
 cp target/release/checker_leaderboard deploy/service/checker_leaderboard
 cp target/release/checker_subscriber deploy/service/checker_subscriber
+cp target/release/checker_unclaim deploy/service/checker_unclaim
 cp target/release/gloader deploy/gloader/gloader
 cp target/release/wwwloader deploy/admin/wwwloader
 
@@ -115,15 +124,18 @@ case $1 in
   docker-compose up -d --build esmservice
   ;;
 6)
-  docker-compose up -d --build esm-game-loader
+  docker-compose up -d --build esmservice
   ;;
 7)
-  docker-compose up -d --build esm-admin
+  docker-compose up -d --build esm-game-loader
   ;;
 8)
-  docker-compose up -d --build dbpg-master
+  docker-compose up -d --build esm-admin
   ;;
 9)
+  docker-compose up -d --build dbpg-master
+  ;;
+11)
   docker-compose up -d --build
   ;;
 88)
