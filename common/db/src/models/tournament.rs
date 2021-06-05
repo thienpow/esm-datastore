@@ -139,6 +139,15 @@ impl Tournament {
       Ok(n)
     }
     
+    pub async fn delete_all_set_game_rule(set_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("DELETE FROM public.\"tournament_set_game_rule\" WHERE set_id=$1;").await?;
+      let n = conn.execute(&stmt, &[&set_id]).await?;
+    
+      Ok(n)
+    }
+    
     pub async fn list(limit: i64, offset: i64, search_title: String, status: i32, ids: String, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<Tournament>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

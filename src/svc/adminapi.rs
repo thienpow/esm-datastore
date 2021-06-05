@@ -133,6 +133,7 @@ use adminapi_proto::{
   DeleteTournamentRequest, DeleteTournamentResponse,
   DeleteTournamentSetRequest, DeleteTournamentSetResponse,
   DeleteTournamentSetGameRuleRequest, DeleteTournamentSetGameRuleResponse,
+  DeleteAllTournamentSetGameRuleRequest, DeleteAllTournamentSetGameRuleResponse,
   ListTournamentRequest, ListTournamentResponse, 
   ListTournamentSetRequest, ListTournamentSetResponse, 
   ListTournamentSetGameRuleRequest, ListTournamentSetGameRuleResponse, 
@@ -2311,6 +2312,21 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     };
     
     Ok(Response::new(DeleteTournamentSetGameRuleResponse {
+      result: result,
+    }))
+  }
+
+  async fn delete_all_tournament_set_game_rule(&self, request: Request<DeleteAllTournamentSetGameRuleRequest>, ) -> Result<Response<DeleteAllTournamentSetGameRuleResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let result = match tournament::Tournament::delete_all_set_game_rule(req.set_id.into(), &self.pool.clone()).await {
+      Ok(result) => result.to_string(),
+      Err(error) => error.to_string(),
+    };
+    
+    Ok(Response::new(DeleteAllTournamentSetGameRuleResponse {
       result: result,
     }))
   }

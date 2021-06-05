@@ -406,11 +406,19 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
             break;
         }
 
+        let mut previous_group_id = 0;
+        let mut previous_start_timestamp = 0;
         for game in &active_games {
         
             if i > 0  {
                 i = 0;
                 start_timestamp = start_timestamp -  1;
+            }
+
+            if game.group_id > 0 {
+                if previous_group_id ==  game.group_id  {
+                    start_timestamp = previous_start_timestamp;
+                }
             }
 
             if prize.type_id < 4 {
@@ -460,6 +468,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                         Err(error) => panic!("==== generate_current_games.add_current_game Error: {}.", error),
                     }
 
+                    previous_start_timestamp = start_timestamp;
                     start_timestamp = end_timestamp;
     
                     
@@ -467,6 +476,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                     
                     if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.game_id ==  previous_game_id {
                         is_after_previous = true;
+                        previous_start_timestamp = start_timestamp;
                         start_timestamp = previous_end_timestamp;
                     }
                 }
@@ -501,9 +511,16 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
     
                 }
                 
+                previous_start_timestamp = start_timestamp;
                 start_timestamp = end_timestamp;
 
             }
+
+            // remember the  group_id as previous_group_id so that next item can refer to it.
+            if game.group_id > 0 {
+                previous_group_id =  game.group_id;
+            }
+
         }
         i = i+1;
         start_timestamp = start_timestamp + 1;

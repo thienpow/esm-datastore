@@ -60,7 +60,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 
                     //SELECT * FROM gplayer WHERE prize_id={game.prize_id} AND game_id={game.game_id} AND is_closed=false ORDER BY game_score DESC;
                     //from highest score
-                    let mut total_tickets_collected: i64 = 0;
 
                     match gplayer::GPlayer::list_unclosed_gplays(prize_id, game_id, &pool.clone()).await {
                         Ok(gplays) => {
@@ -115,7 +114,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         cg_id.to_string().as_str(), prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), game_id.to_string().as_str(), 
                                         rank_gem.to_string().as_str(), rule.exp.to_string().as_str(), reward_tickets.to_string().as_str(), user.msg_token.as_str()).await {
                                             Ok(_) => {
-                                                total_tickets_collected = total_tickets_collected + reward_tickets as i64;
+                                                
                                             },
                                             Err(e) => {
                                                 checker::Checker::add_error(checker::ErrorLog {
@@ -142,11 +141,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         Err(error) => panic!("Error {}", error),
                     };
                     
-                    prize::Prize::close_current_game(cg_id, total_tickets_collected, &pool.clone()).await?;
+                    let tickets_collected = prize::Prize::get_current_tickets_collected(prize_id, &pool.clone()).await?;
+                    prize::Prize::close_current_game(cg_id, tickets_collected, &pool.clone()).await?;
                     match notify_tour_ending("Tournament Ending", format!("Tournament for game_id: {} has just Ended!", 
                         game_id).as_str(), cg_id.to_string().as_str(), 
                         prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), 
-                        game_id.to_string().as_str(), total_tickets_collected.to_string().as_str()).await {
+                        game_id.to_string().as_str(), tickets_collected.to_string().as_str()).await {
                         Ok(_) => {},
                         Err(e) => {
                             checker::Checker::add_error(checker::ErrorLog {
