@@ -216,6 +216,16 @@ impl Prize {
       Ok(n)
     }
 
+    pub async fn set_bad_link(prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"prize\" SET status_progress=666 WHERE id=$1;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&prize_id]).await?;
+    
+      Ok(n)
+    }
+
     pub async fn log_closed(prize_id: i64, tickets_collected: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
@@ -662,7 +672,7 @@ impl Prize {
                           LEFT JOIN public.\"tournament_set\" AS s ON s.id = ts.set_id 
                           LEFT JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.set_id = ts.set_id 
                           LEFT JOIN public.\"game\" AS g ON g.id = tsg.game_id 
-                        WHERE p.status = 2 AND p.id = $1
+                        WHERE p.status = 2 AND p.id = $1 
                         ORDER BY p.id, tsg.group_id;".to_string();
       let stmt = conn.prepare(&sql_string).await?;
   

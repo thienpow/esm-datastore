@@ -163,6 +163,7 @@ COPY public.spinner_rule (id, probability, win, type_id) FROM stdin;
 COPY public.status_progress_type (id, title) FROM stdin;
 0	Inactive
 1	Running
+666	Bad Link
 999	Ended
 9999	SOS Stopped
 \.

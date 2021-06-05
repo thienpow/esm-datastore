@@ -89,12 +89,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     println!("{} prize_id={} Type 1/2, running, ", i, prize.id.to_string());
                     process_current_games(&prize, &pool.clone()).await?;
 
+                    /*
                     if status_progress != 1 {
                         let _ = match prize::Prize::set_running(prize_id, &pool.clone()).await {
                             Ok(_) => (),
                             Err(error) => panic!("== set_running Error: {}.", error),
                         };
                     }
+                    */
                     
                 } else {
     
@@ -201,12 +203,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             println!("{} prize_id={} Type 3/4, is Repeat and running, ", i, prize.id.to_string());
                             process_current_games(&prize, &pool.clone()).await?;
 
+                            /*
                             if status_progress != 1 {
                                 let _ = match prize::Prize::set_running(prize_id, &pool.clone()).await {
                                     Ok(_) => (),
                                     Err(error) => panic!("== set_running Error: {}.", error),
                                 };
                             }
+                            */
 
                         } else {
 
@@ -269,12 +273,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             println!("{} prize_id={} Type 3/4, not repeat and running", i, prize.id.to_string());
                             process_current_games(&prize, &pool.clone()).await?;
 
+                            /*
                             if status_progress != 1 {
                                 let _ = match prize::Prize::set_running(prize_id, &pool.clone()).await {
                                     Ok(_) => (),
                                     Err(error) => panic!("== set_running Error: {}.", error),
                                 };
                             }
+                            */
                             
 
                         } else {
@@ -382,7 +388,14 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
         Err(error) => panic!("==== generate_current_games.list_active_by_prize_id Error: {}.", error),
     };
 
+    if active_games.len() < 1 {
+        return Ok(())
+    }
+
     let mut start_timestamp = scheduled_on;
+    if previous_end_timestamp > start_timestamp {
+        start_timestamp = previous_end_timestamp;
+    }
     
     let mut final_end_timestamp = scheduled_off;
     //println!("==== adjusted_now {} > scheduled_off {}", adjusted_now, scheduled_off);
@@ -398,6 +411,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
     }
 
     let diff_timestamp = scheduled_off - scheduled_on;
+    
 
     let mut i = 0;
     while start_timestamp < final_end_timestamp {
@@ -406,6 +420,8 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
             break;
         }
 
+        println!("prize_id={} start_timestamp={} === final_end_timestamp={} diff_timestamp={} final_end_timestamp-start_timestamp={}", prize.id, start_timestamp, final_end_timestamp, diff_timestamp, final_end_timestamp-start_timestamp);
+//break;
         let mut previous_group_id = 0;
         let mut previous_start_timestamp = 0;
         for game in &active_games {
@@ -415,15 +431,27 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                 start_timestamp = start_timestamp -  1;
             }
 
-            let mut is_continue = true;
             if prize.type_id < 4 {
                 if game.tour_id == 0 || game.tour_status != 2 || game.set_id == 0 || game.tsg_id == 0 || game.game_id == 0 ||  game.game_status != 2 {
-                    is_continue = false;
+                    println!("bad record!!!");
+                    if prize.status_progress != 666 {
+                        match prize::Prize::set_bad_link(prize.id, &pool).await {
+                            Ok(_) => {
+                                println!("=== set_bad_link ===");
+                            },
+                            Err(error) => panic!("==== generate_current_games.set_bad_link Error: {}.", error),
+                        };
+                    }
+                    
+                    return Ok(())
                 }
+
+                let _ = match prize::Prize::set_running(prize.id, &pool.clone()).await {
+                    Ok(_) => (),
+                    Err(error) => panic!("== set_running Error: {}.", error),
+                };
             }
             
-            if is_continue {
-
                 if game.group_id > 0 {
                     if previous_group_id ==  game.group_id  {
                         start_timestamp = previous_start_timestamp;
@@ -452,7 +480,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                             end_timestamp: UNIX_EPOCH + Duration::new(end_timestamp as u64, 0)
                             };
         
-                        println!("== add_current_game");
+                        println!("== add_current_game in is_previous_game_found");
                         match prize::Prize::add_current_game(cg, &pool.clone()).await {
                             Ok(_) => {
                                 ()
@@ -466,15 +494,31 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                         
                     } else {
                         
-                        if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.game_id ==  previous_game_id {
-                            println!("== not after previous, but conditions in.");
-                            is_after_previous = true;
-                            previous_start_timestamp = start_timestamp;
-                            start_timestamp = previous_end_timestamp;
+                        if game.group_id > 0 {
+                            if game.tour_id == previous_tour_id && game.set_id == previous_set_id {
+                                println!("== not after previous, but conditions in.");
+                                is_after_previous = true;
+                                previous_start_timestamp = start_timestamp;
+                                start_timestamp = previous_end_timestamp;
+                            } else {
+                                println!("== dead group.");
+                                break;
+                            }
                         } else {
-                            println!("== not after previous, dead loop will happen here.");
-                            break;
+                            println!("== not after previous, tour {}={}, set {}={}, game {}, {}", game.tour_id, previous_tour_id, game.set_id, previous_set_id, game.game_id, previous_game_id);
+                                
+                            if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.game_id ==  previous_game_id {
+                                println!("== not after previous, but conditions in.");
+                                is_after_previous = true;
+                                previous_start_timestamp = start_timestamp;
+                                start_timestamp = previous_end_timestamp;
+                                
+                            } else {
+                                println!("== dead single.");
+                                //return Ok(())
+                            }
                         }
+                        
                     }
     
                 } else { // if 0 then means genearate from scheduled_on of prize
@@ -497,7 +541,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                             end_timestamp: UNIX_EPOCH + Duration::new(end_timestamp as u64, 0)
                         };
         
-                        println!("== add_current_game");
+                        println!("== add_current_game in not is_previous_game_found");
                         match prize::Prize::add_current_game(cg, &pool.clone()).await {
                             Ok(_) => {
                                 ()
@@ -512,7 +556,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
     
                 }
     
-            }
+            
             
             // remember the  group_id as previous_group_id so that next item can refer to it.
             if game.group_id > 0 {
