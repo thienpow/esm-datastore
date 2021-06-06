@@ -1,0 +1,75 @@
+version: "3.9"
+services:
+
+  dbpg-master:
+    build:
+      context: .
+      dockerfile: ./postgres/master/Dockerfile
+    restart: always
+    command: >
+      -c listen_addresses=*
+      -c port=25432
+      -c ssl=on
+      -c ssl_cert_file=/var/lib/postgresql/server.crt
+      -c ssl_key_file=/var/lib/postgresql/server.key
+      -c ssl_ca_file=/var/lib/postgresql/CA.crt
+      -c ssl_crl_file=/var/lib/postgresql/CA.crl
+      -c hot_standby=on
+      -c wal_level=replica
+      -c wal_keep_size=1024
+      -c max_wal_senders=10
+      -c wal_compression=on
+      -c archive_mode=on
+      -c archive_command='cd .'
+    volumes: 
+      - dbpg-master-data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: doadmin
+      POSTGRES_PASSWORD: tf45h3hpz6xstby6
+      PG_REP_USER: replicator
+      PG_REP_PASSWORD: tf45h3hpz6xstby6
+    networks:
+      - envoymesh
+    expose:
+      - "25432"
+    ports:
+      - "25432:25432"
+
+  dbpg-standby-01:
+    build:
+      context: .
+      dockerfile: ./postgres/standby/Dockerfile
+    restart: always
+    command: gosu postgres postgres 
+      -c listen_addresses=*
+      -c port=25433
+      -c ssl=on
+      -c ssl_cert_file=/var/lib/postgresql/server.crt
+      -c ssl_key_file=/var/lib/postgresql/server.key
+      -c ssl_ca_file=/var/lib/postgresql/CA.crt
+      -c ssl_crl_file=/var/lib/postgresql/CA.crl
+      -c restore_command='cp /archives/%f %p'
+      -c primary_conninfo='user=replicator password=tf45h3hpz6xstby6 channel_binding=prefer host=dbpg-master port=25432 sslmode=prefer sslcompression=0 ssl_min_protocol_version=TLSv1.2 gssencmode=prefer krbsrvname=postgres target_session_attrs=any'
+    volumes: 
+      - dbpg-standby-01-data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: doadmin
+      POSTGRES_PASSWORD: tf45h3hpz6xstby6
+      PG_REP_USER: replicator
+      PG_REP_PASSWORD: tf45h3hpz6xstby6
+      PG_MASTER_HOST: dbpg-master
+      PG_MASTER_PORT: 25432
+    networks:
+      - envoymesh
+    expose:
+      - "25433"
+    ports:
+      - "25433:25433"
+      
+volumes:
+  dbpg-master-data:
+  dbpg-standby-01-data:
+networks:
+  envoymesh: {}

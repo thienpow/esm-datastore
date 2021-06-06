@@ -67,7 +67,7 @@ case $1 in
   $CARGO_PATH/cargo build --bin wwwloader --release
   ;;
 9)
-  echo "rebuild dbpg-master"
+  echo "rebuild database"
   ;;
 11)
   echo "RESTART ONLY: docker-compose up -d --build"
@@ -93,55 +93,67 @@ rm gloader/gloader
 rm admin/wwwloader
 
 cd ..
-cp target/release/esmserver deploy/service/esmserver
-cp target/release/checker_current_game deploy/service/checker_current_game
-cp target/release/checker_leaderboard deploy/service/checker_leaderboard
-cp target/release/checker_subscriber deploy/service/checker_subscriber
-cp target/release/checker_unclaim deploy/service/checker_unclaim
-cp target/release/gloader deploy/gloader/gloader
-cp target/release/wwwloader deploy/admin/wwwloader
+cp target/release/esmserver deploy/micro-services/service/esmserver
+cp target/release/checker_current_game deploy/micro-services/service/checker_current_game
+cp target/release/checker_leaderboard deploy/micro-services/service/checker_leaderboard
+cp target/release/checker_subscriber deploy/micro-services/service/checker_subscriber
+cp target/release/checker_unclaim deploy/micro-services/service/checker_unclaim
+cp target/release/gloader deploy/gloader/micro-services/gloader
+cp target/release/wwwloader deploy/admin/micro-services/wwwloader
 
 
-cd deploy/
+
 
 case $1 in
 0)
+  cd deploy/micro-services/
   docker-compose up -d --build
   ;;
 1)
+  cd deploy/micro-services/
   docker-compose up -d --build esmservice
   ;;
 2)
+  cd deploy/micro-services/
   docker-compose up -d --build esm-admin
   ;;
 3)
+  cd deploy/micro-services/
   docker-compose up -d --build esmservice
   ;;
 4)
+  cd deploy/micro-services/
   docker-compose up -d --build esmservice
   ;;
 5)
+  cd deploy/micro-services/
   docker-compose up -d --build esmservice
   ;;
 6)
+  cd deploy/micro-services/
   docker-compose up -d --build esmservice
   ;;
 7)
+  cd deploy/micro-services/
   docker-compose up -d --build esm-game-loader
   ;;
 8)
+  cd deploy/micro-services/
   docker-compose up -d --build esm-admin
   ;;
 9)
-  docker-compose up -d --build dbpg-master
+  cd deploy/database/
+  docker-compose up -d --build
   ;;
 11)
+  cd deploy/micro-services/
   docker-compose up -d --build
   ;;
 88)
-  docker-compose up --build dbpg-standby-01
+  #docker-compose up --build dbpg-standby-01
   ;;
 99)
+  cd deploy/micro-services/
   docker-compose up --build
   ;;
 esac
