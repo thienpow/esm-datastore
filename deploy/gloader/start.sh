@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export LISTEN_ON="0.0.0.0:3033"
-. /usr/local/bin/common_env
+export DB_CERT_PATH="/usr/local/bin/CA.crt"
 
 /usr/local/bin/gloader

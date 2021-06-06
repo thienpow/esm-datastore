@@ -69,6 +69,13 @@ services:
       context: .
       dockerfile: ./gloader/Dockerfile
     restart: always
+    environment:
+      LISTEN_ON: 0.0.0.0:3033
+      JWK_URL: https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com
+      JWK_AUDIENCE: esports-mini
+      JWK_ISSUER: https://securetoken.google.com/esports-mini
+      DB_CONN_STRING: postgresql://doadmin:tf45h3hpz6xstby6@dbpg-master:25432/postgres?sslmode=require
+      SERVER_TIMEZONE: 8
     networks:
       - envoymesh
     expose:
@@ -81,6 +88,8 @@ services:
       context: .
       dockerfile: ./admin/Dockerfile
     restart: always
+    environment:
+      LISTEN_ON: 0.0.0.0:3030
     networks:
       - envoymesh
     expose:
@@ -93,6 +102,9 @@ services:
       context: .
       dockerfile: ./stripe/Dockerfile
     restart: always
+    environment:
+      PORT: 4242
+      STRIPE_SECRET: sk_test_51IOa7gBGCaV2oEVpEDw9fOn1fUn8IaPOemu7Yjkg6N75C3ahsd7sEQr3ait4JYU55wfCBbXCRPIhcUxGMVtQYA6A003YKMqkYF
     networks:
       - envoymesh
     expose:
