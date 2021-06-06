@@ -53,10 +53,6 @@ services:
       JWK_ISSUER: https://securetoken.google.com/esports-mini
       DB_CONN_STRING: postgresql://doadmin:tf45h3hpz6xstby6@dbpg-master:25432/postgres?sslmode=require
       SERVER_TIMEZONE: 8
-    depends_on:
-      - "dbpg-master"
-    links:
-      - "dbpg-master"
     networks:
       - envoymesh
     expose:

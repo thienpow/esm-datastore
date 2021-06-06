@@ -83,16 +83,14 @@ esac
   
 
 
-cd deploy/micro-services/
-rm service/esmserver
-rm service/checker_current_game
-rm service/checker_leaderboard
-rm service/checker_subscriber
-rm service/checker_unclaim
-rm gloader/gloader
-rm admin/wwwloader
+rm deploy/micro-services/service/esmserver
+rm deploy/micro-services/service/checker_current_game
+rm deploy/micro-services/service/checker_leaderboard
+rm deploy/micro-services/service/checker_subscriber
+rm deploy/micro-services/service/checker_unclaim
+rm deploy/micro-services/gloader/gloader
+rm deploy/micro-services/admin/wwwloader
 
-cd ../..
 cp target/release/esmserver deploy/micro-services/service/esmserver
 cp target/release/checker_current_game deploy/micro-services/service/checker_current_game
 cp target/release/checker_leaderboard deploy/micro-services/service/checker_leaderboard
