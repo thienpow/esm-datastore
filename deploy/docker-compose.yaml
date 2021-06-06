@@ -45,6 +45,14 @@ services:
     environment:
       LISTEN_ON: 0.0.0.0:50051
       BEFORE_LOGIN_TOKEN: Bearer before-login-token
+      STRIPE_SECRET: sk_test_51IOa7gBGCaV2oEVpEDw9fOn1fUn8IaPOemu7Yjkg6N75C3ahsd7sEQr3ait4JYU55wfCBbXCRPIhcUxGMVtQYA6A003YKMqkYF
+      CHECKER_TIME_WAIT: 60
+      FCM_KEY: AAAAzT8d8lM:APA91bHtFSHVIBiiSDUWSaUkrYNrcBSyhMY_JBYSeaaoWpkrxSgBO-7xgHtySH3qfTvsgHHTIsrh_SwwirCvTTuOWBl0--JhddEV8MFnEgWuGRPOXPVyTBHym5k9gh8WrCxr-rY13Y54
+      JWK_URL: https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com
+      JWK_AUDIENCE: esports-mini
+      JWK_ISSUER: https://securetoken.google.com/esports-mini
+      DB_CONN_STRING: postgresql://doadmin:tf45h3hpz6xstby6@dbpg-master:25432/postgres?sslmode=require
+      SERVER_TIMEZONE: 8
     depends_on:
       - "dbpg-master"
     links:
