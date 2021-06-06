@@ -3,7 +3,7 @@ echo "host  replication          replicator         0.0.0.0/0         md5" >> "$
 echo "hostssl all all all cert clientcert=verify-ca" >> "$PGDATA/pg_hba.conf"
 
 #fill the initial data
-# psql -f /tmp/initial_data.sql --username "$POSTGRES_USER" --dbname "$POSTGRES_DB"
+psql -f /tmp/initial_data.sql --username "$POSTGRES_USER" --dbname "$POSTGRES_DB"
 
 set -e
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
