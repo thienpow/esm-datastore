@@ -42,6 +42,8 @@ services:
       context: .
       dockerfile: ./service/Dockerfile
     restart: always
+    environment:
+      LISTEN_ON: 0.0.0.0:50051
     depends_on:
       - "dbpg-master"
     links:

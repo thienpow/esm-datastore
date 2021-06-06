@@ -53,3 +53,16 @@ curl -Lo minikube https://storage.googleapis.com/minikube/releases/v1.21.0-beta.
 chmod +x minikube
 sudo mv minikube /usr/local/bin/
 ```
+
+#### generate Personal Access Token at DigitalOcean API menu
+export DIGITALOCEAN_ACCESS_TOKEN=e1b03c02f77eee583d315f83ee664eeee3a893ba6a58213c48cbc409431a30e6
+doctl auth init
+doctl k8s cluster create mycluster --region "sgp1" --auto-upgrade --node-pool "name=mypool;auto-scale=true;min-nodes=1;max-nodes=10"
+#### after created, cluster credentials to kubeconfig file found in "/Users/thienpow/.kube/config", it's added automatically
+
+#### alternatively, can get the token from digitalocean kubernetes dashboard and add the config manually by using command below.
+doctl k8s cluster kubeconfig save 6b0c05d0-1ea7-4095-8bec-3d383f7797c7
+
+download the kubeconfig.yaml DigitalOcean Kubernetes Dashboard, go into the the pool, find the Download Cluster Config File, and save it into ~/.kube
+#### to check the cluster nodes running
+cd ~/.kube && kubectl --kubeconfig="mycluster-kubeconfig.yaml" get nodes
