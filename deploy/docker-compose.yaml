@@ -44,6 +44,7 @@ services:
     restart: always
     environment:
       LISTEN_ON: 0.0.0.0:50051
+      BEFORE_LOGIN_TOKEN: Bearer before-login-token
     depends_on:
       - "dbpg-master"
     links:
