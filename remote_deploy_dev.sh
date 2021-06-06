@@ -96,8 +96,8 @@ cp target/release/checker_current_game deploy/micro-services/service/checker_cur
 cp target/release/checker_leaderboard deploy/micro-services/service/checker_leaderboard
 cp target/release/checker_subscriber deploy/micro-services/service/checker_subscriber
 cp target/release/checker_unclaim deploy/micro-services/service/checker_unclaim
-cp target/release/gloader deploy/gloader/micro-services/gloader
-cp target/release/wwwloader deploy/admin/micro-services/wwwloader
+cp target/release/gloader deploy/micro-services/gloader/gloader
+cp target/release/wwwloader deploy/micro-services/admin/wwwloader
 
 
 
