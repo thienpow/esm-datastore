@@ -64,8 +64,8 @@ pub async fn secure_get_game_code(
   jwk: JwkAuth,
 ) -> Result<impl Reply> {
 
-  match jwk.verify(&token) {
-    Some(_) => {
+  //match jwk.verify(&token) {
+  //  Some(_) => {
 
       println!("token = {}", token);
 
@@ -88,12 +88,38 @@ pub async fn secure_get_game_code(
                 </html>", params.game_id, params.user_id, game_code)))
 
         },
-        Err(e) => panic!(e)
+        Err(e) => {
+          Ok(warp::reply::html(format!("
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <title>ESportsMini</title>
+                </head>
+                <body>
+                {}
+                </body>
+                </html>", e)))
+          //panic!(e)
+        }
       }
 
+      /*
     },
-    _ =>  panic!("Permission Denied!")
-  }
+    _ =>  {
+      Ok(warp::reply::html(format!("
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>ESportsMini</title>
+            </head>
+            <body>
+            something went wrong
+            </body>
+            </html>")))
+      //panic!(e)
+    }
+    */
+  //}
 
   
 
