@@ -79,16 +79,11 @@ docker push registry.digitalocean.com/esm-dev/esm-admin
 docker tag f8c4184fa44b registry.digitalocean.com/esm-dev/esm-stripe
 docker push registry.digitalocean.com/esm-dev/esm-stripe
 
-
-docker tag fd2b91802b62 registry.digitalocean.com/esm-dev/grpc-web-proxy
-docker push registry.digitalocean.com/esm-dev/grpc-web-proxy
-
-docker tag f2ea89ad5be4 registry.digitalocean.com/esm-dev/front-envoy
-docker push registry.digitalocean.com/esm-dev/front-envoy
-
-
 docker tag c6de86db75a8 registry.digitalocean.com/esm-dev/esmservice
 docker push registry.digitalocean.com/esm-dev/esmservice
+
+docker tag dd89c7822680 registry.digitalocean.com/esm-dev/esm-game-loader
+docker push registry.digitalocean.com/esm-dev/esm-game-loader
 
 ## create service
 kubectl apply -f xxx.yaml
