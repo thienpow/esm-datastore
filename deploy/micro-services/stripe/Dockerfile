@@ -1,6 +1,4 @@
-FROM node:latest
-
-#RUN apt-get update && apt-get install -y ca-certificates libssl-dev nodejs npm && rm -rf /var/lib/apt/lists/*
+FROM node:slim
 
 COPY ./stripe/www /www
 

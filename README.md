@@ -76,13 +76,13 @@ docker build .
 docker tag 19435260b7f1 registry.digitalocean.com/esm-dev/esm-admin
 docker push registry.digitalocean.com/esm-dev/esm-admin
 
-docker tag f8c4184fa44b registry.digitalocean.com/esm-dev/esm-stripe
+docker tag 301c3adb6f73 registry.digitalocean.com/esm-dev/esm-stripe
 docker push registry.digitalocean.com/esm-dev/esm-stripe
 
 docker tag c6de86db75a8 registry.digitalocean.com/esm-dev/esmservice
 docker push registry.digitalocean.com/esm-dev/esmservice
 
-docker tag dd89c7822680 registry.digitalocean.com/esm-dev/esm-game-loader
+docker tag 31e2032ec268 registry.digitalocean.com/esm-dev/esm-game-loader
 docker push registry.digitalocean.com/esm-dev/esm-game-loader
 
 ## create service
