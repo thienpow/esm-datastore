@@ -21,7 +21,7 @@ fn expect_env_var(name: &str, _default: &str) -> String {
 
 pub fn get_configuration() -> Configuration {
     Configuration {
-        db_cert_path: expect_env_var("DB_CERT_PATH", "deploy/certs/out/CA.crt"),
-        db_conn_string: expect_env_var("DB_CONN_STRING", "postgresql://doadmin:tf45h3hpz6xstby6@esm-api.aadi.my:25432/postgres?sslmode=require"),
+        db_cert_path: expect_env_var("DB_CERT_PATH", "certs/out/ca.crt"),
+        db_conn_string: expect_env_var("DB_CONN_STRING", "postgresql://doadmin:tf45h3hpz6xstby6@139.59.218.134:25432/postgres?sslmode=disable"),
     }
 }
