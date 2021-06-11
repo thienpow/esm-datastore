@@ -12,6 +12,9 @@ run the following on your local dev machine
 ./deploy_dev.sh
 
 ```
+# Build inside Rust Docker
+docker-compose run --rm dev
+
 
 # Production Deployment
 
