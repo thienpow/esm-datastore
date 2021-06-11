@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../kubernetes/production"
+		},
+		{
+			"path": "../../../../../certbot"
+		}
+	],
+	"settings": {}
+}
