@@ -64,36 +64,37 @@ pub async fn secure_get_game_code(
   jwk: JwkAuth,
 ) -> Result<impl Reply> {
 
-  match jwk.verify(&token) {
-    Some(_) => {
+  if let Some(_) = jwk.verify(&token) {
 
-      println!("token = {}", token);
+    println!("token = {}", token);
 
-      match game::Game::get_game_code(params.game_id, &pool.clone()).await {
-        Ok(game_code) => {
-      
-          Ok(warp::reply::html(format!("
-                <!DOCTYPE html>
-                <html>
-                <head>
-                  <title>ESportsMini</title>
-                  <script>
-                    let game_id = {}
-                    let user_id = {}
-                  </script>
-                </head>
-                <body>
-                {}
-                </body>
-                </html>", params.game_id, params.user_id, game_code)))
+    match game::Game::get_game_code(params.game_id, &pool.clone()).await {
+      Ok(game_code) => {
+    
+        Ok(warp::reply::html(format!("
+                  <!DOCTYPE html>
+                  <html>
+                  <head>
+                    <title>ESportsMini</title>
+                    <script>
+                      let game_id = {}
+                      let user_id = {}
+                    </script>
+                  </head>
+                  <body>
+                  {}
+                  </body>
+                  </html>", params.game_id, params.user_id, game_code)))
 
-        },
-        Err(e) => panic!(e)
+      },
+      Err(e) => {
+        Ok(warp::reply::html(format!("{}", e)))
       }
+    }
 
-    },
-    _ =>  panic!("Permission Denied!")
-  }
+} else {
+  Ok(warp::reply::html(format!("JWT Token verification failed")))
+}
 
   
 
