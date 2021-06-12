@@ -63,13 +63,13 @@ case $1 in
   ;;
 esac
 
-[ ! -d "build" ] && mkdir build
-cp target/release/esmserver build/esmserver
-cp target/release/checker_current_game ./build/checker_current_game
-cp target/release/checker_leaderboard ./build/checker_leaderboard
-cp target/release/checker_subscriber ./build/checker_subscriber
-cp target/release/checker_unclaim ./build/checker_unclaim
-cp target/release/gloader ./build/gloader
-cp target/release/wwwloader ./build/wwwloader
+[ ! -d "build" ] && mkdir .build
+cp target/release/esmserver ./.build/esmserver
+cp target/release/checker_current_game ./.build/checker_current_game
+cp target/release/checker_leaderboard ./.build/checker_leaderboard
+cp target/release/checker_subscriber ./.build/checker_subscriber
+cp target/release/checker_unclaim ./.build/checker_unclaim
+cp target/release/gloader ./.build/gloader
+cp target/release/wwwloader ./.build/wwwloader
 
 uptime

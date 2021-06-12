@@ -32,4 +32,4 @@ rsync -av $SOURCE_FOLDER $USER@$PROD_SERVER:$TARGET_FOLDER --exclude-from='.rsyn
 ssh $USER@$PROD_SERVER 'bash -s' < remote_build.sh $choice
 
 # copy back the results
-rsync -av $USER@$PROD_SERVER:$TARGET_FOLDER/build ./
+rsync -av $USER@$PROD_SERVER:$TARGET_FOLDER/.build ./
