@@ -4,10 +4,10 @@
 			"path": "../.."
 		},
 		{
-			"path": "../../../kubernetes/production"
+			"path": "../../../../../certbot"
 		},
 		{
-			"path": "../../../../../certbot"
+			"path": "../../../kubernetes"
 		}
 	],
 	"settings": {}
