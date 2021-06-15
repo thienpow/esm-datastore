@@ -1601,7 +1601,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     let iseconds_on: i64 = req.scheduled_on.into();
     let scheduled_on = UNIX_EPOCH + Duration::new(iseconds_on as u64, 0);
 
-    match prize::Prize::list_all_prize_pool_tickets_by_user(user_id, scheduled_on,&self.pool.clone()).await {
+    match prize::Prize::get_all_prize_pool_tickets_by_user(user_id, scheduled_on,&self.pool.clone()).await {
       Ok(tickets) => {
 
         Ok(Response::new(GetTotalTicketsSinceResponse {

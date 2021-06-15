@@ -793,11 +793,11 @@ impl Prize {
       Ok(vec)
     }
 
-    pub async fn list_all_prize_pool_tickets_by_user(user_id: i64, scheduled_on: SystemTime,  pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+    pub async fn get_all_prize_pool_tickets_by_user(user_id: i64, scheduled_on: SystemTime,  pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
 
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT SUM(tickets) FROM public.\"prize_pool\" WHERE user_id=$1 AND created_on >= $2 GROUP BY user_id;").await?;
+      let stmt = conn.prepare("SELECT COALESCE(SUM(tickets), 0) FROM public.\"prize_pool\" WHERE user_id=$1 AND created_on >= $2 GROUP BY user_id;").await?;
     
       let row = conn.query_one(&stmt, &[&user_id, &scheduled_on]).await?;
     
