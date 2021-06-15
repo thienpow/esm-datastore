@@ -2,7 +2,7 @@
 pub mod esmapi_proto {
   tonic::include_proto!("api.esm");
 }
-//use core::time::Duration;
+use core::time::Duration;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use tonic::{Request, Response, Status};
@@ -81,7 +81,7 @@ use esmapi_proto::{
   PrizeDetail, 
   GetPrizeDetailRequest, GetPrizeDetailResponse,
   PrizeBasicDetail,
-
+  GetTotalTicketsSinceRequest, GetTotalTicketsSinceResponse,
 
   // Rank
   ListRankRequest, ListRankResponse,
@@ -1592,7 +1592,25 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     }
   }
 
+  async fn get_total_tickets_since(&self, request: Request<GetTotalTicketsSinceRequest>, ) -> Result<Response<GetTotalTicketsSinceResponse>, Status> {
 
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    let iseconds_on: i64 = req.scheduled_on.into();
+    let scheduled_on = UNIX_EPOCH + Duration::new(iseconds_on as u64, 0);
+
+    match prize::Prize::list_all_prize_pool_tickets_by_user(user_id, scheduled_on,&self.pool.clone()).await {
+      Ok(tickets) => {
+
+        Ok(Response::new(GetTotalTicketsSinceResponse {
+          tickets: tickets
+        }))
+      },
+      Err(e) => Err(Status::internal(format!("Error: list_all_prize_pool_tickets_by_user failed! {}", e.to_string())))
+    }
+  }
 
 
 
