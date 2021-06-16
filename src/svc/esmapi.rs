@@ -1608,7 +1608,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
           tickets: tickets
         }))
       },
-      Err(e) => Err(Status::internal(format!("Error: list_all_prize_pool_tickets_by_user failed! {}", e.to_string())))
+      Err(e) => Err(Status::internal(format!("Error: get_all_prize_pool_tickets_by_user failed! {}", e.to_string())))
     }
   }
 

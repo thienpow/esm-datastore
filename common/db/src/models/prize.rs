@@ -797,7 +797,7 @@ impl Prize {
 
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT COALESCE(SUM(tickets), 0) FROM public.\"prize_pool\" WHERE user_id=$1 AND created_on >= $2 GROUP BY user_id;").await?;
+      let stmt = conn.prepare("SELECT COALESCE(SUM(tickets), 0) FROM public.\"prize_pool\" WHERE user_id=$1 AND created_on >= $2;").await?;
     
       let row = conn.query_one(&stmt, &[&user_id, &scheduled_on]).await?;
     
