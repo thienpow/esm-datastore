@@ -25,8 +25,8 @@ echo "calling remote script with choice=$choice"
 
 SOURCE_FOLDER='./'
 TARGET_FOLDER='~/esm-datastore'
-PROD_SERVER='pow'
-USER='ken'
+PROD_SERVER='azure'
+USER='pow'
 
 rsync -av $SOURCE_FOLDER $USER@$PROD_SERVER:$TARGET_FOLDER --exclude-from='.rsyncignore'
 ssh $USER@$PROD_SERVER 'bash -s' < remote_build.sh $choice

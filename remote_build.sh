@@ -26,9 +26,6 @@ case $1 in
   echo "building gloader"
   $CARGO_PATH/cargo build --bin gloader --release
 
-  echo "building wwwloader"
-  $CARGO_PATH/cargo build --bin wwwloader --release
-
   ;;
 1)
   echo "building esmserver"
@@ -54,13 +51,6 @@ case $1 in
   echo "building gloader"
   $CARGO_PATH/cargo build --bin gloader --release
   ;;
-7)
-  echo "building wwwloader"
-  $CARGO_PATH/cargo build --bin wwwloader --release
-  ;;
-8)
-  echo "skip building"
-  ;;
 esac
 
 [ ! -d ".build" ] && mkdir .build
@@ -70,6 +60,5 @@ cp target/release/checker_leaderboard ./.build/checker_leaderboard
 cp target/release/checker_subscriber ./.build/checker_subscriber
 cp target/release/checker_unclaim ./.build/checker_unclaim
 cp target/release/gloader ./.build/gloader
-cp target/release/wwwloader ./.build/wwwloader
 
 uptime

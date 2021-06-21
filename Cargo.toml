@@ -30,10 +30,6 @@ name =  "gloader"
 path = "src/micro_services/gloader/gloader.rs"
 
 [[bin]]
-name =  "wwwloader"
-path = "src/micro_services/wwwloader/wwwloader.rs"
-
-[[bin]]
 name = "test_db_conn"
 path = "src/micro_services/test_db_conn.rs"
 
