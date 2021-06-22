@@ -133,7 +133,7 @@ impl GPlayer {
     pub async fn list_leaderboard(game_id: i64, prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<LeaderBoard>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT user_id, MAX(game_score) game_score FROM public.gplayer WHERE game_id=4 AND prize_id=3 AND is_logged_leave=true AND is_closed=false GROUP BY user_id ORDER BY game_score DESC LIMIT 100;").await?;
+      let stmt = conn.prepare("SELECT user_id, MAX(game_score) game_score FROM public.\"gplayer\" WHERE game_id=4 AND prize_id=3 AND is_logged_leave=true AND is_closed=false GROUP BY user_id ORDER BY game_score DESC LIMIT 100;").await?;
     
       let mut vec: Vec<LeaderBoard> = Vec::new();
       for row in conn.query(&stmt, &[&game_id, &prize_id]).await? {
