@@ -89,7 +89,7 @@ impl JwkVerifier {
         let key = DecodingKey::from_rsa_components(&key.n, &key.e);
         match decode::<Claims>(token, &key, &validation) {
             Ok(c) => {
-                println!("yeah! {:?}", c);
+                //println!("yeah! {:?}", c);
                 Ok(c)
               },
               Err(e) => {
