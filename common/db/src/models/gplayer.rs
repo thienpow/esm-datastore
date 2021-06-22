@@ -36,6 +36,11 @@ pub struct LogGDetail {
   pub game_score: i32,
 }
 
+pub struct LeaderBoard {
+  pub user_id: i64,
+  pub game_score: i32
+}
+
 impl GPlayer {
     
 
@@ -123,6 +128,26 @@ impl GPlayer {
       Ok(vec)
     }
 
+    
+
+    pub async fn list_leaderboard(game_id: i64, prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<LeaderBoard>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT user_id, MAX(game_score) game_score FROM public.gplayer WHERE game_id=4 AND prize_id=3 AND is_logged_leave=true AND is_closed=false GROUP BY user_id ORDER BY game_score DESC LIMIT 100;").await?;
+    
+      let mut vec: Vec<LeaderBoard> = Vec::new();
+      for row in conn.query(&stmt, &[&game_id, &prize_id]).await? {
+        let lb =  LeaderBoard {
+          user_id: row.get(0),
+          game_score: row.get(1),
+        };
+      
+        vec.push(lb);
+      }
+      
+      Ok(vec)
+
+    }
     pub async fn list_log_g_by_game(game_id: i64, prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<LogGDetail>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

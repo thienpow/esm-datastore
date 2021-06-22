@@ -42,7 +42,7 @@ service EsmApi {
   rpc LogGEnter(LogGEnterRequest) returns (LogGEnterResponse) {}
   rpc LogGLeave(LogGLeaveRequest) returns (LogGLeaveResponse) {}
   rpc ListLogG(ListLogGRequest) returns (ListLogGResponse) {}
-  rpc ListLogGByGame(ListLogGByGameRequest) returns (ListLogGByGameResponse) {}
+  rpc ListLeaderboard(ListLeaderboardRequest) returns (ListLeaderboardResponse) {}
   rpc ListPlayerHighscore(ListPlayerHighscoreRequest) returns (ListPlayerHighscoreResponse) {}
 
   // Invite
@@ -465,12 +465,19 @@ message ListLogGResponse {
   repeated LogGDetail result = 1;
 }
 
-message ListLogGByGameRequest {
+message ListLeaderboardRequest {
   int64 game_id = 1;
   int64 prize_id = 2;
 }
-message ListLogGByGameResponse {
-  repeated LogGDetail result = 1;
+message ListLeaderboardResponse {
+  repeated LeaderboardDetail result = 1;
+}
+message LeaderboardDetail {
+  int64 user_id = 1;
+  string nick_name = 2;
+  string avatar_url = 3;
+  int32 exp = 4;
+  int32 game_score = 5;
 }
 
 message ListPlayerHighscoreRequest {

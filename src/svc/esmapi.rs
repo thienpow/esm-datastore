@@ -59,9 +59,9 @@ use esmapi_proto::{
   LogGEnterRequest, LogGEnterResponse,
   LogGLeaveRequest, LogGLeaveResponse,
   ListLogGRequest, ListLogGResponse,
-  ListLogGByGameRequest, ListLogGByGameResponse,
+  ListLeaderboardRequest, ListLeaderboardResponse,
   ListPlayerHighscoreRequest, ListPlayerHighscoreResponse,
-  LogGDetail,
+  LogGDetail, LeaderboardDetail,
 
   //  Invites
   AddInviteRequest, AddInviteResponse,
@@ -944,50 +944,44 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
   }
 
-  async fn list_log_g_by_game(&self, request: Request<ListLogGByGameRequest>, ) -> Result<Response<ListLogGByGameResponse>, Status> {
+  async fn list_leaderboard(&self, request: Request<ListLeaderboardRequest>, ) -> Result<Response<ListLeaderboardResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
     
-    let log_g = match gplayer::GPlayer::list_log_g_by_game(req.game_id, req.prize_id, &self.pool.clone()).await {
+    let log_g = match gplayer::GPlayer::list_leaderboard(req.game_id, req.prize_id, &self.pool.clone()).await {
       Ok(log_g) => log_g,
       Err(e) => {
-        println!("list_log_g_by_game not ok {:?}", e);
+        println!("list_leaderboard not ok {:?}", e);
         return Err(Status::internal(format!("{:?}", e)))
       }
     };
     
 
-    let mut result: Vec<LogGDetail> = Vec::new();
+    let mut result: Vec<LeaderboardDetail> = Vec::new();
     
     for l in log_g {
       
-      let enter_timestamp = l.enter_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
-      let leave_timestamp = l.leave_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+      let player: user::Player = match user::User::get_player(l.user_id, &self.pool.clone()).await {
+        Ok(player) => player,
+        Err(e) => {
+          println!("list_leaderboard not ok, get player failed. {:?}", e);
+          return Err(Status::internal(format!("{:?}", e)))
+        }
+      };
 
-      let li = LogGDetail {
-        id: l.id,
+      let li = LeaderboardDetail {
         user_id: l.user_id,
-        nick_name: l.nick_name,
-        avatar_url: l.avatar_url,
-        prize_id: l.prize_id,
-        prize_title: l.prize_title,
-        prize_img_url: l.prize_img_url,
-        type_id: l.type_id,
-        game_id: l.game_id,
-        game_title: l.game_title,
-        game_img_url: l.game_img_url,
-        enter_timestamp: enter_timestamp as i64,
-        leave_timestamp: leave_timestamp as i64,
-        is_watched_ad: l.is_watched_ad,
-        is_used_gem: l.is_used_gem,
+        nick_name: player.nick_name,
+        avatar_url: player.avatar_url,
+        exp: player.exp,
         game_score: l.game_score,
       };
       
       result.push(li);
     };
     
-    Ok(Response::new(ListLogGByGameResponse {
+    Ok(Response::new(ListLeaderboardResponse {
       result: result,
     }))
 

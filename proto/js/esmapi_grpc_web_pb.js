@@ -1994,80 +1994,80 @@ proto.api.esm.EsmApiPromiseClient.prototype.listLogG =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.api.esm.ListLogGByGameRequest,
- *   !proto.api.esm.ListLogGByGameResponse>}
+ *   !proto.api.esm.ListLeaderboardRequest,
+ *   !proto.api.esm.ListLeaderboardResponse>}
  */
-const methodDescriptor_EsmApi_ListLogGByGame = new grpc.web.MethodDescriptor(
-  '/api.esm.EsmApi/ListLogGByGame',
+const methodDescriptor_EsmApi_ListLeaderboard = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListLeaderboard',
   grpc.web.MethodType.UNARY,
-  proto.api.esm.ListLogGByGameRequest,
-  proto.api.esm.ListLogGByGameResponse,
+  proto.api.esm.ListLeaderboardRequest,
+  proto.api.esm.ListLeaderboardResponse,
   /**
-   * @param {!proto.api.esm.ListLogGByGameRequest} request
+   * @param {!proto.api.esm.ListLeaderboardRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.api.esm.ListLogGByGameResponse.deserializeBinary
+  proto.api.esm.ListLeaderboardResponse.deserializeBinary
 );
 
 
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.api.esm.ListLogGByGameRequest,
- *   !proto.api.esm.ListLogGByGameResponse>}
+ *   !proto.api.esm.ListLeaderboardRequest,
+ *   !proto.api.esm.ListLeaderboardResponse>}
  */
-const methodInfo_EsmApi_ListLogGByGame = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.api.esm.ListLogGByGameResponse,
+const methodInfo_EsmApi_ListLeaderboard = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListLeaderboardResponse,
   /**
-   * @param {!proto.api.esm.ListLogGByGameRequest} request
+   * @param {!proto.api.esm.ListLeaderboardRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.api.esm.ListLogGByGameResponse.deserializeBinary
+  proto.api.esm.ListLeaderboardResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.api.esm.ListLogGByGameRequest} request The
+ * @param {!proto.api.esm.ListLeaderboardRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.api.esm.ListLogGByGameResponse)}
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListLeaderboardResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListLogGByGameResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListLeaderboardResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.api.esm.EsmApiClient.prototype.listLogGByGame =
+proto.api.esm.EsmApiClient.prototype.listLeaderboard =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/api.esm.EsmApi/ListLogGByGame',
+      '/api.esm.EsmApi/ListLeaderboard',
       request,
       metadata || {},
-      methodDescriptor_EsmApi_ListLogGByGame,
+      methodDescriptor_EsmApi_ListLeaderboard,
       callback);
 };
 
 
 /**
- * @param {!proto.api.esm.ListLogGByGameRequest} request The
+ * @param {!proto.api.esm.ListLeaderboardRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.api.esm.ListLogGByGameResponse>}
+ * @return {!Promise<!proto.api.esm.ListLeaderboardResponse>}
  *     Promise that resolves to the response
  */
-proto.api.esm.EsmApiPromiseClient.prototype.listLogGByGame =
+proto.api.esm.EsmApiPromiseClient.prototype.listLeaderboard =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/api.esm.EsmApi/ListLogGByGame',
+      '/api.esm.EsmApi/ListLeaderboard',
       request,
       metadata || {},
-      methodDescriptor_EsmApi_ListLogGByGame);
+      methodDescriptor_EsmApi_ListLeaderboard);
 };
 
 
