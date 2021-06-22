@@ -133,7 +133,7 @@ impl GPlayer {
     pub async fn list_leaderboard(game_id: i64, prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<LeaderBoard>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT user_id, MAX(game_score) game_score FROM public.\"gplayer\" WHERE game_id=4 AND prize_id=3 AND is_logged_leave=true AND is_closed=false GROUP BY user_id ORDER BY game_score DESC LIMIT 100;").await?;
+      let stmt = conn.prepare("SELECT user_id, MAX(game_score) game_score FROM public.\"gplayer\" WHERE game_id=$1 AND prize_id=$2 AND is_logged_leave=true AND is_closed=false GROUP BY user_id ORDER BY game_score DESC LIMIT 100;").await?;
     
       let mut vec: Vec<LeaderBoard> = Vec::new();
       for row in conn.query(&stmt, &[&game_id, &prize_id]).await? {
@@ -148,38 +148,7 @@ impl GPlayer {
       Ok(vec)
 
     }
-    pub async fn list_log_g_by_game(game_id: i64, prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<LogGDetail>, RunError<tokio_postgres::Error>> {
-      let conn = pool.get().await?;
-  
-      let stmt = conn.prepare("SELECT gp.id, gp.user_id, u.nick_name, u.avatar_url, gp.prize_id, p.title AS prize_title, p.img_url AS prize_img_url, p.type_id, gp.game_id, g.title AS game_title, g.img_url AS game_img_url, gp.enter_timestamp, gp.leave_timestamp, gp.is_watched_ad, gp.is_used_gem, gp.game_score FROM public.\"gplayer\" AS gp INNER JOIN public.\"user\" AS u ON gp.user_id = u.id INNER JOIN public.\"prize\" AS p ON gp.prize_id = p.id INNER JOIN public.\"game\" AS g ON gp.game_id = g.id WHERE gp.game_id=$1 AND gp.prize_id=$2 AND gp.is_logged_leave=true AND gp.is_closed=false ORDER BY gp.game_score DESC LIMIT 100;").await?;
     
-      let mut vec: Vec<LogGDetail> = Vec::new();
-      for row in conn.query(&stmt, &[&game_id, &prize_id]).await? {
-        let log_g = LogGDetail {
-          id: row.get(0),
-          user_id: row.get(1),
-          nick_name: row.get(2),
-          avatar_url: row.get(3),
-          prize_id: row.get(4),
-          prize_title: row.get(5),
-          prize_img_url: row.get(6),
-          type_id: row.get(7),
-          game_id: row.get(8),
-          game_title: row.get(9),
-          game_img_url: row.get(10),
-          enter_timestamp: row.get(11),
-          leave_timestamp: row.get(12),
-          is_watched_ad: row.get(13),
-          is_used_gem: row.get(14),
-          game_score: row.get(15),
-        };
-
-        vec.push(log_g);
-      }
-      
-      Ok(vec)
-    }
-
     pub async fn list_log_g_by_player(player_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<LogGDetail>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

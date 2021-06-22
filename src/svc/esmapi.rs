@@ -949,41 +949,43 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let req = request.into_inner();
     
-    let log_g = match gplayer::GPlayer::list_leaderboard(req.game_id, req.prize_id, &self.pool.clone()).await {
-      Ok(log_g) => log_g,
+    match gplayer::GPlayer::list_leaderboard(req.game_id, req.prize_id, &self.pool.clone()).await {
+      Ok(lb) => {
+
+        let mut result: Vec<LeaderboardDetail> = Vec::new();
+    
+        for l in lb {
+          
+          let player: user::Player = match user::User::get_player(l.user_id, &self.pool.clone()).await {
+            Ok(player) => player,
+            Err(e) => {
+              println!("list_leaderboard not ok, get player failed. {:?}", e);
+              return Err(Status::internal(format!("{:?}", e)))
+            }
+          };
+    
+          let li = LeaderboardDetail {
+            user_id: l.user_id,
+            nick_name: player.nick_name,
+            avatar_url: player.avatar_url,
+            exp: player.exp,
+            game_score: l.game_score,
+          };
+          
+          result.push(li);
+        };
+        
+        Ok(Response::new(ListLeaderboardResponse {
+          result: result,
+        }))
+      },
       Err(e) => {
         println!("list_leaderboard not ok {:?}", e);
         return Err(Status::internal(format!("{:?}", e)))
       }
-    };
+    }
     
 
-    let mut result: Vec<LeaderboardDetail> = Vec::new();
-    
-    for l in log_g {
-      
-      let player: user::Player = match user::User::get_player(l.user_id, &self.pool.clone()).await {
-        Ok(player) => player,
-        Err(e) => {
-          println!("list_leaderboard not ok, get player failed. {:?}", e);
-          return Err(Status::internal(format!("{:?}", e)))
-        }
-      };
-
-      let li = LeaderboardDetail {
-        user_id: l.user_id,
-        nick_name: player.nick_name,
-        avatar_url: player.avatar_url,
-        exp: player.exp,
-        game_score: l.game_score,
-      };
-      
-      result.push(li);
-    };
-    
-    Ok(Response::new(ListLeaderboardResponse {
-      result: result,
-    }))
 
   }
 
