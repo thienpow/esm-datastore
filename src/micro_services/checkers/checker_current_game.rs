@@ -89,14 +89,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     println!("{} prize_id={} Type 1/2, running, ", i, prize.id.to_string());
                     process_current_games(&prize, &pool.clone()).await?;
 
-                    /*
-                    if status_progress != 1 {
-                        let _ = match prize::Prize::set_running(prize_id, &pool.clone()).await {
-                            Ok(_) => (),
-                            Err(error) => panic!("== set_running Error: {}.", error),
-                        };
-                    }
-                    */
                     
                 } else {
     
@@ -203,14 +195,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             println!("{} prize_id={} Type 3/4, is Repeat and running, ", i, prize.id.to_string());
                             process_current_games(&prize, &pool.clone()).await?;
 
-                            /*
-                            if status_progress != 1 {
-                                let _ = match prize::Prize::set_running(prize_id, &pool.clone()).await {
-                                    Ok(_) => (),
-                                    Err(error) => panic!("== set_running Error: {}.", error),
-                                };
-                            }
-                            */
 
                         } else {
 
@@ -272,15 +256,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             //scheduled_off is bigger than now, meaning it's not ended
                             println!("{} prize_id={} Type 3/4, not repeat and running", i, prize.id.to_string());
                             process_current_games(&prize, &pool.clone()).await?;
-
-                            /*
-                            if status_progress != 1 {
-                                let _ = match prize::Prize::set_running(prize_id, &pool.clone()).await {
-                                    Ok(_) => (),
-                                    Err(error) => panic!("== set_running Error: {}.", error),
-                                };
-                            }
-                            */
                             
 
                         } else {
