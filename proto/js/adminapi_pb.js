@@ -42693,11 +42693,12 @@ proto.adminapi.esm.WinnerDetail.toObject = function(includeInstance, msg) {
     prizeTypeId: jspb.Message.getFieldWithDefault(msg, 5, 0),
     userId: jspb.Message.getFieldWithDefault(msg, 6, 0),
     userNickName: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    userAvatarUrl: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    createdOn: jspb.Message.getFieldWithDefault(msg, 9, 0),
-    claimedOn: jspb.Message.getFieldWithDefault(msg, 10, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 11, 0),
-    shipTracking: jspb.Message.getFieldWithDefault(msg, 12, "")
+    userEmail: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    userAvatarUrl: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    createdOn: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    claimedOn: jspb.Message.getFieldWithDefault(msg, 11, 0),
+    status: jspb.Message.getFieldWithDefault(msg, 12, 0),
+    shipTracking: jspb.Message.getFieldWithDefault(msg, 13, "")
   };
 
   if (includeInstance) {
@@ -42764,21 +42765,25 @@ proto.adminapi.esm.WinnerDetail.deserializeBinaryFromReader = function(msg, read
       break;
     case 8:
       var value = /** @type {string} */ (reader.readString());
-      msg.setUserAvatarUrl(value);
+      msg.setUserEmail(value);
       break;
     case 9:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setCreatedOn(value);
+      var value = /** @type {string} */ (reader.readString());
+      msg.setUserAvatarUrl(value);
       break;
     case 10:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setClaimedOn(value);
+      msg.setCreatedOn(value);
       break;
     case 11:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setClaimedOn(value);
+      break;
+    case 12:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
-    case 12:
+    case 13:
       var value = /** @type {string} */ (reader.readString());
       msg.setShipTracking(value);
       break;
@@ -42860,38 +42865,45 @@ proto.adminapi.esm.WinnerDetail.serializeBinaryToWriter = function(message, writ
       f
     );
   }
-  f = message.getUserAvatarUrl();
+  f = message.getUserEmail();
   if (f.length > 0) {
     writer.writeString(
       8,
       f
     );
   }
-  f = message.getCreatedOn();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getUserAvatarUrl();
+  if (f.length > 0) {
+    writer.writeString(
       9,
       f
     );
   }
-  f = message.getClaimedOn();
+  f = message.getCreatedOn();
   if (f !== 0) {
     writer.writeInt64(
       10,
       f
     );
   }
+  f = message.getClaimedOn();
+  if (f !== 0) {
+    writer.writeInt64(
+      11,
+      f
+    );
+  }
   f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
-      11,
+      12,
       f
     );
   }
   f = message.getShipTracking();
   if (f.length > 0) {
     writer.writeString(
-      12,
+      13,
       f
     );
   }
@@ -43025,10 +43037,10 @@ proto.adminapi.esm.WinnerDetail.prototype.setUserNickName = function(value) {
 
 
 /**
- * optional string user_avatar_url = 8;
+ * optional string user_email = 8;
  * @return {string}
  */
-proto.adminapi.esm.WinnerDetail.prototype.getUserAvatarUrl = function() {
+proto.adminapi.esm.WinnerDetail.prototype.getUserEmail = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
@@ -43037,34 +43049,34 @@ proto.adminapi.esm.WinnerDetail.prototype.getUserAvatarUrl = function() {
  * @param {string} value
  * @return {!proto.adminapi.esm.WinnerDetail} returns this
  */
-proto.adminapi.esm.WinnerDetail.prototype.setUserAvatarUrl = function(value) {
+proto.adminapi.esm.WinnerDetail.prototype.setUserEmail = function(value) {
   return jspb.Message.setProto3StringField(this, 8, value);
 };
 
 
 /**
- * optional int64 created_on = 9;
+ * optional string user_avatar_url = 9;
+ * @return {string}
+ */
+proto.adminapi.esm.WinnerDetail.prototype.getUserAvatarUrl = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.adminapi.esm.WinnerDetail} returns this
+ */
+proto.adminapi.esm.WinnerDetail.prototype.setUserAvatarUrl = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * optional int64 created_on = 10;
  * @return {number}
  */
 proto.adminapi.esm.WinnerDetail.prototype.getCreatedOn = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.adminapi.esm.WinnerDetail} returns this
- */
-proto.adminapi.esm.WinnerDetail.prototype.setCreatedOn = function(value) {
-  return jspb.Message.setProto3IntField(this, 9, value);
-};
-
-
-/**
- * optional int64 claimed_on = 10;
- * @return {number}
- */
-proto.adminapi.esm.WinnerDetail.prototype.getClaimedOn = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
 };
 
@@ -43073,16 +43085,16 @@ proto.adminapi.esm.WinnerDetail.prototype.getClaimedOn = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.WinnerDetail} returns this
  */
-proto.adminapi.esm.WinnerDetail.prototype.setClaimedOn = function(value) {
+proto.adminapi.esm.WinnerDetail.prototype.setCreatedOn = function(value) {
   return jspb.Message.setProto3IntField(this, 10, value);
 };
 
 
 /**
- * optional int32 status = 11;
+ * optional int64 claimed_on = 11;
  * @return {number}
  */
-proto.adminapi.esm.WinnerDetail.prototype.getStatus = function() {
+proto.adminapi.esm.WinnerDetail.prototype.getClaimedOn = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
 };
 
@@ -43091,17 +43103,35 @@ proto.adminapi.esm.WinnerDetail.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.WinnerDetail} returns this
  */
-proto.adminapi.esm.WinnerDetail.prototype.setStatus = function(value) {
+proto.adminapi.esm.WinnerDetail.prototype.setClaimedOn = function(value) {
   return jspb.Message.setProto3IntField(this, 11, value);
 };
 
 
 /**
- * optional string ship_tracking = 12;
+ * optional int32 status = 12;
+ * @return {number}
+ */
+proto.adminapi.esm.WinnerDetail.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.WinnerDetail} returns this
+ */
+proto.adminapi.esm.WinnerDetail.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 12, value);
+};
+
+
+/**
+ * optional string ship_tracking = 13;
  * @return {string}
  */
 proto.adminapi.esm.WinnerDetail.prototype.getShipTracking = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 12, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 13, ""));
 };
 
 
@@ -43110,7 +43140,7 @@ proto.adminapi.esm.WinnerDetail.prototype.getShipTracking = function() {
  * @return {!proto.adminapi.esm.WinnerDetail} returns this
  */
 proto.adminapi.esm.WinnerDetail.prototype.setShipTracking = function(value) {
-  return jspb.Message.setProto3StringField(this, 12, value);
+  return jspb.Message.setProto3StringField(this, 13, value);
 };
 
 

@@ -2596,6 +2596,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
         prize_type_id: winner.prize_type_id,
         user_id: winner.user_id,
         user_nick_name: winner.user_nick_name,
+        user_email: winner.user_email,
         user_avatar_url: winner.user_avatar_url,
         created_on: created_on as i64,
         claimed_on: claimed_on as i64,
