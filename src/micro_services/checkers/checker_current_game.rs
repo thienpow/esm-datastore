@@ -423,11 +423,13 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
         }
 
         println!("prize_id={} start_timestamp={} === final_end_timestamp={} diff_timestamp={} final_end_timestamp-start_timestamp={}", prize.id, start_timestamp, final_end_timestamp, diff_timestamp, final_end_timestamp-start_timestamp);
-//break;
+
         let mut previous_group_id = 0;
         let mut previous_start_timestamp = 0;
+        let mut max_active_games_len = 0;
         for game in &active_games {
             
+
             if i > 0  {
                 i = 0;
                 start_timestamp = start_timestamp -  1;
@@ -487,6 +489,16 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                                     let end_timestamp = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
                                     previous_start_timestamp = start_timestamp;
                                     start_timestamp = end_timestamp;
+                                } else {
+
+                                    max_active_games_len = max_active_games_len + 1;
+                                    if max_active_games_len == active_games.len() {
+                                        println!("== dead group.");
+                                        // it's dead, nothing found from previous, data is changed, so we start fresh with this new game.
+                                        let _ = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
+                                        
+                                        return Ok(())
+                                    }
                                 }
                             }
                         } else {
@@ -499,8 +511,16 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                                 start_timestamp = previous_end_timestamp;
                                 
                             } else {
-                                println!("== dead single.");
-                                //return Ok(())
+                                
+                                max_active_games_len = max_active_games_len + 1;
+                                if max_active_games_len == active_games.len() {
+                                    println!("== dead single.");
+                                    // it's dead, nothing found from previous, data is changed, so we start fresh with this new game.
+
+                                    let _ = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
+
+                                    return Ok(())
+                                }
                             }
                         }
                         
