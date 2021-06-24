@@ -2634,6 +2634,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.getPrizeTicketPool =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.GetPrizeTicketsCollectedRequest,
+ *   !proto.api.esm.GetPrizeTicketsCollectedResponse>}
+ */
+const methodDescriptor_EsmApi_GetPrizeTicketsCollected = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/GetPrizeTicketsCollected',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.GetPrizeTicketsCollectedRequest,
+  proto.api.esm.GetPrizeTicketsCollectedResponse,
+  /**
+   * @param {!proto.api.esm.GetPrizeTicketsCollectedRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetPrizeTicketsCollectedResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.GetPrizeTicketsCollectedRequest,
+ *   !proto.api.esm.GetPrizeTicketsCollectedResponse>}
+ */
+const methodInfo_EsmApi_GetPrizeTicketsCollected = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.GetPrizeTicketsCollectedResponse,
+  /**
+   * @param {!proto.api.esm.GetPrizeTicketsCollectedRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetPrizeTicketsCollectedResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.GetPrizeTicketsCollectedRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.GetPrizeTicketsCollectedResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.GetPrizeTicketsCollectedResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.getPrizeTicketsCollected =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/GetPrizeTicketsCollected',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetPrizeTicketsCollected,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.GetPrizeTicketsCollectedRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.GetPrizeTicketsCollectedResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.getPrizeTicketsCollected =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/GetPrizeTicketsCollected',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetPrizeTicketsCollected);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.ListPrizeRequest,
  *   !proto.api.esm.ListPrizeResponse>}
  */

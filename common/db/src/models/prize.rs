@@ -734,8 +734,17 @@ impl Prize {
     pub async fn get_current_tickets_collected_by_user(user_id: i64, prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT (SELECT COALESCE(SUM(tickets), 0) FROM public.\"prize_pool\" WHERE user_id=$1 AND prize_id=$2 AND is_closed=false) AS tickets_collected;").await?;
+      let stmt = conn.prepare("SELECT COALESCE(SUM(tickets), 0) FROM public.\"prize_pool\" WHERE user_id=$1 AND prize_id=$2 AND is_closed=false;").await?;
       let row = conn.query_one(&stmt, &[&user_id, &prize_id]).await?;
+    
+      Ok(row.get::<usize, i64>(0))
+    }
+
+    pub async fn get_tickets_collected(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT tickets_collected FROM public.\"prize\" WHERE id=$1;").await?;
+      let row = conn.query_one(&stmt, &[&id]).await?;
     
       Ok(row.get::<usize, i64>(0))
     }
@@ -743,7 +752,7 @@ impl Prize {
     pub async fn get_current_tickets_collected(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT (SELECT COALESCE(SUM(tickets), 0) FROM public.\"prize_pool\" WHERE prize_id=$1 AND is_closed=false) AS tickets_collected;").await?;
+      let stmt = conn.prepare("SELECT COALESCE(SUM(tickets), 0) FROM public.\"prize_pool\" WHERE prize_id=$1 AND is_closed=false;").await?;
       let row = conn.query_one(&stmt, &[&id]).await?;
     
       Ok(row.get::<usize, i64>(0))
@@ -755,6 +764,16 @@ impl Prize {
       let stmt = conn.prepare("UPDATE public.\"prize\" SET tickets_collected=$1, tickets_collected_on=NOW() WHERE id=$2;").await?;
       let n = conn.execute(&stmt, 
                   &[&tickets_collected, &prize_id]).await?;
+    
+      Ok(n)
+    }
+
+    pub async fn add_prize_tickets_collected(prize_id: i64, tickets_to_add: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("UPDATE public.\"prize\" SET tickets_collected=tickets_collected+$1, tickets_collected_on=NOW() WHERE id=$2;").await?;
+      let n = conn.execute(&stmt, 
+                  &[&tickets_to_add, &prize_id]).await?;
     
       Ok(n)
     }

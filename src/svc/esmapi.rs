@@ -77,6 +77,7 @@ use esmapi_proto::{
 
   // Prize
   GetPrizeTicketPoolRequest, GetPrizeTicketPoolResponse,
+  GetPrizeTicketsCollectedRequest, GetPrizeTicketsCollectedResponse,
   ListPrizeRequest, ListPrizeResponse, 
   PrizeDetail, 
   GetPrizeDetailRequest, GetPrizeDetailResponse,
@@ -863,6 +864,10 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                       match prize::Prize::log_prize_pool(prize_id, user_id, game_id, 2, reward_tickets, &self.pool.clone()).await {
                         Ok(_) => {
                           //do something here?
+                          match prize::Prize::add_prize_tickets_collected(prize_id, reward_tickets as i64, &self.pool.clone()).await {
+                            Ok(_) => (),
+                            Err(e) => return Err(Status::internal(format!("Error: log_g_leave ==> add_prize_tickets_collected failed! {}", e.to_string()))),
+                          } 
                           
                           ()
                         },
@@ -1189,6 +1194,10 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
           match prize::Prize::log_prize_pool(prize_id, user_id, 0, 1, win_amount, &self.pool.clone()).await {
             Ok(_) => {
               //do something here?
+              match prize::Prize::add_prize_tickets_collected(prize_id, win_amount as i64, &self.pool.clone()).await {
+                Ok(_) => (),
+                Err(e) => return Err(Status::internal(format!("Error: log_s_leave ==> add_prize_tickets_collected failed! {}", e.to_string()))),
+              } 
               
               ()
             },
@@ -1460,6 +1469,19 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         tickets: tickets,
       })),
       Err(e) => return Err(Status::internal(format!("Error: get_prize_ticket_pool ==> prize::Prize::get_current_tickets_collected_by_user failed! {}", e.to_string())))
+    }
+  }
+
+  async fn get_prize_tickets_collected(&self, request: Request<GetPrizeTicketsCollectedRequest>, ) -> Result<Response<GetPrizeTicketsCollectedResponse>, Status> {
+    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+
+    match prize::Prize::get_tickets_collected(req.prize_id.into(), &self.pool.clone()).await {
+      Ok(tickets) => Ok(Response::new(GetPrizeTicketsCollectedResponse {
+        tickets: tickets,
+      })),
+      Err(e) => return Err(Status::internal(format!("Error: get_prize_tickets_collected ==> prize::Prize::get_tickets_collected failed! {}", e.to_string())))
     }
   }
 
