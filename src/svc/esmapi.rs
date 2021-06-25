@@ -1473,7 +1473,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
   }
 
   async fn get_prize_tickets_collected(&self, request: Request<GetPrizeTicketsCollectedRequest>, ) -> Result<Response<GetPrizeTicketsCollectedResponse>, Status> {
-    let _ = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
 
