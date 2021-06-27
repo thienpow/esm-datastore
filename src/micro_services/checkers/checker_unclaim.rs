@@ -34,31 +34,49 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     loop {
         
-        let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
-
-        match esm_db::models::config::Config::get_days_to_claim(&pool.clone()).await {
-            Ok(days_to_claim) => {
-      
-              match winner::Winner::set_all_expired_unclaimed(days_to_claim, &pool.clone()).await {
-                Ok(_) => {},
-                Err(e) => panic!("== set_all_expired_unclaimed Error: {:?}.", e),
-              }
+        // main_loop
+        match main_loop(&pool).await {
+            Ok(_) => {
+                println!("");
+                ()
             },
-            Err(e) => panic!("== get_days_to_claim Error: {:?}.", e),
-        };
-      
-        let stop = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
+            Err(error) => {
+                println!("{}", error);
+                ()
+            }
+        }
 
-        let diff = stop - start;
-        println!("checker_unclaim Time Spent = {}ms", diff);
-
-        let _ = match checker::Checker::update_unclaim_checked(diff as i64, &pool.clone()).await {
-            Ok(_) => (),
-            Err(e) => panic!("== update_unclaim_checked Error: {:?}.", e),
-        };
         let time_wait = time::Duration::from_secs(config.checker_time_wait);
         thread::sleep(time_wait);
     }
 
 }
 
+
+async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<(), Box<dyn std::error::Error>> {
+
+    let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
+
+    match esm_db::models::config::Config::get_days_to_claim(&pool.clone()).await {
+        Ok(days_to_claim) => {
+  
+          match winner::Winner::set_all_expired_unclaimed(days_to_claim, &pool.clone()).await {
+            Ok(_) => {},
+            Err(e) => panic!("== set_all_expired_unclaimed Error: {:?}.", e),
+          }
+        },
+        Err(e) => panic!("== get_days_to_claim Error: {:?}.", e),
+    };
+  
+    let stop = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
+
+    let diff = stop - start;
+    println!("checker_unclaim Time Spent = {}ms", diff);
+
+    let _ = match checker::Checker::update_unclaim_checked(diff as i64, &pool.clone()).await {
+        Ok(_) => (),
+        Err(e) => panic!("== update_unclaim_checked Error: {:?}.", e),
+    };
+
+    Ok(())
+}

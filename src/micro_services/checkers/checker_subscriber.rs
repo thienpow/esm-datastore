@@ -34,48 +34,66 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     loop {
         
-        let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
-
-        //daily checker for users' who subscribed and yet to be rewarded with daily_gem and add the gem amount to user's gem
-        match user::User::list_unrewarded_subscriber(&pool.clone()).await {
-            Ok(users) => {
-                //retrieve users that's subscribed and not yet updated with daily_gem
-                for user in users {
-
-                    user::User::reward_gem(user.id, user.daily_gem, &pool.clone()).await?;
-                    match notify("Daily Gem Reward", format!("Your Subscription Reward has just reloaded: {} GEMS!", user.daily_gem).as_str(), user.daily_gem.to_string().as_str(), user.msg_token.as_str()).await {
-                        Ok(_) => {},
-                        Err(e) => {
-                            checker::Checker::add_error(checker::ErrorLog {
-                                module_id: 201,
-                                detail: format!("{}", e),
-                            }, &pool).await?;
-                            println!("Error notify subscriber {}", e);
-                        }
-                    }
-                }
-
+        // main_loop
+        match main_loop(&pool).await {
+            Ok(_) => {
+                println!("");
+                ()
             },
-            Err(e) => panic!("list_subscriber error: {:?}", e),
+            Err(error) => {
+                println!("{}", error);
+                ()
+            }
         }
         
-    
-
-        let stop = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
-
-        let diff = stop - start;
-        println!("checker_subscriber Time Spent = {}ms", diff);
-
-        let _ = match checker::Checker::update_subscriber_checked(diff as i64, &pool.clone()).await {
-            Ok(_) => (),
-            Err(e) => panic!("== update_subscriber_checked Error: {:?}.", e),
-        };
         let time_wait = time::Duration::from_secs(config.checker_time_wait);
         thread::sleep(time_wait);
     }
 
 }
 
+
+async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<(), Box<dyn std::error::Error>> {
+
+    let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
+
+    //daily checker for users' who subscribed and yet to be rewarded with daily_gem and add the gem amount to user's gem
+    match user::User::list_unrewarded_subscriber(&pool.clone()).await {
+        Ok(users) => {
+            //retrieve users that's subscribed and not yet updated with daily_gem
+            for user in users {
+
+                user::User::reward_gem(user.id, user.daily_gem, &pool.clone()).await?;
+                match notify("Daily Gem Reward", format!("Your Subscription Reward has just reloaded: {} GEMS!", user.daily_gem).as_str(), user.daily_gem.to_string().as_str(), user.msg_token.as_str()).await {
+                    Ok(_) => {},
+                    Err(e) => {
+                        checker::Checker::add_error(checker::ErrorLog {
+                            module_id: 201,
+                            detail: format!("{}", e),
+                        }, &pool).await?;
+                        println!("Error notify subscriber {}", e);
+                    }
+                }
+            }
+
+        },
+        Err(e) => panic!("list_subscriber error: {:?}", e),
+    }
+    
+
+
+    let stop = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
+
+    let diff = stop - start;
+    println!("checker_subscriber Time Spent = {}ms", diff);
+
+    let _ = match checker::Checker::update_subscriber_checked(diff as i64, &pool.clone()).await {
+        Ok(_) => (),
+        Err(e) => panic!("== update_subscriber_checked Error: {:?}.", e),
+    };
+
+    Ok(())
+}
 
 pub async fn notify(title: &str, body: &str, daily_gem: &str, token: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
