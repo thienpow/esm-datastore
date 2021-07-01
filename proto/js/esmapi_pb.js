@@ -13344,7 +13344,8 @@ proto.api.esm.LeaderboardDetail.toObject = function(includeInstance, msg) {
     nickName: jspb.Message.getFieldWithDefault(msg, 2, ""),
     avatarUrl: jspb.Message.getFieldWithDefault(msg, 3, ""),
     exp: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    gameScore: jspb.Message.getFieldWithDefault(msg, 5, 0)
+    gameScore: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    leaveTimestamp: jspb.Message.getFieldWithDefault(msg, 6, 0)
   };
 
   if (includeInstance) {
@@ -13400,6 +13401,10 @@ proto.api.esm.LeaderboardDetail.deserializeBinaryFromReader = function(msg, read
     case 5:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGameScore(value);
+      break;
+    case 6:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLeaveTimestamp(value);
       break;
     default:
       reader.skipField();
@@ -13462,6 +13467,13 @@ proto.api.esm.LeaderboardDetail.serializeBinaryToWriter = function(message, writ
   if (f !== 0) {
     writer.writeInt32(
       5,
+      f
+    );
+  }
+  f = message.getLeaveTimestamp();
+  if (f !== 0) {
+    writer.writeInt64(
+      6,
       f
     );
   }
@@ -13555,6 +13567,24 @@ proto.api.esm.LeaderboardDetail.prototype.getGameScore = function() {
  */
 proto.api.esm.LeaderboardDetail.prototype.setGameScore = function(value) {
   return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional int64 leave_timestamp = 6;
+ * @return {number}
+ */
+proto.api.esm.LeaderboardDetail.prototype.getLeaveTimestamp = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.api.esm.LeaderboardDetail} returns this
+ */
+proto.api.esm.LeaderboardDetail.prototype.setLeaveTimestamp = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 

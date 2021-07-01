@@ -22,6 +22,7 @@ pub struct TourSet {
 pub struct TournamentSet {
   pub id: i64,
   pub title: String,
+  pub status: i32, 
   pub duration_days: i32,
   pub duration_hours: i32,
   pub is_group: bool,
@@ -45,7 +46,9 @@ pub struct TournamentCount {
 }
 
 pub struct TournamentSetCount {
-  pub total: i64
+  pub draft: i64,
+  pub published: i64,
+  pub archived: i64 
 }
 
 
@@ -64,9 +67,9 @@ impl Tournament {
     pub async fn add_set(tournament_set: TournamentSet, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("INSERT INTO public.\"tournament_set\" (title, duration_days, duration_hours, is_group) VALUES ($1, $2, $3, $4) RETURNING id;").await?;
+      let stmt = conn.prepare("INSERT INTO public.\"tournament_set\" (title, status, duration_days, duration_hours, is_group) VALUES ($1, $2, $3, $4, $5) RETURNING id;").await?;
       let row = conn.query_one(&stmt, 
-                  &[&tournament_set.title, &tournament_set.duration_days, &tournament_set.duration_hours, &tournament_set.is_group]).await?;
+                  &[&tournament_set.title, &tournament_set.status, &tournament_set.duration_days, &tournament_set.duration_hours, &tournament_set.is_group]).await?;
     
       Ok(row.get::<usize, i64>(0))
     }
@@ -95,9 +98,9 @@ impl Tournament {
     pub async fn update_set(tournament_set: TournamentSet, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"tournament_set\" SET title=$1, duration_days=$2, duration_hours=$3, is_group=$4 WHERE id=$5;").await?;
+      let stmt = conn.prepare("UPDATE public.\"tournament_set\" SET title=$1, status=$2, duration_days=$3, duration_hours=$4, is_group=$5 WHERE id=$6;").await?;
       let n = conn.execute(&stmt, 
-                  &[&tournament_set.title, &tournament_set.duration_days, &tournament_set.duration_hours, &tournament_set.is_group, &tournament_set.id]).await?;
+                  &[&tournament_set.title, &tournament_set.status, &tournament_set.duration_days, &tournament_set.duration_hours, &tournament_set.is_group, &tournament_set.id]).await?;
     
       Ok(n)
     }
@@ -210,21 +213,25 @@ impl Tournament {
       Ok(vec)
     }
 
-    pub async fn list_set(limit: i64, offset: i64, search_title: String, ids: String, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<TournamentSet>, RunError<tokio_postgres::Error>> {
+    pub async fn list_set(limit: i64, offset: i64, search_title: String, status: i32, ids: String, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<TournamentSet>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
       let mut vec: Vec<TournamentSet> = Vec::new();
       if search_title.len() > 2 {
-        let sql_string = format!("SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        let mut sql_string = format!("SELECT id, title, status, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE title ILIKE '%{}%' ORDER BY id DESC LIMIT {} OFFSET {};", search_title, limit, offset);
+        if status > -1 {
+          sql_string = format!("SELECT id, title, status, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE title ILIKE '%{}%' AND status={} ORDER BY id DESC LIMIT {} OFFSET {};", search_title, status, limit, offset);
+        }
         let stmt = conn.prepare(&sql_string).await?;
     
         for row in conn.query(&stmt, &[]).await? {
           let set = TournamentSet {
             id: row.get(0),
             title: row.get(1), 
-            duration_days: row.get(2),
-            duration_hours: row.get(3), 
-            is_group: row.get(4), 
+            status: row.get(2),
+            duration_days: row.get(3),
+            duration_hours: row.get(4), 
+            is_group: row.get(5), 
           };
   
           vec.push(set);
@@ -233,7 +240,7 @@ impl Tournament {
       } else {
 
         if ids.len() > 0 {
-          let sql_string = format!("SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE id IN ({});", ids);
+          let sql_string = format!("SELECT id, title, status, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE id IN ({});", ids);
 
           let stmt = conn.prepare(&sql_string).await?;
       
@@ -241,25 +248,29 @@ impl Tournament {
             let set = TournamentSet {
               id: row.get(0),
               title: row.get(1), 
-              duration_days: row.get(2),
-              duration_hours: row.get(3), 
-              is_group: row.get(4), 
+              status: row.get(2),
+              duration_days: row.get(3),
+              duration_hours: row.get(4), 
+              is_group: row.get(5), 
             };
     
             vec.push(set);
           }
         } else {
-          let sql_string = "SELECT id, title, duration_days, duration_hours, is_group FROM public.\"tournament_set\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
-
+          let mut sql_string = "SELECT id, title, status, duration_days, duration_hours, is_group FROM public.\"tournament_set\" ORDER BY id DESC LIMIT $1 OFFSET $2;".to_string();
+          if status > -1 {
+            sql_string = format!("SELECT id, title, status, duration_days, duration_hours, is_group FROM public.\"tournament_set\" WHERE status={} ORDER BY id DESC LIMIT $1 OFFSET $2;", status);
+          }
           let stmt = conn.prepare(&sql_string).await?;
       
           for row in conn.query(&stmt, &[&limit, &offset]).await? {
             let set = TournamentSet {
               id: row.get(0),
               title: row.get(1), 
-              duration_days: row.get(2),
-              duration_hours: row.get(3), 
-              is_group: row.get(4), 
+              status: row.get(2),
+              duration_days: row.get(3),
+              duration_hours: row.get(4), 
+              is_group: row.get(5), 
             };
     
             vec.push(set);
@@ -314,13 +325,15 @@ impl Tournament {
     pub async fn count_set(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<TournamentSetCount, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let sql = "SELECT (SELECT COUNT(id) FROM public.\"tournament_set\") AS total;";
+      let sql = "SELECT (SELECT COUNT(id) FROM public.\"tournament_set\" WHERE status=1) AS draft, (SELECT COUNT(id) FROM public.\"tournament_set\" WHERE status=2) AS published, (SELECT COUNT(id) FROM public.\"tournament_set\" WHERE status=3) AS archived;";
 
       let stmt = conn.prepare(sql).await?;
       let row = conn.query_one(&stmt, &[]).await?;
       
       Ok(TournamentSetCount {
-        total: row.get::<usize, i64>(0),
+        draft: row.get::<usize, i64>(0),
+        published: row.get::<usize, i64>(1),
+        archived: row.get::<usize, i64>(2)
       })
     }
 

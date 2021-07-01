@@ -968,13 +968,20 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
               return Err(Status::internal(format!("{:?}", e)))
             }
           };
+
+          let leave_timestamp = match gplayer::GPlayer::get_timestamp(req.game_id, req.prize_id, l.user_id, l.game_score, &self.pool.clone()).await {
+            Ok(leave_timestamp) => leave_timestamp,
+            Err(_) => SystemTime::now()
+          };
     
+          let leave_timestamp= leave_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
           let li = LeaderboardDetail {
             user_id: l.user_id,
             nick_name: player.nick_name,
             avatar_url: player.avatar_url,
             exp: player.exp,
             game_score: l.game_score,
+            leave_timestamp: leave_timestamp,
           };
           
           result.push(li);

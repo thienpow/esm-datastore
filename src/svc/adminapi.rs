@@ -2155,6 +2155,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let tournament_set = tournament::TournamentSet {
       id: 0,
       title: req.title.into(),
+      status: req.status.into(),
       duration_days: req.duration_days.into(),
       duration_hours: req.duration_hours.into(),
       is_group: req.is_group.into()
@@ -2228,6 +2229,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     let tournament_set = tournament::TournamentSet {
       id: req.id.into(),
       title: req.title.into(),
+      status: req.status.into(),
       duration_days: req.duration_days.into(),
       duration_hours: req.duration_hours.into(),
       is_group: req.is_group.into()
@@ -2366,7 +2368,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let sets = match tournament::Tournament::list_set(req.limit.into(), req.offset.into(), req.search_title.into(), "".to_string(), &self.pool.clone()).await {
+    let sets = match tournament::Tournament::list_set(req.limit.into(), req.offset.into(), req.search_title.into(),req.status.into(), "".to_string(), &self.pool.clone()).await {
       Ok(sets) => sets,
       Err(error) => panic!("Error: {}.", error),
     };
@@ -2380,6 +2382,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
       let li = TournamentSetDetail {
         id: set.id,
         title: set.title,
+        status: set.status,
         duration_days: set.duration_days,
         duration_hours: set.duration_hours,
         is_group: set.is_group
@@ -2457,7 +2460,9 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     Ok(Response::new(GetTournamentSetCountResponse {
       result: Some(TournamentSetCount{
-        total: count.total
+        draft: count.draft,
+        published: count.published,
+        archived: count.archived
       }),
     }))
   }

@@ -479,6 +479,7 @@ message LeaderboardDetail {
   string avatar_url = 3;
   int32 exp = 4;
   int32 game_score = 5;
+  int64 leave_timestamp = 6;
 }
 
 message ListPlayerHighscoreRequest {

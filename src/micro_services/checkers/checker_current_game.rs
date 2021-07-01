@@ -139,15 +139,22 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
 
                                 // before reset the schedule, check if the duration_days < 7, if smaller than 7 days, we need to make sure it's within repeated_on.
                                 // let say, if duration_days is 2, we need to check if scheduled_off is already pass, and if the repeated_on is within today.
-                                // if scheduled_off is not passed, meaning we need to reset_schedule with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
+                                // if scheduled_off is not passed, meaning we need to reset with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
 
                                 let mut is_reset = false;
-                                if prize.duration_days < 7 {
-                                    if is_today_repeat {
+                                
+                                if prize.is_repeat {
+
+                                    if prize.duration_days < 7 {
+                                        if is_today_repeat {
+                                            is_reset = true;
+                                        }
+                                    } else {
                                         is_reset = true;
                                     }
+
                                 } else {
-                                    is_reset = true;
+                                    is_reset = false;
                                 }
 
                                 if is_reset {
@@ -241,18 +248,24 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                                     
                                     // before reset the schedule, check if the duration_days < 7, if smaller than 7 days, we need to make sure it's within repeated_on.
                                     // let say, if duration_days is 2, we need to check if scheduled_off is already pass, and if the repeated_on is within today.
-                                    // if scheduled_off is not passed, meaning we need to reset_schedule with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
+                                    // if scheduled_off is not passed, meaning we need to reset with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
         
 
                                     let mut is_reset = false;
-                                    if prize.duration_days < 7 {
-                                        if is_today_repeat {
+
+                                    if prize.is_repeat {
+                                        if prize.duration_days < 7 {
+                                            if is_today_repeat {
+                                                is_reset = true;
+                                            }
+                                        } else {
                                             is_reset = true;
                                         }
-                                    } else {
-                                        is_reset = true;
+    
+                                    }  else {
+                                        is_reset = false;
                                     }
-
+                                    
                                     if is_reset {
                                         //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
                                         let _ = match prize::Prize::reset_schedule(prize_id, new_scheduled_on, new_scheduled_off, &pool.clone()).await {
@@ -441,91 +454,92 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                     return Ok(())
                 }
 
-                let _ = match prize::Prize::set_running(prize.id, &pool.clone()).await {
-                    Ok(_) => (),
-                    Err(error) => panic!("== set_running Error: {}.", error),
-                };
             }
-            
-                if game.group_id > 0 {
-                    if previous_group_id ==  game.group_id  {
-                        start_timestamp = previous_start_timestamp;
-                        println!("previous_group_id ==  game.group_id; set_id={}", game.set_id);
-                    }
-                } 
-
-                println!("is_previous_game_found == {}", is_previous_game_found);
-                if is_previous_game_found { 
-                
-                    if is_after_previous {
-
-                        let end_timestamp = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
-
-                        previous_start_timestamp = start_timestamp;
-                        start_timestamp = end_timestamp;
         
-                        
-                    } else {
-                        
-                        if game.group_id > 0 {
-                            if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.group_id == previous_group_id {
-                                println!("== not after previous, but conditions in.");
-                                is_after_previous_group = true;
-                            } else {
+            let _ = match prize::Prize::set_running(prize.id, &pool.clone()).await {
+                Ok(_) => (),
+                Err(error) => panic!("== set_running Error: {}.", error),
+            };
 
-                                if is_after_previous_group {
-                                    is_after_previous = true;
-                                    start_timestamp = previous_end_timestamp;
+            if game.group_id > 0 {
+                if previous_group_id ==  game.group_id  {
+                    start_timestamp = previous_start_timestamp;
+                    println!("previous_group_id ==  game.group_id; set_id={}", game.set_id);
+                }
+            } 
 
-                                    let end_timestamp = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
-                                    previous_start_timestamp = start_timestamp;
-                                    start_timestamp = end_timestamp;
-                                } else {
+            println!("is_previous_game_found == {}", is_previous_game_found);
+            if is_previous_game_found { 
+            
+                if is_after_previous {
 
-                                    max_active_games_len = max_active_games_len + 1;
-                                    if max_active_games_len == active_games.len() {
-                                        println!("== dead group.");
-                                        // it's dead, nothing found from previous, data is changed, so we start fresh with this new game.
-                                        let _ = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
-                                        
-                                        return Ok(())
-                                    }
-                                }
-                            }
-                        } else {
-                            println!("== not after previous, tour {}={}, set {}={}, game {}, {}", game.tour_id, previous_tour_id, game.set_id, previous_set_id, game.game_id, previous_game_id);
-                                
-                            if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.game_id ==  previous_game_id {
-                                println!("== not after previous, but conditions in.");
-                                is_after_previous = true;
-                                previous_start_timestamp = start_timestamp;
-                                start_timestamp = previous_end_timestamp;
-                                
-                            } else {
-                                
-                                max_active_games_len = max_active_games_len + 1;
-                                if max_active_games_len == active_games.len() {
-                                    println!("== dead single.");
-                                    // it's dead, nothing found from previous, data is changed, so we start fresh with this new game.
-
-                                    let _ = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
-
-                                    return Ok(())
-                                }
-                            }
-                        }
-                        
-                    }
-    
-                } else { // if 0 then means genearate from scheduled_on of prize
-                    
                     let end_timestamp = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
 
                     previous_start_timestamp = start_timestamp;
                     start_timestamp = end_timestamp;
     
+                    
+                } else {
+                    
+                    if game.group_id > 0 {
+                        if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.group_id == previous_group_id {
+                            println!("== not after previous, but conditions in.");
+                            is_after_previous_group = true;
+                        } else {
+
+                            if is_after_previous_group {
+                                is_after_previous = true;
+                                start_timestamp = previous_end_timestamp;
+
+                                let end_timestamp = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
+                                previous_start_timestamp = start_timestamp;
+                                start_timestamp = end_timestamp;
+                            } else {
+
+                                max_active_games_len = max_active_games_len + 1;
+                                if max_active_games_len == active_games.len() {
+                                    println!("== dead group.");
+                                    // it's dead, nothing found from previous, data is changed, so we start fresh with this new game.
+                                    let _ = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
+                                    
+                                    return Ok(())
+                                }
+                            }
+                        }
+                    } else {
+                        println!("== not after previous, tour {}={}, set {}={}, game {}, {}", game.tour_id, previous_tour_id, game.set_id, previous_set_id, game.game_id, previous_game_id);
+                            
+                        if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.game_id ==  previous_game_id {
+                            println!("== not after previous, but conditions in.");
+                            is_after_previous = true;
+                            previous_start_timestamp = start_timestamp;
+                            start_timestamp = previous_end_timestamp;
+                            
+                        } else {
+                            
+                            max_active_games_len = max_active_games_len + 1;
+                            if max_active_games_len == active_games.len() {
+                                println!("== dead single.");
+                                // it's dead, nothing found from previous, data is changed, so we start fresh with this new game.
+
+                                let _ = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
+
+                                return Ok(())
+                            }
+                        }
+                    }
+                    
                 }
-    
+
+            } else { // if 0 then means genearate from scheduled_on of prize
+                
+                let end_timestamp = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
+
+                previous_start_timestamp = start_timestamp;
+                start_timestamp = end_timestamp;
+
+            }
+
             
             
             // remember the  group_id as previous_group_id so that next item can refer to it.

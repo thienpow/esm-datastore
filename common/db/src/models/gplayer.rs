@@ -148,6 +148,17 @@ impl GPlayer {
       Ok(vec)
 
     }
+
+    pub async fn get_timestamp(game_id: i64, prize_id: i64, user_id: i64, game_score: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<SystemTime, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT leave_timestamp FROM public.\"gplayer\" WHERE game_id=$1 AND prize_id=$2 AND user_id=$3 AND game_score=$4 AND is_logged_leave=true AND is_closed=false LIMIT 1;").await?;
+      let row = conn.query_one(&stmt, 
+        &[&game_id, &prize_id, &user_id, &game_score]).await?;
+
+      Ok(row.get(0))
+
+    }
     
     pub async fn list_log_g_by_player(player_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<LogGDetail>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;

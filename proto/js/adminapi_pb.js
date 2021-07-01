@@ -35333,9 +35333,10 @@ proto.adminapi.esm.AddTournamentSetRequest.prototype.toObject = function(opt_inc
 proto.adminapi.esm.AddTournamentSetRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     title: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    durationDays: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    durationHours: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    isGroup: jspb.Message.getBooleanFieldWithDefault(msg, 4, false)
+    status: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    durationDays: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    durationHours: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    isGroup: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
   };
 
   if (includeInstance) {
@@ -35378,13 +35379,17 @@ proto.adminapi.esm.AddTournamentSetRequest.deserializeBinaryFromReader = functio
       break;
     case 2:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setDurationDays(value);
+      msg.setStatus(value);
       break;
     case 3:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setDurationHours(value);
+      msg.setDurationDays(value);
       break;
     case 4:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setDurationHours(value);
+      break;
+    case 5:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsGroup(value);
       break;
@@ -35424,24 +35429,31 @@ proto.adminapi.esm.AddTournamentSetRequest.serializeBinaryToWriter = function(me
       f
     );
   }
-  f = message.getDurationDays();
+  f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
       2,
       f
     );
   }
-  f = message.getDurationHours();
+  f = message.getDurationDays();
   if (f !== 0) {
     writer.writeInt32(
       3,
       f
     );
   }
+  f = message.getDurationHours();
+  if (f !== 0) {
+    writer.writeInt32(
+      4,
+      f
+    );
+  }
   f = message.getIsGroup();
   if (f) {
     writer.writeBool(
-      4,
+      5,
       f
     );
   }
@@ -35467,10 +35479,10 @@ proto.adminapi.esm.AddTournamentSetRequest.prototype.setTitle = function(value) 
 
 
 /**
- * optional int32 duration_days = 2;
+ * optional int32 status = 2;
  * @return {number}
  */
-proto.adminapi.esm.AddTournamentSetRequest.prototype.getDurationDays = function() {
+proto.adminapi.esm.AddTournamentSetRequest.prototype.getStatus = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
@@ -35479,16 +35491,16 @@ proto.adminapi.esm.AddTournamentSetRequest.prototype.getDurationDays = function(
  * @param {number} value
  * @return {!proto.adminapi.esm.AddTournamentSetRequest} returns this
  */
-proto.adminapi.esm.AddTournamentSetRequest.prototype.setDurationDays = function(value) {
+proto.adminapi.esm.AddTournamentSetRequest.prototype.setStatus = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
 /**
- * optional int32 duration_hours = 3;
+ * optional int32 duration_days = 3;
  * @return {number}
  */
-proto.adminapi.esm.AddTournamentSetRequest.prototype.getDurationHours = function() {
+proto.adminapi.esm.AddTournamentSetRequest.prototype.getDurationDays = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -35497,17 +35509,35 @@ proto.adminapi.esm.AddTournamentSetRequest.prototype.getDurationHours = function
  * @param {number} value
  * @return {!proto.adminapi.esm.AddTournamentSetRequest} returns this
  */
-proto.adminapi.esm.AddTournamentSetRequest.prototype.setDurationHours = function(value) {
+proto.adminapi.esm.AddTournamentSetRequest.prototype.setDurationDays = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
 /**
- * optional bool is_group = 4;
+ * optional int32 duration_hours = 4;
+ * @return {number}
+ */
+proto.adminapi.esm.AddTournamentSetRequest.prototype.getDurationHours = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.AddTournamentSetRequest} returns this
+ */
+proto.adminapi.esm.AddTournamentSetRequest.prototype.setDurationHours = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional bool is_group = 5;
  * @return {boolean}
  */
 proto.adminapi.esm.AddTournamentSetRequest.prototype.getIsGroup = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 4, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
 };
 
 
@@ -35516,7 +35546,7 @@ proto.adminapi.esm.AddTournamentSetRequest.prototype.getIsGroup = function() {
  * @return {!proto.adminapi.esm.AddTournamentSetRequest} returns this
  */
 proto.adminapi.esm.AddTournamentSetRequest.prototype.setIsGroup = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 4, value);
+  return jspb.Message.setProto3BooleanField(this, 5, value);
 };
 
 
@@ -36414,9 +36444,10 @@ proto.adminapi.esm.UpdateTournamentSetRequest.toObject = function(includeInstanc
   var f, obj = {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     title: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    durationDays: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    durationHours: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    isGroup: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
+    status: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    durationDays: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    durationHours: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    isGroup: jspb.Message.getBooleanFieldWithDefault(msg, 6, false)
   };
 
   if (includeInstance) {
@@ -36463,13 +36494,17 @@ proto.adminapi.esm.UpdateTournamentSetRequest.deserializeBinaryFromReader = func
       break;
     case 3:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setDurationDays(value);
+      msg.setStatus(value);
       break;
     case 4:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setDurationHours(value);
+      msg.setDurationDays(value);
       break;
     case 5:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setDurationHours(value);
+      break;
+    case 6:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsGroup(value);
       break;
@@ -36516,24 +36551,31 @@ proto.adminapi.esm.UpdateTournamentSetRequest.serializeBinaryToWriter = function
       f
     );
   }
-  f = message.getDurationDays();
+  f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
       3,
       f
     );
   }
-  f = message.getDurationHours();
+  f = message.getDurationDays();
   if (f !== 0) {
     writer.writeInt32(
       4,
       f
     );
   }
+  f = message.getDurationHours();
+  if (f !== 0) {
+    writer.writeInt32(
+      5,
+      f
+    );
+  }
   f = message.getIsGroup();
   if (f) {
     writer.writeBool(
-      5,
+      6,
       f
     );
   }
@@ -36577,10 +36619,10 @@ proto.adminapi.esm.UpdateTournamentSetRequest.prototype.setTitle = function(valu
 
 
 /**
- * optional int32 duration_days = 3;
+ * optional int32 status = 3;
  * @return {number}
  */
-proto.adminapi.esm.UpdateTournamentSetRequest.prototype.getDurationDays = function() {
+proto.adminapi.esm.UpdateTournamentSetRequest.prototype.getStatus = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -36589,16 +36631,16 @@ proto.adminapi.esm.UpdateTournamentSetRequest.prototype.getDurationDays = functi
  * @param {number} value
  * @return {!proto.adminapi.esm.UpdateTournamentSetRequest} returns this
  */
-proto.adminapi.esm.UpdateTournamentSetRequest.prototype.setDurationDays = function(value) {
+proto.adminapi.esm.UpdateTournamentSetRequest.prototype.setStatus = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
 /**
- * optional int32 duration_hours = 4;
+ * optional int32 duration_days = 4;
  * @return {number}
  */
-proto.adminapi.esm.UpdateTournamentSetRequest.prototype.getDurationHours = function() {
+proto.adminapi.esm.UpdateTournamentSetRequest.prototype.getDurationDays = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
@@ -36607,17 +36649,35 @@ proto.adminapi.esm.UpdateTournamentSetRequest.prototype.getDurationHours = funct
  * @param {number} value
  * @return {!proto.adminapi.esm.UpdateTournamentSetRequest} returns this
  */
-proto.adminapi.esm.UpdateTournamentSetRequest.prototype.setDurationHours = function(value) {
+proto.adminapi.esm.UpdateTournamentSetRequest.prototype.setDurationDays = function(value) {
   return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
 /**
- * optional bool is_group = 5;
+ * optional int32 duration_hours = 5;
+ * @return {number}
+ */
+proto.adminapi.esm.UpdateTournamentSetRequest.prototype.getDurationHours = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.UpdateTournamentSetRequest} returns this
+ */
+proto.adminapi.esm.UpdateTournamentSetRequest.prototype.setDurationHours = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional bool is_group = 6;
  * @return {boolean}
  */
 proto.adminapi.esm.UpdateTournamentSetRequest.prototype.getIsGroup = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 6, false));
 };
 
 
@@ -36626,7 +36686,7 @@ proto.adminapi.esm.UpdateTournamentSetRequest.prototype.getIsGroup = function() 
  * @return {!proto.adminapi.esm.UpdateTournamentSetRequest} returns this
  */
 proto.adminapi.esm.UpdateTournamentSetRequest.prototype.setIsGroup = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 5, value);
+  return jspb.Message.setProto3BooleanField(this, 6, value);
 };
 
 
@@ -38844,7 +38904,8 @@ proto.adminapi.esm.ListTournamentSetRequest.toObject = function(includeInstance,
   var f, obj = {
     limit: jspb.Message.getFieldWithDefault(msg, 1, 0),
     offset: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    searchTitle: jspb.Message.getFieldWithDefault(msg, 3, "")
+    searchTitle: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    status: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -38893,6 +38954,10 @@ proto.adminapi.esm.ListTournamentSetRequest.deserializeBinaryFromReader = functi
       var value = /** @type {string} */ (reader.readString());
       msg.setSearchTitle(value);
       break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setStatus(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -38940,6 +39005,13 @@ proto.adminapi.esm.ListTournamentSetRequest.serializeBinaryToWriter = function(m
   if (f.length > 0) {
     writer.writeString(
       3,
+      f
+    );
+  }
+  f = message.getStatus();
+  if (f !== 0) {
+    writer.writeInt32(
+      4,
       f
     );
   }
@@ -38997,6 +39069,24 @@ proto.adminapi.esm.ListTournamentSetRequest.prototype.getSearchTitle = function(
  */
 proto.adminapi.esm.ListTournamentSetRequest.prototype.setSearchTitle = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional int32 status = 4;
+ * @return {number}
+ */
+proto.adminapi.esm.ListTournamentSetRequest.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.ListTournamentSetRequest} returns this
+ */
+proto.adminapi.esm.ListTournamentSetRequest.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
@@ -39194,9 +39284,10 @@ proto.adminapi.esm.TournamentSetDetail.toObject = function(includeInstance, msg)
   var f, obj = {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     title: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    durationDays: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    durationHours: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    isGroup: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
+    status: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    durationDays: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    durationHours: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    isGroup: jspb.Message.getBooleanFieldWithDefault(msg, 6, false)
   };
 
   if (includeInstance) {
@@ -39243,13 +39334,17 @@ proto.adminapi.esm.TournamentSetDetail.deserializeBinaryFromReader = function(ms
       break;
     case 3:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setDurationDays(value);
+      msg.setStatus(value);
       break;
     case 4:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setDurationHours(value);
+      msg.setDurationDays(value);
       break;
     case 5:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setDurationHours(value);
+      break;
+    case 6:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsGroup(value);
       break;
@@ -39296,24 +39391,31 @@ proto.adminapi.esm.TournamentSetDetail.serializeBinaryToWriter = function(messag
       f
     );
   }
-  f = message.getDurationDays();
+  f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
       3,
       f
     );
   }
-  f = message.getDurationHours();
+  f = message.getDurationDays();
   if (f !== 0) {
     writer.writeInt32(
       4,
       f
     );
   }
+  f = message.getDurationHours();
+  if (f !== 0) {
+    writer.writeInt32(
+      5,
+      f
+    );
+  }
   f = message.getIsGroup();
   if (f) {
     writer.writeBool(
-      5,
+      6,
       f
     );
   }
@@ -39357,10 +39459,10 @@ proto.adminapi.esm.TournamentSetDetail.prototype.setTitle = function(value) {
 
 
 /**
- * optional int32 duration_days = 3;
+ * optional int32 status = 3;
  * @return {number}
  */
-proto.adminapi.esm.TournamentSetDetail.prototype.getDurationDays = function() {
+proto.adminapi.esm.TournamentSetDetail.prototype.getStatus = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -39369,16 +39471,16 @@ proto.adminapi.esm.TournamentSetDetail.prototype.getDurationDays = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.TournamentSetDetail} returns this
  */
-proto.adminapi.esm.TournamentSetDetail.prototype.setDurationDays = function(value) {
+proto.adminapi.esm.TournamentSetDetail.prototype.setStatus = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
 /**
- * optional int32 duration_hours = 4;
+ * optional int32 duration_days = 4;
  * @return {number}
  */
-proto.adminapi.esm.TournamentSetDetail.prototype.getDurationHours = function() {
+proto.adminapi.esm.TournamentSetDetail.prototype.getDurationDays = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
@@ -39387,17 +39489,35 @@ proto.adminapi.esm.TournamentSetDetail.prototype.getDurationHours = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.TournamentSetDetail} returns this
  */
-proto.adminapi.esm.TournamentSetDetail.prototype.setDurationHours = function(value) {
+proto.adminapi.esm.TournamentSetDetail.prototype.setDurationDays = function(value) {
   return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
 /**
- * optional bool is_group = 5;
+ * optional int32 duration_hours = 5;
+ * @return {number}
+ */
+proto.adminapi.esm.TournamentSetDetail.prototype.getDurationHours = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.TournamentSetDetail} returns this
+ */
+proto.adminapi.esm.TournamentSetDetail.prototype.setDurationHours = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional bool is_group = 6;
  * @return {boolean}
  */
 proto.adminapi.esm.TournamentSetDetail.prototype.getIsGroup = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 6, false));
 };
 
 
@@ -39406,7 +39526,7 @@ proto.adminapi.esm.TournamentSetDetail.prototype.getIsGroup = function() {
  * @return {!proto.adminapi.esm.TournamentSetDetail} returns this
  */
 proto.adminapi.esm.TournamentSetDetail.prototype.setIsGroup = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 5, value);
+  return jspb.Message.setProto3BooleanField(this, 6, value);
 };
 
 
@@ -40766,7 +40886,9 @@ proto.adminapi.esm.TournamentSetCount.prototype.toObject = function(opt_includeI
  */
 proto.adminapi.esm.TournamentSetCount.toObject = function(includeInstance, msg) {
   var f, obj = {
-    total: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    draft: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    published: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    archived: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -40805,7 +40927,15 @@ proto.adminapi.esm.TournamentSetCount.deserializeBinaryFromReader = function(msg
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setTotal(value);
+      msg.setDraft(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setPublished(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setArchived(value);
       break;
     default:
       reader.skipField();
@@ -40836,10 +40966,24 @@ proto.adminapi.esm.TournamentSetCount.prototype.serializeBinary = function() {
  */
 proto.adminapi.esm.TournamentSetCount.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getTotal();
+  f = message.getDraft();
   if (f !== 0) {
     writer.writeInt64(
       1,
+      f
+    );
+  }
+  f = message.getPublished();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
+  f = message.getArchived();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
       f
     );
   }
@@ -40847,10 +40991,10 @@ proto.adminapi.esm.TournamentSetCount.serializeBinaryToWriter = function(message
 
 
 /**
- * optional int64 total = 1;
+ * optional int64 draft = 1;
  * @return {number}
  */
-proto.adminapi.esm.TournamentSetCount.prototype.getTotal = function() {
+proto.adminapi.esm.TournamentSetCount.prototype.getDraft = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -40859,8 +41003,44 @@ proto.adminapi.esm.TournamentSetCount.prototype.getTotal = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.TournamentSetCount} returns this
  */
-proto.adminapi.esm.TournamentSetCount.prototype.setTotal = function(value) {
+proto.adminapi.esm.TournamentSetCount.prototype.setDraft = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional int64 published = 2;
+ * @return {number}
+ */
+proto.adminapi.esm.TournamentSetCount.prototype.getPublished = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.TournamentSetCount} returns this
+ */
+proto.adminapi.esm.TournamentSetCount.prototype.setPublished = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 archived = 3;
+ * @return {number}
+ */
+proto.adminapi.esm.TournamentSetCount.prototype.getArchived = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.TournamentSetCount} returns this
+ */
+proto.adminapi.esm.TournamentSetCount.prototype.setArchived = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
