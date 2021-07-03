@@ -19,6 +19,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
   let config = config::get_configuration();
 
+
   let cert = fs::read(config.db_cert_path)?;
   let cert = Certificate::from_pem(&cert)?;
   let connector = TlsConnector::builder().add_root_certificate(cert).build()?;
@@ -49,8 +50,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Some(index) => index as i32,
     _ => -1,
   };
-
+  
   println!("index={}", index);
+  
+
   Ok(())
 }
 

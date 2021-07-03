@@ -1713,6 +1713,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
         tickets: p.tickets,
         created_on: created_on as i64,
         is_closed: p.is_closed,
+        cg_id: p.cg_id,
       };
       
       result.push(li);

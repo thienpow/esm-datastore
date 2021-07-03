@@ -974,6 +974,7 @@ message PrizePoolDetail {
   int32 tickets = 5;
   int64 created_on = 6;
   bool is_closed = 7;
+  int64 cg_id = 8;
 }
 
 

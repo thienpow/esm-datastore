@@ -149,12 +149,12 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                                     }
 
                                     
-                                    prize::Prize::log_prize_pool(prize_id, user_id, game_id, 3, reward_tickets.ceil() as i32, &pool.clone()).await?;
+                                    prize::Prize::log_prize_pool(prize_id, user_id, game_id, 3, reward_tickets.ceil() as i32, cg_id, &pool.clone()).await?;
                                 }
 
                             }
 
-                            gplayer::GPlayer::close(gplay_id, &pool.clone()).await?;
+                            gplayer::GPlayer::close(gplay_id, cg_id, &pool.clone()).await?;
                             
                             
                             

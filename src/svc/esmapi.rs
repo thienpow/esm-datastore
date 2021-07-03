@@ -861,7 +861,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
                     Ok(_) => {
 
                       //log into prize_pool, win_from = 2
-                      match prize::Prize::log_prize_pool(prize_id, user_id, game_id, 2, reward_tickets, &self.pool.clone()).await {
+                      match prize::Prize::log_prize_pool(prize_id, user_id, game_id, 2, reward_tickets, id, &self.pool.clone()).await {
                         Ok(_) => {
                           //do something here?
                           match prize::Prize::add_prize_tickets_collected(prize_id, reward_tickets as i64, &self.pool.clone()).await {
@@ -960,26 +960,13 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         let mut result: Vec<LeaderboardDetail> = Vec::new();
     
         for l in lb {
-          
-          let player: user::Player = match user::User::get_player(l.user_id, &self.pool.clone()).await {
-            Ok(player) => player,
-            Err(e) => {
-              println!("list_leaderboard not ok, get player failed. {:?}", e);
-              return Err(Status::internal(format!("{:?}", e)))
-            }
-          };
-
-          let leave_timestamp = match gplayer::GPlayer::get_timestamp(req.game_id, req.prize_id, l.user_id, l.game_score, &self.pool.clone()).await {
-            Ok(leave_timestamp) => leave_timestamp,
-            Err(_) => SystemTime::now()
-          };
     
-          let leave_timestamp= leave_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
+          let leave_timestamp= l.leave_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
           let li = LeaderboardDetail {
             user_id: l.user_id,
-            nick_name: player.nick_name,
-            avatar_url: player.avatar_url,
-            exp: player.exp,
+            nick_name: l.nick_name,
+            avatar_url: l.avatar_url,
+            exp: l.exp,
             game_score: l.game_score,
             leave_timestamp: leave_timestamp,
           };
@@ -1198,7 +1185,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
             Err(e) => return Err(Status::internal(format!("Error: log_s_leave ==> get_spin_prize_id failed! {}", e.to_string()))),
           };
   
-          match prize::Prize::log_prize_pool(prize_id, user_id, 0, 1, win_amount, &self.pool.clone()).await {
+          match prize::Prize::log_prize_pool(prize_id, user_id, 0, 1, win_amount, id, &self.pool.clone()).await {
             Ok(_) => {
               //do something here?
               match prize::Prize::add_prize_tickets_collected(prize_id, win_amount as i64, &self.pool.clone()).await {

@@ -64,7 +64,6 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
     let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
     let config = config::get_configuration();
-    
     let now = Utc::now();
     let today = now.weekday().number_from_monday() as i32;
 
@@ -75,11 +74,14 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
     
     let mut i = 0;
     
+    let server_timezone = (config.server_timezone * 3600) as i64;
+    let now_sec = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
     for prize in prizes {
         
         let prize_id = prize.id;
         let type_id = prize.type_id;
         let status_progress = prize.status_progress;
+        let is_repeat: bool = prize.is_repeat;
         let repeated_on = prize.repeated_on.clone();
 
 
@@ -95,88 +97,53 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
           
         i = i + 1;
     
-        let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
-        let timezone_seconds = prize.timezone * (3600 as f64);
+        let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
+        let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
+        let timezone_seconds = (prize.timezone * (3600 as f64)) as i64;
+        
+        //let scheduled_on = scheduled_on + timezone_seconds;
+        //let scheduled_off = scheduled_off + timezone_seconds;
+        let adjusted_now = now_sec - server_timezone + timezone_seconds;
 
-        let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (config.server_timezone * 3600) + (timezone_seconds as u64);
+        /*
+        println!("prize_id = {}", prize_id);
+        println!("scheduled_on = {}", scheduled_on);
+        println!("scheduled_off = {}", scheduled_off);
+        println!("adjusted_now = {}", adjusted_now);
+        println!("SystemTime::now() = {}", now_sec);
 
-        let tickets_collected = prize::Prize::get_current_tickets_collected(prize_id, &pool.clone()).await?;
-        prize::Prize::set_prize_tickets_collected(prize_id, tickets_collected, &pool.clone()).await?;
+        let diff_on = scheduled_on - adjusted_now;
+        println!("scheduled_on - adjusted_now = {}", diff_on);
 
-        if type_id == 1 || type_id == 2 {
-    
-            if tickets_collected < prize.tickets_required {
+        let diff_off = scheduled_off - adjusted_now;
+        println!("scheduled_off - adjusted_now = {}", diff_off);
+        */
 
-                println!("{} prize_id={} Type 1/2, running, ", i, prize.id.to_string());
-                process_current_games(&prize, &pool.clone()).await?;
 
-                
-            } else {
+        if scheduled_on <= adjusted_now {
+            let _ = match prize::Prize::set_running(prize.id, &pool.clone()).await {
+                Ok(_) => (),
+                Err(error) => panic!("== set_running Error: {}.", error),
+            };
+        }
 
-                if prize.is_repeat { //close & reset
+        if status_progress < 900 && scheduled_on <= (adjusted_now + 180) {
+            let tickets_collected = prize::Prize::get_current_tickets_collected(prize_id, &pool.clone()).await?;
+            prize::Prize::set_prize_tickets_collected(prize_id, tickets_collected, &pool.clone()).await?;
 
-                    // after closing is called here only do reset/perm-end below
-                    //process closing here, loop the prize_pool, set is_closed and find winner
-                    match process_closing(&prize, &pool.clone()).await {
-                        Ok(success) => {
-                            if success {
+            if type_id == 1 || type_id == 2 {
+        
+                if tickets_collected < prize.tickets_required {
 
-                                //make sure prize's tickets_collected is kept in a log, to identify previous round's data
-                                let _ = match prize::Prize::log_closed(prize_id, tickets_collected, &pool.clone()).await {
-                                    Ok(_) => (),
-                                    Err(error) => panic!("== Type 1/2 log_closed Error: {}.", error),
-                                };
-                                
-                                println!("{} prize_id={} Type 1/2, tickets fulled and restart need to be set here",i , prize_id.to_string());
+                    println!("{} prize_id={} Type 1/2, running, ", i, prize.id.to_string());
+                    process_current_games(&prize, &pool.clone()).await?;
 
-                                let u_new_scheduled_on: u64 = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
-                                let duration_days: u64 = (prize.duration_days as u64) * 86400;
-                                let duration_hours: u64 = (prize.duration_hours as u64) * 3600;
-                                let new_scheduled_on: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on, 0);
-                                let new_scheduled_off: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on + duration_days + duration_hours, 0);
-                                
+                    
+                } else {
 
-                                // before reset the schedule, check if the duration_days < 7, if smaller than 7 days, we need to make sure it's within repeated_on.
-                                // let say, if duration_days is 2, we need to check if scheduled_off is already pass, and if the repeated_on is within today.
-                                // if scheduled_off is not passed, meaning we need to reset with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
+                    if is_repeat { //close & reset
 
-                                let mut is_reset = false;
-                                
-                                if prize.is_repeat {
-
-                                    if prize.duration_days < 7 {
-                                        if is_today_repeat {
-                                            is_reset = true;
-                                        }
-                                    } else {
-                                        is_reset = true;
-                                    }
-
-                                } else {
-                                    is_reset = false;
-                                }
-
-                                if is_reset {
-                                    //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
-                                    let _ = match prize::Prize::reset_schedule(prize_id, new_scheduled_on, new_scheduled_off, &pool.clone()).await {
-                                        Ok(_) => (),
-                                        Err(error) => panic!("== Type 1/2, tickets fulled, reset_schedule Error: {}.", error),
-                                    };
-
-                                    process_current_games(&prize, &pool.clone()).await?;
-                                }
-                                
-                                
-                            }
-                        },
-                        Err(error) => panic!("== Type 1/2, tickets fulled, process_closing Error: {}.", error),
-                    };
-
-                } else { //perm-close
-
-                    if status_progress < 999 {
-
+                        // after closing is called here only do reset/perm-end below
                         //process closing here, loop the prize_pool, set is_closed and find winner
                         match process_closing(&prize, &pool.clone()).await {
                             Ok(success) => {
@@ -187,33 +154,83 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                                         Ok(_) => (),
                                         Err(error) => panic!("== Type 1/2 log_closed Error: {}.", error),
                                     };
+                                    
+                                    println!("{} prize_id={} Type 1/2, tickets fulled and restart need to be set here",i , prize_id.to_string());
 
-                                    println!("{} prize_id={} Type 1/2, TICKETS FULLED, NOT REPEAT and ENDED", i, prize.id.to_string());
+                                    let u_new_scheduled_on: u64 = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
+                                    let duration_days: u64 = (prize.duration_days as u64) * 86400;
+                                    let duration_hours: u64 = (prize.duration_hours as u64) * 3600;
+                                    let new_scheduled_on: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on, 0);
+                                    let new_scheduled_off: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on + duration_days + duration_hours, 0);
+                                    
 
-                                    //update status_progress=closed=999
-                                    let _ = match prize::Prize::set_permanent_closed(prize.id, &pool.clone()).await {
-                                        Ok(_) => (),
-                                        Err(error) => panic!("== Type 1/2, TICKETS FULLED, set_closed Error: {}.", error),
-                                    };
+                                    // before reset the schedule, check if the duration_days < 7, if smaller than 7 days, we need to make sure it's within repeated_on.
+                                    // let say, if duration_days is 2, we need to check if scheduled_off is already pass, and if the repeated_on is within today.
+                                    // if scheduled_off is not passed, meaning we need to reset with another new_scheduled_on and skip process_current_games because it's not suppose to have games until today is within repeated on.
 
+                                    let mut is_reset = false;
+                                    
+                                    if prize.duration_days < 7 {
+                                        if is_today_repeat {
+                                            is_reset = true;
+                                        }
+                                    } else {
+                                        is_reset = true;
+                                    }
+
+                                    if is_reset {
+                                        //update the prize scheduled_on to new schedule and reset tickets_collected to 0, status_progress=running=1
+                                        let _ = match prize::Prize::reset_schedule(prize_id, new_scheduled_on, new_scheduled_off, &pool.clone()).await {
+                                            Ok(_) => (),
+                                            Err(error) => panic!("== Type 1/2, tickets fulled, reset_schedule Error: {}.", error),
+                                        };
+
+                                        process_current_games(&prize, &pool.clone()).await?;
+                                    }
+                                    
+                                    
                                 }
                             },
-                            Err(error) => panic!("== Type 1/2, TICKETS FULLED, process_closing Error: {}.", error),
+                            Err(error) => panic!("== Type 1/2, tickets fulled, process_closing Error: {}.", error),
                         };
+
+                    } else { //perm-close
+
+                        if status_progress < 999 {
+
+                            //process closing here, loop the prize_pool, set is_closed and find winner
+                            match process_closing(&prize, &pool.clone()).await {
+                                Ok(success) => {
+                                    if success {
+
+                                        //make sure prize's tickets_collected is kept in a log, to identify previous round's data
+                                        let _ = match prize::Prize::log_closed(prize_id, tickets_collected, &pool.clone()).await {
+                                            Ok(_) => (),
+                                            Err(error) => panic!("== Type 1/2 log_closed Error: {}.", error),
+                                        };
+
+                                        println!("{} prize_id={} Type 1/2, TICKETS FULLED, NOT REPEAT and ENDED", i, prize.id.to_string());
+
+                                        //update status_progress=closed=999
+                                        let _ = match prize::Prize::set_permanent_closed(prize.id, &pool.clone()).await {
+                                            Ok(_) => (),
+                                            Err(error) => panic!("== Type 1/2, TICKETS FULLED, set_closed Error: {}.", error),
+                                        };
+
+                                    }
+                                },
+                                Err(error) => panic!("== Type 1/2, TICKETS FULLED, process_closing Error: {}.", error),
+                            };
+                            
+                        }
                         
                     }
-                    
                 }
-            }
-        
-            
-
-        } else if type_id == 3 || type_id == 4 {
-
-            if scheduled_on <= (adjusted_now - 60) {
+                
+            } else if type_id == 3 || type_id == 4 {
 
                 // if is_repeat, meaning need to always show, because it never end.
-                if prize.is_repeat {
+                if is_repeat {
 
                     //if repeat, prize_status=running, as always
 
@@ -240,7 +257,7 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
         
                                     println!("{} prize_id={} Type 3/4, is Repeat and restart need to be set here, ", i, prize.id.to_string());
         
-                                    let u_new_scheduled_on: u64 = adjusted_now;
+                                    let u_new_scheduled_on: u64 = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
                                     let duration_days: u64 = (prize.duration_days as u64) * 86400;
                                     let duration_hours: u64 = (prize.duration_hours as u64) * 3600;
                                     let new_scheduled_on: SystemTime = UNIX_EPOCH + Duration::new(u_new_scheduled_on, 0);
@@ -253,17 +270,12 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
 
                                     let mut is_reset = false;
 
-                                    if prize.is_repeat {
-                                        if prize.duration_days < 7 {
-                                            if is_today_repeat {
-                                                is_reset = true;
-                                            }
-                                        } else {
+                                    if prize.duration_days < 7 {
+                                        if is_today_repeat {
                                             is_reset = true;
                                         }
-    
-                                    }  else {
-                                        is_reset = false;
+                                    } else {
+                                        is_reset = true;
                                     }
                                     
                                     if is_reset {
@@ -311,6 +323,7 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                                         };
             
                                         println!("{} prize_id={} Type 3/4, NOT REPEAT and ENDED", i, prize_id.to_string());
+                                        println!("scheduled_off > adjusted_now  {} > {}", scheduled_off, adjusted_now);
         
                                         //update the status_progress=closed=999
                                         let _ = match prize::Prize::set_permanent_closed(prize_id, &pool.clone()).await {
@@ -327,8 +340,10 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                         
                     }
                 } 
-            } 
+                
+            }
         }
+        
     } 
     
     
@@ -379,6 +394,8 @@ async fn process_current_games(prize: &Prize, pool: &Pool<PostgresConnectionMana
 
 async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, previous_tour_id: i64, previous_set_id: i64, previous_game_id: i64, previous_end_timestamp: u64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<(), Box<dyn std::error::Error>> {
     
+    let now = SystemTime::now();
+
     let config = config::get_configuration();
     let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
     let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
@@ -419,7 +436,15 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
     let diff_timestamp = scheduled_off - scheduled_on;
     
 
-    let mut i = 0;
+    /*
+    println!("prize_id = {}", prize.id);
+    if prize.id == 37 {
+        println!("===== DEBUG HERE =====");
+        println!("start_timestamp {} < final_end_timestamp {}", start_timestamp, final_end_timestamp);
+    }
+    */
+
+    let mut index: i64 = 0;
     while start_timestamp < final_end_timestamp {
         
         if start_timestamp > (adjusted_now + 3600 * 1) {
@@ -431,12 +456,61 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
         let mut previous_group_id = 0;
         let mut previous_start_timestamp = 0;
         let mut max_active_games_len = 0;
+
+        let mut first_game = &prize::PrizeActive {
+            current_game_id: 0,
+            prize_id: 0,
+            prize_title: "".to_string(),
+            prize_img_url: "".to_string(),
+            prize_subtitle: "".to_string(),
+            prize_content: "".to_string(),
+            prize_duration_days: 0,
+            prize_duration_hours: 0,
+            
+            type_id: 0,
+            tickets_required: 0,
+            timezone: 0 as f64,
+            scheduled_on: now,
+            scheduled_off: now,
+            is_repeat: false,
+            repeated_on: vec![0],
+            status: 0,
+            status_progress: 0,
+            tickets_collected: 0,
+          
+            tour_id: 0,
+            tour_title: "".to_string(),
+            tour_status: 0,
+            set_id: 0,
+            set_title: "".to_string(),
+            game_id: 0,
+            game_title: "".to_string(),
+            game_subtitle: "".to_string(),
+            game_img_url: "".to_string(),
+            game_content: "".to_string(),
+            game_status: 0,
+          
+            score_rule: 0,
+            watch_ad_get_tickets: 0,
+            watch_ad_get_exp: 0,
+            use_gem_get_tickets: 0,
+            use_gem_get_exp: 0,
+            use_how_many_gems: 0,
+          
+            tsg_id: 0,
+            game_duration_days: 0,
+            game_duration_hours: 0,
+            game_duration_minutes: 0,
+            group_id: 0,
+          
+            start_timestamp: now,
+            end_timestamp: now,
+        };
+
         for game in &active_games {
             
-
-            if i > 0  {
-                i = 0;
-                start_timestamp = start_timestamp -  1;
+            if index == 0  {
+                first_game = game.clone();
             }
 
             if prize.type_id < 4 {
@@ -456,9 +530,9 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
 
             }
         
-            let _ = match prize::Prize::set_running(prize.id, &pool.clone()).await {
+            let _ = match prize::Prize::set_ready(prize.id, &pool.clone()).await {
                 Ok(_) => (),
-                Err(error) => panic!("== set_running Error: {}.", error),
+                Err(error) => panic!("== set_ready Error: {}.", error),
             };
 
             if game.group_id > 0 {
@@ -473,7 +547,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
             
                 if is_after_previous {
 
-                    let end_timestamp = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
+                    let end_timestamp = process_add_current_game(index, start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
 
                     previous_start_timestamp = start_timestamp;
                     start_timestamp = end_timestamp;
@@ -491,7 +565,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                                 is_after_previous = true;
                                 start_timestamp = previous_end_timestamp;
 
-                                let end_timestamp = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
+                                let end_timestamp = process_add_current_game(index, start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
                                 previous_start_timestamp = start_timestamp;
                                 start_timestamp = end_timestamp;
                             } else {
@@ -500,7 +574,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                                 if max_active_games_len == active_games.len() {
                                     println!("== dead group.");
                                     // it's dead, nothing found from previous, data is changed, so we start fresh with this new game.
-                                    let _ = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
+                                    let _ = process_add_current_game(index, start_timestamp, diff_timestamp, &prize, first_game, &pool.clone()).await?;
                                     
                                     return Ok(())
                                 }
@@ -522,7 +596,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
                                 println!("== dead single.");
                                 // it's dead, nothing found from previous, data is changed, so we start fresh with this new game.
 
-                                let _ = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
+                                let _ = process_add_current_game(index, start_timestamp, diff_timestamp, &prize, first_game, &pool.clone()).await?;
 
                                 return Ok(())
                             }
@@ -533,7 +607,7 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
 
             } else { // if 0 then means genearate from scheduled_on of prize
                 
-                let end_timestamp = process_add_current_game(start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
+                let end_timestamp = process_add_current_game(index, start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
 
                 previous_start_timestamp = start_timestamp;
                 start_timestamp = end_timestamp;
@@ -548,20 +622,26 @@ async fn generate_current_games(is_previous_game_found: bool, prize: &Prize, pre
             }
 
         }
-        i = i+1;
-        start_timestamp = start_timestamp + 1;
-        //println!("==== bottom start_timestamp {} == final_end_timestamp {}", start_timestamp, final_end_timestamp);
+        index = index+1;
+        
     }
     
     
     Ok(())
 }
 
-async fn process_add_current_game(start_timestamp: u64, diff_timestamp: u64, prize: &prize::Prize, active_game: &prize::PrizeActive, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, Box<dyn std::error::Error>> {
+async fn process_add_current_game(index: i64, start_timestamp: u64, diff_timestamp: u64, prize: &prize::Prize, active_game: &prize::PrizeActive, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, Box<dyn std::error::Error>> {
     let mut end_timestamp = start_timestamp + active_game.game_duration_days as u64 * 86400 + active_game.game_duration_hours as u64 * 3600 + active_game.game_duration_minutes as u64 *  60;
     if prize.type_id == 4 {
         end_timestamp = end_timestamp + diff_timestamp;
     }
+
+    let temp_end_timestamp = end_timestamp;
+
+    let config = config::get_configuration();
+    let timezone_seconds = prize.timezone * (3600 as f64);
+    let start_timestamp = start_timestamp + (config.server_timezone * 3600) - (timezone_seconds as u64);
+    let end_timestamp = end_timestamp + (config.server_timezone * 3600) - (timezone_seconds as u64);
 
     //append to db.current_game
     let cg = CurrentGame {
@@ -572,12 +652,19 @@ async fn process_add_current_game(start_timestamp: u64, diff_timestamp: u64, pri
         tsg_id: active_game.tsg_id,
         game_id: active_game.game_id,
         start_timestamp: UNIX_EPOCH + Duration::new(start_timestamp as u64, 0),
-        end_timestamp: UNIX_EPOCH + Duration::new(end_timestamp as u64, 0)
-        };
+        end_timestamp: UNIX_EPOCH + Duration::new(end_timestamp as u64, 0),
+        index: index,
+    };
 
     println!("== ||||| add_current_game ||||| ==");
+
+    //println!("prize_id = {}", prize.id);
+    //if prize.id == 37 {
+    //    println!("===== DEBUG HERE ===== add_current_game ***********!!!!!! ");
+    //}
+
     match prize::Prize::add_current_game(cg, &pool.clone()).await {
-        Ok(_) => Ok(end_timestamp),
+        Ok(_) => Ok(temp_end_timestamp),
         Err(error) => panic!("==== generate_current_games.add_current_game Error: {}.", error),
     }
 

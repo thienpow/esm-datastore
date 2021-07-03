@@ -38,7 +38,11 @@ pub struct LogGDetail {
 
 pub struct LeaderBoard {
   pub user_id: i64,
-  pub game_score: i32
+  pub nick_name: String,
+  pub avatar_url: String,
+  pub exp: i32,
+  pub game_score: i32,
+  pub leave_timestamp: SystemTime,
 }
 
 impl GPlayer {
@@ -65,12 +69,12 @@ impl GPlayer {
       Ok(n)
     }
     
-    pub async fn close(id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
+    pub async fn close(id: i64, cg_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"gplayer\" SET is_closed=true, closed_timestamp=NOW() WHERE id=$1;").await?;
+      let stmt = conn.prepare("UPDATE public.\"gplayer\" SET is_closed=true, closed_timestamp=NOW(), cg_id=$1 WHERE id=$2;").await?;
       let n = conn.execute(&stmt, 
-                  &[&id]).await?;
+                  &[&cg_id, &id]).await?;
     
       Ok(n)
     }
@@ -133,13 +137,29 @@ impl GPlayer {
     pub async fn list_leaderboard(game_id: i64, prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<LeaderBoard>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT user_id, MAX(game_score) game_score FROM public.\"gplayer\" WHERE game_id=$1 AND prize_id=$2 AND is_logged_leave=true AND is_closed=false GROUP BY user_id ORDER BY game_score DESC LIMIT 100;").await?;
+      let stmt = conn.prepare(r#" 
+        SELECT gp1.user_id, u.nick_name, u.avatar_url, u.exp, gp1.game_score, gp1.leave_timestamp 
+        FROM public.gplayer AS gp1
+        LEFT JOIN public.user AS u ON u.id=gp1.user_id
+        WHERE game_id=$1 AND prize_id=$2 AND is_logged_leave=true AND is_closed=false 
+          AND game_score = (
+            SELECT game_score 
+            FROM public.gplayer AS gp2
+            WHERE game_id=$1 AND prize_id=$2 AND is_logged_leave=true 
+              AND is_closed=false AND gp1.user_id=gp2.user_id
+            ORDER BY game_score DESC LIMIT 1
+          )
+        ORDER BY game_score DESC LIMIT 100;"#).await?;
     
       let mut vec: Vec<LeaderBoard> = Vec::new();
       for row in conn.query(&stmt, &[&game_id, &prize_id]).await? {
         let lb =  LeaderBoard {
           user_id: row.get(0),
-          game_score: row.get(1),
+          nick_name: row.get(1),
+          avatar_url: row.get(2),
+          exp: row.get(3),
+          game_score: row.get(4),
+          leave_timestamp: row.get(5)
         };
       
         vec.push(lb);
