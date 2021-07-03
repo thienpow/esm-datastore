@@ -748,8 +748,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
     let now = SystemTime::now();
     
-    //TODO: check the req.secret key see if the key is originate from our system
-    
     let gplayer = gplayer::GPlayer {
       id: 0,
       prize_id: req.prize_id.into(),
@@ -763,9 +761,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     };
     
 
-    //TODO: generate a new secret key to reply to user, if user are allowed to play, 
-    // if not allowed to play anymore then reply an empty string
-    // the generated secret key will then be used during log_leave
     let result = match gplayer::GPlayer::enter(gplayer, &self.pool.clone()).await {
       Ok(result) => result.to_string(),
       Err(e) => return Err(Status::internal(format!("Error: log_g_enter ==> gplayer::GPlayer::enter failed! {}", e.to_string())))
@@ -788,10 +783,6 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
     svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
 
     let now = SystemTime::now();
-    //println!("logGLeave now{}", now);
-    //TODO: check if the req.secret is generated during log_enter
-    // if yes, then allow recording the game score
-    // generated secret key timestamp must not allowed more than 30 minutes
     
     let gplayer = gplayer::GPlayer {
       id: id,

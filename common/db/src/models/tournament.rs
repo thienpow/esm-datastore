@@ -17,6 +17,12 @@ pub struct TourSet {
   pub set_title: String,
   pub status: i32,
 }
+pub struct TourSetSmall {
+  pub id: i64,
+  pub tour_id: i64,
+  pub set_id: i64,
+  pub status: i32,
+}
 
 //pub scheduled_on: SystemTime,
 pub struct TournamentSet {
@@ -370,6 +376,26 @@ impl Tournament {
           set_id: row.get(2),
           set_title: row.get(3),
           status: row.get(4)
+        };
+
+        vec.push(rule);
+      }
+      
+      Ok(vec)
+    }
+
+    pub async fn list_tour_set_small(tour_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<TourSetSmall>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, tour_id, set_id, status FROM public.\"tour_set\" WHERE tour_id=$1 ORDER BY id ASC;").await?;
+    
+      let mut vec: Vec<TourSetSmall> = Vec::new();
+      for row in conn.query(&stmt, &[&tour_id]).await? {
+        let rule = TourSetSmall {
+          id: row.get(0),
+          tour_id: row.get(1),
+          set_id: row.get(2),
+          status: row.get(3)
         };
 
         vec.push(rule);
