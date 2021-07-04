@@ -360,53 +360,41 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
     Ok(())
 }
 
-async fn process_current_games(prize: &Prize, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<CurrentGame>, Box<dyn std::error::Error>> {
+async fn process_current_games(prize: &Prize, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<_, Box<dyn std::error::Error>> {
 
-    let current_games: Vec<CurrentGame> = match prize::Prize::list_current_game_by_system(prize.id, &pool.clone()).await {
-        Ok(current_games) => current_games,
+    match prize::Prize::list_previous_game(prize.id, &pool.clone()).await {
+        Ok(previous_games) => {
+            if previous_games.len() > 0 {
+                //println!("== prize_id={}, previous_games={}", prize.id.to_string(), previous_games.len().to_string());
+                let end_timestamp = previous_games[0].end_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+                let set_duration_countdown= previous_games[0].set_duration_countdown;
+                
+                generate_current_games(
+                    set_duration_countdown,  
+                    true, &prize, 
+                    previous_games[0].tour_id, 
+                    previous_games[0].set_id, 
+                    previous_games[0].game_id, 
+                    end_timestamp, 
+                    &pool.clone()).await?;
+            } else {
+                
+                generate_current_games(
+                    0,
+                    false, 
+                    &prize, 
+                    0, 
+                    0, 
+                    0, 
+                    0, 
+                    &pool.clone()).await?;
+            }
+
+            Ok(())
+        },
         Err(error) => panic!("== list_current_games Error: {}.", error),
-    };
-
-    if current_games.len() > 0 {
-        println!("== prize_id={}, current_games={}", prize.id.to_string(), current_games.len().to_string());
-    } else {
-
-        //println!("== No current_games found (we add 1 day here, so current game checking is always tomorrow.), finding previous_games...");
-        let _ = match prize::Prize::list_previous_game(prize.id, &pool.clone()).await {
-            Ok(previous_games) => {
-                if previous_games.len() > 0 {
-                    //println!("== prize_id={}, previous_games={}", prize.id.to_string(), previous_games.len().to_string());
-                    let end_timestamp = previous_games[0].end_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
-                    let set_duration_countdown= previous_games[0].set_duration_countdown;
-                    
-                    println!("== previous_games found, generating current_games from time after {}... and game_id after {}, until next end...", end_timestamp.to_string(), previous_games[0].game_id.to_string());
-                    generate_current_games(
-                        set_duration_countdown,  
-                        true, &prize, 
-                        previous_games[0].tour_id, 
-                        previous_games[0].set_id, 
-                        previous_games[0].game_id, 
-                        end_timestamp, 
-                        &pool.clone()).await?;
-                } else {
-                    println!("== No previous_games found, generating current_games from start until next end...");
-                    generate_current_games(
-                        0,
-                        false, 
-                        &prize, 
-                        0, 
-                        0, 
-                        0, 
-                        0, 
-                        &pool.clone()).await?;
-                }
-            },
-            Err(error) => panic!("== list_current_games Error: {}.", error),
-        };
-
     }
-
-    Ok(current_games)
+    
 }
 
 fn find_next_set_id(previous_set_id: i64, tour_sets: &Vec<tournament::TourSetSmall>) ->  i64 {
@@ -449,7 +437,14 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
    
 
     let mut start_timestamp = scheduled_on;
-    let previous_end_timestamp = previous_end_timestamp - (config.server_timezone * 3600) + (timezone_seconds as u64);
+
+    //
+    // we converted the end_timestamp when adding it to current_game table, now we need to convert it back.
+    //
+    let mut previous_end_timestamp = previous_end_timestamp;
+    if previous_end_timestamp > 0 {
+        previous_end_timestamp = previous_end_timestamp - (config.server_timezone * 3600) + (timezone_seconds as u64);
+    }
     if previous_end_timestamp > start_timestamp {
         start_timestamp = previous_end_timestamp;
     }
