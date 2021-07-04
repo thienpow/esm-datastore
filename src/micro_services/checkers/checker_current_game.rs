@@ -360,7 +360,7 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
     Ok(())
 }
 
-async fn process_current_games(prize: &Prize, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<_, Box<dyn std::error::Error>> {
+async fn process_current_games(prize: &Prize, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<bool, Box<dyn std::error::Error>> {
 
     match prize::Prize::list_previous_game(prize.id, &pool.clone()).await {
         Ok(previous_games) => {
@@ -390,7 +390,7 @@ async fn process_current_games(prize: &Prize, pool: &Pool<PostgresConnectionMana
                     &pool.clone()).await?;
             }
 
-            Ok(())
+            Ok(true)
         },
         Err(error) => panic!("== list_current_games Error: {}.", error),
     }
@@ -427,6 +427,8 @@ fn get_next_set_countdown(previous_set_duration_countdown: i32, minutes: i32, ho
 
 async fn generate_current_games(previous_set_duration_countdown: i32, is_previous_game_found: bool, prize: &Prize, previous_tour_id: i64, previous_set_id: i64, previous_game_id: i64, previous_end_timestamp: u64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<(), Box<dyn std::error::Error>> {
     
+    println!("===== generate_current_games =====");
+
     let now = SystemTime::now();
 
     let config = config::get_configuration();
@@ -449,7 +451,6 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
         start_timestamp = previous_end_timestamp;
     }
     
-    println!("===== generate_current_games =====");
     let mut final_end_timestamp = scheduled_off;
     //println!("==== adjusted_now {} > scheduled_off {}", adjusted_now, scheduled_off);
     if adjusted_now + 3600 * 1 > scheduled_off {
@@ -472,24 +473,33 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
     //
     while start_timestamp < final_end_timestamp {
 
+        let mut previous_group_id = 0;
+        let mut previous_start_timestamp = 0;
+        let mut max_active_games_len = 0;
+
         let mut is_after_previous = false;
-        let mut is_after_previous_group = false;
+        let mut is_within_previous_group = false;
 
         let mut previous_set_duration_countdown = previous_set_duration_countdown;
         let mut previous_group_duration_countdown = 0;
 
         let mut previous_set_id = previous_set_id;
-        if previous_set_duration_countdown == 0 && previous_set_id > 0 {
-            // if previous_set_duration_countdown is already 0, means we need to find next formatset not the current formatset.
-            // first need to get the list of formatset under tournament, which can be found from the tour_set table
-            // then loop into it to find the next item after the set_id, if not found, get the first set_id,
+        let mut is_need_reset_countdown =  false;
 
+        // **************************************
+        // if previous_set_duration_countdown is already 0, means we need to find next formatset not the current formatset.
+        // first need to get the list of formatset under tournament, which can be found from the tour_set table
+        // then loop into it to find the next item after the set_id, if not found, get the first set_id,
+        // **************************************
+        if previous_set_duration_countdown == 0 && previous_set_id > 0 {
+            
             let tour_sets = match tournament::Tournament::list_tour_set_small(previous_tour_id, &pool.clone()).await {
                 Ok(tour_sets) => tour_sets,
                 Err(error) => panic!("==== generate_current_games.list_tour_set_small Error: {}.", error),
             };
         
             previous_set_id = find_next_set_id(previous_set_id, &tour_sets);
+            is_need_reset_countdown = true;
         } 
 
         let active_games = match prize::Prize::list_active_by_prize_id(prize.id, previous_tour_id, previous_set_id, &pool.clone()).await {
@@ -500,6 +510,11 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
         if active_games.len() < 1 {
             // this is just in case someone deleted/modified the record and we cant retrieve that anymore, so we just quit processing it
             return Ok(())
+        } else {
+            if is_need_reset_countdown {
+                let game = &active_games[0];
+                previous_set_duration_countdown = (game.set_duration_days * 24  * 60) + (game.set_duration_hours * 60);
+            }
         }
 
         // *************************
@@ -551,11 +566,6 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
                 }
             }
         }
-
-        
-        let mut previous_group_id = 0;
-        let mut previous_start_timestamp = 0;
-        let mut max_active_games_len = 0;
 
         let mut first_game = &prize::PrizeActiveSmall {
             prize_id: 0,
@@ -610,9 +620,24 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
                     previous_set_duration_countdown = (game.set_duration_days * 24 * 60) + (game.set_duration_hours * 60)
                 }
             } else {
-                if previous_set_duration_countdown == 0 {
-                    //if previous_set_duration_countdown already reach 0
-                    return Ok(())
+                if game.set_is_group {
+
+                    if previous_group_id ==  game.group_id  {
+                        start_timestamp = previous_start_timestamp;
+                        previous_set_duration_countdown = previous_group_duration_countdown;
+                    } else {
+                        // if already found previous group and now we are in next group so we are confirm we are after previous
+                        if is_within_previous_group {
+                            is_after_previous = true;
+                        }
+                        previous_set_duration_countdown = get_next_set_countdown(previous_set_duration_countdown, game.game_duration_minutes, game.game_duration_hours, game.game_duration_days);
+                    }
+
+                } else {
+                    if previous_set_duration_countdown == 0 {
+                        //if previous_set_duration_countdown already reach 0
+                        break;
+                    }
                 }
             }
 
@@ -652,17 +677,8 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
             // because the game that's going to be added next should have same start_timestamp as the previous game in the same group.
             // remember, we are in the loop of &active_games now.
             // **********************
-            if game.set_is_group {
-                if previous_group_id ==  game.group_id  {
-                    start_timestamp = previous_start_timestamp;
-                    previous_set_duration_countdown = previous_group_duration_countdown;
-                } else {
-                    // if already found previous group and now we are in next group so we are confirm we are after previous
-                    if is_after_previous_group {
-                        is_after_previous = true;
-                    }
-                }
-            } 
+            
+            
 
             println!("is_previous_game_found == {}", is_previous_game_found);
             if is_previous_game_found { 
@@ -683,7 +699,7 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
                     if game.set_is_group {
 
                         if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.group_id == previous_group_id {
-                            is_after_previous_group = true;
+                            is_within_previous_group = true;
                         } 
                         
                         //
@@ -701,11 +717,9 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
                     } else {
                         
                         if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.game_id ==  previous_game_id {
-                            println!("== not after previous, but conditions in.");
                             is_after_previous = true;
                             previous_start_timestamp = start_timestamp;
                             start_timestamp = previous_end_timestamp;
-                            
                         } 
 
                         //
