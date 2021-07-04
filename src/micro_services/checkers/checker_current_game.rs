@@ -447,86 +447,9 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
     let timezone_seconds = prize.timezone * (3600 as f64);
     let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (config.server_timezone * 3600) + (timezone_seconds as u64);
    
-    let mut is_after_previous = false;
-    let mut is_after_previous_group = false;
-
-    let mut previous_set_duration_countdown = previous_set_duration_countdown;
-    let mut previous_set_id = previous_set_id;
-    if previous_set_duration_countdown == 0 && previous_set_id > 0 {
-        // if previous_set_duration_countdown is already 0, means we need to find next formatset not the current formatset.
-        // first need to get the list of formatset under tournament, which can be found from the tour_set table
-        // then loop into it to find the next item after the set_id, if not found, get the first set_id,
-
-        let tour_sets = match tournament::Tournament::list_tour_set_small(previous_tour_id, &pool.clone()).await {
-            Ok(tour_sets) => tour_sets,
-            Err(error) => panic!("==== generate_current_games.list_tour_set_small Error: {}.", error),
-        };
-    
-        previous_set_id = find_next_set_id(previous_set_id, &tour_sets);
-    } 
-
-    let active_games = match prize::Prize::list_active_by_prize_id(prize.id, previous_tour_id, previous_set_id, &pool.clone()).await {
-        Ok(active_games) => active_games,
-        Err(error) => panic!("==== generate_current_games.list_active_by_prize_id Error: {}.", error),
-    };
-
-    if active_games.len() < 1 {
-        // this is just in case someone deleted/modified the record and we cant retrieve that anymore, so we just quit processing it
-        return Ok(())
-    }
-
-    // *************************
-    // push the first group into first_group_games array
-    // we need this for special condition usage later.
-    // *************************
-    let mut first_group_id  = 0;
-    let mut first_group_games: Vec<PrizeActiveSmall> = Vec::new();
-    for game in &active_games {
-        
-        if game.group_id > 0 {
-            if first_group_id == 0 {
-                first_group_id = game.group_id;
-            }
-
-            if first_group_id == game.group_id  {
-                first_group_games.push(prize::PrizeActiveSmall {
-                    prize_id: game.prize_id,
-                    prize_duration_days: game.prize_duration_days,
-                    prize_duration_hours: game.prize_duration_hours,
-                    
-                    type_id: game.type_id,
-                    tickets_required: game.tickets_required,
-                    timezone: game.timezone,
-                    scheduled_on: game.scheduled_on,
-                    scheduled_off: game.scheduled_off,
-                    is_repeat: game.is_repeat,
-                    repeated_on: game.repeated_on.clone(),
-                    status: game.status,
-                    status_progress: game.status_progress,
-                    tickets_collected: game.tickets_collected,
-                  
-                    tour_id: game.tour_id,
-                    tour_status: game.tour_status,
-                    set_id: game.set_id,
-                    set_duration_days: game.set_duration_days,
-                    set_duration_hours: game.set_duration_hours,
-                    set_is_group: game.set_is_group,
-                    set_status: game.set_status,
-                    game_id: game.game_id,
-                    game_status: game.game_status,
-                  
-                    tsg_id: game.tsg_id,
-                    game_duration_days: game.game_duration_days,
-                    game_duration_hours: game.game_duration_hours,
-                    game_duration_minutes: game.game_duration_minutes,
-                    group_id: game.group_id
-                });
-            }
-        }
-    }
-
 
     let mut start_timestamp = scheduled_on;
+    let previous_end_timestamp = previous_end_timestamp - (config.server_timezone * 3600) + (timezone_seconds as u64);
     if previous_end_timestamp > start_timestamp {
         start_timestamp = previous_end_timestamp;
     }
@@ -548,23 +471,93 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
     let diff_timestamp = scheduled_off - scheduled_on;
     
 
-    /*
-    println!("prize_id = {}", prize.id);
-    if prize.id == 37 {
-        println!("===== DEBUG HERE =====");
-        println!("start_timestamp {} < final_end_timestamp {}", start_timestamp, final_end_timestamp);
-    }
-    */
-
     let mut index: i64 = 0;
+    //
+    // time loop here.
+    //
     while start_timestamp < final_end_timestamp {
+
+        let mut is_after_previous = false;
+        let mut is_after_previous_group = false;
+
+        let mut previous_set_duration_countdown = previous_set_duration_countdown;
+        let mut previous_group_duration_countdown = 0;
+
+        let mut previous_set_id = previous_set_id;
+        if previous_set_duration_countdown == 0 && previous_set_id > 0 {
+            // if previous_set_duration_countdown is already 0, means we need to find next formatset not the current formatset.
+            // first need to get the list of formatset under tournament, which can be found from the tour_set table
+            // then loop into it to find the next item after the set_id, if not found, get the first set_id,
+
+            let tour_sets = match tournament::Tournament::list_tour_set_small(previous_tour_id, &pool.clone()).await {
+                Ok(tour_sets) => tour_sets,
+                Err(error) => panic!("==== generate_current_games.list_tour_set_small Error: {}.", error),
+            };
         
-        if start_timestamp > (adjusted_now + 3600 * 1) {
-            break;
+            previous_set_id = find_next_set_id(previous_set_id, &tour_sets);
+        } 
+
+        let active_games = match prize::Prize::list_active_by_prize_id(prize.id, previous_tour_id, previous_set_id, &pool.clone()).await {
+            Ok(active_games) => active_games,
+            Err(error) => panic!("==== generate_current_games.list_active_by_prize_id Error: {}.", error),
+        };
+
+        if active_games.len() < 1 {
+            // this is just in case someone deleted/modified the record and we cant retrieve that anymore, so we just quit processing it
+            return Ok(())
         }
 
-        println!("prize_id={} start_timestamp={} === final_end_timestamp={} diff_timestamp={} final_end_timestamp-start_timestamp={}", prize.id, start_timestamp, final_end_timestamp, diff_timestamp, final_end_timestamp-start_timestamp);
+        // *************************
+        // push the first group into first_group_games array
+        // we need this for special condition usage later.
+        // *************************
+        let mut first_group_id  = 0;
+        let mut first_group_games: Vec<PrizeActiveSmall> = Vec::new();
+        for game in &active_games {
+              
+            if game.group_id > 0 {
+                if first_group_id == 0 {
+                    first_group_id = game.group_id;
+                }
 
+                if first_group_id == game.group_id  {
+                    first_group_games.push(prize::PrizeActiveSmall {
+                        prize_id: game.prize_id,
+                        prize_duration_days: game.prize_duration_days,
+                        prize_duration_hours: game.prize_duration_hours,
+                        
+                        type_id: game.type_id,
+                        tickets_required: game.tickets_required,
+                        timezone: game.timezone,
+                        scheduled_on: game.scheduled_on,
+                        scheduled_off: game.scheduled_off,
+                        is_repeat: game.is_repeat,
+                        repeated_on: game.repeated_on.clone(),
+                        status: game.status,
+                        status_progress: game.status_progress,
+                        tickets_collected: game.tickets_collected,
+                    
+                        tour_id: game.tour_id,
+                        tour_status: game.tour_status,
+                        set_id: game.set_id,
+                        set_duration_days: game.set_duration_days,
+                        set_duration_hours: game.set_duration_hours,
+                        set_is_group: game.set_is_group,
+                        set_status: game.set_status,
+                        game_id: game.game_id,
+                        game_status: game.game_status,
+                    
+                        tsg_id: game.tsg_id,
+                        game_duration_days: game.game_duration_days,
+                        game_duration_hours: game.game_duration_hours,
+                        game_duration_minutes: game.game_duration_minutes,
+                        group_id: game.group_id
+                    });
+                }
+            }
+        }
+
+        
         let mut previous_group_id = 0;
         let mut previous_start_timestamp = 0;
         let mut max_active_games_len = 0;
@@ -602,8 +595,19 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
             group_id: 0
         };
 
+
+
+        // ******************
+        //
+        //
+        // | core loop here |
+        //
+        //
+        // ******************
         for game in &active_games {
             
+            max_active_games_len = max_active_games_len + 1;
+
             if index == 0  {
                 first_game = game.clone();
 
@@ -616,9 +620,6 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
                     return Ok(())
                 }
             }
-
-            //TODO: not just first_game need to keep track of current_game in the loop too.
-            //  need to find first game of a format_set too.
 
             // **********************
             // check for bad link
@@ -659,7 +660,12 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
             if game.set_is_group {
                 if previous_group_id ==  game.group_id  {
                     start_timestamp = previous_start_timestamp;
-                    println!("previous_group_id ==  game.group_id; set_id={}", game.set_id);
+                    previous_set_duration_countdown = previous_group_duration_countdown;
+                } else {
+                    // if already found previous group and now we are in next group so we are confirm we are after previous
+                    if is_after_previous_group {
+                        is_after_previous = true;
+                    }
                 }
             } 
 
@@ -668,7 +674,9 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
             
                 if is_after_previous {
 
-                    previous_set_duration_countdown = get_next_set_countdown(previous_set_duration_countdown, game.game_duration_minutes, game.game_duration_hours, game.game_duration_days);
+                    if !game.set_is_group {
+                        previous_set_duration_countdown = get_next_set_countdown(previous_set_duration_countdown, game.game_duration_minutes, game.game_duration_hours, game.game_duration_days);
+                    }
                     let end_timestamp = process_add_current_game(previous_set_duration_countdown, index, start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
 
                     previous_start_timestamp = start_timestamp;
@@ -680,54 +688,39 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
                     if game.set_is_group {
 
                         if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.group_id == previous_group_id {
-                            println!("== not after previous, but conditions in.");
                             is_after_previous_group = true;
+                        } 
+                        
+                        //
+                        // it's dead end of the loop, nothing found from previous, so we start fresh with this new game.
+                        //
+                        if max_active_games_len == active_games.len() {
                             previous_set_duration_countdown = get_next_set_countdown(previous_set_duration_countdown, game.game_duration_minutes, game.game_duration_hours, game.game_duration_days);
-                                
-                        } else {
-
-                            if is_after_previous_group {
-                                is_after_previous = true;
-                                start_timestamp = previous_end_timestamp;
-                                
-                                let end_timestamp = process_add_current_game(previous_set_duration_countdown, index, start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
-                                previous_start_timestamp = start_timestamp;
-                                start_timestamp = end_timestamp;
-                            } else {
-
-                                max_active_games_len = max_active_games_len + 1;
-                                if max_active_games_len == active_games.len() {
-                                    println!("== group dead end.");
-                                    // it's dead end of the loop, nothing found from previous, so we start fresh with this new game.
-                                    previous_set_duration_countdown = get_next_set_countdown(previous_set_duration_countdown, game.game_duration_minutes, game.game_duration_hours, game.game_duration_days);
-                                    for game1 in &first_group_games {
-                                        let _ = process_add_current_game(previous_set_duration_countdown, index, start_timestamp, diff_timestamp, &prize, game1, &pool.clone()).await?;
-                                    }
-                                    
-                                    return Ok(())
-                                }
+                            for game1 in &first_group_games {
+                                let _ = process_add_current_game(previous_set_duration_countdown, index, start_timestamp, diff_timestamp, &prize, game1, &pool.clone()).await?;
                             }
-                        }
-                    } else {
-                        println!("== not after previous, tour {}={}, set {}={}, game {}, {}", game.tour_id, previous_tour_id, game.set_id, previous_set_id, game.game_id, previous_game_id);
                             
+                            return Ok(())
+                        }
+
+                    } else {
+                        
                         if game.tour_id == previous_tour_id && game.set_id == previous_set_id && game.game_id ==  previous_game_id {
                             println!("== not after previous, but conditions in.");
                             is_after_previous = true;
                             previous_start_timestamp = start_timestamp;
                             start_timestamp = previous_end_timestamp;
                             
-                        } else {
-                            
-                            max_active_games_len = max_active_games_len + 1;
-                            if max_active_games_len == active_games.len() {
-                                println!("== dead single.");
-                                // it's dead, nothing found from previous, data is changed, so we start fresh with this new game.
-                                previous_set_duration_countdown = get_next_set_countdown(previous_set_duration_countdown, game.game_duration_minutes, game.game_duration_hours, game.game_duration_days);
-                                let _ = process_add_current_game(previous_set_duration_countdown, index, start_timestamp, diff_timestamp, &prize, first_game, &pool.clone()).await?;
+                        } 
 
-                                return Ok(())
-                            }
+                        //
+                        // it's dead, nothing found from previous, data is changed, so we start fresh with this new game.
+                        //
+                        if max_active_games_len == active_games.len() {
+                            previous_set_duration_countdown = get_next_set_countdown(previous_set_duration_countdown, game.game_duration_minutes, game.game_duration_hours, game.game_duration_days);
+                            let _ = process_add_current_game(previous_set_duration_countdown, index, start_timestamp, diff_timestamp, &prize, first_game, &pool.clone()).await?;
+
+                            return Ok(())
                         }
                     }
                     
@@ -740,7 +733,9 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
                 // so, we do a free loop and keep coming in this to add the game, no bother if it's group or single
                 // the same game in the group would be same start_timestamp because we have handled it at the || CHECKPOINT: re-use previous_start_timestamp || above.
                 // **********************
-                previous_set_duration_countdown = get_next_set_countdown(previous_set_duration_countdown, game.game_duration_minutes, game.game_duration_hours, game.game_duration_days);
+                if !game.set_is_group {
+                    previous_set_duration_countdown = get_next_set_countdown(previous_set_duration_countdown, game.game_duration_minutes, game.game_duration_hours, game.game_duration_days);
+                }
                 let end_timestamp = process_add_current_game(previous_set_duration_countdown, index, start_timestamp, diff_timestamp, &prize, &game, &pool.clone()).await?;
 
                 previous_start_timestamp = start_timestamp;
@@ -748,11 +743,10 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
 
             }
 
-            
-            
             // remember the  group_id as previous_group_id so that next item can refer to it.
-            if game.group_id > 0 {
+            if game.set_is_group {
                 previous_group_id =  game.group_id;
+                previous_group_duration_countdown = previous_set_duration_countdown;
             }
 
         }

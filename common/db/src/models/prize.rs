@@ -726,7 +726,7 @@ impl Prize {
                           LEFT JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.set_id = ts.set_id 
                           LEFT JOIN public.\"game\" AS g ON g.id = tsg.game_id 
                         WHERE p.status = 2 AND p.id = $1
-                        ORDER BY p.id, t.id, s.id, tsg.group_id;".to_string();
+                        ORDER BY p.id, t.id, s.id, tsg.group_id, tsg.id;".to_string();
       
       if tour_id > 0 && set_id > 0 {
         sql_string = format!("SELECT 
@@ -765,7 +765,7 @@ impl Prize {
                           LEFT JOIN public.\"tournament_set_game_rule\" AS tsg ON tsg.set_id = ts.set_id 
                           LEFT JOIN public.\"game\" AS g ON g.id = tsg.game_id 
                         WHERE p.status = 2 AND p.id = $1 AND t.id = {} AND s.id = {}
-                        ORDER BY p.id, t.id, s.id, tsg.group_id;", tour_id, set_id);
+                        ORDER BY p.id, t.id, s.id, tsg.group_id, tsg.id;", tour_id, set_id);
       
       }
       let stmt = conn.prepare(&sql_string).await?;
