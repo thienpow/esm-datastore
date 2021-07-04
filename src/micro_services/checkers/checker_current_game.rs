@@ -366,7 +366,7 @@ async fn process_current_games(prize: &Prize, pool: &Pool<PostgresConnectionMana
         Ok(previous_games) => {
             if previous_games.len() > 0 {
                 //println!("== prize_id={}, previous_games={}", prize.id.to_string(), previous_games.len().to_string());
-                let end_timestamp = previous_games[0].end_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs();
+                let end_timestamp = previous_games[0].end_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
                 let set_duration_countdown= previous_games[0].set_duration_countdown;
                 
                 generate_current_games(
@@ -425,33 +425,37 @@ fn get_next_set_countdown(previous_set_duration_countdown: i32, minutes: i32, ho
     result
 }
 
-async fn generate_current_games(previous_set_duration_countdown: i32, is_previous_game_found: bool, prize: &Prize, previous_tour_id: i64, previous_set_id: i64, previous_game_id: i64, previous_end_timestamp: u64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<(), Box<dyn std::error::Error>> {
+async fn generate_current_games(previous_set_duration_countdown: i32, is_previous_game_found: bool, prize: &Prize, previous_tour_id: i64, previous_set_id: i64, previous_game_id: i64, previous_end_timestamp: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<(), Box<dyn std::error::Error>> {
     
     println!("===== generate_current_games =====");
 
     let now = SystemTime::now();
 
+
+    let mut previous_set_duration_countdown = previous_set_duration_countdown;
+    let mut previous_set_id = previous_set_id;
+
     let config = config::get_configuration();
-    let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs();
-    let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs();
+    let scheduled_on = prize.scheduled_on.duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
+    let scheduled_off = prize.scheduled_off.duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
     let timezone_seconds = prize.timezone * (3600 as f64);
     let adjusted_now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() - (config.server_timezone * 3600) + (timezone_seconds as u64);
-   
+    let adjusted_now = adjusted_now as i64;
 
-    let mut start_timestamp = scheduled_on;
+    let mut start_timestamp: i64 = scheduled_on;
 
     //
     // we converted the end_timestamp when adding it to current_game table, now we need to convert it back.
     //
-    let mut previous_end_timestamp = previous_end_timestamp;
+    let mut previous_end_timestamp: i64 = previous_end_timestamp;
     if previous_end_timestamp > 0 {
-        previous_end_timestamp = previous_end_timestamp - (config.server_timezone * 3600) + (timezone_seconds as u64);
+        previous_end_timestamp = previous_end_timestamp - (config.server_timezone as i64 * 3600) + (timezone_seconds as i64);
     }
     if previous_end_timestamp > start_timestamp {
         start_timestamp = previous_end_timestamp;
     }
     
-    let mut final_end_timestamp = scheduled_off;
+    let mut final_end_timestamp: i64 = scheduled_off;
     //println!("==== adjusted_now {} > scheduled_off {}", adjusted_now, scheduled_off);
     if adjusted_now + 3600 * 1 > scheduled_off {
 
@@ -467,12 +471,30 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
     let diff_timestamp = scheduled_off - scheduled_on;
     
 
-    let mut index: i64 = 0;
+    if prize.id == 37  || prize.id == 39 {
+        println!("");
+        println!("prize_id = {}", prize.id);
+        println!("final_end_timestamp - start_timestamp = {} ", final_end_timestamp  as  i64 - start_timestamp as i64);
+        println!("");
+    }
+
     //
     // time loop here.
     //
     while start_timestamp < final_end_timestamp {
 
+        //if start_timestamp > (adjusted_now + 3600 * 1) {
+        //    break;
+        //}
+
+        println!("final_end_timestamp - start_timestamp = {} ", final_end_timestamp  as  i64 - start_timestamp as i64);
+        println!("scheduled_off = {} ", scheduled_off);
+        println!("final_end_timestamp = {} ", final_end_timestamp);
+        println!("start_timestamp = {} ", start_timestamp);
+        println!("now = {} ", SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs());
+
+
+        let mut previous_group_duration_countdown = 0;
         let mut previous_group_id = 0;
         let mut previous_start_timestamp = 0;
         let mut max_active_games_len = 0;
@@ -480,10 +502,6 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
         let mut is_after_previous = false;
         let mut is_within_previous_group = false;
 
-        let mut previous_set_duration_countdown = previous_set_duration_countdown;
-        let mut previous_group_duration_countdown = 0;
-
-        let mut previous_set_id = previous_set_id;
         let mut is_need_reset_countdown =  false;
 
         // **************************************
@@ -525,7 +543,7 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
         let mut first_group_games: Vec<PrizeActiveSmall> = Vec::new();
         for game in &active_games {
               
-            if game.group_id > 0 {
+            if game.set_is_group {
                 if first_group_id == 0 {
                     first_group_id = game.group_id;
                 }
@@ -609,8 +627,11 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
         //
         //
         // ******************
+        //println!("Reached Core Loop");
+
+        let mut index: i64 = 0;
         for game in &active_games {
-            
+
             max_active_games_len = max_active_games_len + 1;
 
             if index == 0  {
@@ -618,10 +639,17 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
 
                 if previous_set_duration_countdown == 0 {
                     previous_set_duration_countdown = (game.set_duration_days * 24 * 60) + (game.set_duration_hours * 60)
-                }
+                } 
+                
             } else {
                 if game.set_is_group {
 
+                    // **********************
+                    // CHECKPOINT: re-use previous_start_timestamp
+                    // use back the previous start_timestamp if found the group is the same as previous one.
+                    // because the game that's going to be added next should have same start_timestamp as the previous game in the same group.
+                    // remember, we are in the loop of &active_games now.
+                    // **********************
                     if previous_group_id ==  game.group_id  {
                         start_timestamp = previous_start_timestamp;
                         previous_set_duration_countdown = previous_group_duration_countdown;
@@ -636,6 +664,7 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
                 } else {
                     if previous_set_duration_countdown == 0 {
                         //if previous_set_duration_countdown already reach 0
+                        println!("previous_set_duration_countdown = {}", previous_set_duration_countdown);
                         break;
                     }
                 }
@@ -671,14 +700,6 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
 
 
 
-            // **********************
-            // CHECKPOINT: re-use previous_start_timestamp
-            // use back the previous start_timestamp if found the group is the same as previous one.
-            // because the game that's going to be added next should have same start_timestamp as the previous game in the same group.
-            // remember, we are in the loop of &active_games now.
-            // **********************
-            
-            
 
             println!("is_previous_game_found == {}", is_previous_game_found);
             if is_previous_game_found { 
@@ -707,11 +728,13 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
                         //
                         if max_active_games_len == active_games.len() {
                             previous_set_duration_countdown = get_next_set_countdown(previous_set_duration_countdown, game.game_duration_minutes, game.game_duration_hours, game.game_duration_days);
+                            let mut temp_end_timestamp = 0;
                             for game1 in &first_group_games {
-                                let _ = process_add_current_game(previous_set_duration_countdown, index, start_timestamp, diff_timestamp, &prize, game1, &pool.clone()).await?;
+                                let end_timestamp = process_add_current_game(previous_set_duration_countdown, index, start_timestamp, diff_timestamp, &prize, game1, &pool.clone()).await?;
+                                temp_end_timestamp = end_timestamp;
                             }
-                            
-                            return Ok(())
+                            start_timestamp = temp_end_timestamp;
+                            break;
                         }
 
                     } else {
@@ -727,9 +750,10 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
                         //
                         if max_active_games_len == active_games.len() {
                             previous_set_duration_countdown = get_next_set_countdown(previous_set_duration_countdown, game.game_duration_minutes, game.game_duration_hours, game.game_duration_days);
-                            let _ = process_add_current_game(previous_set_duration_countdown, index, start_timestamp, diff_timestamp, &prize, first_game, &pool.clone()).await?;
+                            let end_timestamp = process_add_current_game(previous_set_duration_countdown, index, start_timestamp, diff_timestamp, &prize, first_game, &pool.clone()).await?;
 
-                            return Ok(())
+                            start_timestamp = end_timestamp;
+                            break;
                         }
                     }
                     
@@ -756,10 +780,15 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
             if game.set_is_group {
                 previous_group_id =  game.group_id;
                 previous_group_duration_countdown = previous_set_duration_countdown;
+
+                if max_active_games_len == active_games.len() {
+                    previous_set_duration_countdown = get_next_set_countdown(previous_set_duration_countdown, game.game_duration_minutes, game.game_duration_hours, game.game_duration_days);
+                }
             }
 
+            index = index+1;
         }
-        index = index+1;
+        
         
     }
     
@@ -767,8 +796,8 @@ async fn generate_current_games(previous_set_duration_countdown: i32, is_previou
     Ok(())
 }
 
-async fn process_add_current_game(set_duration_countdown: i32, index: i64, start_timestamp: u64, diff_timestamp: u64, prize: &prize::Prize, active_game: &prize::PrizeActiveSmall, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, Box<dyn std::error::Error>> {
-    let mut end_timestamp = start_timestamp + active_game.game_duration_days as u64 * 86400 + active_game.game_duration_hours as u64 * 3600 + active_game.game_duration_minutes as u64 *  60;
+async fn process_add_current_game(set_duration_countdown: i32, index: i64, start_timestamp: i64, diff_timestamp: i64, prize: &prize::Prize, active_game: &prize::PrizeActiveSmall, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, Box<dyn std::error::Error>> {
+    let mut end_timestamp = start_timestamp + active_game.game_duration_days as i64 * 86400 + active_game.game_duration_hours as i64 * 3600 + active_game.game_duration_minutes as i64 *  60;
     if prize.type_id == 4 {
         end_timestamp = end_timestamp + diff_timestamp;
     }
@@ -777,8 +806,8 @@ async fn process_add_current_game(set_duration_countdown: i32, index: i64, start
 
     let config = config::get_configuration();
     let timezone_seconds = prize.timezone * (3600 as f64);
-    let start_timestamp = start_timestamp + (config.server_timezone * 3600) - (timezone_seconds as u64);
-    let end_timestamp = end_timestamp + (config.server_timezone * 3600) - (timezone_seconds as u64);
+    let start_timestamp = start_timestamp + (config.server_timezone as i64 * 3600) - (timezone_seconds as i64);
+    let end_timestamp = end_timestamp + (config.server_timezone as i64 * 3600) - (timezone_seconds as i64);
 
     //append to db.current_game
     let cg = CurrentGame {
