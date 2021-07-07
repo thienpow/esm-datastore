@@ -58,14 +58,16 @@ pub struct TournamentSetCount {
   pub archived: i64 
 }
 pub struct LeaderboardHistory {
-  pub cg_id: i64,
+  pub rank: i32,
   pub prize_id: i64,
+  pub user_id: i64,
+  pub cg_id: i64,
+  pub gplay_id: i64,
   pub prize_type_id: i32,
   pub game_id: i64,
   pub reward_gem: i32,
   pub reward_exp: i32,
   pub tickets: i32,
-  pub rank: i32,
   pub created_on: SystemTime,
 }
 
@@ -76,14 +78,15 @@ impl Tournament {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare(r#"INSERT INTO public.leaderboard_history 
-      (cg_id, prize_id, prize_type_id, game_id, reward_gem, reward_exp, tickets, rank, created_on) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+      (rank, prize_id, user_id, cg_id, gplay_id, prize_type_id, game_id, reward_gem, reward_exp, tickets, created_on) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
       RETURNING id;"#).await?;
 
       let row = conn.query_one(&stmt, &[
-        &history.cg_id, &history.prize_id, &history.prize_type_id, 
+        &history.rank, &history.prize_id, &history.user_id,
+        &history.cg_id, &history.gplay_id, &history.prize_type_id, 
         &history.game_id, &history.reward_gem, &history.reward_exp, 
-        &history.tickets, &history.rank, &history.created_on]).await?;
+        &history.tickets, &history.created_on]).await?;
     
       Ok(row.get::<usize, i64>(0))
       

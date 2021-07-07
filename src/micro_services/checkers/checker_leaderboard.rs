@@ -63,6 +63,7 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
     // check if end_timestamp < now, meaning already past, then do the closing.
    
     // SELECT * FROm current_game WHERE end_timestamp < now() AND is_closed=false;
+    
     match prize::Prize::list_past_unclosed_current_games(&pool.clone()).await {
         Ok(current_games) => {
             //println!("games count=={}", games.len());
@@ -78,120 +79,125 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                 let prize_type_id = cg.prize_type_id;
                 let mut game_tickets_collected = 0;
 
-                //println!("game_id=={}", game_id);
-            
-                //SELECT * FROM gplayer WHERE prize_id={game.prize_id} AND game_id={game.game_id} AND is_closed=false ORDER BY game_score DESC;
-                //from highest score
-
-                match gplayer::GPlayer::list_leaderboard(prize_id, game_id, &pool.clone()).await {
+                let rules = match game::Game::list_leader_rule(game_id, &pool.clone()).await  {
+                    Ok(rules) => rules,
+                    Err(error) => panic!("Error {}", error),
+                };
+                
+                match gplayer::GPlayer::list_unclosed_gplays(prize_id, game_id, &pool.clone()).await {
                     Ok(gplays) => {
 
-                        //println!("gplays count=={}", gplays.len());
-                        let rules = match game::Game::list_leader_rule(game_id, &pool.clone()).await  {
-                            Ok(rules) => rules,
-                            Err(error) => panic!("Error {}", error),
-                        };            
-                        
-                        
+                        let mut vec_user_id = vec![0];
                         let mut i = 1;
                         for gplay in gplays {
 
-                            let gplay_id = gplay.gplay_id;
+                            let gplay_id = gplay.id;
                             let user_id = gplay.user_id;
 
+                            let mut is_existed = false;
+                            if vec_user_id.contains(&user_id) {
+                                is_existed = true;
+                            }
+                            if !is_existed {
+                                vec_user_id.push(user_id);
 
-                            let user = match user::User::get(user_id, &pool.clone()).await {
-                                Ok(user) => user,
-                                Err(error) => panic!("Error: {}.", error),
-                            };
+                                let user = match user::User::get(user_id, &pool.clone()).await {
+                                    Ok(user) => user,
+                                    Err(error) => panic!("Error: {}.", error),
+                                };
 
 
-                            for rule in &rules {
+                                for rule in &rules {
 
-                                if i>=rule.rank_from && i<=rule.rank_to {
-                                    //within this rank, then update the user.exp with rule.exp by doing user.exp+rule.exp
-                                    //check if got subscription, if got then use the daily_multiplier or 
-                                    //use  one_time_multiplier if not 0, need to set to 0 after used on one_time_multiplier 
-                                    let mut reward_tickets: f64 = rule.tickets as f64;
-                                    let mut multiplier: f64 = 0.0;
-                                    if user.one_time_multiplier > 0.0 {
-                                        //This feature is not needed.
-                                        //TDOD: make sure if one_time_multiplier is used as 1 time or 1 day and if used as accumulative to daily_multiplier
-                                        //multiplier = user.one_time_multiplier;
-                                        //reset one_time_multiplier to 0 because used
-                                        //user::User::reset_one_time_multiplier(user_id, &pool.clone()).await?;
+                                    if i>=rule.rank_from && i<=rule.rank_to {
+                                        //within this rank, then update the user.exp with rule.exp by doing user.exp+rule.exp
+                                        //check if got subscription, if got then use the daily_multiplier or 
+                                        //use  one_time_multiplier if not 0, need to set to 0 after used on one_time_multiplier 
+                                        let mut reward_tickets: f64 = rule.tickets as f64;
+                                        let mut multiplier: f64 = 0.0;
+                                        if user.one_time_multiplier > 0.0 {
+                                            //This feature is not needed.
+                                            //TDOD: make sure if one_time_multiplier is used as 1 time or 1 day and if used as accumulative to daily_multiplier
+                                            //multiplier = user.one_time_multiplier;
+                                            //reset one_time_multiplier to 0 because used
+                                            //user::User::reset_one_time_multiplier(user_id, &pool.clone()).await?;
 
-                                    } 
-                                    
-                                    let (rank_multiplier, rank_gem) = get_reward_from_rank(user.exp, &ranks);
-                                    multiplier = multiplier + user.daily_multiplier + rank_multiplier;
-                                    
-                                    reward_tickets = reward_tickets + (multiplier * rule.tickets as f64);
-                                    println!("reward_tickets=={}", reward_tickets);
-
-                                    user::User::reward_gem(user_id, rank_gem, &pool.clone()).await?;
-                                    user::User::reward_exp(user_id, rule.exp, &pool.clone()).await?;
-                                    
-                                    let now = SystemTime::now();
-                                    
-                                    if i <= 1000  {
-                                        //only keep the first 1000 player's record into leaderboard_history table
-                                        let history = tournament::LeaderboardHistory {
-                                            cg_id: gplay_id,
-                                            prize_id: prize_id,
-                                            prize_type_id: prize_type_id,
-                                            game_id: game_id,
-                                            reward_gem: rank_gem,
-                                            reward_exp:  rule.exp,
-                                            tickets: reward_tickets as i32,
-                                            rank: i,
-                                            created_on: now,
-                                        };
-                                        tournament::Tournament::record_leaderboard_history(history, &pool).await?;
+                                        } 
                                         
-                                        //only notify the first 1000 players
-                                        match notify_player(
-                                            "Your Tournament Result!", 
-                                            format!("Tournament for game_id: {} has just Ended!", game_id).as_str(), 
-                                            cg_id.to_string().as_str(), 
-                                            i.to_string().as_str(), 
-                                            prize_id.to_string().as_str(), 
-                                            prize_type_id.to_string().as_str(), 
-                                            game_id.to_string().as_str(), 
-                                            rank_gem.to_string().as_str(), 
-                                            rule.exp.to_string().as_str(), 
-                                            reward_tickets.to_string().as_str(), 
-                                            user.msg_token.as_str(), 
-                                            now.duration_since(UNIX_EPOCH).unwrap().as_secs().to_string().as_str()).await {
-                                        Ok(_) => {
+                                        let (rank_multiplier, rank_gem) = get_reward_from_rank(user.exp, &ranks);
+                                        multiplier = multiplier + user.daily_multiplier + rank_multiplier;
+                                        
+                                        reward_tickets = reward_tickets + (multiplier * rule.tickets as f64);
+                                        println!("reward_tickets=={}", reward_tickets);
+
+                                        user::User::reward_gem(user_id, rank_gem, &pool.clone()).await?;
+                                        user::User::reward_exp(user_id, rule.exp, &pool.clone()).await?;
+                                        
+                                        let now = SystemTime::now();
+                                        
+                                        if i <= 1000  {
+                                            //only keep the first 1000 player's record into leaderboard_history table
+                                            let history = tournament::LeaderboardHistory {
+                                                rank: i,
+                                                prize_id: prize_id,
+                                                user_id: user_id,
+                                                cg_id: cg_id,
+                                                gplay_id: gplay_id,
+                                                prize_type_id: prize_type_id,
+                                                game_id: game_id,
+                                                reward_gem: rank_gem,
+                                                reward_exp:  rule.exp,
+                                                tickets: reward_tickets as i32,
+                                                created_on: now,
+                                            };
+                                            tournament::Tournament::record_leaderboard_history(history, &pool).await?;
                                             
-                                        },
-                                        Err(e) => {
-                                            checker::Checker::add_error(checker::ErrorLog {
-                                                module_id: 201,
-                                                detail: format!("{}", e),
-                                            }, &pool).await?;
-                                            println!("Error notify_player {}", e);
+                                            //only notify the first 1000 players
+                                            match notify_player(
+                                                "Your Tournament Result!", 
+                                                format!("Tournament for game_id: {} has just Ended!", game_id).as_str(), 
+                                                cg_id.to_string().as_str(), 
+                                                i.to_string().as_str(), 
+                                                prize_id.to_string().as_str(), 
+                                                prize_type_id.to_string().as_str(), 
+                                                game_id.to_string().as_str(), 
+                                                rank_gem.to_string().as_str(), 
+                                                rule.exp.to_string().as_str(), 
+                                                reward_tickets.to_string().as_str(), 
+                                                user.msg_token.as_str(), 
+                                                now.duration_since(UNIX_EPOCH).unwrap().as_secs().to_string().as_str()).await {
+                                            Ok(_) => {
+                                                
+                                            },
+                                            Err(e) => {
+                                                checker::Checker::add_error(checker::ErrorLog {
+                                                    module_id: 201,
+                                                    detail: format!("{}", e),
+                                                }, &pool).await?;
+                                                println!("Error notify_player {}", e);
+                                            }
                                         }
+
+                                        }
+                                        
+                                        //and, append to prize_pool with rule.tickets, win_from=3,
+                                        prize::Prize::log_prize_pool(prize_id, user_id, game_id, 3, reward_tickets.ceil() as i32, cg_id, &pool.clone()).await?;
+                                        game_tickets_collected = game_tickets_collected + reward_tickets as i64;
                                     }
 
-                                    }
-                                    
-                                    //and, append to prize_pool with rule.tickets, win_from=3,
-                                    prize::Prize::log_prize_pool(prize_id, user_id, game_id, 3, reward_tickets.ceil() as i32, cg_id, &pool.clone()).await?;
-                                    game_tickets_collected = game_tickets_collected + reward_tickets as i64;
                                 }
 
+                                i = i + 1;
                             }
 
                             gplayer::GPlayer::close(gplay_id, cg_id, &pool.clone()).await?;
                             
-                                       
-                            
-                            i = i + 1;
                         }
                     },
-                    Err(error) => panic!("Error {}", error),
+                    Err(error) => {
+                        println!("ERROR at list_leaderboard {}", error);
+                        panic!("Error {}", error)
+                    },
                 };
                 
                 let prize_tickets_collected = prize::Prize::get_current_tickets_collected(prize_id, &pool.clone()).await?;

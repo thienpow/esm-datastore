@@ -134,43 +134,6 @@ impl GPlayer {
     }
 
     
-
-    pub async fn list_leaderboard(game_id: i64, prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<LeaderBoard>, RunError<tokio_postgres::Error>> {
-      let conn = pool.get().await?;
-  
-      let stmt = conn.prepare(r#" 
-        SELECT gp1.id, gp1.user_id, u.nick_name, u.avatar_url, u.exp, gp1.game_score, gp1.leave_timestamp 
-        FROM public.gplayer AS gp1
-        LEFT JOIN public.user AS u ON u.id=gp1.user_id
-        WHERE game_id=$1 AND prize_id=$2 AND is_logged_leave=true AND is_closed=false 
-          AND game_score = (
-            SELECT game_score 
-            FROM public.gplayer AS gp2
-            WHERE game_id=$1 AND prize_id=$2 AND is_logged_leave=true 
-              AND is_closed=false AND gp1.user_id=gp2.user_id
-            ORDER BY game_score DESC LIMIT 1
-          )
-        ORDER BY gp1.game_score DESC, gp1.leave_timestamp ASC LIMIT 100;"#).await?;
-    
-      let mut vec: Vec<LeaderBoard> = Vec::new();
-      for row in conn.query(&stmt, &[&game_id, &prize_id]).await? {
-        let lb =  LeaderBoard {
-          gplay_id: row.get(0),
-          user_id: row.get(1),
-          nick_name: row.get(2),
-          avatar_url: row.get(3),
-          exp: row.get(4),
-          game_score: row.get(5),
-          leave_timestamp: row.get(6),
-        };
-      
-        vec.push(lb);
-      }
-      
-      Ok(vec)
-
-    }
-
     pub async fn get_timestamp(game_id: i64, prize_id: i64, user_id: i64, game_score: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<SystemTime, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
@@ -214,6 +177,7 @@ impl GPlayer {
       Ok(vec)
     }
 
+
     pub async fn list_unclosed_gplays(prize_id: i64, game_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<GPlayer>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
@@ -238,6 +202,39 @@ impl GPlayer {
       
       Ok(vec)
     }
+
+    pub async fn list_leaderboard(game_id: i64, prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<LeaderBoard>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT gp1.id, gp1.user_id, u.nick_name, u.avatar_url, u.exp, gp1.game_score, gp1.leave_timestamp FROM public.\"gplayer\" AS gp1 
+        LEFT JOIN public.\"user\" AS u ON u.id=gp1.user_id 
+        WHERE gp1.game_id=$1 AND gp1.prize_id=$2 AND gp1.is_logged_leave=true AND gp1.is_closed=false 
+          AND gp1.game_score = (
+            SELECT gp2.game_score 
+            FROM public.\"gplayer\" AS gp2
+            WHERE gp2.game_id=$1 AND gp2.prize_id=$2 AND gp2.is_logged_leave=true 
+              AND gp2.is_closed=false AND gp1.user_id=gp2.user_id
+            ORDER BY gp2.game_score DESC LIMIT 1
+          )
+        ORDER BY gp1.game_score DESC, gp1.leave_timestamp ASC LIMIT 100;").await?;
     
+      let mut vec: Vec<LeaderBoard> = Vec::new();
+      for row in conn.query(&stmt, &[&game_id, &prize_id]).await? {
+        let lb =  LeaderBoard {
+          gplay_id: row.get(0),
+          user_id: row.get(1),
+          nick_name: row.get(2),
+          avatar_url: row.get(3),
+          exp: row.get(4),
+          game_score: row.get(5),
+          leave_timestamp: row.get(6),
+        };
+      
+        vec.push(lb);
+      }
+      
+      Ok(vec)
+
+    }
 
 }
