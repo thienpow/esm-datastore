@@ -37,6 +37,7 @@ pub struct LogGDetail {
 }
 
 pub struct LeaderBoard {
+  pub gplay_id: i64,
   pub user_id: i64,
   pub nick_name: String,
   pub avatar_url: String,
@@ -138,7 +139,7 @@ impl GPlayer {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare(r#" 
-        SELECT gp1.user_id, u.nick_name, u.avatar_url, u.exp, gp1.game_score, gp1.leave_timestamp 
+        SELECT gp1.id, gp1.user_id, u.nick_name, u.avatar_url, u.exp, gp1.game_score, gp1.leave_timestamp 
         FROM public.gplayer AS gp1
         LEFT JOIN public.user AS u ON u.id=gp1.user_id
         WHERE game_id=$1 AND prize_id=$2 AND is_logged_leave=true AND is_closed=false 
@@ -149,17 +150,18 @@ impl GPlayer {
               AND is_closed=false AND gp1.user_id=gp2.user_id
             ORDER BY game_score DESC LIMIT 1
           )
-        ORDER BY game_score DESC LIMIT 100;"#).await?;
+        ORDER BY gp1.game_score DESC, gp1.leave_timestamp ASC LIMIT 100;"#).await?;
     
       let mut vec: Vec<LeaderBoard> = Vec::new();
       for row in conn.query(&stmt, &[&game_id, &prize_id]).await? {
         let lb =  LeaderBoard {
-          user_id: row.get(0),
-          nick_name: row.get(1),
-          avatar_url: row.get(2),
-          exp: row.get(3),
-          game_score: row.get(4),
-          leave_timestamp: row.get(5)
+          gplay_id: row.get(0),
+          user_id: row.get(1),
+          nick_name: row.get(2),
+          avatar_url: row.get(3),
+          exp: row.get(4),
+          game_score: row.get(5),
+          leave_timestamp: row.get(6),
         };
       
         vec.push(lb);
@@ -215,7 +217,7 @@ impl GPlayer {
     pub async fn list_unclosed_gplays(prize_id: i64, game_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<GPlayer>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, user_id, prize_id, game_id, enter_timestamp, leave_timestamp, is_watched_ad, is_used_gem, game_score FROM public.\"gplayer\" WHERE prize_id=$1 AND game_id=$2 AND is_logged_leave=true AND is_closed=false ORDER BY game_score DESC;").await?;
+      let stmt = conn.prepare("SELECT id, user_id, prize_id, game_id, enter_timestamp, leave_timestamp, is_watched_ad, is_used_gem, game_score FROM public.\"gplayer\" WHERE prize_id=$1 AND game_id=$2 AND is_logged_leave=true AND is_closed=false ORDER BY game_score DESC, leave_timestamp ASC;").await?;
     
       let mut vec: Vec<GPlayer> = Vec::new();
       for row in conn.query(&stmt, &[&prize_id, &game_id]).await? {

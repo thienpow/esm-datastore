@@ -1,5 +1,6 @@
 
 use tokio_postgres;
+use std::time::{SystemTime};
 use bb8::{Pool, RunError};
 use bb8_postgres::PostgresConnectionManager;
 use postgres_native_tls::MakeTlsConnector;
@@ -56,10 +57,37 @@ pub struct TournamentSetCount {
   pub published: i64,
   pub archived: i64 
 }
+pub struct LeaderboardHistory {
+  pub cg_id: i64,
+  pub prize_id: i64,
+  pub prize_type_id: i32,
+  pub game_id: i64,
+  pub reward_gem: i32,
+  pub reward_exp: i32,
+  pub tickets: i32,
+  pub rank: i32,
+  pub created_on: SystemTime,
+}
 
 
 impl Tournament {
     
+    pub async fn record_leaderboard_history(history: LeaderboardHistory, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare(r#"INSERT INTO public.leaderboard_history 
+      (cg_id, prize_id, prize_type_id, game_id, reward_gem, reward_exp, tickets, rank, created_on) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+      RETURNING id;"#).await?;
+
+      let row = conn.query_one(&stmt, &[
+        &history.cg_id, &history.prize_id, &history.prize_type_id, 
+        &history.game_id, &history.reward_gem, &history.reward_exp, 
+        &history.tickets, &history.rank, &history.created_on]).await?;
+    
+      Ok(row.get::<usize, i64>(0))
+      
+    }
     pub async fn add(tournament: Tournament, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<i64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

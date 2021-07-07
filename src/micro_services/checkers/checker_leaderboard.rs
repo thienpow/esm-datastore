@@ -83,7 +83,7 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                 //SELECT * FROM gplayer WHERE prize_id={game.prize_id} AND game_id={game.game_id} AND is_closed=false ORDER BY game_score DESC;
                 //from highest score
 
-                match gplayer::GPlayer::list_unclosed_gplays(prize_id, game_id, &pool.clone()).await {
+                match gplayer::GPlayer::list_leaderboard(prize_id, game_id, &pool.clone()).await {
                     Ok(gplays) => {
 
                         //println!("gplays count=={}", gplays.len());
@@ -96,7 +96,7 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                         let mut i = 1;
                         for gplay in gplays {
 
-                            let gplay_id = gplay.id;
+                            let gplay_id = gplay.gplay_id;
                             let user_id = gplay.user_id;
 
 
@@ -115,6 +115,7 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                                     let mut reward_tickets: f64 = rule.tickets as f64;
                                     let mut multiplier: f64 = 0.0;
                                     if user.one_time_multiplier > 0.0 {
+                                        //This feature is not needed.
                                         //TDOD: make sure if one_time_multiplier is used as 1 time or 1 day and if used as accumulative to daily_multiplier
                                         //multiplier = user.one_time_multiplier;
                                         //reset one_time_multiplier to 0 because used
@@ -130,12 +131,38 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
 
                                     user::User::reward_gem(user_id, rank_gem, &pool.clone()).await?;
                                     user::User::reward_exp(user_id, rule.exp, &pool.clone()).await?;
-                                    //TODO: notify user
-                                    //append to prize_pool with rule.tickets, win_from=3,
-                                    game_tickets_collected = game_tickets_collected + reward_tickets as i64;
-                                    match notify_player("Your Tournament Result!", format!("Tournament for game_id: {} has just Ended!", game_id).as_str(), 
-                                    cg_id.to_string().as_str(), prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), game_id.to_string().as_str(), 
-                                    rank_gem.to_string().as_str(), rule.exp.to_string().as_str(), reward_tickets.to_string().as_str(), user.msg_token.as_str()).await {
+                                    
+                                    let now = SystemTime::now();
+                                    
+                                    if i <= 1000  {
+                                        //only keep the first 1000 player's record into leaderboard_history table
+                                        let history = tournament::LeaderboardHistory {
+                                            cg_id: gplay_id,
+                                            prize_id: prize_id,
+                                            prize_type_id: prize_type_id,
+                                            game_id: game_id,
+                                            reward_gem: rank_gem,
+                                            reward_exp:  rule.exp,
+                                            tickets: reward_tickets as i32,
+                                            rank: i,
+                                            created_on: now,
+                                        };
+                                        tournament::Tournament::record_leaderboard_history(history, &pool).await?;
+                                        
+                                        //only notify the first 1000 players
+                                        match notify_player(
+                                            "Your Tournament Result!", 
+                                            format!("Tournament for game_id: {} has just Ended!", game_id).as_str(), 
+                                            cg_id.to_string().as_str(), 
+                                            i.to_string().as_str(), 
+                                            prize_id.to_string().as_str(), 
+                                            prize_type_id.to_string().as_str(), 
+                                            game_id.to_string().as_str(), 
+                                            rank_gem.to_string().as_str(), 
+                                            rule.exp.to_string().as_str(), 
+                                            reward_tickets.to_string().as_str(), 
+                                            user.msg_token.as_str(), 
+                                            now.duration_since(UNIX_EPOCH).unwrap().as_secs().to_string().as_str()).await {
                                         Ok(_) => {
                                             
                                         },
@@ -148,15 +175,18 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                                         }
                                     }
 
+                                    }
                                     
+                                    //and, append to prize_pool with rule.tickets, win_from=3,
                                     prize::Prize::log_prize_pool(prize_id, user_id, game_id, 3, reward_tickets.ceil() as i32, cg_id, &pool.clone()).await?;
+                                    game_tickets_collected = game_tickets_collected + reward_tickets as i64;
                                 }
 
                             }
 
                             gplayer::GPlayer::close(gplay_id, cg_id, &pool.clone()).await?;
                             
-                            
+                                       
                             
                             i = i + 1;
                         }
@@ -166,6 +196,7 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                 
                 let prize_tickets_collected = prize::Prize::get_current_tickets_collected(prize_id, &pool.clone()).await?;
                 prize::Prize::close_current_game(cg_id, game_tickets_collected, &pool.clone()).await?;
+
                 match notify_tour_ending("Tournament Ending", format!("Tournament for game_id: {} has just Ended!", 
                     game_id).as_str(), cg_id.to_string().as_str(), 
                     prize_id.to_string().as_str(), prize_type_id.to_string().as_str(), 
@@ -250,13 +281,12 @@ async fn notify_tour_ending(title: &str, body: &str, cg_id: &str, prize_id: &str
 
 async fn notify_player(title: &str, body: &str, 
     cg_id: &str, 
+    rank: &str,
     prize_id: &str, prize_type_id: &str, 
     game_id: &str, 
     reward_gem: &str, reward_exp: &str, tickets: &str, 
-    token: &str) -> Result<bool, reqwest::Error> {
+    token: &str, timestamp: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
-    
-    let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
     
     let echo_json: serde_json::Value = reqwest::Client::new()
     .post("https://fcm.googleapis.com/fcm/send")
@@ -275,7 +305,8 @@ async fn notify_player(title: &str, body: &str,
             "reward_gem": reward_gem,
             "reward_exp": reward_exp,
             "tickets": tickets,
-            "timestamp": format!("{}", timestamp).as_str()
+            "rank": rank,
+            "timestamp": timestamp
         },
         "to": token
     }))
