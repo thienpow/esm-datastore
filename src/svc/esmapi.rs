@@ -992,6 +992,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         for l in lb {
     
           let li = LeaderboardHistoryDetail {
+            rank: l.rank,
             user_id: l.user_id,
             nick_name: l.nick_name,
             avatar_url: l.avatar_url,

@@ -2796,6 +2796,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
         for l in lb {
     
           let li = LeaderboardHistoryDetail {
+            rank: l.rank,
             user_id: l.user_id,
             nick_name: l.nick_name,
             avatar_url: l.avatar_url,

@@ -48,7 +48,7 @@ pub struct LeaderBoard {
 
 
 pub struct LeaderBoardHistory {
-  pub rank: i64,
+  pub rank: i32,
   pub user_id: i64,
   pub nick_name: String,
   pub avatar_url: String,
