@@ -4154,86 +4154,6 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listPrizePool =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.adminapi.esm.ListClosedCurrentGameRequest,
- *   !proto.adminapi.esm.ListClosedCurrentGameResponse>}
- */
-const methodDescriptor_AdminApi_ListClosedCurrentGame = new grpc.web.MethodDescriptor(
-  '/adminapi.esm.AdminApi/ListClosedCurrentGame',
-  grpc.web.MethodType.UNARY,
-  proto.adminapi.esm.ListClosedCurrentGameRequest,
-  proto.adminapi.esm.ListClosedCurrentGameResponse,
-  /**
-   * @param {!proto.adminapi.esm.ListClosedCurrentGameRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.adminapi.esm.ListClosedCurrentGameResponse.deserializeBinary
-);
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.adminapi.esm.ListClosedCurrentGameRequest,
- *   !proto.adminapi.esm.ListClosedCurrentGameResponse>}
- */
-const methodInfo_AdminApi_ListClosedCurrentGame = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.adminapi.esm.ListClosedCurrentGameResponse,
-  /**
-   * @param {!proto.adminapi.esm.ListClosedCurrentGameRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.adminapi.esm.ListClosedCurrentGameResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.adminapi.esm.ListClosedCurrentGameRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListClosedCurrentGameResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListClosedCurrentGameResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.adminapi.esm.AdminApiClient.prototype.listClosedCurrentGame =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/adminapi.esm.AdminApi/ListClosedCurrentGame',
-      request,
-      metadata || {},
-      methodDescriptor_AdminApi_ListClosedCurrentGame,
-      callback);
-};
-
-
-/**
- * @param {!proto.adminapi.esm.ListClosedCurrentGameRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.adminapi.esm.ListClosedCurrentGameResponse>}
- *     Promise that resolves to the response
- */
-proto.adminapi.esm.AdminApiPromiseClient.prototype.listClosedCurrentGame =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/adminapi.esm.AdminApi/ListClosedCurrentGame',
-      request,
-      metadata || {},
-      methodDescriptor_AdminApi_ListClosedCurrentGame);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.AddRankRequest,
  *   !proto.adminapi.esm.AddRankResponse>}
  */
@@ -6948,6 +6868,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listLogG =
       request,
       metadata || {},
       methodDescriptor_AdminApi_ListLogG);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListClosedCurrentGameRequest,
+ *   !proto.adminapi.esm.ListClosedCurrentGameResponse>}
+ */
+const methodDescriptor_AdminApi_ListClosedCurrentGame = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListClosedCurrentGame',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListClosedCurrentGameRequest,
+  proto.adminapi.esm.ListClosedCurrentGameResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListClosedCurrentGameRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListClosedCurrentGameResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListClosedCurrentGameRequest,
+ *   !proto.adminapi.esm.ListClosedCurrentGameResponse>}
+ */
+const methodInfo_AdminApi_ListClosedCurrentGame = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListClosedCurrentGameResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListClosedCurrentGameRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListClosedCurrentGameResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListClosedCurrentGameRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListClosedCurrentGameResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListClosedCurrentGameResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listClosedCurrentGame =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListClosedCurrentGame',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListClosedCurrentGame,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListClosedCurrentGameRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListClosedCurrentGameResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listClosedCurrentGame =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListClosedCurrentGame',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListClosedCurrentGame);
 };
 
 

@@ -143,6 +143,20 @@ pub struct CurrentGame {
   pub set_duration_countdown: i32
 }
 
+pub struct ClosedCurrentGame {
+  pub id: i64,
+  pub prize_id: i64,
+  pub tour_id: i64,
+  pub set_id: i64,
+  pub tsg_id: i64,
+  pub game_id: i64,
+  pub game_title: String,
+  pub start_timestamp: SystemTime,
+  pub end_timestamp: SystemTime,
+  pub index: i64,
+  pub set_duration_countdown: i32
+}
+
 pub struct PastCurrentGame {
   pub id: i64,
   pub prize_id: i64,
@@ -598,24 +612,28 @@ impl Prize {
     }
 
 
-    pub async fn list_closed_current_game_by_admin(prize_id: i64, limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
+    pub async fn list_closed_current_game_by_admin(prize_id: i64, limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<ClosedCurrentGame>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, tsg_id, game_id, start_timestamp, end_timestamp, index, set_duration_countdown FROM public.\"current_game\" WHERE prize_id=$1 AND is_closed=true ORDER BY id DESC LIMIT $2 OFFSET $3;").await?;
+      let stmt = conn.prepare("SELECT cg.id, cg.prize_id, cg.tour_id, cg.set_id, cg.tsg_id, cg.game_id, g.title AS game_title, cg.start_timestamp, cg.end_timestamp, cg.index, cg.set_duration_countdown 
+      FROM public.\"current_game\" AS cg 
+      LEFT JOIN public.\"game\" AS g ON g.id=cg.game_id
+      WHERE cg.prize_id=$1 AND cg.is_closed=true ORDER BY cg.id DESC LIMIT $2 OFFSET $3;").await?;
     
-      let mut vec: Vec<CurrentGame> = Vec::new();
+      let mut vec: Vec<ClosedCurrentGame> = Vec::new();
       for row in conn.query(&stmt, &[&prize_id, &limit, &offset]).await? {
-        let rule = CurrentGame {
+        let rule = ClosedCurrentGame {
           id: row.get(0),
           prize_id: row.get(1),
           tour_id: row.get(2),
           set_id: row.get(3),
           tsg_id: row.get(4),
           game_id: row.get(5),
-          start_timestamp: row.get(6),
-          end_timestamp: row.get(7),
-          index: row.get(8),
-          set_duration_countdown: row.get(9)
+          game_title: row.get(6),
+          start_timestamp: row.get(7),
+          end_timestamp: row.get(8),
+          index: row.get(9),
+          set_duration_countdown: row.get(10)
         };
 
         vec.push(rule);

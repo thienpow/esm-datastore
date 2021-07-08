@@ -76,7 +76,6 @@ service AdminApi {
   rpc DeletePrizeTour(DeletePrizeTourRequest) returns (DeletePrizeTourResponse) {}
   rpc ListPrizeTour(ListPrizeTourRequest) returns (ListPrizeTourResponse) {}
   rpc ListPrizePool(ListPrizePoolRequest) returns (ListPrizePoolResponse) {}
-  rpc ListClosedCurrentGame(ListClosedCurrentGameRequest) returns (ListClosedCurrentGameResponse) {}
 
   // Rank
   rpc AddRank(AddRankRequest) returns (AddRankResponse) {}
@@ -124,6 +123,7 @@ service AdminApi {
   rpc ListLogG(ListLogGRequest) returns (ListLogGResponse) {}
 
   // Leaderboard
+  rpc ListClosedCurrentGame(ListClosedCurrentGameRequest) returns (ListClosedCurrentGameResponse) {}
   rpc ListLeaderboard(ListLeaderboardRequest) returns (ListLeaderboardResponse) {}
   rpc ListLeaderboardHistory(ListLeaderboardHistoryRequest) returns (ListLeaderboardHistoryResponse) {}
 }
@@ -982,26 +982,6 @@ message PrizePoolDetail {
   int64 cg_id = 8;
 }
 
-message ListClosedCurrentGameRequest {
-  int64 prize_id = 1;
-  int64 limit = 2;
-  int64 offset = 3;
-}
-message ListClosedCurrentGameResponse {
-  repeated ClosedCurrentGameDetail result = 1;
-}
-message ClosedCurrentGameDetail {
-  int64 id = 1;
-  int64 prize_id = 2;
-  int64 tour_id = 3;
-  int64 set_id = 4;
-  int64 tsg_id = 5;
-  int64 game_id = 6;
-  int64 start_timestamp = 7;
-  int64 end_timestamp = 8;
-  int32 set_duration_countdown = 9;
-}
-
 
 
 
@@ -1554,6 +1534,27 @@ message LogGDetail {
 /*
 **************************************** Leaderbboard ***************************************
 */
+message ListClosedCurrentGameRequest {
+  int64 prize_id = 1;
+  int64 limit = 2;
+  int64 offset = 3;
+}
+message ListClosedCurrentGameResponse {
+  repeated ClosedCurrentGameDetail result = 1;
+}
+message ClosedCurrentGameDetail {
+  int64 id = 1;
+  int64 prize_id = 2;
+  int64 tour_id = 3;
+  int64 set_id = 4;
+  int64 tsg_id = 5;
+  int64 game_id = 6;
+  string game_title = 7;
+  int64 start_timestamp = 8;
+  int64 end_timestamp = 9;
+  int32 set_duration_countdown = 10;
+}
+
 // this is history, should not be used as "current"
 message ListLeaderboardHistoryRequest {
   int64 cg_id = 1;
