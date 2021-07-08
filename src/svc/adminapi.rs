@@ -100,6 +100,8 @@ use adminapi_proto::{
   PrizeTourDetail,
   ListPrizePoolRequest, ListPrizePoolResponse,
   PrizePoolDetail,
+  ListClosedCurrentGameRequest, ListClosedCurrentGameResponse,
+  ClosedCurrentGameDetail,
 
   // Rank
   AddRankRequest, AddRankResponse,
@@ -155,6 +157,12 @@ use adminapi_proto::{
   ListLogGRequest, ListLogGResponse,
   LogGDetail,
 
+  // Leaderboard
+  ListLeaderboardRequest, ListLeaderboardResponse,
+  ListLeaderboardHistoryRequest, ListLeaderboardHistoryResponse,
+  LeaderboardDetail, LeaderboardHistoryDetail,
+
+  // Count
   UserCount, GameCount, ItemCount, PrizeCount, BuyCount, SubscriptionCount, TournamentCount, TournamentSetCount, WinnerCount
 };
 
@@ -1726,6 +1734,42 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
   }
 
 
+  async fn list_closed_current_game(&self, request: Request<ListClosedCurrentGameRequest>, ) -> Result<Response<ListClosedCurrentGameResponse>, Status> {
+    let _ = svc::check_is_admin(&request.metadata()).await?;
+    
+    let req = request.into_inner();
+    
+    let cg_list = match prize::Prize::list_closed_current_game_by_admin(req.prize_id.into(), req.limit, req.offset, &self.pool.clone()).await {
+      Ok(cg_list) => cg_list,
+      Err(error) => panic!("Error: {}.", error),
+    };
+    
+    let mut result: Vec<ClosedCurrentGameDetail> = Vec::new();
+    
+    for cg in cg_list {
+
+      let li = ClosedCurrentGameDetail {
+        id: cg.id,
+        prize_id: cg.prize_id,
+        tour_id: cg.tour_id,
+        set_id: cg.set_id,
+        tsg_id: cg.tsg_id,
+        game_id: cg.game_id,
+        start_timestamp: cg.start_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs() as i64,
+        end_timestamp: cg.end_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs() as i64,
+        set_duration_countdown: cg.set_duration_countdown
+      };
+      
+      result.push(li);
+    };
+    
+    Ok(Response::new(ListClosedCurrentGameResponse {
+      result: result,
+    }))
+    
+  }
+
+
 
 
 
@@ -2686,5 +2730,90 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
 
   }
 
+
+
+
+
+
+
+
+
+
+
+
+  /*************************************** Leaderboard ***************************************
+  *
+  *
+  */
+  async fn list_leaderboard(&self, request: Request<ListLeaderboardRequest>, ) -> Result<Response<ListLeaderboardResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    
+    match gplayer::GPlayer::list_leaderboard(req.game_id, req.prize_id, req.limit, req.offset, &self.pool.clone()).await {
+      Ok(lb) => {
+
+        let mut result: Vec<LeaderboardDetail> = Vec::new();
+    
+        for l in lb {
+    
+          let leave_timestamp= l.leave_timestamp.duration_since(UNIX_EPOCH).unwrap().as_secs() as i64;
+          let li = LeaderboardDetail {
+            user_id: l.user_id,
+            nick_name: l.nick_name,
+            avatar_url: l.avatar_url,
+            exp: l.exp,
+            game_score: l.game_score,
+            leave_timestamp: leave_timestamp,
+          };
+          
+          result.push(li);
+        };
+        
+        Ok(Response::new(ListLeaderboardResponse {
+          result: result,
+        }))
+      },
+      Err(e) => {
+        println!("list_leaderboard not ok {:?}", e);
+        return Err(Status::internal(format!("{:?}", e)))
+      }
+    }
+  }
+
+  async fn list_leaderboard_history(&self, request: Request<ListLeaderboardHistoryRequest>, ) -> Result<Response<ListLeaderboardHistoryResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    
+    match gplayer::GPlayer::list_leaderboard_history(req.cg_id, req.limit, req.offset, &self.pool.clone()).await {
+      Ok(lb) => {
+
+        let mut result: Vec<LeaderboardHistoryDetail> = Vec::new();
+    
+        for l in lb {
+    
+          let li = LeaderboardHistoryDetail {
+            user_id: l.user_id,
+            nick_name: l.nick_name,
+            avatar_url: l.avatar_url,
+            exp: l.exp,
+            game_score: l.game_score,
+            tickets: l.tickets,
+          };
+          
+          result.push(li);
+        };
+        
+        Ok(Response::new(ListLeaderboardHistoryResponse {
+          result: result,
+        }))
+      },
+      Err(e) => {
+        println!("list_leaderboard_history not ok {:?}", e);
+        return Err(Status::internal(format!("{:?}", e)))
+      }
+    }
+  }
 
 }

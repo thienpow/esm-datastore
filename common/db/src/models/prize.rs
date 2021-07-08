@@ -598,6 +598,32 @@ impl Prize {
     }
 
 
+    pub async fn list_closed_current_game_by_admin(prize_id: i64, limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
+      let conn = pool.get().await?;
+  
+      let stmt = conn.prepare("SELECT id, prize_id, tour_id, set_id, tsg_id, game_id, start_timestamp, end_timestamp, index, set_duration_countdown FROM public.\"current_game\" WHERE prize_id=$1 AND is_closed=true ORDER BY id DESC LIMIT $2 OFFSET $3;").await?;
+    
+      let mut vec: Vec<CurrentGame> = Vec::new();
+      for row in conn.query(&stmt, &[&prize_id, &limit, &offset]).await? {
+        let rule = CurrentGame {
+          id: row.get(0),
+          prize_id: row.get(1),
+          tour_id: row.get(2),
+          set_id: row.get(3),
+          tsg_id: row.get(4),
+          game_id: row.get(5),
+          start_timestamp: row.get(6),
+          end_timestamp: row.get(7),
+          index: row.get(8),
+          set_duration_countdown: row.get(9)
+        };
+
+        vec.push(rule);
+      }
+      
+      Ok(vec)
+    }
+
     pub async fn list_current_game_by_system(prize_id: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<CurrentGame>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   

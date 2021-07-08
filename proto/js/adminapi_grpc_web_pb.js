@@ -4154,6 +4154,86 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listPrizePool =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListClosedCurrentGameRequest,
+ *   !proto.adminapi.esm.ListClosedCurrentGameResponse>}
+ */
+const methodDescriptor_AdminApi_ListClosedCurrentGame = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListClosedCurrentGame',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListClosedCurrentGameRequest,
+  proto.adminapi.esm.ListClosedCurrentGameResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListClosedCurrentGameRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListClosedCurrentGameResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListClosedCurrentGameRequest,
+ *   !proto.adminapi.esm.ListClosedCurrentGameResponse>}
+ */
+const methodInfo_AdminApi_ListClosedCurrentGame = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListClosedCurrentGameResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListClosedCurrentGameRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListClosedCurrentGameResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListClosedCurrentGameRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListClosedCurrentGameResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListClosedCurrentGameResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listClosedCurrentGame =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListClosedCurrentGame',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListClosedCurrentGame,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListClosedCurrentGameRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListClosedCurrentGameResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listClosedCurrentGame =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListClosedCurrentGame',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListClosedCurrentGame);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.adminapi.esm.AddRankRequest,
  *   !proto.adminapi.esm.AddRankResponse>}
  */
@@ -6868,6 +6948,166 @@ proto.adminapi.esm.AdminApiPromiseClient.prototype.listLogG =
       request,
       metadata || {},
       methodDescriptor_AdminApi_ListLogG);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListLeaderboardRequest,
+ *   !proto.adminapi.esm.ListLeaderboardResponse>}
+ */
+const methodDescriptor_AdminApi_ListLeaderboard = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListLeaderboard',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListLeaderboardRequest,
+  proto.adminapi.esm.ListLeaderboardResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListLeaderboardRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListLeaderboardResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListLeaderboardRequest,
+ *   !proto.adminapi.esm.ListLeaderboardResponse>}
+ */
+const methodInfo_AdminApi_ListLeaderboard = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListLeaderboardResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListLeaderboardRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListLeaderboardResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListLeaderboardRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListLeaderboardResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListLeaderboardResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listLeaderboard =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListLeaderboard',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListLeaderboard,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListLeaderboardRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListLeaderboardResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listLeaderboard =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListLeaderboard',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListLeaderboard);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.adminapi.esm.ListLeaderboardHistoryRequest,
+ *   !proto.adminapi.esm.ListLeaderboardHistoryResponse>}
+ */
+const methodDescriptor_AdminApi_ListLeaderboardHistory = new grpc.web.MethodDescriptor(
+  '/adminapi.esm.AdminApi/ListLeaderboardHistory',
+  grpc.web.MethodType.UNARY,
+  proto.adminapi.esm.ListLeaderboardHistoryRequest,
+  proto.adminapi.esm.ListLeaderboardHistoryResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListLeaderboardHistoryRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListLeaderboardHistoryResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adminapi.esm.ListLeaderboardHistoryRequest,
+ *   !proto.adminapi.esm.ListLeaderboardHistoryResponse>}
+ */
+const methodInfo_AdminApi_ListLeaderboardHistory = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.adminapi.esm.ListLeaderboardHistoryResponse,
+  /**
+   * @param {!proto.adminapi.esm.ListLeaderboardHistoryRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.adminapi.esm.ListLeaderboardHistoryResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adminapi.esm.ListLeaderboardHistoryRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adminapi.esm.ListLeaderboardHistoryResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adminapi.esm.ListLeaderboardHistoryResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adminapi.esm.AdminApiClient.prototype.listLeaderboardHistory =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListLeaderboardHistory',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListLeaderboardHistory,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adminapi.esm.ListLeaderboardHistoryRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adminapi.esm.ListLeaderboardHistoryResponse>}
+ *     Promise that resolves to the response
+ */
+proto.adminapi.esm.AdminApiPromiseClient.prototype.listLeaderboardHistory =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/adminapi.esm.AdminApi/ListLeaderboardHistory',
+      request,
+      metadata || {},
+      methodDescriptor_AdminApi_ListLeaderboardHistory);
 };
 
 

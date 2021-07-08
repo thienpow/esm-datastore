@@ -79,13 +79,14 @@ impl Tournament {
       let conn = pool.get().await?;
   
       let stmt = conn.prepare(r#"INSERT INTO public.leaderboard_history 
-      (rank, prize_id, user_id, cg_id, gplay_id, prize_type_id, game_id, reward_gem, reward_exp, tickets, created_on) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
+      (rank, prize_id, user_id, cg_id, gplay_id, game_score, prize_type_id, game_id, reward_gem, reward_exp, tickets, created_on) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
       RETURNING id;"#).await?;
 
       let row = conn.query_one(&stmt, &[
         &history.rank, &history.prize_id, &history.user_id,
-        &history.cg_id, &history.gplay_id, &history.prize_type_id, 
+        &history.cg_id, &history.gplay_id, &history.game_score,
+        &history.prize_type_id, 
         &history.game_id, &history.reward_gem, &history.reward_exp, 
         &history.tickets, &history.created_on]).await?;
     

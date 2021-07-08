@@ -76,6 +76,7 @@ service AdminApi {
   rpc DeletePrizeTour(DeletePrizeTourRequest) returns (DeletePrizeTourResponse) {}
   rpc ListPrizeTour(ListPrizeTourRequest) returns (ListPrizeTourResponse) {}
   rpc ListPrizePool(ListPrizePoolRequest) returns (ListPrizePoolResponse) {}
+  rpc ListClosedCurrentGame(ListClosedCurrentGameRequest) returns (ListClosedCurrentGameResponse) {}
 
   // Rank
   rpc AddRank(AddRankRequest) returns (AddRankResponse) {}
@@ -121,6 +122,10 @@ service AdminApi {
   rpc GetWinnerCount(GetWinnerCountRequest) returns (GetWinnerCountResponse) {}
 
   rpc ListLogG(ListLogGRequest) returns (ListLogGResponse) {}
+
+  // Leaderboard
+  rpc ListLeaderboard(ListLeaderboardRequest) returns (ListLeaderboardResponse) {}
+  rpc ListLeaderboardHistory(ListLeaderboardHistoryRequest) returns (ListLeaderboardHistoryResponse) {}
 }
 
 
@@ -977,10 +982,25 @@ message PrizePoolDetail {
   int64 cg_id = 8;
 }
 
-
-
-
-
+message ListClosedCurrentGameRequest {
+  int64 prize_id = 1;
+  int64 limit = 2;
+  int64 offset = 3;
+}
+message ListClosedCurrentGameResponse {
+  repeated ClosedCurrentGameDetail result = 1;
+}
+message ClosedCurrentGameDetail {
+  int64 id = 1;
+  int64 prize_id = 2;
+  int64 tour_id = 3;
+  int64 set_id = 4;
+  int64 tsg_id = 5;
+  int64 game_id = 6;
+  int64 start_timestamp = 7;
+  int64 end_timestamp = 8;
+  int32 set_duration_countdown = 9;
+}
 
 
 
@@ -1528,4 +1548,45 @@ message LogGDetail {
   bool is_watched_ad = 11;
   bool is_used_gem = 12;
   int32 game_score = 13;
+}
+
+
+/*
+**************************************** Leaderbboard ***************************************
+*/
+// this is history, should not be used as "current"
+message ListLeaderboardHistoryRequest {
+  int64 cg_id = 1;
+  int64 limit = 2;
+  int64 offset = 3;
+}
+message ListLeaderboardHistoryResponse {
+  repeated LeaderboardHistoryDetail result = 1;
+}
+message LeaderboardHistoryDetail {
+  int64 user_id = 1;
+  string nick_name = 2;
+  string avatar_url = 3;
+  int32 exp = 4;
+  int32 game_score = 5;
+  int32 tickets = 6;
+}
+
+// this is current leaderboard
+message ListLeaderboardRequest {
+  int64 game_id = 1;
+  int64 prize_id = 2;
+  int64 limit = 3;
+  int64 offset = 4;
+}
+message ListLeaderboardResponse {
+  repeated LeaderboardDetail result = 1;
+}
+message LeaderboardDetail {
+  int64 user_id = 1;
+  string nick_name = 2;
+  string avatar_url = 3;
+  int32 exp = 4;
+  int32 game_score = 5;
+  int64 leave_timestamp = 6;
 }
