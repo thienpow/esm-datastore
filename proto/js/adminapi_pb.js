@@ -45996,12 +45996,13 @@ proto.adminapi.esm.LeaderboardHistoryDetail.prototype.toObject = function(opt_in
  */
 proto.adminapi.esm.LeaderboardHistoryDetail.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    nickName: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    avatarUrl: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    exp: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    gameScore: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    tickets: jspb.Message.getFieldWithDefault(msg, 6, 0)
+    rank: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    userId: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    nickName: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    avatarUrl: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    exp: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    gameScore: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    tickets: jspb.Message.getFieldWithDefault(msg, 7, 0)
   };
 
   if (includeInstance) {
@@ -46039,26 +46040,30 @@ proto.adminapi.esm.LeaderboardHistoryDetail.deserializeBinaryFromReader = functi
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setRank(value);
+      break;
+    case 2:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setUserId(value);
       break;
-    case 2:
+    case 3:
       var value = /** @type {string} */ (reader.readString());
       msg.setNickName(value);
       break;
-    case 3:
+    case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setAvatarUrl(value);
       break;
-    case 4:
+    case 5:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setExp(value);
       break;
-    case 5:
+    case 6:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setGameScore(value);
       break;
-    case 6:
+    case 7:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setTickets(value);
       break;
@@ -46091,45 +46096,52 @@ proto.adminapi.esm.LeaderboardHistoryDetail.prototype.serializeBinary = function
  */
 proto.adminapi.esm.LeaderboardHistoryDetail.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getRank();
+  if (f !== 0) {
+    writer.writeInt32(
+      1,
+      f
+    );
+  }
   f = message.getUserId();
   if (f !== 0) {
     writer.writeInt64(
-      1,
+      2,
       f
     );
   }
   f = message.getNickName();
   if (f.length > 0) {
     writer.writeString(
-      2,
+      3,
       f
     );
   }
   f = message.getAvatarUrl();
   if (f.length > 0) {
     writer.writeString(
-      3,
+      4,
       f
     );
   }
   f = message.getExp();
   if (f !== 0) {
     writer.writeInt32(
-      4,
+      5,
       f
     );
   }
   f = message.getGameScore();
   if (f !== 0) {
     writer.writeInt32(
-      5,
+      6,
       f
     );
   }
   f = message.getTickets();
   if (f !== 0) {
     writer.writeInt32(
-      6,
+      7,
       f
     );
   }
@@ -46137,10 +46149,10 @@ proto.adminapi.esm.LeaderboardHistoryDetail.serializeBinaryToWriter = function(m
 
 
 /**
- * optional int64 user_id = 1;
+ * optional int32 rank = 1;
  * @return {number}
  */
-proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getUserId = function() {
+proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getRank = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -46149,34 +46161,34 @@ proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getUserId = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.LeaderboardHistoryDetail} returns this
  */
-proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setUserId = function(value) {
+proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setRank = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional string nick_name = 2;
+ * optional int64 user_id = 2;
+ * @return {number}
+ */
+proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getUserId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.LeaderboardHistoryDetail} returns this
+ */
+proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setUserId = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional string nick_name = 3;
  * @return {string}
  */
 proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getNickName = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.adminapi.esm.LeaderboardHistoryDetail} returns this
- */
-proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setNickName = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
-};
-
-
-/**
- * optional string avatar_url = 3;
- * @return {string}
- */
-proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getAvatarUrl = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -46185,34 +46197,34 @@ proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getAvatarUrl = function() 
  * @param {string} value
  * @return {!proto.adminapi.esm.LeaderboardHistoryDetail} returns this
  */
-proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setAvatarUrl = function(value) {
+proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setNickName = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
 /**
- * optional int32 exp = 4;
+ * optional string avatar_url = 4;
+ * @return {string}
+ */
+proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getAvatarUrl = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.adminapi.esm.LeaderboardHistoryDetail} returns this
+ */
+proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setAvatarUrl = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional int32 exp = 5;
  * @return {number}
  */
 proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getExp = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.adminapi.esm.LeaderboardHistoryDetail} returns this
- */
-proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setExp = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
-};
-
-
-/**
- * optional int32 game_score = 5;
- * @return {number}
- */
-proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getGameScore = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
@@ -46221,16 +46233,16 @@ proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getGameScore = function() 
  * @param {number} value
  * @return {!proto.adminapi.esm.LeaderboardHistoryDetail} returns this
  */
-proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setGameScore = function(value) {
+proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setExp = function(value) {
   return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 
 /**
- * optional int32 tickets = 6;
+ * optional int32 game_score = 6;
  * @return {number}
  */
-proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getTickets = function() {
+proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getGameScore = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
@@ -46239,8 +46251,26 @@ proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getTickets = function() {
  * @param {number} value
  * @return {!proto.adminapi.esm.LeaderboardHistoryDetail} returns this
  */
-proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setTickets = function(value) {
+proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setGameScore = function(value) {
   return jspb.Message.setProto3IntField(this, 6, value);
+};
+
+
+/**
+ * optional int32 tickets = 7;
+ * @return {number}
+ */
+proto.adminapi.esm.LeaderboardHistoryDetail.prototype.getTickets = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.LeaderboardHistoryDetail} returns this
+ */
+proto.adminapi.esm.LeaderboardHistoryDetail.prototype.setTickets = function(value) {
+  return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
