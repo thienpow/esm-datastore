@@ -28722,7 +28722,8 @@ proto.adminapi.esm.PrizePoolDetail.toObject = function(includeInstance, msg) {
     winFrom: jspb.Message.getFieldWithDefault(msg, 4, 0),
     tickets: jspb.Message.getFieldWithDefault(msg, 5, 0),
     createdOn: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    isClosed: jspb.Message.getBooleanFieldWithDefault(msg, 7, false)
+    isClosed: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
+    cgId: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -28786,6 +28787,10 @@ proto.adminapi.esm.PrizePoolDetail.deserializeBinaryFromReader = function(msg, r
     case 7:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsClosed(value);
+      break;
+    case 8:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setCgId(value);
       break;
     default:
       reader.skipField();
@@ -28862,6 +28867,13 @@ proto.adminapi.esm.PrizePoolDetail.serializeBinaryToWriter = function(message, w
   if (f) {
     writer.writeBool(
       7,
+      f
+    );
+  }
+  f = message.getCgId();
+  if (f !== 0) {
+    writer.writeInt64(
+      8,
       f
     );
   }
@@ -28991,6 +29003,24 @@ proto.adminapi.esm.PrizePoolDetail.prototype.getIsClosed = function() {
  */
 proto.adminapi.esm.PrizePoolDetail.prototype.setIsClosed = function(value) {
   return jspb.Message.setProto3BooleanField(this, 7, value);
+};
+
+
+/**
+ * optional int64 cg_id = 8;
+ * @return {number}
+ */
+proto.adminapi.esm.PrizePoolDetail.prototype.getCgId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.PrizePoolDetail} returns this
+ */
+proto.adminapi.esm.PrizePoolDetail.prototype.setCgId = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 

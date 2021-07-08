@@ -60,8 +60,10 @@ use esmapi_proto::{
   LogGLeaveRequest, LogGLeaveResponse,
   ListLogGRequest, ListLogGResponse,
   ListLeaderboardRequest, ListLeaderboardResponse,
+  ListLeaderboardHistoryRequest, ListLeaderboardHistoryResponse,
+  GetCurrentPlayerRankRequest, GetCurrentPlayerRankResponse,
   ListPlayerHighscoreRequest, ListPlayerHighscoreResponse,
-  LogGDetail, LeaderboardDetail,
+  LogGDetail, LeaderboardDetail, LeaderboardHistoryDetail,
 
   //  Invites
   AddInviteRequest, AddInviteResponse,
@@ -940,12 +942,13 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
   }
 
+
   async fn list_leaderboard(&self, request: Request<ListLeaderboardRequest>, ) -> Result<Response<ListLeaderboardResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
 
     let req = request.into_inner();
     
-    match gplayer::GPlayer::list_leaderboard(req.game_id, req.prize_id, &self.pool.clone()).await {
+    match gplayer::GPlayer::list_leaderboard(req.game_id, req.prize_id, req.limit, req.offset, &self.pool.clone()).await {
       Ok(lb) => {
 
         let mut result: Vec<LeaderboardDetail> = Vec::new();
@@ -974,10 +977,63 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
         return Err(Status::internal(format!("{:?}", e)))
       }
     }
-    
-
-
   }
+
+  async fn list_leaderboard_history(&self, request: Request<ListLeaderboardHistoryRequest>, ) -> Result<Response<ListLeaderboardHistoryResponse>, Status> {
+    let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    
+    match gplayer::GPlayer::list_leaderboard_history(req.cg_id, req.limit, req.offset, &self.pool.clone()).await {
+      Ok(lb) => {
+
+        let mut result: Vec<LeaderboardHistoryDetail> = Vec::new();
+    
+        for l in lb {
+    
+          let li = LeaderboardHistoryDetail {
+            user_id: l.user_id,
+            nick_name: l.nick_name,
+            avatar_url: l.avatar_url,
+            exp: l.exp,
+            game_score: l.game_score,
+            tickets: l.tickets,
+          };
+          
+          result.push(li);
+        };
+        
+        Ok(Response::new(ListLeaderboardHistoryResponse {
+          result: result,
+        }))
+      },
+      Err(e) => {
+        println!("list_leaderboard_history not ok {:?}", e);
+        return Err(Status::internal(format!("{:?}", e)))
+      }
+    }
+  }
+
+  async fn get_current_player_rank(&self, request: Request<GetCurrentPlayerRankRequest>, ) -> Result<Response<GetCurrentPlayerRankResponse>, Status> {
+    
+    let uid = svc::check_is_exact_user(&request.metadata(), &self.jwk).await?;
+
+    let req = request.into_inner();
+    let user_id: i64 = req.user_id.into();
+    svc::verify_exact_match(uid, user_id, &self.pool.clone()).await?;
+
+    
+    match gplayer::GPlayer::get_current_player_rank(user_id, req.game_id, req.prize_id, &self.pool.clone()).await {
+      Ok(rank) => {
+
+        Ok(Response::new(GetCurrentPlayerRankResponse {
+          result: rank
+        }))
+      },
+      Err(e) => Err(Status::internal(format!("Error: get_spin_available failed! {}", e.to_string())))
+    }
+  }
+
 
   async fn list_player_highscore(&self, request: Request<ListPlayerHighscoreRequest>, ) -> Result<Response<ListPlayerHighscoreResponse>, Status> {
     let _ = svc::check_is_user(&request.metadata(), &self.jwk).await?;

@@ -52,7 +52,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
 
-        let time_wait = time::Duration::from_secs(config.checker_time_wait);
+        let time_wait = time::Duration::from_secs(config.checker_cg_time_wait);
         thread::sleep(time_wait);
 
     }

@@ -2074,6 +2074,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listLeaderboard =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.ListLeaderboardHistoryRequest,
+ *   !proto.api.esm.ListLeaderboardHistoryResponse>}
+ */
+const methodDescriptor_EsmApi_ListLeaderboardHistory = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/ListLeaderboardHistory',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.ListLeaderboardHistoryRequest,
+  proto.api.esm.ListLeaderboardHistoryResponse,
+  /**
+   * @param {!proto.api.esm.ListLeaderboardHistoryRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListLeaderboardHistoryResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.ListLeaderboardHistoryRequest,
+ *   !proto.api.esm.ListLeaderboardHistoryResponse>}
+ */
+const methodInfo_EsmApi_ListLeaderboardHistory = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.ListLeaderboardHistoryResponse,
+  /**
+   * @param {!proto.api.esm.ListLeaderboardHistoryRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.ListLeaderboardHistoryResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.ListLeaderboardHistoryRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.ListLeaderboardHistoryResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.ListLeaderboardHistoryResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.listLeaderboardHistory =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/ListLeaderboardHistory',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListLeaderboardHistory,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.ListLeaderboardHistoryRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.ListLeaderboardHistoryResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.listLeaderboardHistory =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/ListLeaderboardHistory',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_ListLeaderboardHistory);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.api.esm.ListPlayerHighscoreRequest,
  *   !proto.api.esm.ListPlayerHighscoreResponse>}
  */
@@ -2148,6 +2228,86 @@ proto.api.esm.EsmApiPromiseClient.prototype.listPlayerHighscore =
       request,
       metadata || {},
       methodDescriptor_EsmApi_ListPlayerHighscore);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.api.esm.GetCurrentPlayerRankRequest,
+ *   !proto.api.esm.GetCurrentPlayerRankResponse>}
+ */
+const methodDescriptor_EsmApi_GetCurrentPlayerRank = new grpc.web.MethodDescriptor(
+  '/api.esm.EsmApi/GetCurrentPlayerRank',
+  grpc.web.MethodType.UNARY,
+  proto.api.esm.GetCurrentPlayerRankRequest,
+  proto.api.esm.GetCurrentPlayerRankResponse,
+  /**
+   * @param {!proto.api.esm.GetCurrentPlayerRankRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetCurrentPlayerRankResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.api.esm.GetCurrentPlayerRankRequest,
+ *   !proto.api.esm.GetCurrentPlayerRankResponse>}
+ */
+const methodInfo_EsmApi_GetCurrentPlayerRank = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.api.esm.GetCurrentPlayerRankResponse,
+  /**
+   * @param {!proto.api.esm.GetCurrentPlayerRankRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.api.esm.GetCurrentPlayerRankResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.api.esm.GetCurrentPlayerRankRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.api.esm.GetCurrentPlayerRankResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.api.esm.GetCurrentPlayerRankResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.api.esm.EsmApiClient.prototype.getCurrentPlayerRank =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/api.esm.EsmApi/GetCurrentPlayerRank',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetCurrentPlayerRank,
+      callback);
+};
+
+
+/**
+ * @param {!proto.api.esm.GetCurrentPlayerRankRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.api.esm.GetCurrentPlayerRankResponse>}
+ *     Promise that resolves to the response
+ */
+proto.api.esm.EsmApiPromiseClient.prototype.getCurrentPlayerRank =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/api.esm.EsmApi/GetCurrentPlayerRank',
+      request,
+      metadata || {},
+      methodDescriptor_EsmApi_GetCurrentPlayerRank);
 };
 
 

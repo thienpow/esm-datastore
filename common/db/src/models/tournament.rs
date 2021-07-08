@@ -63,6 +63,7 @@ pub struct LeaderboardHistory {
   pub user_id: i64,
   pub cg_id: i64,
   pub gplay_id: i64,
+  pub game_score: i32,
   pub prize_type_id: i32,
   pub game_id: i64,
   pub reward_gem: i32,

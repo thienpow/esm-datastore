@@ -43,7 +43,9 @@ service EsmApi {
   rpc LogGLeave(LogGLeaveRequest) returns (LogGLeaveResponse) {}
   rpc ListLogG(ListLogGRequest) returns (ListLogGResponse) {}
   rpc ListLeaderboard(ListLeaderboardRequest) returns (ListLeaderboardResponse) {}
+  rpc ListLeaderboardHistory(ListLeaderboardHistoryRequest) returns (ListLeaderboardHistoryResponse) {}
   rpc ListPlayerHighscore(ListPlayerHighscoreRequest) returns (ListPlayerHighscoreResponse) {}
+  rpc GetCurrentPlayerRank(GetCurrentPlayerRankRequest) returns (GetCurrentPlayerRankResponse) {}
 
   // Invite
   rpc AddInvite(AddInviteRequest) returns (AddInviteResponse) {}
@@ -466,9 +468,30 @@ message ListLogGResponse {
   repeated LogGDetail result = 1;
 }
 
+// this is history, should not be used as "current"
+message ListLeaderboardHistoryRequest {
+  int64 cg_id = 1;
+  int64 limit = 2;
+  int64 offset = 3;
+}
+message ListLeaderboardHistoryResponse {
+  repeated LeaderboardHistoryDetail result = 1;
+}
+message LeaderboardHistoryDetail {
+  int64 user_id = 1;
+  string nick_name = 2;
+  string avatar_url = 3;
+  int32 exp = 4;
+  int32 game_score = 5;
+  int32 tickets = 6;
+}
+
+// this is current leaderboard
 message ListLeaderboardRequest {
   int64 game_id = 1;
   int64 prize_id = 2;
+  int64 limit = 3;
+  int64 offset = 4;
 }
 message ListLeaderboardResponse {
   repeated LeaderboardDetail result = 1;
@@ -480,6 +503,15 @@ message LeaderboardDetail {
   int32 exp = 4;
   int32 game_score = 5;
   int64 leave_timestamp = 6;
+}
+
+message GetCurrentPlayerRankRequest {
+  int64 user_id = 1;
+  int64 game_id = 2;
+  int64 prize_id = 3;
+}
+message GetCurrentPlayerRankResponse {
+  int64 result = 1;
 }
 
 message ListPlayerHighscoreRequest {

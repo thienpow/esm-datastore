@@ -47,7 +47,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
 
-        let time_wait = time::Duration::from_secs(config.checker_time_wait);
+        let time_wait = time::Duration::from_secs(config.checker_lb_time_wait);
         thread::sleep(time_wait);
     }
 
@@ -55,6 +55,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 
 async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<(), Box<dyn std::error::Error>> {
+
+    let config = config::get_configuration();
 
     let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
@@ -88,11 +90,12 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                     Ok(gplays) => {
 
                         let mut vec_user_id = vec![0];
-                        let mut i = 1;
+                        let mut i: i32 = 1;
                         for gplay in gplays {
 
                             let gplay_id = gplay.id;
                             let user_id = gplay.user_id;
+                            let game_score = gplay.game_score;
 
                             let mut is_existed = false;
                             if vec_user_id.contains(&user_id) {
@@ -135,14 +138,15 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                                         
                                         let now = SystemTime::now();
                                         
-                                        if i <= 1000  {
-                                            //only keep the first 1000 player's record into leaderboard_history table
+                                        if i <= config.max_history  {
+                                            //only keep the first (n) players based on the env config player's record into leaderboard_history table
                                             let history = tournament::LeaderboardHistory {
                                                 rank: i,
                                                 prize_id: prize_id,
                                                 user_id: user_id,
                                                 cg_id: cg_id,
                                                 gplay_id: gplay_id,
+                                                game_score: game_score,
                                                 prize_type_id: prize_type_id,
                                                 game_id: game_id,
                                                 reward_gem: rank_gem,
@@ -151,8 +155,10 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                                                 created_on: now,
                                             };
                                             tournament::Tournament::record_leaderboard_history(history, &pool).await?;
-                                            
-                                            //only notify the first 1000 players
+                                        }
+
+                                        if i <= config.max_notify {
+                                            //only notify the first (n) players based on the env config
                                             match notify_player(
                                                 "Your Tournament Result!", 
                                                 format!("Tournament for game_id: {} has just Ended!", game_id).as_str(), 
@@ -161,6 +167,7 @@ async fn main_loop(pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> 
                                                 prize_id.to_string().as_str(), 
                                                 prize_type_id.to_string().as_str(), 
                                                 game_id.to_string().as_str(), 
+                                                game_score.to_string().as_str(),
                                                 rank_gem.to_string().as_str(), 
                                                 rule.exp.to_string().as_str(), 
                                                 reward_tickets.to_string().as_str(), 
@@ -290,6 +297,7 @@ async fn notify_player(title: &str, body: &str,
     rank: &str,
     prize_id: &str, prize_type_id: &str, 
     game_id: &str, 
+    game_score: &str,
     reward_gem: &str, reward_exp: &str, tickets: &str, 
     token: &str, timestamp: &str) -> Result<bool, reqwest::Error> {
     let config = config::get_configuration();
@@ -308,6 +316,7 @@ async fn notify_player(title: &str, body: &str,
             "prize_id": prize_id,
             "prize_type_id": prize_type_id,
             "game_id": game_id,
+            "game_score": game_score,
             "reward_gem": reward_gem,
             "reward_exp": reward_exp,
             "tickets": tickets,
