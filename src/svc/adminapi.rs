@@ -2716,7 +2716,7 @@ async fn list_spinner_rule(&self, request: Request<ListSpinnerRuleRequest>, ) ->
     
     let req = request.into_inner();
     
-    let cg_list = match prize::Prize::list_closed_current_game_by_admin(req.prize_id.into(), req.limit, req.offset, &self.pool.clone()).await {
+    let cg_list = match prize::Prize::list_closed_current_game_by_admin(req.prize_id, req.closed_date, req.limit, req.offset, &self.pool.clone()).await {
       Ok(cg_list) => cg_list,
       Err(error) => panic!("Error: {}.", error),
     };

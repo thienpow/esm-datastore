@@ -1536,8 +1536,9 @@ message LogGDetail {
 */
 message ListClosedCurrentGameRequest {
   int64 prize_id = 1;
-  int64 limit = 2;
-  int64 offset = 3;
+  int32 closed_date = 2;
+  int64 limit = 3;
+  int64 offset = 4;
 }
 message ListClosedCurrentGameResponse {
   repeated ClosedCurrentGameDetail result = 1;

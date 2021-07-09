@@ -44897,8 +44897,9 @@ proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.toObject = function(op
 proto.adminapi.esm.ListClosedCurrentGameRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     prizeId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    limit: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    offset: jspb.Message.getFieldWithDefault(msg, 3, 0)
+    closedDate: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    limit: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    offset: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -44940,10 +44941,14 @@ proto.adminapi.esm.ListClosedCurrentGameRequest.deserializeBinaryFromReader = fu
       msg.setPrizeId(value);
       break;
     case 2:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setClosedDate(value);
+      break;
+    case 3:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setLimit(value);
       break;
-    case 3:
+    case 4:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setOffset(value);
       break;
@@ -44983,17 +44988,24 @@ proto.adminapi.esm.ListClosedCurrentGameRequest.serializeBinaryToWriter = functi
       f
     );
   }
+  f = message.getClosedDate();
+  if (f !== 0) {
+    writer.writeInt32(
+      2,
+      f
+    );
+  }
   f = message.getLimit();
   if (f !== 0) {
     writer.writeInt64(
-      2,
+      3,
       f
     );
   }
   f = message.getOffset();
   if (f !== 0) {
     writer.writeInt64(
-      3,
+      4,
       f
     );
   }
@@ -45019,10 +45031,10 @@ proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.setPrizeId = function(
 
 
 /**
- * optional int64 limit = 2;
+ * optional int32 closed_date = 2;
  * @return {number}
  */
-proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.getLimit = function() {
+proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.getClosedDate = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
@@ -45031,16 +45043,16 @@ proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.getLimit = function() 
  * @param {number} value
  * @return {!proto.adminapi.esm.ListClosedCurrentGameRequest} returns this
  */
-proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.setLimit = function(value) {
+proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.setClosedDate = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
 /**
- * optional int64 offset = 3;
+ * optional int64 limit = 3;
  * @return {number}
  */
-proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.getOffset = function() {
+proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.getLimit = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -45049,8 +45061,26 @@ proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.getOffset = function()
  * @param {number} value
  * @return {!proto.adminapi.esm.ListClosedCurrentGameRequest} returns this
  */
-proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.setOffset = function(value) {
+proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.setLimit = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int64 offset = 4;
+ * @return {number}
+ */
+proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.getOffset = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.adminapi.esm.ListClosedCurrentGameRequest} returns this
+ */
+proto.adminapi.esm.ListClosedCurrentGameRequest.prototype.setOffset = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 

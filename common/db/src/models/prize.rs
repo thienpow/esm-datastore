@@ -612,16 +612,21 @@ impl Prize {
     }
 
 
-    pub async fn list_closed_current_game_by_admin(prize_id: i64, limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<ClosedCurrentGame>, RunError<tokio_postgres::Error>> {
+    pub async fn list_closed_current_game_by_admin(prize_id: i64, closed_date: i32, limit: i64, offset: i64, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<Vec<ClosedCurrentGame>, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("SELECT cg.id, cg.prize_id, cg.tour_id, cg.set_id, cg.tsg_id, cg.game_id, g.title AS game_title, cg.start_timestamp, cg.end_timestamp, cg.index, cg.set_duration_countdown 
+      let sql_string = format!("SELECT cg.id, cg.prize_id, cg.tour_id, cg.set_id, cg.tsg_id, cg.game_id, g.title AS game_title, cg.start_timestamp, cg.end_timestamp, cg.index, cg.set_duration_countdown 
       FROM public.\"current_game\" AS cg 
       LEFT JOIN public.\"game\" AS g ON g.id=cg.game_id
-      WHERE cg.prize_id=$1 AND cg.is_closed=true ORDER BY cg.id DESC LIMIT $2 OFFSET $3;").await?;
+      WHERE cg.prize_id={} AND cg.is_closed=true AND cg.end_timestamp::date=TO_DATE('{}', 'YYYYMMDD')
+      ORDER BY cg.id DESC LIMIT {} OFFSET {};", prize_id, closed_date, limit, offset);
+
+      println!("DEBUG=== {}", &sql_string);
+
+      let stmt = conn.prepare(&sql_string).await?;
     
       let mut vec: Vec<ClosedCurrentGame> = Vec::new();
-      for row in conn.query(&stmt, &[&prize_id, &limit, &offset]).await? {
+      for row in conn.query(&stmt, &[]).await? {
         let rule = ClosedCurrentGame {
           id: row.get(0),
           prize_id: row.get(1),
