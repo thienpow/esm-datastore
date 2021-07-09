@@ -621,7 +621,7 @@ impl Prize {
       WHERE cg.prize_id={} AND cg.is_closed=true AND cg.end_timestamp::date=TO_DATE('{}', 'YYYYMMDD')
       ORDER BY cg.id DESC LIMIT {} OFFSET {};", prize_id, closed_date, limit, offset);
 
-      println!("DEBUG=== {}", &sql_string);
+      //println!("DEBUG=== {}", &sql_string);
 
       let stmt = conn.prepare(&sql_string).await?;
     
