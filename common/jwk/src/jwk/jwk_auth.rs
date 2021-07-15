@@ -43,11 +43,13 @@ impl JwkAuth {
             let rt = tokio::runtime::Runtime::new().unwrap();
             rt.block_on(async {
                 
-                
+                let mut retried = 0;
                 loop {
     
                     let delay = match fetch_keys().await {
                         Ok(keys) => {
+
+                            retried = 0;
                             let mut verifier = verifier.lock().unwrap();
                             verifier.set_keys(keys.keys);
                             println!(
@@ -57,6 +59,8 @@ impl JwkAuth {
                             keys.validity
                         },
                         Err(_) => {
+                            retried = retried + 1;
+                            println!("JWK fetch_keys retried {:?}", retried);
                             Duration::from_secs(10)
                         }
                     };

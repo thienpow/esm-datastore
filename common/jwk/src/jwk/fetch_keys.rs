@@ -29,14 +29,22 @@ const FALLBACK_TIMEOUT: Duration = Duration::from_secs(60);
 pub async fn fetch_keys_for_config(
     config: &JwkConfiguration,
 ) -> Result<JwkKeys, Box<dyn std::error::Error>> {
-    let http_response = reqwest::get(&config.jwk_url).await.unwrap();
-    let max_age = get_max_age(&http_response).unwrap_or(FALLBACK_TIMEOUT);
-    let result = Result::Ok(http_response.json::<KeyResponse>().await.unwrap());
 
-    return result.map(|res| JwkKeys {
-        keys: res.keys,
-        validity: max_age,
-    });
+    match reqwest::get(&config.jwk_url).await {
+        Ok(http_response) => {
+
+            let max_age = get_max_age(&http_response).unwrap_or(FALLBACK_TIMEOUT);
+            let result = Result::Ok(http_response.json::<KeyResponse>().await.unwrap());
+        
+            return result.map(|res| JwkKeys {
+                keys: res.keys,
+                validity: max_age,
+            });
+
+        },
+        Err(e) => panic!("Error fetch_keys_for_config: {:?}", e),
+    };
+
 }
 
 pub async fn fetch_keys() -> Result<JwkKeys, Box<dyn Error>> {
