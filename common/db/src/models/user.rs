@@ -167,7 +167,7 @@ impl User {
     pub async fn deduct_gem(id: i64, gem: i32, pool: &Pool<PostgresConnectionManager<MakeTlsConnector>>) -> Result<u64, RunError<tokio_postgres::Error>> {
       let conn = pool.get().await?;
   
-      let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=gem_balance-$1 WHERE id=$2 AND gem_balance > $1;").await?;
+      let stmt = conn.prepare("UPDATE public.\"user\" SET gem_balance=gem_balance-$1 WHERE id=$2 AND gem_balance >= $1;").await?;
       let n = conn.execute(&stmt, 
                   &[&gem, &id]).await?;
     
