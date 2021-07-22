@@ -225,7 +225,7 @@ impl GPlayer {
       let stmt = conn.prepare("SELECT gs.id, gs.user_id, u.firstname, u.avatar_url, u.exp, gs.game_score, gs.leave_timestamp FROM
           (SELECT DISTINCT ON (user_id)
             id, user_id, leave_timestamp, game_score
-          FROM public.\"gplayer\" WHERE game_id=$1 AND prize_id=$2
+          FROM public.\"gplayer\" WHERE game_id=$1 AND prize_id=$2 AND is_logged_leave=true AND is_closed=false
           ORDER BY user_id, game_score DESC) AS gs
         LEFT JOIN public.\"user\" u ON gs.user_id = u.id
         ORDER BY game_score DESC LIMIT $3 OFFSET $4;").await?;
