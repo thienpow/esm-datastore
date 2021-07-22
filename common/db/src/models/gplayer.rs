@@ -222,18 +222,14 @@ impl GPlayer {
         limit = 100;
       }
 
-      let stmt = conn.prepare("SELECT gp1.id, gp1.user_id, u.nick_name, u.avatar_url, u.exp, gp1.game_score, gp1.leave_timestamp FROM public.\"gplayer\" AS gp1 
-        LEFT JOIN public.\"user\" AS u ON u.id=gp1.user_id 
-        WHERE gp1.game_id=$1 AND gp1.prize_id=$2 AND gp1.is_logged_leave=true AND gp1.is_closed=false 
-          AND gp1.game_score = (
-            SELECT gp2.game_score 
-            FROM public.\"gplayer\" AS gp2
-            WHERE gp2.game_id=$1 AND gp2.prize_id=$2 AND gp2.is_logged_leave=true 
-              AND gp2.is_closed=false AND gp1.user_id=gp2.user_id
-            ORDER BY gp2.game_score DESC LIMIT 1
-          )
-        ORDER BY gp1.game_score DESC, gp1.leave_timestamp ASC LIMIT $3 OFFSET $4;").await?;
-    
+      let stmt = conn.prepare("SELECT gs.id, gs.user_id, u.firstname, u.avatar_url, u.exp, gs.game_score, gs.leave_timestamp FROM
+          (SELECT DISTINCT ON (user_id)
+            id, user_id, leave_timestamp, game_score
+          FROM public.\"gplayer\" WHERE game_id=$1 AND prize_id=$2
+          ORDER BY user_id, game_score DESC) AS gs
+        LEFT JOIN public.\"user\" u ON gs.user_id = u.id
+        ORDER BY game_score DESC LIMIT $3 OFFSET $4;").await?;
+
       let mut vec: Vec<LeaderBoard> = Vec::new();
       for row in conn.query(&stmt, &[&game_id, &prize_id, &limit, &offset]).await? {
         let lb =  LeaderBoard {
