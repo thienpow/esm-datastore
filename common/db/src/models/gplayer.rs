@@ -222,7 +222,7 @@ impl GPlayer {
         limit = 100;
       }
 
-      let stmt = conn.prepare("SELECT gs.id, gs.user_id, u.firstname, u.avatar_url, u.exp, gs.game_score, gs.leave_timestamp FROM
+      let stmt = conn.prepare("SELECT gs.id, gs.user_id, u.nick_name, u.avatar_url, u.exp, gs.game_score, gs.leave_timestamp FROM
           (SELECT DISTINCT ON (user_id)
             id, user_id, leave_timestamp, game_score
           FROM public.\"gplayer\" WHERE game_id=$1 AND prize_id=$2 AND is_logged_leave=true AND is_closed=false
