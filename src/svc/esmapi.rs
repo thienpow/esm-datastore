@@ -822,7 +822,7 @@ impl esmapi_proto::esm_api_server::EsmApi for EsmApiServer {
 
               match game::Game::get_game_rules(game_id, &self.pool.clone()).await {
                 Ok(game_rules) => {
-                  let multiplier: f32 = game_score as f32 / game_rules.score_rule as f32;
+                  let multiplier: f32 = (game_score as f32 / game_rules.score_rule as f32).floor();
                   let mut reward_tickets: i32 = 0;
                   let mut reward_exp: i32 = 0;
                   
