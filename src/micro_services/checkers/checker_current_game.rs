@@ -399,18 +399,14 @@ async fn process_current_games(prize: &Prize, pool: &Pool<PostgresConnectionMana
 
 fn find_next_set_id(previous_set_id: i64, tour_sets: &Vec<tournament::TourSetSmall>) ->  i64 {
 
-    let mut is_found_set_id = false;
-    for ts in tour_sets {
-
-        if is_found_set_id {
-            //reset the previous_set_id to the next set_id
-            return ts.set_id
-        } else {
-            if ts.set_id == previous_set_id {
-                is_found_set_id = true;
+    for i in 0..tour_sets.len() {
+        if tour_sets[i].set_id == previous_set_id {
+            if i != tour_sets.len()-1 {
+                return tour_sets[i+1].set_id;
+            } else {
+                return tour_sets[0].set_id;
             }
         }
-        
     }
 
     previous_set_id
